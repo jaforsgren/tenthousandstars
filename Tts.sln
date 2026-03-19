@@ -1,0 +1,19 @@
+﻿Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tts", "Tts.csproj", "{22280549-C793-43CA-A6C0-DE67C669A62E}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+	Debug|Any CPU = Debug|Any CPU
+	ExportDebug|Any CPU = ExportDebug|Any CPU
+	ExportRelease|Any CPU = ExportRelease|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{22280549-C793-43CA-A6C0-DE67C669A62E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{22280549-C793-43CA-A6C0-DE67C669A62E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{22280549-C793-43CA-A6C0-DE67C669A62E}.ExportDebug|Any CPU.ActiveCfg = ExportDebug|Any CPU
+		{22280549-C793-43CA-A6C0-DE67C669A62E}.ExportDebug|Any CPU.Build.0 = ExportDebug|Any CPU
+		{22280549-C793-43CA-A6C0-DE67C669A62E}.ExportRelease|Any CPU.ActiveCfg = ExportRelease|Any CPU
+		{22280549-C793-43CA-A6C0-DE67C669A62E}.ExportRelease|Any CPU.Build.0 = ExportRelease|Any CPU
+	EndGlobalSection
+EndGlobal
