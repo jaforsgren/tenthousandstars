@@ -1,0 +1,13 @@
+{
+  "MinSystems": 6,
+  "MaxSystems": 12,
+  "MinSpacing": 130.0,
+  "Margin": 70.0,
+  "PlanetProductionRate": 0.1,
+  "MinOrbit": 14.0,
+  "MaxOrbit": 38.0,
+  "MinPlanetSize": 2.0,
+  "MaxPlanetSize": 8.0,
+  "MaxPlacementAttempts": 500,
+  "MaxConnectionsPerSystem": 4
+}

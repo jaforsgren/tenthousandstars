@@ -7,10 +7,10 @@ namespace Tts;
 [Tool]
 public partial class Level : Node2D
 {
-	private const int DefaultPreviewSeed = 42;
+	private const int UnsetSeed = 0;
 
 	[Export]
-	public int PreviewSeed { get; set; } = DefaultPreviewSeed;
+	public int PreviewSeed { get; set; } = UnsetSeed;
 
 	// Clicking this checkbox in the inspector regenerates the layout.
 	[Export]
@@ -38,12 +38,16 @@ public partial class Level : Node2D
 	private void GeneratePreview()
 	{
 		Clear();
-		Build(LevelGenerator.Generate(new Random(PreviewSeed)));
+		var levelCfg = ConfigLoader.Load<LevelConfig>("res://config/level.json");
+		var genCfg = ConfigLoader.Load<LevelGeneratorConfig>("res://config/level_generator.json");
+		var seed = PreviewSeed != UnsetSeed ? PreviewSeed : levelCfg.DefaultPreviewSeed;
+		Build(LevelGenerator.Generate(new Random(seed), genCfg));
 	}
 
 	private void GenerateRuntime()
 	{
-		Build(LevelGenerator.Generate(_rng));
+		var genCfg = ConfigLoader.Load<LevelGeneratorConfig>("res://config/level_generator.json");
+		Build(LevelGenerator.Generate(_rng, genCfg));
 	}
 
 	private void Build(LevelData data)

@@ -33,3 +33,4 @@ project/assembly_name="Tts"
 
 rendering_device/driver.windows="d3d12"
 renderer/rendering_method="mobile"
+environment/defaults/default_clear_color=Color(0.057633385, 0.053018652, 0.052188188, 1)
