@@ -33,6 +33,9 @@ public partial class SystemNode : Node2D
 
 	public override void _Ready()
 	{
+		if (Engine.IsEditorHint())
+			return;
+
 		var fleetCenterY = SystemRadius + FleetCircleGap + FleetCircleRadius;
 		_shipLabel = new Label
 		{
@@ -49,6 +52,9 @@ public partial class SystemNode : Node2D
 
 	public override void _Process(double delta)
 	{
+		if (Engine.IsEditorHint())
+			return;
+
 		_ships += ProductionRate * (float)delta;
 		_shipLabel.Text = Mathf.FloorToInt(_ships).ToString();
 	}

@@ -4,16 +4,59 @@ using System.Collections.Generic;
 
 namespace Tts;
 
+[Tool]
 public partial class Level : Node2D
 {
+	private const int DefaultPreviewSeed = 42;
+
+	[Export]
+	public int PreviewSeed { get; set; } = DefaultPreviewSeed;
+
+	// Clicking this checkbox in the inspector regenerates the layout.
+	[Export]
+	public bool Regenerate
+	{
+		get => false;
+		set
+		{
+			if (value && Engine.IsEditorHint())
+				GeneratePreview();
+		}
+	}
+
 	private readonly Random _rng = new();
 	private readonly List<SystemNode> _systems = [];
 
 	public override void _Ready()
 	{
-		var data = LevelGenerator.Generate(_rng);
+		if (Engine.IsEditorHint())
+			GeneratePreview();
+		else
+			GenerateRuntime();
+	}
+
+	private void GeneratePreview()
+	{
+		Clear();
+		Build(LevelGenerator.Generate(new Random(PreviewSeed)));
+	}
+
+	private void GenerateRuntime()
+	{
+		Build(LevelGenerator.Generate(_rng));
+	}
+
+	private void Build(LevelData data)
+	{
 		SpawnRoutes(data);
 		SpawnSystems(data);
+	}
+
+	private void Clear()
+	{
+		foreach (var child in GetChildren())
+			child.QueueFree();
+		_systems.Clear();
 	}
 
 	private void SpawnRoutes(LevelData data)

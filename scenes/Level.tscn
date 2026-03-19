@@ -1,6 +1,7 @@
-[gd_scene format=3 uid="uid://tts_level_001"]
+[gd_scene format=3 uid="uid://oh7xwg5sdut4"]
 
-[ext_resource type="Script" path="res://scripts/Level.cs" id="1"]
+[ext_resource type="Script" uid="uid://ct5eymu2l0jtw" path="res://scripts/Level.cs" id="1"]
 
-[node name="Level" type="Node2D"]
+[node name="Level" type="Node2D" unique_id=2067866758]
 script = ExtResource("1")
+PreviewSeed = 41
