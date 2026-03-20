@@ -1,5 +1,9 @@
 {
-	"MinZoom": 0.0,
+	"MinZoom": 0.3,
 	"MaxZoom": 3.0,
-	"ZoomStep": 0.1
+	"ZoomStep": 0.1,
+	"StartZoom": 1.5,
+	"FollowZoom": 2.0,
+	"FocusTransitionSeconds": 0.4,
+	"TrackpadZoomSensitivity": 1.0
 }

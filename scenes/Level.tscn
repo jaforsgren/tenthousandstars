@@ -4,7 +4,7 @@
 
 [node name="Level" type="Node2D" unique_id=2067866758]
 script = ExtResource("1")
-PreviewSeed = 6
+PreviewSeed = 7
 _isDragging = false
 _hasDragCandidate = false
 _draggingFromIndex = -1

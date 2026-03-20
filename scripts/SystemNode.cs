@@ -24,8 +24,12 @@ public partial class SystemNode : Node2D
 	private readonly List<PlanetNode> _planetNodes = [];
 
 	private static readonly Color ScoutedModulate = new(0.5f, 0.55f, 0.65f, 0.45f);
+	private static readonly Color ObjectiveRingColor = new(1f, 0.85f, 0.2f, 0.8f);
+	private const float ObjectiveRingGap = 5f;
+	private const float ObjectiveRingWidth = 1.5f;
 
 	private FogState _fogState = FogState.Revealed;
+	private bool _isObjective;
 
 	public float ProductionRate => _planets.Sum(p => p.ProductionRate) + _baseProduction;
 	public float Ships => _ships;
@@ -75,6 +79,18 @@ public partial class SystemNode : Node2D
 	{
 		_ships = Mathf.Max(0f, remainingShips);
 		_fleetNode?.UpdateFleet(_ships, _owner, _selected);
+	}
+
+	public void MarkAsObjective()
+	{
+		_isObjective = true;
+		QueueRedraw();
+	}
+
+	public override void _Draw()
+	{
+		if (!_isObjective) return;
+		DrawArc(Vector2.Zero, _systemRadius + ObjectiveRingGap, 0f, Mathf.Tau, 64, ObjectiveRingColor, ObjectiveRingWidth);
 	}
 
 	public void SetSelected(bool selected)
