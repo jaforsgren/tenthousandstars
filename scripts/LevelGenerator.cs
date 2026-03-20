@@ -1,12 +1,13 @@
 using Godot;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Tts;
 
 public enum SystemOwner { None, Player }
 
-public record SystemData(Vector2 Position, IReadOnlyList<Planet> Planets, SystemOwner Owner = SystemOwner.None);
+public record SystemData(Vector2 Position, IReadOnlyList<Planet> Planets, SystemOwner Owner = SystemOwner.None, float InitialFleet = 0f);
 public record LevelData(IReadOnlyList<SystemData> Systems, IReadOnlyList<(int From, int To)> Routes);
 
 public static class LevelGenerator
@@ -16,7 +17,9 @@ public static class LevelGenerator
 		var count = rng.Next(cfg.MinSystems, cfg.MaxSystems + 1);
 		var systems = PlaceSystems(rng, count, viewportWidth, viewportHeight, cfg);
 		var routes = BuildRoutes(rng, systems, cfg);
-		return new LevelData(AssignPlayerStart(rng, systems), routes);
+		var withOwner = AssignPlayerStart(rng, systems);
+		var withFleets = AssignNeutralFleets(rng, withOwner, cfg);
+		return new LevelData(withFleets, routes);
 	}
 
 	private static IReadOnlyList<SystemData> AssignPlayerStart(Random rng, IReadOnlyList<SystemData> systems)
@@ -25,6 +28,14 @@ public static class LevelGenerator
 		var playerIndex = rng.Next(0, list.Count);
 		list[playerIndex] = list[playerIndex] with { Owner = SystemOwner.Player };
 		return list;
+	}
+
+	private static IReadOnlyList<SystemData> AssignNeutralFleets(Random rng, IReadOnlyList<SystemData> systems, LevelGeneratorConfig cfg)
+	{
+		return systems.Select(s => s.Owner == SystemOwner.None
+			? s with { InitialFleet = rng.Next(cfg.NeutralFleetMin, cfg.NeutralFleetMax + 1) }
+			: s
+		).ToList();
 	}
 
 	private static IReadOnlyList<SystemData> PlaceSystems(Random rng, int count, int width, int height, LevelGeneratorConfig cfg)

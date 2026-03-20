@@ -11,4 +11,6 @@ public record LevelGeneratorConfig(
 	float MinPlanetSize,
 	float MaxPlanetSize,
 	int MaxPlacementAttempts,
-	int MaxConnectionsPerSystem);
+	int MaxConnectionsPerSystem,
+	int NeutralFleetMin,
+	int NeutralFleetMax);

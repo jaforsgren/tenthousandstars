@@ -15,4 +15,6 @@ public record SystemConfig(
 	float PlanetOutlineWidth,
 	ColorData FleetFill,
 	ColorData FleetOutline,
-	float FleetOutlineWidth);
+	float FleetOutlineWidth,
+	ColorData NeutralFleetFill,
+	ColorData NeutralFleetOutline);

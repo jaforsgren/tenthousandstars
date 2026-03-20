@@ -36,6 +36,7 @@ public partial class Level : Node2D
 	private Color _ghostFleetFill;
 	private Color _ghostFleetOutline;
 	private float _ghostFleetOutlineWidth;
+	private float _defenderBonus;
 
 	public override void _Ready()
 	{
@@ -67,6 +68,7 @@ public partial class Level : Node2D
 		_ghostFleetFill = sysCfg.FleetFill.ToColor();
 		_ghostFleetOutline = sysCfg.FleetOutline.ToColor();
 		_ghostFleetOutlineWidth = sysCfg.FleetOutlineWidth;
+		_defenderBonus = ConfigLoader.Load<CombatConfig>("res://config/combat.json").DefenderBonus;
 		_routeSet = new HashSet<(int, int)>(data.Routes);
 
 		SpawnRoutes(data);
@@ -101,7 +103,7 @@ public partial class Level : Node2D
 			var system = new SystemNode();
 			system.Position = systemData.Position;
 			AddChild(system);
-			system.Initialize(systemData.Planets, systemData.Owner);
+			system.Initialize(systemData.Planets, systemData.Owner, systemData.InitialFleet);
 			_systems.Add(system);
 		}
 	}
@@ -149,7 +151,7 @@ public partial class Level : Node2D
 		var worldPos = GetGlobalMousePosition();
 		for (var i = 0; i < _systems.Count; i++)
 		{
-			if (!_systems[i].HasFleet || !_systems[i].ContainsFleetAt(worldPos))
+			if (!_systems[i].IsPlayerOwned || !_systems[i].HasFleet || !_systems[i].ContainsFleetAt(worldPos))
 				continue;
 
 			_draggingFromIndex = i;
@@ -173,8 +175,23 @@ public partial class Level : Node2D
 			if (!AreConnected(_draggingFromIndex, i))
 				continue;
 
-			var ships = _systems[_draggingFromIndex].TakeFleet();
-			_systems[i].ReceiveFleet(ships);
+			var attacker = _systems[_draggingFromIndex];
+			var target = _systems[i];
+			var attackerFleet = attacker.TakeFleet();
+
+			if (target.Owner == attacker.Owner)
+			{
+				target.AddFleet(attackerFleet);
+			}
+			else
+			{
+				var result = CombatResolver.Resolve(attackerFleet, target.Ships, _defenderBonus);
+				if (result.AttackerWins)
+					target.Capture(result.AttackerRemainder, attacker.Owner);
+				else
+					target.SustainDefense(result.DefenderRemainder);
+			}
+
 			resolved = true;
 			break;
 		}

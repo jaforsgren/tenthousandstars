@@ -26,13 +26,18 @@ public partial class SystemNode : Node2D
 	private Color _fleetFill;
 	private Color _fleetOutline;
 	private float _fleetOutlineWidth;
+	private Color _neutralFleetFill;
+	private Color _neutralFleetOutline;
 
 	private const float SelectedOutlineWidthMultiplier = 4f;
 
 	private bool _selected;
 
 	public float ProductionRate => _planets.Sum(p => p.ProductionRate) + _baseProduction;
-	public bool HasFleet => _owner != SystemOwner.None;
+	public float Ships => _ships;
+	public SystemOwner Owner => _owner;
+	public bool HasFleet => _ships > 0;
+	public bool IsPlayerOwned => _owner == SystemOwner.Player;
 
 	public bool ContainsFleetAt(Vector2 worldPos)
 	{
@@ -48,18 +53,33 @@ public partial class SystemNode : Node2D
 		var taken = _ships;
 		_ships = 0f;
 		_selected = false;
+		UpdateLabel();
 		QueueRedraw();
 		return taken;
 	}
 
-	public void ReceiveFleet(float ships)
+	// Friendly reinforcement — same owner sends ships here.
+	public void AddFleet(float ships)
 	{
-		if (_owner == SystemOwner.None)
-		{
-			_owner = SystemOwner.Player;
-			_shipLabel.Visible = true;
-		}
 		_ships += ships;
+		UpdateLabel();
+		QueueRedraw();
+	}
+
+	// Attacker won combat — this system is captured with the attacker's remaining ships.
+	public void Capture(float ships, SystemOwner newOwner)
+	{
+		_owner = newOwner;
+		_ships = ships;
+		UpdateLabel();
+		QueueRedraw();
+	}
+
+	// Defender survived — update fleet to post-combat remainder.
+	public void SustainDefense(float remainingShips)
+	{
+		_ships = Mathf.Max(0f, remainingShips);
+		UpdateLabel();
 		QueueRedraw();
 	}
 
@@ -75,7 +95,13 @@ public partial class SystemNode : Node2D
 		_owner = owner;
 		_ships = initialShips;
 		if (_shipLabel != null)
-			_shipLabel.Visible = _owner != SystemOwner.None;
+			UpdateLabel();
+	}
+
+	private void UpdateLabel()
+	{
+		_shipLabel.Text = Mathf.FloorToInt(_ships).ToString();
+		_shipLabel.Visible = _ships > 0;
 	}
 
 	public override void _Ready()
@@ -96,6 +122,8 @@ public partial class SystemNode : Node2D
 		_fleetFill = cfg.FleetFill.ToColor();
 		_fleetOutline = cfg.FleetOutline.ToColor();
 		_fleetOutlineWidth = cfg.FleetOutlineWidth;
+		_neutralFleetFill = cfg.NeutralFleetFill.ToColor();
+		_neutralFleetOutline = cfg.NeutralFleetOutline.ToColor();
 
 		if (Engine.IsEditorHint())
 			return;
@@ -121,7 +149,8 @@ public partial class SystemNode : Node2D
 			return;
 
 		_ships += ProductionRate * (float)delta;
-		_shipLabel.Text = Mathf.FloorToInt(_ships).ToString();
+		UpdateLabel();
+		QueueRedraw();
 	}
 
 	public override void _Draw()
@@ -139,12 +168,15 @@ public partial class SystemNode : Node2D
 			DrawArc(pos, planet.Size, 0f, Mathf.Tau, 16, _planetOutline, _planetOutlineWidth);
 		}
 
-		if (_owner != SystemOwner.None)
+		if (_ships > 0)
 		{
+			var isPlayerFleet = _owner == SystemOwner.Player;
+			var fill = isPlayerFleet ? _fleetFill : _neutralFleetFill;
+			var outline = isPlayerFleet ? _fleetOutline : _neutralFleetOutline;
 			var fleetCenter = new Vector2(0f, _systemRadius + _fleetCircleGap + _fleetCircleRadius);
-			DrawCircle(fleetCenter, _fleetCircleRadius, _fleetFill);
+			DrawCircle(fleetCenter, _fleetCircleRadius, fill);
 			var outlineWidth = _selected ? _fleetOutlineWidth * SelectedOutlineWidthMultiplier : _fleetOutlineWidth;
-			var outlineColor = _selected ? Colors.White : _fleetOutline;
+			var outlineColor = _selected ? Colors.White : outline;
 			DrawArc(fleetCenter, _fleetCircleRadius, 0f, Mathf.Tau, 32, outlineColor, outlineWidth);
 		}
 	}

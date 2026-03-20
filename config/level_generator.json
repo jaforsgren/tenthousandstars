@@ -9,5 +9,7 @@
   "MinPlanetSize": 2.0,
   "MaxPlanetSize": 8.0,
   "MaxPlacementAttempts": 500,
-  "MaxConnectionsPerSystem": 4
+  "MaxConnectionsPerSystem": 4,
+  "NeutralFleetMin": 5,
+  "NeutralFleetMax": 15
 }

@@ -43,5 +43,17 @@
 		"B": 0.0,
 		"A": 1.0
 	},
-	"FleetOutlineWidth": 0.5
+	"FleetOutlineWidth": 0.5,
+	"NeutralFleetFill": {
+		"R": 0.5,
+		"G": 0.5,
+		"B": 0.5,
+		"A": 0.3
+	},
+	"NeutralFleetOutline": {
+		"R": 0.7,
+		"G": 0.7,
+		"B": 0.7,
+		"A": 1.0
+	}
 }
