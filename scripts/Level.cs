@@ -10,6 +10,7 @@ public partial class Level : Node2D
 {
 	private const int UnsetSeed = 0;
 	private const float DragThreshold = 8f;
+	private const float DoubleClickThresholdSeconds = 0.35f;
 
 	[Export]
 	public int PreviewSeed { get; set; } = UnsetSeed;
@@ -45,12 +46,16 @@ public partial class Level : Node2D
 	private Color _ghostFleetOutline;
 	private float _ghostFleetOutlineWidth;
 	private float _defenderBonus;
+	private float _fogClearSeconds;
 	private LoreConfig _loreConfig = null!;
 	private SelectionPanel _selectionPanel = null!;
 	private NotificationPanel _notificationPanel = null!;
 	private EndStateConfig _endStateCfg = null!;
 	private EndCondition? _activeCondition;
 	private bool _endConditionReached;
+	private CameraController _camera = null!;
+	private double _lastSystemClickTime = double.MinValue;
+	private int _lastClickedSystemIndex = -1;
 
 	public override void _Ready()
 	{
@@ -91,6 +96,7 @@ public partial class Level : Node2D
 		_ghostFleetOutline = sysCfg.FleetOutline.ToColor();
 		_ghostFleetOutlineWidth = sysCfg.FleetOutlineWidth;
 		_defenderBonus = ConfigLoader.Load<CombatConfig>("res://config/combat.json").DefenderBonus;
+		_fogClearSeconds = ConfigLoader.Load<LevelConfig>("res://config/level.json").FogClearSeconds;
 		_routeSet = new HashSet<(int, int)>(data.Routes);
 
 		SpawnRoutes(data);
@@ -205,6 +211,9 @@ public partial class Level : Node2D
 		_notificationPanel = null!;
 		_activeCondition = null;
 		_endConditionReached = false;
+		_camera = null!;
+		_lastSystemClickTime = double.MinValue;
+		_lastClickedSystemIndex = -1;
 	}
 
 	private void SpawnRoutes(LevelData data)
@@ -241,7 +250,7 @@ public partial class Level : Node2D
 				state = FogState.Scouted;
 			else
 				state = FogState.Hidden;
-			_systems[i].SetFogState(state);
+			_systems[i].SetFogState(state, _fogClearSeconds);
 		}
 
 		foreach (var (from, to, routeNode) in _routeNodes)
@@ -257,7 +266,7 @@ public partial class Level : Node2D
 			else
 				routeState = FogState.Scouted;
 
-			routeNode.SetFogState(routeState);
+			routeNode.SetFogState(routeState, _fogClearSeconds);
 		}
 	}
 
@@ -278,11 +287,12 @@ public partial class Level : Node2D
 		if (Engine.IsEditorHint())
 			return;
 
+		var camCfg = ConfigLoader.Load<CameraConfig>("res://config/camera.json");
 		var playerSystem = data.Systems.FirstOrDefault(s => s.Owner == SystemOwner.Player);
-		var camera = new CameraController();
-		AddChild(camera);
-		camera.MakeCurrent();
-		camera.FocusOn(playerSystem?.Position ?? Vector2.Zero);
+		_camera = new CameraController();
+		AddChild(_camera);
+		_camera.MakeCurrent();
+		_camera.FocusOn(playerSystem?.Position ?? Vector2.Zero, camCfg.StartZoom);
 	}
 
 	public override void _UnhandledInput(InputEvent @event)
@@ -388,12 +398,26 @@ public partial class Level : Node2D
 				continue;
 			if (_systems[i].ContainsSystemAt(worldPos))
 			{
-				ShowSystemInfo(i);
+				HandleSystemClick(i);
 				return;
 			}
 		}
 
 		_selectionPanel.Hide();
+	}
+
+	private void HandleSystemClick(int systemIndex)
+	{
+		var now = Time.GetTicksMsec() / 1000.0;
+		var isDoubleClick = _lastClickedSystemIndex == systemIndex
+			&& (now - _lastSystemClickTime) < DoubleClickThresholdSeconds;
+		_lastSystemClickTime = now;
+		_lastClickedSystemIndex = systemIndex;
+
+		if (isDoubleClick)
+			_camera.FollowSystem(_systems[systemIndex].GlobalPosition);
+		else
+			ShowSystemInfo(systemIndex);
 	}
 
 	private void ShowFleetInfo(int systemIndex)
@@ -447,7 +471,11 @@ public partial class Level : Node2D
 			{
 				var result = CombatResolver.Resolve(attackerFleet, target.Ships, _defenderBonus);
 				if (result.AttackerWins)
+				{
 					target.Capture(result.AttackerRemainder, attacker.Owner);
+					if (_camera.IsFollowing)
+						_camera.FollowSystem(target.GlobalPosition);
+				}
 				else
 					target.SustainDefense(result.DefenderRemainder);
 			}
