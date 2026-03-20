@@ -27,7 +27,47 @@ public partial class SystemNode : Node2D
 	private Color _fleetOutline;
 	private float _fleetOutlineWidth;
 
+	private const float SelectedOutlineWidthMultiplier = 4f;
+
+	private bool _selected;
+
 	public float ProductionRate => _planets.Sum(p => p.ProductionRate) + _baseProduction;
+	public bool HasFleet => _owner != SystemOwner.None;
+
+	public bool ContainsFleetAt(Vector2 worldPos)
+	{
+		var center = GlobalPosition + new Vector2(0f, _systemRadius + _fleetCircleGap + _fleetCircleRadius);
+		return worldPos.DistanceTo(center) <= _fleetCircleRadius;
+	}
+
+	public bool ContainsSystemAt(Vector2 worldPos)
+		=> worldPos.DistanceTo(GlobalPosition) <= _systemRadius;
+
+	public float TakeFleet()
+	{
+		var taken = _ships;
+		_ships = 0f;
+		_selected = false;
+		QueueRedraw();
+		return taken;
+	}
+
+	public void ReceiveFleet(float ships)
+	{
+		if (_owner == SystemOwner.None)
+		{
+			_owner = SystemOwner.Player;
+			_shipLabel.Visible = true;
+		}
+		_ships += ships;
+		QueueRedraw();
+	}
+
+	public void SetSelected(bool selected)
+	{
+		_selected = selected;
+		QueueRedraw();
+	}
 
 	public void Initialize(IReadOnlyList<Planet> planets, SystemOwner owner, float initialShips = 0f)
 	{
@@ -103,7 +143,9 @@ public partial class SystemNode : Node2D
 		{
 			var fleetCenter = new Vector2(0f, _systemRadius + _fleetCircleGap + _fleetCircleRadius);
 			DrawCircle(fleetCenter, _fleetCircleRadius, _fleetFill);
-			DrawArc(fleetCenter, _fleetCircleRadius, 0f, Mathf.Tau, 32, _fleetOutline, _fleetOutlineWidth);
+			var outlineWidth = _selected ? _fleetOutlineWidth * SelectedOutlineWidthMultiplier : _fleetOutlineWidth;
+			var outlineColor = _selected ? Colors.White : _fleetOutline;
+			DrawArc(fleetCenter, _fleetCircleRadius, 0f, Mathf.Tau, 32, outlineColor, outlineWidth);
 		}
 	}
 }
