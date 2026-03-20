@@ -48,6 +48,7 @@ public partial class Level : Node2D
 	private float _defenderBonus;
 	private float _fogClearSeconds;
 	private float _fadeOutSeconds;
+	private ColorRect _fadeOverlay = null!;
 	private LoreConfig _loreConfig = null!;
 	private SelectionPanel _selectionPanel = null!;
 	private NotificationPanel _notificationPanel = null!;
@@ -93,6 +94,7 @@ public partial class Level : Node2D
 			_systems[_objectiveSystemIndex].MarkAsObjective();
 		UpdateFogOfWar();
 		AssignLoreSeeds(data);
+		SpawnFadeOverlay();
 		SpawnSelectionPanel();
 		SpawnNotificationPanel();
 		SpawnInfoButton();
@@ -207,6 +209,20 @@ public partial class Level : Node2D
 		}
 	}
 
+	private void SpawnFadeOverlay()
+	{
+		var layer = new CanvasLayer { Layer = 9 };
+		AddChild(layer);
+		_fadeOverlay = new ColorRect
+		{
+			Color = Colors.Black,
+			Modulate = new Color(1f, 1f, 1f, 0f),
+			Size = GetViewport().GetVisibleRect().Size,
+			MouseFilter = Control.MouseFilterEnum.Ignore
+		};
+		layer.AddChild(_fadeOverlay);
+	}
+
 	private void SpawnSelectionPanel()
 	{
 		var layer = new CanvasLayer { Layer = 10 };
@@ -284,6 +300,7 @@ public partial class Level : Node2D
 
 	private void ShowEndSequence(string title, string description)
 	{
+		_fadeOverlay.MouseFilter = Control.MouseFilterEnum.Stop;
 		_camera.PanTo(ComputeMapCenter(), _endStateCfg.EndStateSeconds);
 		StartFadeOut(_fadeOutSeconds);
 		_notificationPanel.Show(
@@ -299,7 +316,7 @@ public partial class Level : Node2D
 	private void StartFadeOut(float durationSeconds)
 	{
 		var tween = CreateTween();
-		tween.TweenProperty(this, "modulate", new Color(1f, 1f, 1f, 0f), durationSeconds)
+		tween.TweenProperty(_fadeOverlay, "modulate", new Color(1f, 1f, 1f, 1f), durationSeconds)
 			.SetTrans(Tween.TransitionType.Linear);
 	}
 
@@ -338,7 +355,6 @@ public partial class Level : Node2D
 
 	private void RegenerateLevel()
 	{
-		Modulate = Colors.White;
 		Clear();
 		GenerateRuntime();
 	}
@@ -354,6 +370,7 @@ public partial class Level : Node2D
 		_hasDragCandidate = false;
 		_draggingFromIndex = -1;
 		_dragCandidateIndex = -1;
+		_fadeOverlay = null!;
 		_selectionPanel = null!;
 		_notificationPanel = null!;
 		_activeCondition = null;
@@ -455,7 +472,7 @@ public partial class Level : Node2D
 
 	public override void _UnhandledInput(InputEvent @event)
 	{
-		if (Engine.IsEditorHint())
+		if (Engine.IsEditorHint() || _endConditionReached)
 			return;
 
 		if (@event is InputEventMouseButton mb)
