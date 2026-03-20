@@ -13,7 +13,7 @@ public static class SystemOwnerExtensions
 		owner is SystemOwner.Ai1 or SystemOwner.Ai2 or SystemOwner.Ai3 or SystemOwner.Ai4;
 }
 
-public record AiPlayerData(SystemOwner Owner, AiDisposition Disposition, string Name);
+public record AiPlayerData(SystemOwner Owner, AiDisposition Disposition, string Name, string FactionName);
 public record SystemData(Vector2 Position, IReadOnlyList<Planet> Planets, SystemOwner Owner = SystemOwner.None, float InitialFleet = 0f);
 public record LevelData(IReadOnlyList<SystemData> Systems, IReadOnlyList<(int From, int To)> Routes, IReadOnlyList<AiPlayerData> AiPlayers);
 
@@ -65,8 +65,14 @@ public static class LevelGenerator
 			var disposition = dispositions[rng.Next(dispositions.Length)];
 			var abbrevs = aiCfg.DispositionAbbreviations[disposition.ToString()];
 			var name = abbrevs[rng.Next(abbrevs.Length)];
+			var nameEntry = aiCfg.Names[rng.Next(aiCfg.Names.Length)];
+			var suffix = aiCfg.Suffix[disposition.ToString()];
+			var chosenSuffix = suffix[rng.Next(suffix.Length)];
+			var factionName = string.IsNullOrEmpty(chosenSuffix)
+				? nameEntry.Noun
+				: $"{nameEntry.Adjective} {chosenSuffix}";
 			list[idx] = list[idx] with { Owner = owner };
-			aiPlayers.Add(new AiPlayerData(owner, disposition, name));
+			aiPlayers.Add(new AiPlayerData(owner, disposition, name, factionName));
 		}
 
 		return (list, aiPlayers);

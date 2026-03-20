@@ -47,11 +47,10 @@ public partial class AiSystemPanel : PanelContainer
 
 	public void ShowFor(AiPlayerData aiPlayer, Color dispositionColor, int seed, Vector2 viewportSize)
 	{
-		var index = (int)aiPlayer.Owner - (int)SystemOwner.Ai1 + 1;
-		_nameLabel.Text = $"AI{index} — {aiPlayer.Name}";
+		_nameLabel.Text = aiPlayer.FactionName;
 		_nameLabel.AddThemeColorOverride("font_color", dispositionColor);
 
-		_dispositionLabel.Text = aiPlayer.Disposition.ToString();
+		_dispositionLabel.Text = $"{aiPlayer.Disposition} — {aiPlayer.Name}";
 		_dispositionLabel.AddThemeColorOverride("font_color", dispositionColor);
 
 		var descriptions = _aiConfig.DispositionDescriptions[aiPlayer.Disposition.ToString()];
