@@ -18,10 +18,27 @@ public partial class RouteNode : Node2D
 		_to = to;
 	}
 
-	public void SetFogState(FogState fogState)
+	private FogState _fogState = FogState.Revealed;
+
+	public void SetFogState(FogState fogState, float clearSeconds)
 	{
-		Visible = fogState != FogState.Hidden;
-		Modulate = fogState == FogState.Scouted ? ScoutedModulate : Colors.White;
+		var previousState = _fogState;
+		_fogState = fogState;
+
+		if (fogState == FogState.Hidden)
+		{
+			Visible = false;
+			return;
+		}
+
+		var targetModulate = fogState == FogState.Scouted ? ScoutedModulate : Colors.White;
+		Visible = true;
+
+		if (previousState == FogState.Hidden)
+			Modulate = new Color(targetModulate.R, targetModulate.G, targetModulate.B, 0f);
+
+		var tween = CreateTween();
+		tween.TweenProperty(this, "modulate", targetModulate, clearSeconds);
 	}
 
 	public override void _Ready()

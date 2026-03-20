@@ -83,11 +83,25 @@ public partial class SystemNode : Node2D
 		_fleetNode?.UpdateFleet(_ships, _owner, _selected);
 	}
 
-	public void SetFogState(FogState fogState)
+	public void SetFogState(FogState fogState, float clearSeconds)
 	{
+		var previousState = _fogState;
 		_fogState = fogState;
-		Visible = fogState != FogState.Hidden;
-		Modulate = fogState == FogState.Scouted ? ScoutedModulate : Colors.White;
+
+		if (fogState == FogState.Hidden)
+		{
+			Visible = false;
+			return;
+		}
+
+		var targetModulate = fogState == FogState.Scouted ? ScoutedModulate : Colors.White;
+		Visible = true;
+
+		if (previousState == FogState.Hidden)
+			Modulate = new Color(targetModulate.R, targetModulate.G, targetModulate.B, 0f);
+
+		var tween = CreateTween();
+		tween.TweenProperty(this, "modulate", targetModulate, clearSeconds);
 	}
 
 	public void Initialize(IReadOnlyList<Planet> planets, SystemOwner owner, float initialShips = 0f)
