@@ -1,3 +1,4 @@
 {
-  "DefaultPreviewSeed": 42
+  "DefaultPreviewSeed": 42,
+  "FogClearSeconds": 1.5
 }
