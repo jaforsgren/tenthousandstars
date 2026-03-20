@@ -4,4 +4,3 @@
 
 [node name="Level" type="Node2D" unique_id=2067866758]
 script = ExtResource("1")
-PreviewSeed = -1

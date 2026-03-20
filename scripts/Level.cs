@@ -80,7 +80,7 @@ public partial class Level : Node2D
 			var system = new SystemNode();
 			system.Position = systemData.Position;
 			AddChild(system);
-			system.Initialize(systemData.Planets);
+			system.Initialize(systemData.Planets, systemData.Owner);
 			_systems.Add(system);
 		}
 	}

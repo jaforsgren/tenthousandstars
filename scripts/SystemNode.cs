@@ -8,6 +8,7 @@ public partial class SystemNode : Node2D
 {
 	private IReadOnlyList<Planet> _planets = [];
 	private float _ships;
+	private SystemOwner _owner;
 	private Label _shipLabel = null!;
 
 	private float _systemRadius;
@@ -28,10 +29,13 @@ public partial class SystemNode : Node2D
 
 	public float ProductionRate => _planets.Sum(p => p.ProductionRate) + _baseProduction;
 
-	public void Initialize(IReadOnlyList<Planet> planets, float initialShips = 0f)
+	public void Initialize(IReadOnlyList<Planet> planets, SystemOwner owner, float initialShips = 0f)
 	{
 		_planets = planets;
+		_owner = owner;
 		_ships = initialShips;
+		if (_shipLabel != null)
+			_shipLabel.Visible = _owner != SystemOwner.None;
 	}
 
 	public override void _Ready()
@@ -63,7 +67,8 @@ public partial class SystemNode : Node2D
 			Size = new Vector2(_labelWidth, _labelHeight),
 			HorizontalAlignment = HorizontalAlignment.Center,
 			VerticalAlignment = VerticalAlignment.Center,
-			Text = "0"
+			Text = "0",
+			Visible = false
 		};
 		_shipLabel.AddThemeColorOverride("font_color", Colors.White);
 		_shipLabel.AddThemeFontSizeOverride("font_size", 11);
@@ -72,7 +77,7 @@ public partial class SystemNode : Node2D
 
 	public override void _Process(double delta)
 	{
-		if (Engine.IsEditorHint())
+		if (Engine.IsEditorHint() || _owner == SystemOwner.None)
 			return;
 
 		_ships += ProductionRate * (float)delta;
@@ -94,8 +99,11 @@ public partial class SystemNode : Node2D
 			DrawArc(pos, planet.Size, 0f, Mathf.Tau, 16, _planetOutline, _planetOutlineWidth);
 		}
 
-		var fleetCenter = new Vector2(0f, _systemRadius + _fleetCircleGap + _fleetCircleRadius);
-		DrawCircle(fleetCenter, _fleetCircleRadius, _fleetFill);
-		DrawArc(fleetCenter, _fleetCircleRadius, 0f, Mathf.Tau, 32, _fleetOutline, _fleetOutlineWidth);
+		if (_owner != SystemOwner.None)
+		{
+			var fleetCenter = new Vector2(0f, _systemRadius + _fleetCircleGap + _fleetCircleRadius);
+			DrawCircle(fleetCenter, _fleetCircleRadius, _fleetFill);
+			DrawArc(fleetCenter, _fleetCircleRadius, 0f, Mathf.Tau, 32, _fleetOutline, _fleetOutlineWidth);
+		}
 	}
 }

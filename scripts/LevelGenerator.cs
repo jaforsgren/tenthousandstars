@@ -4,7 +4,9 @@ using System.Collections.Generic;
 
 namespace Tts;
 
-public record SystemData(Vector2 Position, IReadOnlyList<Planet> Planets);
+public enum SystemOwner { None, Player }
+
+public record SystemData(Vector2 Position, IReadOnlyList<Planet> Planets, SystemOwner Owner = SystemOwner.None);
 public record LevelData(IReadOnlyList<SystemData> Systems, IReadOnlyList<(int From, int To)> Routes);
 
 public static class LevelGenerator
@@ -14,7 +16,15 @@ public static class LevelGenerator
 		var count = rng.Next(cfg.MinSystems, cfg.MaxSystems + 1);
 		var systems = PlaceSystems(rng, count, viewportWidth, viewportHeight, cfg);
 		var routes = BuildRoutes(rng, systems, cfg);
-		return new LevelData(systems, routes);
+		return new LevelData(AssignPlayerStart(rng, systems), routes);
+	}
+
+	private static IReadOnlyList<SystemData> AssignPlayerStart(Random rng, IReadOnlyList<SystemData> systems)
+	{
+		var list = new List<SystemData>(systems);
+		var playerIndex = rng.Next(0, list.Count);
+		list[playerIndex] = list[playerIndex] with { Owner = SystemOwner.Player };
+		return list;
 	}
 
 	private static IReadOnlyList<SystemData> PlaceSystems(Random rng, int count, int width, int height, LevelGeneratorConfig cfg)
