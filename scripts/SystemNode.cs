@@ -23,9 +23,14 @@ public partial class SystemNode : Node2D
 	private FleetNode _fleetNode = null!;
 	private readonly List<PlanetNode> _planetNodes = [];
 
+	private static readonly Color ScoutedModulate = new(0.5f, 0.55f, 0.65f, 0.45f);
+
+	private FogState _fogState = FogState.Revealed;
+
 	public float ProductionRate => _planets.Sum(p => p.ProductionRate) + _baseProduction;
 	public float Ships => _ships;
 	public SystemOwner Owner => _owner;
+	public FogState FogState => _fogState;
 	public bool HasFleet => _ships > 0;
 	public bool IsPlayerOwned => _owner == SystemOwner.Player;
 
@@ -76,6 +81,13 @@ public partial class SystemNode : Node2D
 	{
 		_selected = selected;
 		_fleetNode?.UpdateFleet(_ships, _owner, _selected);
+	}
+
+	public void SetFogState(FogState fogState)
+	{
+		_fogState = fogState;
+		Visible = fogState != FogState.Hidden;
+		Modulate = fogState == FogState.Scouted ? ScoutedModulate : Colors.White;
 	}
 
 	public void Initialize(IReadOnlyList<Planet> planets, SystemOwner owner, float initialShips = 0f)

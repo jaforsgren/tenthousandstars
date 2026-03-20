@@ -33,6 +33,7 @@ public partial class Level : Node2D
 	private readonly List<int[]> _planetLoreSeeds = [];
 
 	private HashSet<(int, int)> _routeSet = [];
+	private readonly List<(int From, int To, RouteNode Node)> _routeNodes = [];
 	private bool _isDragging;
 	private bool _hasDragCandidate;
 	private int _draggingFromIndex = -1;
@@ -73,6 +74,7 @@ public partial class Level : Node2D
 		var genCfg = ConfigLoader.Load<LevelGeneratorConfig>("res://config/level_generator.json");
 		var data = LevelGenerator.Generate(_rng, genCfg);
 		Build(data);
+		UpdateFogOfWar();
 		AssignLoreSeeds(data);
 		_endStateCfg = ConfigLoader.Load<EndStateConfig>("res://config/end_states.json");
 		_activeCondition = _endStateCfg.Conditions[_rng.Next(_endStateCfg.Conditions.Length)];
@@ -194,6 +196,7 @@ public partial class Level : Node2D
 			child.QueueFree();
 		_systems.Clear();
 		_routeSet.Clear();
+		_routeNodes.Clear();
 		_isDragging = false;
 		_hasDragCandidate = false;
 		_draggingFromIndex = -1;
@@ -211,6 +214,50 @@ public partial class Level : Node2D
 			var route = new RouteNode();
 			AddChild(route);
 			route.Initialize(data.Systems[from].Position, data.Systems[to].Position);
+			_routeNodes.Add((from, to, route));
+		}
+	}
+
+	private void UpdateFogOfWar()
+	{
+		var scoutedByPlayer = new HashSet<int>();
+		for (var i = 0; i < _systems.Count; i++)
+		{
+			if (!_systems[i].IsPlayerOwned)
+				continue;
+			foreach (var (from, to) in _routeSet)
+			{
+				if (from == i) scoutedByPlayer.Add(to);
+				else if (to == i) scoutedByPlayer.Add(from);
+			}
+		}
+
+		for (var i = 0; i < _systems.Count; i++)
+		{
+			FogState state;
+			if (_systems[i].IsPlayerOwned)
+				state = FogState.Revealed;
+			else if (scoutedByPlayer.Contains(i))
+				state = FogState.Scouted;
+			else
+				state = FogState.Hidden;
+			_systems[i].SetFogState(state);
+		}
+
+		foreach (var (from, to, routeNode) in _routeNodes)
+		{
+			var fromState = _systems[from].FogState;
+			var toState = _systems[to].FogState;
+
+			FogState routeState;
+			if (fromState == FogState.Hidden && toState == FogState.Hidden)
+				routeState = FogState.Hidden;
+			else if (fromState == FogState.Revealed || toState == FogState.Revealed)
+				routeState = FogState.Revealed;
+			else
+				routeState = FogState.Scouted;
+
+			routeNode.SetFogState(routeState);
 		}
 	}
 
@@ -314,6 +361,8 @@ public partial class Level : Node2D
 	{
 		for (var i = 0; i < _systems.Count; i++)
 		{
+			if (_systems[i].FogState == FogState.Hidden)
+				continue;
 			if (_systems[i].HasFleet && _systems[i].ContainsFleetAt(worldPos))
 			{
 				ShowFleetInfo(i);
@@ -323,6 +372,8 @@ public partial class Level : Node2D
 
 		for (var i = 0; i < _systems.Count; i++)
 		{
+			if (_systems[i].FogState == FogState.Hidden)
+				continue;
 			var planetIndex = _systems[i].PlanetIndexAt(worldPos);
 			if (planetIndex.HasValue)
 			{
@@ -333,6 +384,8 @@ public partial class Level : Node2D
 
 		for (var i = 0; i < _systems.Count; i++)
 		{
+			if (_systems[i].FogState == FogState.Hidden)
+				continue;
 			if (_systems[i].ContainsSystemAt(worldPos))
 			{
 				ShowSystemInfo(i);
@@ -411,7 +464,10 @@ public partial class Level : Node2D
 		QueueRedraw();
 
 		if (resolved)
+		{
+			UpdateFogOfWar();
 			CheckEndCondition();
+		}
 	}
 
 	public override void _Draw()
