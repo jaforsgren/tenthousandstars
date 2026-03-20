@@ -1,7 +1,7 @@
 {
-  "MinSystems": 6,
-  "MaxSystems": 12,
-  "MinSpacing": 130.0,
+  "MinSystems": 10,
+  "MaxSystems": 20,
+  "MinSpacing": 100.0,
   "Margin": 70.0,
   "PlanetProductionRate": 0.1,
   "MinOrbit": 14.0,
@@ -11,5 +11,6 @@
   "MaxPlacementAttempts": 500,
   "MaxConnectionsPerSystem": 4,
   "NeutralFleetMin": 2,
-  "NeutralFleetMax": 5
+  "NeutralFleetMax": 5,
+  "AiMinHopsFromPlayer": 3
 }

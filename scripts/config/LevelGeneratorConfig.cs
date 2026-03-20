@@ -13,4 +13,5 @@ public record LevelGeneratorConfig(
 	int MaxPlacementAttempts,
 	int MaxConnectionsPerSystem,
 	int NeutralFleetMin,
-	int NeutralFleetMax);
+	int NeutralFleetMax,
+	int AiMinHopsFromPlayer);

@@ -28,7 +28,7 @@ public static class LevelGenerator
 		var routes = BuildRoutes(rng, systems, cfg);
 		var withPlayer = AssignPlayerStart(rng, systems);
 		var opponentCount = rng.Next(aiCfg.MinOpponents, aiCfg.MaxOpponents + 1);
-		var (withAi, aiPlayers) = AssignAiStarts(rng, withPlayer, opponentCount, aiCfg);
+		var (withAi, aiPlayers) = AssignAiStarts(rng, withPlayer, routes, opponentCount, cfg, aiCfg);
 		var withFleets = AssignNeutralFleets(rng, withAi, cfg);
 		return new LevelData(withFleets, routes, aiPlayers);
 	}
@@ -42,14 +42,18 @@ public static class LevelGenerator
 	}
 
 	private static (IReadOnlyList<SystemData> Systems, IReadOnlyList<AiPlayerData> AiPlayers) AssignAiStarts(
-		Random rng, IReadOnlyList<SystemData> systems, int opponentCount, AiConfig aiCfg)
+		Random rng, IReadOnlyList<SystemData> systems, IReadOnlyList<(int, int)> routes,
+		int opponentCount, LevelGeneratorConfig cfg, AiConfig aiCfg)
 	{
 		var list = new List<SystemData>(systems);
 		var aiPlayers = new List<AiPlayerData>();
 		var dispositions = Enum.GetValues<AiDisposition>();
 
+		var playerIndex = list.FindIndex(s => s.Owner == SystemOwner.Player);
+		var hopDistances = BfsHopDistances(playerIndex, systems.Count, routes);
+
 		var neutralIndices = Enumerable.Range(0, list.Count)
-			.Where(i => list[i].Owner == SystemOwner.None)
+			.Where(i => list[i].Owner == SystemOwner.None && hopDistances[i] >= cfg.AiMinHopsFromPlayer)
 			.OrderBy(_ => rng.Next())
 			.ToList();
 
@@ -169,6 +173,30 @@ public static class LevelGenerator
 		}
 
 		return [.. routes];
+	}
+
+	private static int[] BfsHopDistances(int startIndex, int systemCount, IReadOnlyList<(int, int)> routes)
+	{
+		var distances = new int[systemCount];
+		Array.Fill(distances, -1);
+		distances[startIndex] = 0;
+
+		var queue = new Queue<int>();
+		queue.Enqueue(startIndex);
+
+		while (queue.Count > 0)
+		{
+			var current = queue.Dequeue();
+			foreach (var (from, to) in routes)
+			{
+				var neighbor = from == current ? to : to == current ? from : -1;
+				if (neighbor < 0 || distances[neighbor] >= 0) continue;
+				distances[neighbor] = distances[current] + 1;
+				queue.Enqueue(neighbor);
+			}
+		}
+
+		return distances;
 	}
 
 	private static (int, int) NormalizedEdge(int a, int b) => a < b ? (a, b) : (b, a);
