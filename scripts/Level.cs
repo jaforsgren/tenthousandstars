@@ -56,6 +56,7 @@ public partial class Level : Node2D
 	private int _objectiveSystemIndex = -1;
 	private CameraController _camera = null!;
 	private InfoButton _infoButton = null!;
+	private AiController _aiController = null!;
 	private double _lastSystemClickTime = double.MinValue;
 	private int _lastClickedSystemIndex = -1;
 
@@ -72,14 +73,16 @@ public partial class Level : Node2D
 		Clear();
 		var levelCfg = ConfigLoader.Load<LevelConfig>("res://config/level.json");
 		var genCfg = ConfigLoader.Load<LevelGeneratorConfig>("res://config/level_generator.json");
+		var aiCfg = ConfigLoader.Load<AiConfig>("res://config/ai.json");
 		var seed = PreviewSeed != UnsetSeed ? PreviewSeed : levelCfg.DefaultPreviewSeed;
-		Build(LevelGenerator.Generate(new Random(seed), genCfg));
+		Build(LevelGenerator.Generate(new Random(seed), genCfg, aiCfg));
 	}
 
 	private void GenerateRuntime()
 	{
 		var genCfg = ConfigLoader.Load<LevelGeneratorConfig>("res://config/level_generator.json");
-		var data = LevelGenerator.Generate(_rng, genCfg);
+		var aiCfg = ConfigLoader.Load<AiConfig>("res://config/ai.json");
+		var data = LevelGenerator.Generate(_rng, genCfg, aiCfg);
 		Build(data);
 		_endStateCfg = ConfigLoader.Load<EndStateConfig>("res://config/end_states.json");
 		_activeCondition = _endStateCfg.Conditions[_rng.Next(_endStateCfg.Conditions.Length)];
@@ -92,6 +95,7 @@ public partial class Level : Node2D
 		SpawnSelectionPanel();
 		SpawnNotificationPanel();
 		SpawnInfoButton();
+		SpawnAiController(data, aiCfg);
 		ShowMissionBrief();
 	}
 
@@ -216,6 +220,19 @@ public partial class Level : Node2D
 		layer.AddChild(_notificationPanel);
 	}
 
+	private void SpawnAiController(LevelData data, AiConfig aiCfg)
+	{
+		_aiController = new AiController();
+		AddChild(_aiController);
+		_aiController.Initialize(_systems, _routeSet, _defenderBonus, data.AiPlayers, aiCfg, _rng, OnAiActionTaken);
+	}
+
+	private void OnAiActionTaken()
+	{
+		UpdateFogOfWar();
+		CheckEndCondition();
+	}
+
 	private void SpawnInfoButton()
 	{
 		var layer = new CanvasLayer { Layer = 12 };
@@ -304,6 +321,7 @@ public partial class Level : Node2D
 		_objectiveSystemIndex = -1;
 		_camera = null!;
 		_infoButton = null!;
+		_aiController = null!;
 		_lastSystemClickTime = double.MinValue;
 		_lastClickedSystemIndex = -1;
 	}
@@ -367,12 +385,17 @@ public partial class Level : Node2D
 
 	private void SpawnSystems(LevelData data)
 	{
+		var aiCfg = ConfigLoader.Load<AiConfig>("res://config/ai.json");
 		foreach (var systemData in data.Systems)
 		{
 			var system = new SystemNode();
 			system.Position = systemData.Position;
 			AddChild(system);
-			system.Initialize(systemData.Planets, systemData.Owner, systemData.InitialFleet);
+			var aiPlayer = data.AiPlayers.FirstOrDefault(a => a.Owner == systemData.Owner);
+			var aiColor = aiPlayer != null
+				? aiCfg.DispositionColors[aiPlayer.Disposition.ToString()].ToColor()
+				: (Godot.Color?)null;
+			system.Initialize(systemData.Planets, systemData.Owner, systemData.InitialFleet, aiPlayer, aiColor);
 			_systems.Add(system);
 		}
 	}

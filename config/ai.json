@@ -1,0 +1,19 @@
+{
+  "MinOpponents": 1,
+  "MaxOpponents": 2,
+  "ThinkIntervalSeconds": 3.0,
+  "StrategicMinSpareShips": 2.0,
+  "CautiousAttackChance": 0.15,
+  "DispositionAbbreviations": {
+	"Aggressive": ["Aggressive", "Warring", "Hotheaded", "Raiding"],
+	"Strategic": ["Stragetig", "Tactical", "Cunning", "Calculated"],
+	"Cautious": ["Cautious", "Biding"],
+	"Dormant": ["Dormant", "Idle", "Sleeping", "Inactive"]
+  },
+  "DispositionColors": {
+	"Aggressive": { "R": 1.0, "G": 0.2, "B": 0.1, "A": 1.0 },
+	"Strategic": { "R": 0.9, "G": 0.7, "B": 0.1, "A": 1.0 },
+	"Cautious": { "R": 0.2, "G": 0.8, "B": 0.4, "A": 1.0 },
+	"Dormant": { "R": 0.2, "G": 0.2, "B": 0.5, "A": 1.0 }
+  }
+}

@@ -5,21 +5,32 @@ using System.Linq;
 
 namespace Tts;
 
-public enum SystemOwner { None, Player }
+public enum SystemOwner { None, Player, Ai1, Ai2, Ai3, Ai4 }
 
+public static class SystemOwnerExtensions
+{
+	public static bool IsAi(this SystemOwner owner) =>
+		owner is SystemOwner.Ai1 or SystemOwner.Ai2 or SystemOwner.Ai3 or SystemOwner.Ai4;
+}
+
+public record AiPlayerData(SystemOwner Owner, AiDisposition Disposition);
 public record SystemData(Vector2 Position, IReadOnlyList<Planet> Planets, SystemOwner Owner = SystemOwner.None, float InitialFleet = 0f);
-public record LevelData(IReadOnlyList<SystemData> Systems, IReadOnlyList<(int From, int To)> Routes);
+public record LevelData(IReadOnlyList<SystemData> Systems, IReadOnlyList<(int From, int To)> Routes, IReadOnlyList<AiPlayerData> AiPlayers);
 
 public static class LevelGenerator
 {
-	public static LevelData Generate(Random rng, LevelGeneratorConfig cfg, int viewportWidth = 480, int viewportHeight = 720)
+	private static readonly SystemOwner[] AiOwners = [SystemOwner.Ai1, SystemOwner.Ai2, SystemOwner.Ai3, SystemOwner.Ai4];
+
+	public static LevelData Generate(Random rng, LevelGeneratorConfig cfg, AiConfig aiCfg, int viewportWidth = 480, int viewportHeight = 720)
 	{
 		var count = rng.Next(cfg.MinSystems, cfg.MaxSystems + 1);
 		var systems = PlaceSystems(rng, count, viewportWidth, viewportHeight, cfg);
 		var routes = BuildRoutes(rng, systems, cfg);
-		var withOwner = AssignPlayerStart(rng, systems);
-		var withFleets = AssignNeutralFleets(rng, withOwner, cfg);
-		return new LevelData(withFleets, routes);
+		var withPlayer = AssignPlayerStart(rng, systems);
+		var opponentCount = rng.Next(aiCfg.MinOpponents, aiCfg.MaxOpponents + 1);
+		var (withAi, aiPlayers) = AssignAiStarts(rng, withPlayer, opponentCount);
+		var withFleets = AssignNeutralFleets(rng, withAi, cfg);
+		return new LevelData(withFleets, routes, aiPlayers);
 	}
 
 	private static IReadOnlyList<SystemData> AssignPlayerStart(Random rng, IReadOnlyList<SystemData> systems)
@@ -28,6 +39,31 @@ public static class LevelGenerator
 		var playerIndex = rng.Next(0, list.Count);
 		list[playerIndex] = list[playerIndex] with { Owner = SystemOwner.Player };
 		return list;
+	}
+
+	private static (IReadOnlyList<SystemData> Systems, IReadOnlyList<AiPlayerData> AiPlayers) AssignAiStarts(
+		Random rng, IReadOnlyList<SystemData> systems, int opponentCount)
+	{
+		var list = new List<SystemData>(systems);
+		var aiPlayers = new List<AiPlayerData>();
+		var dispositions = Enum.GetValues<AiDisposition>();
+
+		var neutralIndices = Enumerable.Range(0, list.Count)
+			.Where(i => list[i].Owner == SystemOwner.None)
+			.OrderBy(_ => rng.Next())
+			.ToList();
+
+		var assignCount = Math.Min(opponentCount, Math.Min(neutralIndices.Count, AiOwners.Length));
+		for (var i = 0; i < assignCount; i++)
+		{
+			var idx = neutralIndices[i];
+			var owner = AiOwners[i];
+			var disposition = dispositions[rng.Next(dispositions.Length)];
+			list[idx] = list[idx] with { Owner = owner };
+			aiPlayers.Add(new AiPlayerData(owner, disposition));
+		}
+
+		return (list, aiPlayers);
 	}
 
 	private static IReadOnlyList<SystemData> AssignNeutralFleets(Random rng, IReadOnlyList<SystemData> systems, LevelGeneratorConfig cfg)
