@@ -12,6 +12,11 @@
       "EnemiesLeft": 0,
       "Description": "Eliminate all enemy fleets.",
       "EndDescription": "The void is silent. No fleet dares challenge you."
+    },
+    {
+      "TargetSystemHops": 3,
+      "Description": "Capture the marked system deep in enemy territory.",
+      "EndDescription": "The distant system falls under your command."
     }
   ]
 }

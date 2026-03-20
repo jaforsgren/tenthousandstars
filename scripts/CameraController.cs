@@ -39,7 +39,7 @@ public partial class CameraController : Camera2D
 		AnimateTo(worldPosition, _followZoom);
 	}
 
-	private void ExitFollowMode()
+	public void ExitFollowMode()
 	{
 		_isFollowing = false;
 		_activeTween?.Kill();

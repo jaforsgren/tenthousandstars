@@ -1,0 +1,8 @@
+[gd_scene format=3 uid="uid://dq2mkcxbvhp7t"]
+
+[ext_resource type="Script" path="res://scripts/InfoButton.cs" id="1_infbtn"]
+
+[node name="InfoButton" type="Control" unique_id=785341209]
+layout_mode = 3
+anchors_preset = 0
+script = ExtResource("1_infbtn")

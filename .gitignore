@@ -1,3 +1,9 @@
 # Godot 4+ specific ignores
 .godot/
 /android/
+.DS_Store
+tasks/
+backup/
+graphics-wip/
+.idea/
+assets/fonts/material-design-icons-4.0.0

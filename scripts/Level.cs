@@ -53,7 +53,9 @@ public partial class Level : Node2D
 	private EndStateConfig _endStateCfg = null!;
 	private EndCondition? _activeCondition;
 	private bool _endConditionReached;
+	private int _objectiveSystemIndex = -1;
 	private CameraController _camera = null!;
+	private InfoButton _infoButton = null!;
 	private double _lastSystemClickTime = double.MinValue;
 	private int _lastClickedSystemIndex = -1;
 
@@ -79,13 +81,86 @@ public partial class Level : Node2D
 		var genCfg = ConfigLoader.Load<LevelGeneratorConfig>("res://config/level_generator.json");
 		var data = LevelGenerator.Generate(_rng, genCfg);
 		Build(data);
-		UpdateFogOfWar();
-		AssignLoreSeeds(data);
 		_endStateCfg = ConfigLoader.Load<EndStateConfig>("res://config/end_states.json");
 		_activeCondition = _endStateCfg.Conditions[_rng.Next(_endStateCfg.Conditions.Length)];
+		if (_activeCondition.TargetSystemHops.HasValue)
+			_objectiveSystemIndex = FindObjectiveSystemIndex(_activeCondition.TargetSystemHops.Value);
+		if (_objectiveSystemIndex >= 0)
+			_systems[_objectiveSystemIndex].MarkAsObjective();
+		UpdateFogOfWar();
+		AssignLoreSeeds(data);
 		SpawnSelectionPanel();
 		SpawnNotificationPanel();
+		SpawnInfoButton();
 		ShowMissionBrief();
+	}
+
+	private int FindObjectiveSystemIndex(int targetHops)
+	{
+		var playerIndex = _systems.FindIndex(s => s.IsPlayerOwned);
+		if (playerIndex < 0) return -1;
+
+		var distances = BfsHopDistances(playerIndex);
+
+		var maxHops = 0;
+		var maxIndex = -1;
+		for (var i = 0; i < distances.Length; i++)
+		{
+			if (distances[i] <= maxHops) continue;
+			maxHops = distances[i];
+			maxIndex = i;
+		}
+
+		// Upper-bound shortcut: target exceeds graph diameter, return the farthest system
+		if (targetHops >= maxHops)
+			return maxIndex;
+
+		var bestIndex = -1;
+		var bestDelta = int.MaxValue;
+		for (var i = 0; i < distances.Length; i++)
+		{
+			if (i == playerIndex) continue;
+			var delta = Math.Abs(distances[i] - targetHops);
+			if (delta < bestDelta)
+			{
+				bestDelta = delta;
+				bestIndex = i;
+			}
+		}
+
+		return bestIndex;
+	}
+
+	private int[] BfsHopDistances(int startIndex)
+	{
+		var distances = new int[_systems.Count];
+		Array.Fill(distances, -1);
+		distances[startIndex] = 0;
+
+		var queue = new Queue<int>();
+		queue.Enqueue(startIndex);
+
+		while (queue.Count > 0)
+		{
+			var current = queue.Dequeue();
+			foreach (var neighbor in GetRouteNeighbors(current))
+			{
+				if (distances[neighbor] >= 0) continue;
+				distances[neighbor] = distances[current] + 1;
+				queue.Enqueue(neighbor);
+			}
+		}
+
+		return distances;
+	}
+
+	private IEnumerable<int> GetRouteNeighbors(int index)
+	{
+		foreach (var (from, to) in _routeSet)
+		{
+			if (from == index) yield return to;
+			else if (to == index) yield return from;
+		}
 	}
 
 	private void Build(LevelData data)
@@ -141,6 +216,15 @@ public partial class Level : Node2D
 		layer.AddChild(_notificationPanel);
 	}
 
+	private void SpawnInfoButton()
+	{
+		var layer = new CanvasLayer { Layer = 12 };
+		AddChild(layer);
+		var scene = GD.Load<PackedScene>("res://scenes/InfoButton.tscn");
+		_infoButton = scene.Instantiate<InfoButton>();
+		layer.AddChild(_infoButton);
+	}
+
 	private void ShowMissionBrief()
 	{
 		_notificationPanel.Show(
@@ -187,6 +271,12 @@ public partial class Level : Node2D
 				return false;
 		}
 
+		if (condition.TargetSystemHops.HasValue)
+		{
+			if (_objectiveSystemIndex < 0 || !_systems[_objectiveSystemIndex].IsPlayerOwned)
+				return false;
+		}
+
 		return true;
 	}
 
@@ -211,7 +301,9 @@ public partial class Level : Node2D
 		_notificationPanel = null!;
 		_activeCondition = null;
 		_endConditionReached = false;
+		_objectiveSystemIndex = -1;
 		_camera = null!;
+		_infoButton = null!;
 		_lastSystemClickTime = double.MinValue;
 		_lastClickedSystemIndex = -1;
 	}
@@ -252,6 +344,9 @@ public partial class Level : Node2D
 				state = FogState.Hidden;
 			_systems[i].SetFogState(state, _fogClearSeconds);
 		}
+
+		if (_objectiveSystemIndex >= 0 && _systems[_objectiveSystemIndex].FogState == FogState.Hidden)
+			_systems[_objectiveSystemIndex].SetFogState(FogState.Scouted, _fogClearSeconds);
 
 		foreach (var (from, to, routeNode) in _routeNodes)
 		{
@@ -375,7 +470,7 @@ public partial class Level : Node2D
 				continue;
 			if (_systems[i].HasFleet && _systems[i].ContainsFleetAt(worldPos))
 			{
-				ShowFleetInfo(i);
+				SelectFleet(i);
 				return;
 			}
 		}
@@ -403,7 +498,19 @@ public partial class Level : Node2D
 			}
 		}
 
+		_camera.ExitFollowMode();
+		_infoButton.Hide();
 		_selectionPanel.Hide();
+	}
+
+	private void SelectFleet(int systemIndex)
+	{
+		_infoButton.ShowFor(GetViewport().GetVisibleRect().Size, () => ShowFleetInfo(systemIndex));
+	}
+
+	private void SelectSystem(int systemIndex)
+	{
+		_infoButton.ShowFor(GetViewport().GetVisibleRect().Size, () => ShowSystemInfo(systemIndex));
 	}
 
 	private void HandleSystemClick(int systemIndex)
@@ -417,7 +524,7 @@ public partial class Level : Node2D
 		if (isDoubleClick)
 			_camera.FollowSystem(_systems[systemIndex].GlobalPosition);
 		else
-			ShowSystemInfo(systemIndex);
+			SelectSystem(systemIndex);
 	}
 
 	private void ShowFleetInfo(int systemIndex)
