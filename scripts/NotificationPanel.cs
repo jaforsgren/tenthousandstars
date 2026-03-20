@@ -7,6 +7,7 @@ public partial class NotificationPanel : PanelContainer
 {
 	private const float PanelWidth = 240f;
 	private const float TopPadding = 12f;
+	private const string VisualScenePath = "res://scenes/NotificationPanel.tscn";
 
 	private Label _titleLabel = null!;
 	private Label _descriptionLabel = null!;
@@ -18,6 +19,10 @@ public partial class NotificationPanel : PanelContainer
 	public override void _Ready()
 	{
 		CustomMinimumSize = new Vector2(PanelWidth, 0f);
+
+		var scene = GD.Load<PackedScene>(VisualScenePath);
+		if (scene != null)
+			AddChild(scene.Instantiate());
 
 		var vbox = new VBoxContainer();
 		AddChild(vbox);

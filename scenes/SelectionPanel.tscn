@@ -1,0 +1,12 @@
+[gd_scene format=3 uid="uid://eb6y3qr60wd1"]
+
+[ext_resource type="Texture2D" uid="uid://cabbnoum5q3uv" path="res://icon.svg" id="1_dnine"]
+
+[node name="SelectionPanel" type="Control" unique_id=532847577]
+layout_mode = 3
+anchors_preset = 0
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=1298544557]
+position = Vector2(88, 127.000015)
+scale = Vector2(0.671875, 0.625)
+texture = ExtResource("1_dnine")
