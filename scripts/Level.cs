@@ -1,6 +1,7 @@
 using Godot;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Tts;
 
@@ -54,6 +55,7 @@ public partial class Level : Node2D
 	{
 		SpawnRoutes(data);
 		SpawnSystems(data);
+		SpawnCamera(data);
 	}
 
 	private void Clear()
@@ -83,5 +85,17 @@ public partial class Level : Node2D
 			system.Initialize(systemData.Planets, systemData.Owner);
 			_systems.Add(system);
 		}
+	}
+
+	private void SpawnCamera(LevelData data)
+	{
+		if (Engine.IsEditorHint())
+			return;
+
+		var playerSystem = data.Systems.FirstOrDefault(s => s.Owner == SystemOwner.Player);
+		var camera = new CameraController();
+		AddChild(camera);
+		camera.MakeCurrent();
+		camera.FocusOn(playerSystem?.Position ?? Vector2.Zero);
 	}
 }
