@@ -47,6 +47,7 @@ public partial class Level : Node2D
 	private float _ghostFleetOutlineWidth;
 	private float _defenderBonus;
 	private float _fogClearSeconds;
+	private float _fadeOutSeconds;
 	private LoreConfig _loreConfig = null!;
 	private SelectionPanel _selectionPanel = null!;
 	private NotificationPanel _notificationPanel = null!;
@@ -175,7 +176,9 @@ public partial class Level : Node2D
 		_ghostFleetOutline = sysCfg.FleetOutline.ToColor();
 		_ghostFleetOutlineWidth = sysCfg.FleetOutlineWidth;
 		_defenderBonus = ConfigLoader.Load<CombatConfig>("res://config/combat.json").DefenderBonus;
-		_fogClearSeconds = ConfigLoader.Load<LevelConfig>("res://config/level.json").FogClearSeconds;
+		var levelCfg = ConfigLoader.Load<LevelConfig>("res://config/level.json");
+		_fogClearSeconds = levelCfg.FogClearSeconds;
+		_fadeOutSeconds = levelCfg.FadeOutSeconds;
 		_routeSet = new HashSet<(int, int)>(data.Routes);
 
 		SpawnRoutes(data);
@@ -231,6 +234,7 @@ public partial class Level : Node2D
 	{
 		UpdateFogOfWar();
 		CheckEndCondition();
+		CheckDefeatCondition();
 	}
 
 	private void SpawnInfoButton()
@@ -262,14 +266,49 @@ public partial class Level : Node2D
 
 		_endConditionReached = true;
 		_selectionPanel.Hide();
+		ShowEndSequence("Mission Complete", _activeCondition.EndDescription);
+	}
+
+	private void CheckDefeatCondition()
+	{
+		if (_endConditionReached)
+			return;
+		if (_systems.Any(s => s.IsPlayerOwned))
+			return;
+
+		_endConditionReached = true;
+		_selectionPanel.Hide();
+		var description = _endStateCfg.DefeatDescriptions[_rng.Next(_endStateCfg.DefeatDescriptions.Length)];
+		ShowEndSequence("Defeated", description);
+	}
+
+	private void ShowEndSequence(string title, string description)
+	{
+		_camera.PanTo(ComputeMapCenter(), _endStateCfg.EndStateSeconds);
+		StartFadeOut(_fadeOutSeconds);
 		_notificationPanel.Show(
-			"Mission Complete",
-			_activeCondition.EndDescription,
+			title,
+			description,
 			_endStateCfg.EndStateSeconds,
 			GetViewport().GetVisibleRect().Size,
 			onDismiss: RegenerateLevel,
 			allowEarlyDismiss: false
 		);
+	}
+
+	private void StartFadeOut(float durationSeconds)
+	{
+		var tween = CreateTween();
+		tween.TweenProperty(this, "modulate", new Color(1f, 1f, 1f, 0f), durationSeconds)
+			.SetTrans(Tween.TransitionType.Linear);
+	}
+
+	private Vector2 ComputeMapCenter()
+	{
+		var sum = Vector2.Zero;
+		foreach (var system in _systems)
+			sum += system.GlobalPosition;
+		return sum / _systems.Count;
 	}
 
 	private bool IsEndConditionMet(EndCondition condition)
@@ -299,6 +338,7 @@ public partial class Level : Node2D
 
 	private void RegenerateLevel()
 	{
+		Modulate = Colors.White;
 		Clear();
 		GenerateRuntime();
 	}

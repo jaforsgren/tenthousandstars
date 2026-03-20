@@ -1,6 +1,13 @@
 {
   "MissionBriefSeconds": 10.0,
-  "EndStateSeconds": 20.0,
+  "EndStateSeconds": 6.0,
+  "DefeatDescriptions": [
+    "Your last system has fallen. The stars no longer answer to you.",
+    "The enemy consumed everything. Silence where your fleets once roared.",
+    "Overrun. Your empire exists only in memory.",
+    "The void swallowed you whole. Nothing remains but dust.",
+    "Every system lost. Every fleet gone. The galaxy moves on without you."
+  ],
   "Conditions": [
     {
       "EnemiesLeft": 0,

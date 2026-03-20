@@ -1,4 +1,5 @@
 {
   "DefaultPreviewSeed": 42,
-  "FogClearSeconds": 1.5
+  "FogClearSeconds": 1.5,
+  "FadeOutSeconds": 4.0
 }

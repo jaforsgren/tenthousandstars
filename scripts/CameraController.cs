@@ -46,6 +46,15 @@ public partial class CameraController : Camera2D
 		_activeTween = null;
 	}
 
+	public void PanTo(Vector2 worldPosition, float durationSeconds)
+	{
+		_isFollowing = false;
+		_activeTween?.Kill();
+		_activeTween = CreateTween();
+		_activeTween.TweenProperty(this, "position", worldPosition, durationSeconds)
+			.SetTrans(Tween.TransitionType.Cubic).SetEase(Tween.EaseType.InOut);
+	}
+
 	private void AnimateTo(Vector2 position, float zoom)
 	{
 		_activeTween?.Kill();

@@ -1,3 +1,3 @@
 namespace Tts;
 
-public record LevelConfig(int DefaultPreviewSeed, float FogClearSeconds);
+public record LevelConfig(int DefaultPreviewSeed, float FogClearSeconds, float FadeOutSeconds);
