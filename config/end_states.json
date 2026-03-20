@@ -1,0 +1,17 @@
+{
+  "MissionBriefSeconds": 10.0,
+  "EndStateSeconds": 20.0,
+  "Conditions": [
+    {
+      "EnemiesLeft": 0,
+      "SystemsLeft": 0,
+      "Description": "Eliminate all enemy fleets and capture every system.",
+      "EndDescription": "Total conquest. Every system bends to your will."
+    },
+    {
+      "EnemiesLeft": 0,
+      "Description": "Eliminate all enemy fleets.",
+      "EndDescription": "The void is silent. No fleet dares challenge you."
+    }
+  ]
+}

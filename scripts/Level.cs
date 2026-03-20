@@ -46,6 +46,10 @@ public partial class Level : Node2D
 	private float _defenderBonus;
 	private LoreConfig _loreConfig = null!;
 	private SelectionPanel _selectionPanel = null!;
+	private NotificationPanel _notificationPanel = null!;
+	private EndStateConfig _endStateCfg = null!;
+	private EndCondition? _activeCondition;
+	private bool _endConditionReached;
 
 	public override void _Ready()
 	{
@@ -70,7 +74,11 @@ public partial class Level : Node2D
 		var data = LevelGenerator.Generate(_rng, genCfg);
 		Build(data);
 		AssignLoreSeeds(data);
+		_endStateCfg = ConfigLoader.Load<EndStateConfig>("res://config/end_states.json");
+		_activeCondition = _endStateCfg.Conditions[_rng.Next(_endStateCfg.Conditions.Length)];
 		SpawnSelectionPanel();
+		SpawnNotificationPanel();
+		ShowMissionBrief();
 	}
 
 	private void Build(LevelData data)
@@ -117,6 +125,69 @@ public partial class Level : Node2D
 		layer.AddChild(_selectionPanel);
 	}
 
+	private void SpawnNotificationPanel()
+	{
+		var layer = new CanvasLayer { Layer = 11 };
+		AddChild(layer);
+		_notificationPanel = new NotificationPanel();
+		layer.AddChild(_notificationPanel);
+	}
+
+	private void ShowMissionBrief()
+	{
+		_notificationPanel.Show(
+			"Mission",
+			_activeCondition!.Description,
+			_endStateCfg.MissionBriefSeconds,
+			GetViewport().GetVisibleRect().Size,
+			onDismiss: () => { }
+		);
+	}
+
+	private void CheckEndCondition()
+	{
+		if (_endConditionReached || _activeCondition == null)
+			return;
+		if (!IsEndConditionMet(_activeCondition))
+			return;
+
+		_endConditionReached = true;
+		_selectionPanel.Hide();
+		_notificationPanel.Show(
+			"Mission Complete",
+			_activeCondition.EndDescription,
+			_endStateCfg.EndStateSeconds,
+			GetViewport().GetVisibleRect().Size,
+			onDismiss: RegenerateLevel,
+			allowEarlyDismiss: false
+		);
+	}
+
+	private bool IsEndConditionMet(EndCondition condition)
+	{
+		if (condition.EnemiesLeft.HasValue)
+		{
+			var enemiesWithFleet = _systems.Count(s => !s.IsPlayerOwned && s.HasFleet);
+			if (enemiesWithFleet > condition.EnemiesLeft.Value)
+				return false;
+		}
+
+		if (condition.SystemsLeft.HasValue)
+		{
+			var nonPlayerSystems = _systems.Count(s => !s.IsPlayerOwned);
+			if (nonPlayerSystems > condition.SystemsLeft.Value)
+				return false;
+		}
+
+		return true;
+	}
+
+	private void RegenerateLevel()
+	{
+		Clear();
+		GenerateRuntime();
+	}
+
 	private void Clear()
 	{
 		foreach (var child in GetChildren())
@@ -127,6 +198,10 @@ public partial class Level : Node2D
 		_hasDragCandidate = false;
 		_draggingFromIndex = -1;
 		_dragCandidateIndex = -1;
+		_selectionPanel = null!;
+		_notificationPanel = null!;
+		_activeCondition = null;
+		_endConditionReached = false;
 	}
 
 	private void SpawnRoutes(LevelData data)
@@ -334,6 +409,9 @@ public partial class Level : Node2D
 		_isDragging = false;
 		_draggingFromIndex = -1;
 		QueueRedraw();
+
+		if (resolved)
+			CheckEndCondition();
 	}
 
 	public override void _Draw()
