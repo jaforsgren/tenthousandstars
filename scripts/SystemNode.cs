@@ -48,6 +48,23 @@ public partial class SystemNode : Node2D
 	public bool ContainsSystemAt(Vector2 worldPos)
 		=> worldPos.DistanceTo(GlobalPosition) <= _systemRadius;
 
+	private const float MinPlanetTapRadius = 10f;
+
+	public int? PlanetIndexAt(Vector2 worldPos)
+	{
+		for (var i = 0; i < _planets.Count; i++)
+		{
+			var planet = _planets[i];
+			var center = GlobalPosition + new Vector2(
+				Mathf.Cos(planet.OrbitAngle) * planet.OrbitRadius,
+				Mathf.Sin(planet.OrbitAngle) * planet.OrbitRadius
+			);
+			if (worldPos.DistanceTo(center) <= Mathf.Max(planet.Size, MinPlanetTapRadius))
+				return i;
+		}
+		return null;
+	}
+
 	public float TakeFleet()
 	{
 		var taken = _ships;

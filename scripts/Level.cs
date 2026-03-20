@@ -9,6 +9,7 @@ namespace Tts;
 public partial class Level : Node2D
 {
 	private const int UnsetSeed = 0;
+	private const float DragThreshold = 8f;
 
 	[Export]
 	public int PreviewSeed { get; set; } = UnsetSeed;
@@ -27,16 +28,24 @@ public partial class Level : Node2D
 
 	private readonly Random _rng = new();
 	private readonly List<SystemNode> _systems = [];
+	private readonly List<int> _systemLoreSeeds = [];
+	private readonly List<int> _fleetLoreSeeds = [];
+	private readonly List<int[]> _planetLoreSeeds = [];
 
 	private HashSet<(int, int)> _routeSet = [];
 	private bool _isDragging;
+	private bool _hasDragCandidate;
 	private int _draggingFromIndex = -1;
+	private int _dragCandidateIndex = -1;
+	private Vector2 _pressWorldPos;
 	private Vector2 _dragWorldPos;
 	private float _ghostFleetRadius;
 	private Color _ghostFleetFill;
 	private Color _ghostFleetOutline;
 	private float _ghostFleetOutlineWidth;
 	private float _defenderBonus;
+	private LoreConfig _loreConfig = null!;
+	private SelectionPanel _selectionPanel = null!;
 
 	public override void _Ready()
 	{
@@ -58,7 +67,10 @@ public partial class Level : Node2D
 	private void GenerateRuntime()
 	{
 		var genCfg = ConfigLoader.Load<LevelGeneratorConfig>("res://config/level_generator.json");
-		Build(LevelGenerator.Generate(_rng, genCfg));
+		var data = LevelGenerator.Generate(_rng, genCfg);
+		Build(data);
+		AssignLoreSeeds(data);
+		SpawnSelectionPanel();
 	}
 
 	private void Build(LevelData data)
@@ -76,6 +88,35 @@ public partial class Level : Node2D
 		SpawnCamera(data);
 	}
 
+	private void AssignLoreSeeds(LevelData data)
+	{
+		_loreConfig = ConfigLoader.Load<LoreConfig>("res://config/lore.json");
+		var loreRng = new Random();
+
+		_systemLoreSeeds.Clear();
+		_fleetLoreSeeds.Clear();
+		_planetLoreSeeds.Clear();
+
+		foreach (var systemData in data.Systems)
+		{
+			_systemLoreSeeds.Add(loreRng.Next());
+			_fleetLoreSeeds.Add(loreRng.Next());
+
+			var planetSeeds = new int[systemData.Planets.Count];
+			for (var j = 0; j < planetSeeds.Length; j++)
+				planetSeeds[j] = loreRng.Next();
+			_planetLoreSeeds.Add(planetSeeds);
+		}
+	}
+
+	private void SpawnSelectionPanel()
+	{
+		var layer = new CanvasLayer { Layer = 10 };
+		AddChild(layer);
+		_selectionPanel = new SelectionPanel();
+		layer.AddChild(_selectionPanel);
+	}
+
 	private void Clear()
 	{
 		foreach (var child in GetChildren())
@@ -83,7 +124,9 @@ public partial class Level : Node2D
 		_systems.Clear();
 		_routeSet.Clear();
 		_isDragging = false;
+		_hasDragCandidate = false;
 		_draggingFromIndex = -1;
+		_dragCandidateIndex = -1;
 	}
 
 	private void SpawnRoutes(LevelData data)
@@ -127,12 +170,8 @@ public partial class Level : Node2D
 
 		if (@event is InputEventMouseButton mb)
 			HandleMouseButton(mb);
-		else if (@event is InputEventMouseMotion && _isDragging)
-		{
-			_dragWorldPos = GetGlobalMousePosition();
-			QueueRedraw();
-			GetViewport().SetInputAsHandled();
-		}
+		else if (@event is InputEventMouseMotion)
+			HandleMouseMotion();
 	}
 
 	private void HandleMouseButton(InputEventMouseButton e)
@@ -141,27 +180,120 @@ public partial class Level : Node2D
 			return;
 
 		if (e.Pressed)
-			TryBeginFleetDrag();
+		{
+			_pressWorldPos = GetGlobalMousePosition();
+			TryRegisterDragCandidate();
+		}
 		else if (_isDragging)
+		{
 			EndFleetDrag();
+			_hasDragCandidate = false;
+			_dragCandidateIndex = -1;
+		}
+		else
+		{
+			HandleClick(_pressWorldPos);
+			_hasDragCandidate = false;
+			_dragCandidateIndex = -1;
+		}
 	}
 
-	private void TryBeginFleetDrag()
+	private void HandleMouseMotion()
 	{
-		var worldPos = GetGlobalMousePosition();
+		if (_hasDragCandidate && !_isDragging)
+		{
+			var worldPos = GetGlobalMousePosition();
+			if (worldPos.DistanceTo(_pressWorldPos) > DragThreshold)
+			{
+				_isDragging = true;
+				_draggingFromIndex = _dragCandidateIndex;
+				_dragWorldPos = worldPos;
+				_systems[_draggingFromIndex].SetSelected(true);
+				QueueRedraw();
+			}
+			GetViewport().SetInputAsHandled();
+		}
+		else if (_isDragging)
+		{
+			_dragWorldPos = GetGlobalMousePosition();
+			QueueRedraw();
+			GetViewport().SetInputAsHandled();
+		}
+	}
+
+	private void TryRegisterDragCandidate()
+	{
 		for (var i = 0; i < _systems.Count; i++)
 		{
-			if (!_systems[i].IsPlayerOwned || !_systems[i].HasFleet || !_systems[i].ContainsFleetAt(worldPos))
+			if (!_systems[i].IsPlayerOwned || !_systems[i].HasFleet || !_systems[i].ContainsFleetAt(_pressWorldPos))
 				continue;
 
-			_draggingFromIndex = i;
-			_dragWorldPos = worldPos;
-			_isDragging = true;
-			_systems[i].SetSelected(true);
+			_dragCandidateIndex = i;
+			_hasDragCandidate = true;
 			GetViewport().SetInputAsHandled();
 			return;
 		}
 	}
+
+	private void HandleClick(Vector2 worldPos)
+	{
+		for (var i = 0; i < _systems.Count; i++)
+		{
+			if (_systems[i].HasFleet && _systems[i].ContainsFleetAt(worldPos))
+			{
+				ShowFleetInfo(i);
+				return;
+			}
+		}
+
+		for (var i = 0; i < _systems.Count; i++)
+		{
+			var planetIndex = _systems[i].PlanetIndexAt(worldPos);
+			if (planetIndex.HasValue)
+			{
+				ShowPlanetInfo(i, planetIndex.Value);
+				return;
+			}
+		}
+
+		for (var i = 0; i < _systems.Count; i++)
+		{
+			if (_systems[i].ContainsSystemAt(worldPos))
+			{
+				ShowSystemInfo(i);
+				return;
+			}
+		}
+
+		_selectionPanel.Hide();
+	}
+
+	private void ShowFleetInfo(int systemIndex)
+	{
+		var pool = _systems[systemIndex].IsPlayerOwned ? _loreConfig.PlayerFleet : _loreConfig.NeutralFleet;
+		var seed = _fleetLoreSeeds[systemIndex];
+		var title = Pick(pool.Titles, seed);
+		var description = Pick(pool.Descriptions, seed);
+		_selectionPanel.ShowAt($"Fleet — {title}", description, GetViewport().GetVisibleRect().Size);
+	}
+
+	private void ShowSystemInfo(int systemIndex)
+	{
+		var seed = _systemLoreSeeds[systemIndex];
+		var title = Pick(_loreConfig.System.Titles, seed);
+		var description = Pick(_loreConfig.System.Descriptions, seed);
+		_selectionPanel.ShowAt(title, description, GetViewport().GetVisibleRect().Size);
+	}
+
+	private void ShowPlanetInfo(int systemIndex, int planetIndex)
+	{
+		var seed = _planetLoreSeeds[systemIndex][planetIndex];
+		var title = Pick(_loreConfig.Planet.Titles, seed);
+		var description = Pick(_loreConfig.Planet.Descriptions, seed);
+		_selectionPanel.ShowAt(title, description, GetViewport().GetVisibleRect().Size);
+	}
+
+	private static string Pick(string[] pool, int seed) => pool[seed % pool.Length];
 
 	private void EndFleetDrag()
 	{
