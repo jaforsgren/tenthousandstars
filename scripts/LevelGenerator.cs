@@ -13,7 +13,7 @@ public static class SystemOwnerExtensions
 		owner is SystemOwner.Ai1 or SystemOwner.Ai2 or SystemOwner.Ai3 or SystemOwner.Ai4;
 }
 
-public record AiPlayerData(SystemOwner Owner, AiDisposition Disposition);
+public record AiPlayerData(SystemOwner Owner, AiDisposition Disposition, string Name);
 public record SystemData(Vector2 Position, IReadOnlyList<Planet> Planets, SystemOwner Owner = SystemOwner.None, float InitialFleet = 0f);
 public record LevelData(IReadOnlyList<SystemData> Systems, IReadOnlyList<(int From, int To)> Routes, IReadOnlyList<AiPlayerData> AiPlayers);
 
@@ -28,7 +28,7 @@ public static class LevelGenerator
 		var routes = BuildRoutes(rng, systems, cfg);
 		var withPlayer = AssignPlayerStart(rng, systems);
 		var opponentCount = rng.Next(aiCfg.MinOpponents, aiCfg.MaxOpponents + 1);
-		var (withAi, aiPlayers) = AssignAiStarts(rng, withPlayer, opponentCount);
+		var (withAi, aiPlayers) = AssignAiStarts(rng, withPlayer, opponentCount, aiCfg);
 		var withFleets = AssignNeutralFleets(rng, withAi, cfg);
 		return new LevelData(withFleets, routes, aiPlayers);
 	}
@@ -42,7 +42,7 @@ public static class LevelGenerator
 	}
 
 	private static (IReadOnlyList<SystemData> Systems, IReadOnlyList<AiPlayerData> AiPlayers) AssignAiStarts(
-		Random rng, IReadOnlyList<SystemData> systems, int opponentCount)
+		Random rng, IReadOnlyList<SystemData> systems, int opponentCount, AiConfig aiCfg)
 	{
 		var list = new List<SystemData>(systems);
 		var aiPlayers = new List<AiPlayerData>();
@@ -59,8 +59,10 @@ public static class LevelGenerator
 			var idx = neutralIndices[i];
 			var owner = AiOwners[i];
 			var disposition = dispositions[rng.Next(dispositions.Length)];
+			var abbrevs = aiCfg.DispositionAbbreviations[disposition.ToString()];
+			var name = abbrevs[rng.Next(abbrevs.Length)];
 			list[idx] = list[idx] with { Owner = owner };
-			aiPlayers.Add(new AiPlayerData(owner, disposition));
+			aiPlayers.Add(new AiPlayerData(owner, disposition, name));
 		}
 
 		return (list, aiPlayers);

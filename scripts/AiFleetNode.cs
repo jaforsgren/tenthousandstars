@@ -16,14 +16,13 @@ public partial class AiFleetNode : FleetNodeBase
 	// No background sprite — color is driven entirely by disposition
 	protected override string? VisualScenePath => null;
 
-	public void Initialize(float systemRadius, float gap, float radius, float labelWidth, float labelHeight, float outlineWidth, Color dispositionColor, AiPlayerData aiPlayer, string[] abbreviations)
+	public void Initialize(float systemRadius, float gap, float radius, float labelWidth, float labelHeight, float outlineWidth, Color dispositionColor, AiPlayerData aiPlayer)
 	{
 		_fill = new Color(dispositionColor.R, dispositionColor.G, dispositionColor.B, 0.3f);
 		_outline = dispositionColor;
 
 		var index = (int)aiPlayer.Owner - (int)SystemOwner.Ai1 + 1;
-		var abbrev = abbreviations[GD.Randi() % (uint)abbreviations.Length];
-		var idText = $"AI{index} {abbrev}";
+		var idText = $"AI{index} {aiPlayer.Name}";
 
 		BaseInitialize(systemRadius, gap, radius, labelWidth, labelHeight, outlineWidth, CountFontSize);
 

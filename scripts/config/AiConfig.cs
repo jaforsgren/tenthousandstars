@@ -8,5 +8,6 @@ public record AiConfig(
 	float ThinkIntervalSeconds,
 	float StrategicMinSpareShips,
 	float CautiousAttackChance,
+	Dictionary<string, float> DispositionReinforceChance,
 	Dictionary<string, ColorData> DispositionColors,
 	Dictionary<string, string[]> DispositionAbbreviations);

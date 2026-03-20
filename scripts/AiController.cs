@@ -54,8 +54,59 @@ public partial class AiController : Node
 
 	private bool TryTakeAction(AiPlayerData player)
 	{
-		var options = new List<(int From, int To)>();
+		var viableAttacks = BuildAttackOptions(player)
+			.Where(o => IsViableAttack(o.From, o.To, player.Disposition))
+			.ToList();
+		var reinforceOptions = BuildReinforceOptions(player);
 
+		return player.Disposition switch
+		{
+			AiDisposition.Aggressive => TryAggressiveAction(player, viableAttacks, reinforceOptions),
+			AiDisposition.Strategic  => TryStrategicAction(player, viableAttacks, reinforceOptions),
+			AiDisposition.Cautious   => TryCautiousAction(player, viableAttacks, reinforceOptions),
+			_ => false
+		};
+	}
+
+	// Attacks first; reinforces only when no attack is available.
+	private bool TryAggressiveAction(AiPlayerData player, List<(int From, int To)> attacks, List<(int From, int To)> reinforcements)
+	{
+		if (attacks.Count > 0)
+			return ExecuteAttack(attacks[_rng.Next(attacks.Count)], player);
+
+		if (reinforcements.Count > 0 && _rng.NextDouble() < _config.DispositionReinforceChance[player.Disposition.ToString()])
+			return ExecuteReinforce(reinforcements[_rng.Next(reinforcements.Count)]);
+
+		return false;
+	}
+
+	// Reinforces with high probability before committing to an attack.
+	private bool TryStrategicAction(AiPlayerData player, List<(int From, int To)> attacks, List<(int From, int To)> reinforcements)
+	{
+		if (reinforcements.Count > 0 && _rng.NextDouble() < _config.DispositionReinforceChance[player.Disposition.ToString()])
+			return ExecuteReinforce(reinforcements[_rng.Next(reinforcements.Count)]);
+
+		if (attacks.Count > 0)
+			return ExecuteAttack(attacks[_rng.Next(attacks.Count)], player);
+
+		return false;
+	}
+
+	// Reinforces with high probability before attacking cautiously.
+	private bool TryCautiousAction(AiPlayerData player, List<(int From, int To)> attacks, List<(int From, int To)> reinforcements)
+	{
+		if (reinforcements.Count > 0 && _rng.NextDouble() < _config.DispositionReinforceChance[player.Disposition.ToString()])
+			return ExecuteReinforce(reinforcements[_rng.Next(reinforcements.Count)]);
+
+		if (attacks.Count > 0)
+			return ExecuteAttack(attacks[_rng.Next(attacks.Count)], player);
+
+		return false;
+	}
+
+	private List<(int From, int To)> BuildAttackOptions(AiPlayerData player)
+	{
+		var options = new List<(int From, int To)>();
 		for (var i = 0; i < _systems.Count; i++)
 		{
 			if (_systems[i].Owner != player.Owner || !_systems[i].HasFleet) continue;
@@ -65,36 +116,67 @@ public partial class AiController : Node
 				options.Add((i, neighbor));
 			}
 		}
-
-		if (options.Count == 0) return false;
-
-		var viable = options.Where(o => IsViable(o.From, o.To, player.Disposition)).ToList();
-		if (viable.Count == 0) return false;
-
-		var chosen = viable[_rng.Next(viable.Count)];
-		ExecuteAttack(chosen.From, chosen.To, player);
-		return true;
+		return options;
 	}
 
-	private bool IsViable(int fromIndex, int toIndex, AiDisposition disposition)
+	// Multi-source BFS from all frontline systems back through owned territory.
+	// Each rear system records which adjacent owned system is one hop toward the front.
+	// Fleets move one hop per tick, naturally pathing through owned systems.
+	private List<(int From, int To)> BuildReinforceOptions(AiPlayerData player)
 	{
-		var attackerFleet = _systems[fromIndex].Ships;
-		var defenderFleet = _systems[toIndex].Ships;
-		var result = CombatResolver.Resolve(attackerFleet, defenderFleet, _defenderBonus);
+		var frontline = new HashSet<int>();
+		for (var i = 0; i < _systems.Count; i++)
+		{
+			if (_systems[i].Owner != player.Owner) continue;
+			if (GetNeighbors(i).Any(n => _systems[n].Owner != player.Owner))
+				frontline.Add(i);
+		}
 
+		if (frontline.Count == 0) return [];
+
+		var visited = new HashSet<int>(frontline);
+		var nextHopTowardFront = new Dictionary<int, int>();
+		var queue = new Queue<int>(frontline);
+
+		while (queue.Count > 0)
+		{
+			var current = queue.Dequeue();
+			foreach (var neighbor in GetNeighbors(current))
+			{
+				if (_systems[neighbor].Owner != player.Owner) continue;
+				if (!visited.Add(neighbor)) continue;
+				nextHopTowardFront[neighbor] = current;
+				queue.Enqueue(neighbor);
+			}
+		}
+
+		var options = new List<(int From, int To)>();
+		for (var i = 0; i < _systems.Count; i++)
+		{
+			if (_systems[i].Owner != player.Owner || !_systems[i].HasFleet) continue;
+			if (frontline.Contains(i)) continue;
+			if (nextHopTowardFront.TryGetValue(i, out var destination))
+				options.Add((i, destination));
+		}
+		return options;
+	}
+
+	private bool IsViableAttack(int fromIndex, int toIndex, AiDisposition disposition)
+	{
+		var result = CombatResolver.Resolve(_systems[fromIndex].Ships, _systems[toIndex].Ships, _defenderBonus);
 		return disposition switch
 		{
 			AiDisposition.Aggressive => result.AttackerWins,
-			AiDisposition.Strategic => result.AttackerWins && result.AttackerRemainder >= _config.StrategicMinSpareShips,
-			AiDisposition.Cautious => result.AttackerWins && (float)_rng.NextDouble() < _config.CautiousAttackChance,
+			AiDisposition.Strategic  => result.AttackerWins && result.AttackerRemainder >= _config.StrategicMinSpareShips,
+			AiDisposition.Cautious   => result.AttackerWins && (float)_rng.NextDouble() < _config.CautiousAttackChance,
 			_ => false
 		};
 	}
 
-	private void ExecuteAttack(int fromIndex, int toIndex, AiPlayerData player)
+	private bool ExecuteAttack((int From, int To) option, AiPlayerData player)
 	{
-		var attacker = _systems[fromIndex];
-		var target = _systems[toIndex];
+		var attacker = _systems[option.From];
+		var target = _systems[option.To];
 		var attackerFleet = attacker.TakeFleet();
 		var dispositionColor = _config.DispositionColors[player.Disposition.ToString()].ToColor();
 
@@ -103,6 +185,14 @@ public partial class AiController : Node
 			target.Capture(result.AttackerRemainder, player.Owner, player, dispositionColor);
 		else
 			target.SustainDefense(result.DefenderRemainder);
+
+		return true;
+	}
+
+	private bool ExecuteReinforce((int From, int To) option)
+	{
+		_systems[option.To].AddFleet(_systems[option.From].TakeFleet());
+		return true;
 	}
 
 	private IEnumerable<int> GetNeighbors(int index)

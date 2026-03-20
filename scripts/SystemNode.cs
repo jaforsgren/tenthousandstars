@@ -27,7 +27,6 @@ public partial class SystemNode : Node2D
 	private Color _playerFleetOutline;
 	private Color _neutralFleetFill;
 	private Color _neutralFleetOutline;
-	private System.Collections.Generic.Dictionary<string, string[]> _aiAbbreviations = null!;
 
 	private SystemCircleNode _systemCircle = null!;
 	private FleetNodeBase? _fleetNode;
@@ -182,8 +181,6 @@ public partial class SystemNode : Node2D
 		_playerFleetOutline = cfg.FleetOutline.ToColor();
 		_neutralFleetFill = cfg.NeutralFleetFill.ToColor();
 		_neutralFleetOutline = cfg.NeutralFleetOutline.ToColor();
-		_aiAbbreviations = ConfigLoader.Load<AiConfig>("res://config/ai.json").DispositionAbbreviations;
-
 		_systemCircle = new SystemCircleNode();
 		AddChild(_systemCircle);
 		_systemCircle.Initialize(
@@ -217,8 +214,7 @@ public partial class SystemNode : Node2D
 		{
 			var node = new AiFleetNode();
 			AddChild(node);
-			var abbrevs = _aiAbbreviations[_aiPlayerData.Disposition.ToString()];
-			node.Initialize(_systemRadius, _fleetCircleGap, _fleetCircleRadius, _labelWidth, _labelHeight, _fleetOutlineWidth, _aiOwnerColor.Value, _aiPlayerData, abbrevs);
+			node.Initialize(_systemRadius, _fleetCircleGap, _fleetCircleRadius, _labelWidth, _labelHeight, _fleetOutlineWidth, _aiOwnerColor.Value, _aiPlayerData);
 			return node;
 		}
 
