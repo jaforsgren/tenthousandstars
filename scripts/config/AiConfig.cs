@@ -9,5 +9,7 @@ public record AiConfig(
 	float StrategicMinSpareShips,
 	float CautiousAttackChance,
 	Dictionary<string, float> DispositionReinforceChance,
+	Dictionary<string, string[]> DispositionDescriptions,
+	Dictionary<string, string[]> DispositionBarks,
 	Dictionary<string, ColorData> DispositionColors,
 	Dictionary<string, string[]> DispositionAbbreviations);

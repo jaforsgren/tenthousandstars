@@ -51,6 +51,8 @@ public partial class Level : Node2D
 	private ColorRect _fadeOverlay = null!;
 	private LoreConfig _loreConfig = null!;
 	private SelectionPanel _selectionPanel = null!;
+	private AiSystemPanel _aiSystemPanel = null!;
+	private IReadOnlyList<AiPlayerData> _aiPlayers = [];
 	private NotificationPanel _notificationPanel = null!;
 	private EndStateConfig _endStateCfg = null!;
 	private EndCondition? _activeCondition;
@@ -86,6 +88,7 @@ public partial class Level : Node2D
 		var aiCfg = ConfigLoader.Load<AiConfig>("res://config/ai.json");
 		var data = LevelGenerator.Generate(_rng, genCfg, aiCfg);
 		Build(data);
+		_aiPlayers = data.AiPlayers;
 		_endStateCfg = ConfigLoader.Load<EndStateConfig>("res://config/end_states.json");
 		_activeCondition = _endStateCfg.Conditions[_rng.Next(_endStateCfg.Conditions.Length)];
 		if (_activeCondition.TargetSystemHops.HasValue)
@@ -96,6 +99,7 @@ public partial class Level : Node2D
 		AssignLoreSeeds(data);
 		SpawnFadeOverlay();
 		SpawnSelectionPanel();
+		SpawnAiSystemPanel();
 		SpawnNotificationPanel();
 		SpawnInfoButton();
 		SpawnAiController(data, aiCfg);
@@ -231,6 +235,14 @@ public partial class Level : Node2D
 		layer.AddChild(_selectionPanel);
 	}
 
+	private void SpawnAiSystemPanel()
+	{
+		var layer = new CanvasLayer { Layer = 10 };
+		AddChild(layer);
+		_aiSystemPanel = new AiSystemPanel();
+		layer.AddChild(_aiSystemPanel);
+	}
+
 	private void SpawnNotificationPanel()
 	{
 		var layer = new CanvasLayer { Layer = 11 };
@@ -282,6 +294,7 @@ public partial class Level : Node2D
 
 		_endConditionReached = true;
 		_selectionPanel.Hide();
+		_aiSystemPanel.Hide();
 		ShowEndSequence("Mission Complete", _activeCondition.EndDescription);
 	}
 
@@ -294,6 +307,7 @@ public partial class Level : Node2D
 
 		_endConditionReached = true;
 		_selectionPanel.Hide();
+		_aiSystemPanel.Hide();
 		var description = _endStateCfg.DefeatDescriptions[_rng.Next(_endStateCfg.DefeatDescriptions.Length)];
 		ShowEndSequence("Defeated", description);
 	}
@@ -372,6 +386,8 @@ public partial class Level : Node2D
 		_dragCandidateIndex = -1;
 		_fadeOverlay = null!;
 		_selectionPanel = null!;
+		_aiSystemPanel = null!;
+		_aiPlayers = [];
 		_notificationPanel = null!;
 		_activeCondition = null;
 		_endConditionReached = false;
@@ -578,6 +594,7 @@ public partial class Level : Node2D
 			}
 		}
 
+		_aiSystemPanel.Hide();
 		_camera.ExitFollowMode();
 		_infoButton.Hide();
 		_selectionPanel.Hide();
@@ -593,6 +610,21 @@ public partial class Level : Node2D
 		_infoButton.ShowFor(GetViewport().GetVisibleRect().Size, () => ShowSystemInfo(systemIndex));
 	}
 
+	private void SelectAiSystem(int systemIndex)
+	{
+		_infoButton.ShowFor(GetViewport().GetVisibleRect().Size, () => ShowAiSystemInfo(systemIndex));
+	}
+
+	private void ShowAiSystemInfo(int systemIndex)
+	{
+		var owner = _systems[systemIndex].Owner;
+		var aiPlayer = _aiPlayers.First(p => p.Owner == owner);
+		var aiCfg = ConfigLoader.Load<AiConfig>("res://config/ai.json");
+		var color = aiCfg.DispositionColors[aiPlayer.Disposition.ToString()].ToColor();
+		_selectionPanel.Hide();
+		_aiSystemPanel.ShowFor(aiPlayer, color, _systemLoreSeeds[systemIndex], GetViewport().GetVisibleRect().Size);
+	}
+
 	private void HandleSystemClick(int systemIndex)
 	{
 		var now = Time.GetTicksMsec() / 1000.0;
@@ -603,6 +635,8 @@ public partial class Level : Node2D
 
 		if (isDoubleClick)
 			_camera.FollowSystem(_systems[systemIndex].GlobalPosition);
+		else if (_systems[systemIndex].IsAiOwned)
+			SelectAiSystem(systemIndex);
 		else
 			SelectSystem(systemIndex);
 	}
@@ -613,6 +647,7 @@ public partial class Level : Node2D
 		var seed = _fleetLoreSeeds[systemIndex];
 		var title = Pick(pool.Titles, seed);
 		var description = Pick(pool.Descriptions, seed);
+		_aiSystemPanel.Hide();
 		_selectionPanel.ShowAt($"Fleet — {title}", description, GetViewport().GetVisibleRect().Size);
 	}
 
@@ -621,6 +656,7 @@ public partial class Level : Node2D
 		var seed = _systemLoreSeeds[systemIndex];
 		var title = Pick(_loreConfig.System.Titles, seed);
 		var description = Pick(_loreConfig.System.Descriptions, seed);
+		_aiSystemPanel.Hide();
 		_selectionPanel.ShowAt(title, description, GetViewport().GetVisibleRect().Size);
 	}
 

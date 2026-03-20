@@ -10,6 +10,54 @@
 	"Cautious": 0.7,
 	"Dormant": 0.0
   },
+  "DispositionDescriptions": {
+	"Aggressive": [
+	  "They expand through force alone. Every system taken by blood.",
+      "No quarter given, none expected. Their fleets sweep without pause."
+	],
+	"Strategic": [
+	  "Every move deliberate. Every fleet positioned with purpose.",
+      "A methodical power. They will not overextend — but they will arrive."
+	],
+	"Cautious": [
+	  "They move slowly, but patience has outlasted many who underestimated them.",
+      "They watch, they wait, and strike only when certain of the outcome."
+	],
+	"Dormant": [
+	  "They have not moved in some time. But their fleets are growing.",
+      "Seemingly at rest. Do not mistake stillness for weakness."
+	]
+  },
+  "DispositionBarks": {
+	"Aggressive": [
+	  "Your kind is weak.",
+	  "We will crush everything.",
+	  "Resistance is futile.",
+	  "Come and die.",
+      "Every system will fall."
+	],
+	"Strategic": [
+	  "You cannot outmaneuver us.",
+	  "This was calculated.",
+	  "Our plan is already complete.",
+	  "You are a calculated loss.",
+      "We were prepared for this."
+	],
+	"Cautious": [
+	  "Tread carefully.",
+	  "We know your every move.",
+	  "The patient predator wins.",
+	  "Not yet... but soon.",
+      "You are being watched."
+	],
+	"Dormant": [
+	  "...",
+	  "We are watching.",
+	  "In time, all things end.",
+	  "Leave us be.",
+      "Do not provoke us."
+	]
+  },
   "DispositionAbbreviations": {
 	"Aggressive": ["Aggressive", "Warring", "Hotheaded", "Raiding"],
 	"Strategic": ["Strategic", "Tactical", "Cunning", "Calculated"],
@@ -19,7 +67,7 @@
   "DispositionColors": {
 	"Aggressive": { "R": 1.0, "G": 0.2, "B": 0.1, "A": 1.0 },
 	"Strategic": { "R": 0.9, "G": 0.7, "B": 0.1, "A": 1.0 },
-	"Cautious": { "R": 0.2, "G": 0.8, "B": 0.4, "A": 1.0 },
+	"Cautious": { "R": 0.8, "G": 0.0, "B": 0.8, "A": 1.0 },
 	"Dormant": { "R": 0.2, "G": 0.2, "B": 0.5, "A": 1.0 }
   }
 }
