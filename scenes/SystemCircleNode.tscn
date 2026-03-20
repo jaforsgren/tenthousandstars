@@ -1,0 +1,10 @@
+[gd_scene format=3 uid="uid://ccfeu0kvy1pat"]
+
+[ext_resource type="Texture2D" uid="uid://cabbnoum5q3uv" path="res://icon.svg" id="2_sygu2"]
+
+[node name="SystemCircleNode" type="Node2D" unique_id=1335027929]
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=891418258]
+modulate = Color(3.798029, 3.798029, 3.798029, 1)
+scale = Vector2(0.08, 0.08)
+texture = ExtResource("2_sygu2")

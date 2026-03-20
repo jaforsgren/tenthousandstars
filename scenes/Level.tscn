@@ -4,4 +4,16 @@
 
 [node name="Level" type="Node2D" unique_id=2067866758]
 script = ExtResource("1")
-PreviewSeed = 4
+PreviewSeed = 6
+_isDragging = false
+_hasDragCandidate = false
+_draggingFromIndex = -1
+_dragCandidateIndex = -1
+_pressWorldPos = Vector2(0, 0)
+_dragWorldPos = Vector2(0, 0)
+_ghostFleetRadius = 8.0
+_ghostFleetFill = Color(0.9, 0.2, 0.2, 0.3)
+_ghostFleetOutline = Color(1, 0.3, 0, 1)
+_ghostFleetOutlineWidth = 0.5
+_defenderBonus = 1.5
+_selectionPanel = null

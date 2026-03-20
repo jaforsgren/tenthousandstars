@@ -1,18 +1,18 @@
 {
   "PlayerFleet": {
-    "Titles": ["Iron Wing"],
-    "Descriptions": ["A ragged but loyal squadron.\nThey will not break."]
+	"Titles": ["Iron Wing"],
+	"Descriptions": ["A ragged but loyal squadron.\nThey will not break."]
   },
   "NeutralFleet": {
-    "Titles": ["Garrison"],
-    "Descriptions": ["A static defense force.\nThey hold their ground but will not advance."]
+	"Titles": ["Garrison"],
+	"Descriptions": ["A static defense force.\nThey hold their ground but will not advance."]
   },
   "System": {
-    "Titles": ["Outer Reach"],
-    "Descriptions": ["A forgotten corner of the galaxy.\nNobody remembers who built it first."]
+	"Titles": ["Outer Reach"],
+	"Descriptions": ["A forgotten corner of the galaxy.\nNobody remembers who built it first."]
   },
   "Planet": {
-    "Titles": ["Dust World"],
-    "Descriptions": ["Barren but rich in minerals.\nMany have tried to settle here.\nNone stayed long."]
+	"Titles": ["Dust World"],
+	"Descriptions": ["Barren but rich in minerals.\nMany have tried to settle here.\nNone stayed long."]
   }
 }
