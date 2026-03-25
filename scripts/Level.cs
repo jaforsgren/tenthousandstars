@@ -46,6 +46,7 @@ public partial class Level : Node2D
 	private Color _ghostFleetOutline;
 	private float _ghostFleetOutlineWidth;
 	private float _defenderBonus;
+	private bool _fogEnabled;
 	private float _fogClearSeconds;
 	private float _fadeOutSeconds;
 	private ColorRect _fadeOverlay = null!;
@@ -183,6 +184,7 @@ public partial class Level : Node2D
 		_ghostFleetOutlineWidth = sysCfg.FleetOutlineWidth;
 		_defenderBonus = ConfigLoader.Load<CombatConfig>("res://config/combat.json").DefenderBonus;
 		var levelCfg = ConfigLoader.Load<LevelConfig>("res://config/level.json");
+		_fogEnabled = levelCfg.FogEnabled;
 		_fogClearSeconds = levelCfg.FogClearSeconds;
 		_fadeOutSeconds = levelCfg.FadeOutSeconds;
 		_routeSet = new HashSet<(int, int)>(data.Routes);
@@ -231,7 +233,7 @@ public partial class Level : Node2D
 	{
 		var layer = new CanvasLayer { Layer = 10 };
 		AddChild(layer);
-		_selectionPanel = new SelectionPanel();
+		_selectionPanel = GD.Load<PackedScene>("res://scenes/SelectionPanel.tscn").Instantiate<SelectionPanel>();
 		layer.AddChild(_selectionPanel);
 	}
 
@@ -239,7 +241,7 @@ public partial class Level : Node2D
 	{
 		var layer = new CanvasLayer { Layer = 10 };
 		AddChild(layer);
-		_aiSystemPanel = new AiSystemPanel();
+		_aiSystemPanel = GD.Load<PackedScene>("res://scenes/AiSystemPanel.tscn").Instantiate<AiSystemPanel>();
 		layer.AddChild(_aiSystemPanel);
 	}
 
@@ -247,7 +249,7 @@ public partial class Level : Node2D
 	{
 		var layer = new CanvasLayer { Layer = 11 };
 		AddChild(layer);
-		_notificationPanel = new NotificationPanel();
+		_notificationPanel = GD.Load<PackedScene>("res://scenes/NotificationPanel.tscn").Instantiate<NotificationPanel>();
 		layer.AddChild(_notificationPanel);
 	}
 
@@ -412,6 +414,15 @@ public partial class Level : Node2D
 
 	private void UpdateFogOfWar()
 	{
+		if (!_fogEnabled)
+		{
+			for (var i = 0; i < _systems.Count; i++)
+				_systems[i].SetFogState(FogState.Revealed, _fogClearSeconds);
+			foreach (var (_, _, routeNode) in _routeNodes)
+				routeNode.SetFogState(FogState.Revealed, _fogClearSeconds);
+			return;
+		}
+
 		var scoutedByPlayer = new HashSet<int>();
 		for (var i = 0; i < _systems.Count; i++)
 		{

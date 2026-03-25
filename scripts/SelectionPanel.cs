@@ -2,33 +2,41 @@ using Godot;
 
 namespace Tts;
 
+[Tool]
 public partial class SelectionPanel : PanelContainer
 {
 	private const float PanelWidth = 200f;
 	private const float TopPadding = 12f;
-	private const string VisualScenePath = "res://scenes/SelectionPanel.tscn";
 
 	private Label _titleLabel = null!;
 	private Label _descriptionLabel = null!;
+
+	private bool _previewInEditor;
+
+	[Export]
+	public bool PreviewInEditor
+	{
+		get => _previewInEditor;
+		set
+		{
+			_previewInEditor = value;
+			if (Engine.IsEditorHint() && IsNodeReady())
+				ApplyEditorPreview();
+		}
+	}
 
 	public override void _Ready()
 	{
 		CustomMinimumSize = new Vector2(PanelWidth, 0f);
 
-		var scene = GD.Load<PackedScene>(VisualScenePath);
-		if (scene != null)
-			AddChild(scene.Instantiate());
+		_titleLabel = GetNode<Label>("%Title");
+		_descriptionLabel = GetNode<Label>("%Description");
 
-		var vbox = new VBoxContainer();
-		AddChild(vbox);
-
-		_titleLabel = new Label { AutowrapMode = TextServer.AutowrapMode.WordSmart };
-		_titleLabel.AddThemeFontSizeOverride("font_size", 13);
-		vbox.AddChild(_titleLabel);
-
-		_descriptionLabel = new Label { AutowrapMode = TextServer.AutowrapMode.WordSmart };
-		_descriptionLabel.AddThemeFontSizeOverride("font_size", 10);
-		vbox.AddChild(_descriptionLabel);
+		if (Engine.IsEditorHint())
+		{
+			ApplyEditorPreview();
+			return;
+		}
 
 		Visible = false;
 	}
@@ -41,5 +49,19 @@ public partial class SelectionPanel : PanelContainer
 
 		var x = (viewportSize.X - PanelWidth) / 2f;
 		Position = new Vector2(x, TopPadding);
+	}
+
+	private void ApplyEditorPreview()
+	{
+		if (_previewInEditor)
+		{
+			_titleLabel.Text = "Vantara Prime";
+			_descriptionLabel.Text = "A contested frontier world. Rich in ore deposits but scarred by old campaigns.";
+		}
+		else
+		{
+			_titleLabel.Text = "System Name";
+			_descriptionLabel.Text = "Description text goes here.";
+		}
 	}
 }

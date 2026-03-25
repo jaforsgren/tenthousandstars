@@ -1,9 +1,11 @@
 [gd_scene format=3 uid="uid://biglwxya2m5vi"]
 
-[ext_resource type="Texture2D" uid="uid://cabbnoum5q3uv" path="res://icon.svg" id="1_vbjpx"]
+[ext_resource type="Texture2D" uid="uid://b1nciwk0gguj7" path="res://assets/images/systems/planet01.png" id="1_vbjpx"]
 
 [node name="PlanetNode" type="Node2D" unique_id=2095391403]
 
-[node name="Sprite2D" type="Sprite2D" parent="." unique_id=950616381]
-scale = Vector2(0.15, 0.15)
+[node name="Planet01" type="Sprite2D" parent="." unique_id=1494034074]
+z_index = 1
+position = Vector2(0, 4.7683716e-07)
+scale = Vector2(0.1, 0.1)
 texture = ExtResource("1_vbjpx")

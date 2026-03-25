@@ -1,10 +1,44 @@
 [gd_scene format=3 uid="uid://ccfeu0kvy1pat"]
 
-[ext_resource type="Texture2D" uid="uid://cabbnoum5q3uv" path="res://icon.svg" id="2_sygu2"]
+[ext_resource type="Texture2D" uid="uid://527mbb6n1kpm" path="res://assets/images/systems/sun.png" id="1_ps4o4"]
+
+[sub_resource type="CanvasItemMaterial" id="CanvasItemMaterial_ps4o4"]
+blend_mode = 1
+
+[sub_resource type="Gradient" id="Gradient_sygu2"]
+interpolation_mode = 2
+offsets = PackedFloat32Array(0, 0.3772563, 0.54873645, 0.72021663)
+colors = PackedColorArray(0.7328067, 0.61960703, 0.54492956, 0.95686275, 0.40069348, 0.31112665, 0.11470831, 0.9827152, 0.08737427, 0.067843504, 0.02501301, 0.99623084, 0, 0, 0, 1)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_klkxq"]
+gradient = SubResource("Gradient_sygu2")
+fill = 1
+fill_from = Vector2(0.4957265, 0.5192308)
+
+[sub_resource type="CanvasItemMaterial" id="CanvasItemMaterial_ysmf3"]
+blend_mode = 1
+
+[sub_resource type="CanvasItemMaterial" id="CanvasItemMaterial_sygu2"]
 
 [node name="SystemCircleNode" type="Node2D" unique_id=1335027929]
 
-[node name="Sprite2D" type="Sprite2D" parent="." unique_id=891418258]
-modulate = Color(3.798029, 3.798029, 3.798029, 1)
-scale = Vector2(0.08, 0.08)
-texture = ExtResource("2_sygu2")
+[node name="gradient" type="Sprite2D" parent="." unique_id=1116226013]
+material = SubResource("CanvasItemMaterial_ps4o4")
+scale = Vector2(1.321, 1.163)
+texture = SubResource("GradientTexture2D_klkxq")
+
+[node name="gradient2" type="Sprite2D" parent="." unique_id=35142583]
+material = SubResource("CanvasItemMaterial_ps4o4")
+scale = Vector2(0.181, 0.159)
+texture = SubResource("GradientTexture2D_klkxq")
+
+[node name="Sun" type="Sprite2D" parent="." unique_id=2144270667]
+material = SubResource("CanvasItemMaterial_ysmf3")
+scale = Vector2(0.105, 0.105)
+texture = ExtResource("1_ps4o4")
+
+[node name="Sun2" type="Sprite2D" parent="." unique_id=509448965]
+visible = false
+material = SubResource("CanvasItemMaterial_sygu2")
+scale = Vector2(0.105, 0.105)
+texture = ExtResource("1_ps4o4")

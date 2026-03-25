@@ -3,11 +3,11 @@ using Godot;
 
 namespace Tts;
 
+[Tool]
 public partial class NotificationPanel : PanelContainer
 {
 	private const float PanelWidth = 240f;
 	private const float TopPadding = 12f;
-	private const string VisualScenePath = "res://scenes/NotificationPanel.tscn";
 
 	private Label _titleLabel = null!;
 	private Label _descriptionLabel = null!;
@@ -15,30 +15,37 @@ public partial class NotificationPanel : PanelContainer
 	private float _timeRemaining;
 	private Action? _onDismiss;
 	private bool _active;
+	private bool _allowEarlyDismiss;
+
+	private bool _previewInEditor;
+
+	[Export]
+	public bool PreviewInEditor
+	{
+		get => _previewInEditor;
+		set
+		{
+			_previewInEditor = value;
+			if (Engine.IsEditorHint() && IsNodeReady())
+				ApplyEditorPreview();
+		}
+	}
 
 	public override void _Ready()
 	{
 		CustomMinimumSize = new Vector2(PanelWidth, 0f);
 
-		var scene = GD.Load<PackedScene>(VisualScenePath);
-		if (scene != null)
-			AddChild(scene.Instantiate());
+		_titleLabel = GetNode<Label>("%Title");
+		_descriptionLabel = GetNode<Label>("%Description");
 
-		var vbox = new VBoxContainer();
-		AddChild(vbox);
-
-		_titleLabel = new Label { AutowrapMode = TextServer.AutowrapMode.WordSmart };
-		_titleLabel.AddThemeFontSizeOverride("font_size", 13);
-		vbox.AddChild(_titleLabel);
-
-		_descriptionLabel = new Label { AutowrapMode = TextServer.AutowrapMode.WordSmart };
-		_descriptionLabel.AddThemeFontSizeOverride("font_size", 10);
-		vbox.AddChild(_descriptionLabel);
+		if (Engine.IsEditorHint())
+		{
+			ApplyEditorPreview();
+			return;
+		}
 
 		Visible = false;
 	}
-
-	private bool _allowEarlyDismiss;
 
 	public void Show(string title, string description, float displaySeconds, Vector2 viewportSize, Action onDismiss, bool allowEarlyDismiss = true)
 	{
@@ -87,5 +94,19 @@ public partial class NotificationPanel : PanelContainer
 		var callback = _onDismiss;
 		_onDismiss = null;
 		callback?.Invoke();
+	}
+
+	private void ApplyEditorPreview()
+	{
+		if (_previewInEditor)
+		{
+			_titleLabel.Text = "Mission Brief";
+			_descriptionLabel.Text = "Eliminate all enemy factions before they consolidate the outer systems.";
+		}
+		else
+		{
+			_titleLabel.Text = "Mission Title";
+			_descriptionLabel.Text = "Mission description text goes here.";
+		}
 	}
 }
