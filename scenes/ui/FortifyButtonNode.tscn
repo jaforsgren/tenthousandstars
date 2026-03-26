@@ -1,14 +1,15 @@
 [gd_scene format=3 uid="uid://cwdh8sq4a1une"]
 
-[ext_resource type="Script" uid="uid://dd26tcheku2bg" path="res://scripts/UpgradeButtonNode.cs" id="1_ub"]
+[ext_resource type="Script" uid="uid://dd26tcheku2bg" path="res://scripts/ui/UpgradeButtonNode.cs" id="1_ub"]
 
 [node name="FortifyButtonNode" type="Control" unique_id=333660158]
 layout_mode = 3
 anchors_preset = 0
 script = ExtResource("1_ub")
+default_label = "Fortify\nSystem"
+active_label = "Remove\nFortify"
 
 [node name="UpgradeButton" type="Button" parent="." unique_id=1506029670]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(48, 48)
 layout_mode = 0
-text = "⛨"

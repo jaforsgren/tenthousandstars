@@ -11,7 +11,7 @@ public partial class SystemCircleNode : Node2D
 
 	private const int ArcSegments = 64;
 
-	private const string VisualScenePath = "res://scenes/SystemCircleNode.tscn";
+	private const string VisualScenePath = "res://scenes/system/SystemCircleNode.tscn";
 
 	public override void _Ready()
 	{

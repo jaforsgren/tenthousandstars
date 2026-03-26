@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://cx4j5nai2b3dk"]
 
-[ext_resource type="Script" uid="uid://byocfpqa83mbg" path="res://scripts/AiSystemPanel.cs" id="1_aisys"]
+[ext_resource type="Script" uid="uid://byocfpqa83mbg" path="res://scripts/ui/AiSystemPanel.cs" id="1_aisys"]
 [ext_resource type="StyleBox" path="res://scenes/InfoPanelStyle.tres" id="2_style"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_q3o3c"]

@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://bfc704rs71xe2"]
 
-[ext_resource type="Script" uid="uid://bfvdp74xmdry3" path="res://scripts/NotificationPanel.cs" id="1_notp"]
+[ext_resource type="Script" uid="uid://bfvdp74xmdry3" path="res://scripts/ui/NotificationPanel.cs" id="1_notp"]
 [ext_resource type="StyleBox" path="res://scenes/InfoPanelStyle.tres" id="2_style"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_title"]

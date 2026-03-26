@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://dm4r7wfxbp3te"]
 
-[ext_resource type="Script" uid="uid://bn3pqm8xc6yt5" path="res://scripts/RerouteArrowNode.cs" id="1_ra"]
+[ext_resource type="Script" uid="uid://bn3pqm8xc6yt5" path="res://scripts/nodes/RerouteArrowNode.cs" id="1_ra"]
 
 [node name="RerouteArrowNode" type="Node2D"]
 script = ExtResource("1_ra")

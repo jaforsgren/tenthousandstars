@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://ctransitfl001"]
 
-[ext_resource type="Script" uid="uid://dgg51yxmfjsuj" path="res://scripts/TransitFleetNode.cs" id="1_"]
+[ext_resource type="Script" uid="uid://dgg51yxmfjsuj" path="res://scripts/fleet/TransitFleetNode.cs" id="1_"]
 
 [node name="TransitFleetNode" type="Node2D" unique_id=226965548]
 script = ExtResource("1_")

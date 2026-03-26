@@ -38,8 +38,8 @@ public partial class SystemNode : FogAwareNode
 	private float _forgeProductionBonus;
 	private float _fortifyDefenseBonusMultiplier;
 
-	private const string ForgeBadgePath = "res://scenes/ForgeUpgradeBadge.tscn";
-	private const string FortifyBadgePath = "res://scenes/FortifyUpgradeBadge.tscn";
+	private const string ForgeBadgePath = "res://scenes/system/ForgeUpgradeBadge.tscn";
+	private const string FortifyBadgePath = "res://scenes/system/FortifyUpgradeBadge.tscn";
 	private const float FleetNodeSpacing = 4f;
 
 	private static readonly Color ObjectiveRingColor = new(1f, 0.85f, 0.2f, 0.8f);

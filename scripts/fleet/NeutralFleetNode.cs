@@ -7,7 +7,7 @@ public partial class NeutralFleetNode : FleetNodeBase
 	private Color _fill;
 	private Color _outline;
 
-	private const string NeutralVisualScenePath = "res://scenes/NeutralFleetNode.tscn";
+	private const string NeutralVisualScenePath = "res://scenes/fleet/NeutralFleetNode.tscn";
 	private const int CountFontSize = 11;
 
 	protected override string? VisualScenePath => NeutralVisualScenePath;

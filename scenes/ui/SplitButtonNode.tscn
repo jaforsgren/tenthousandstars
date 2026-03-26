@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://1gclrocd8aav"]
 
-[ext_resource type="Script" uid="uid://bwlxbto30jgje" path="res://scripts/SplitButtonNode.cs" id="1_sb"]
+[ext_resource type="Script" uid="uid://bwlxbto30jgje" path="res://scripts/ui/SplitButtonNode.cs" id="1_sb"]
 
 [node name="SplitButtonNode" type="Control" unique_id=950248262]
 layout_mode = 3

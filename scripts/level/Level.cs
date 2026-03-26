@@ -240,9 +240,9 @@ public partial class Level : Node2D
 		_fogClearSeconds = levelCfg.FogClearSeconds;
 		_fadeOutSeconds = levelCfg.FadeOutSeconds;
 		_transitDurationSeconds = levelCfg.TransitDurationSeconds;
-		_transitFleetScene = GD.Load<PackedScene>("res://scenes/TransitFleetNode.tscn");
-		_combatEffectScene = GD.Load<PackedScene>("res://scenes/CombatEffectNode.tscn");
-		_rerouteArrowScene = GD.Load<PackedScene>("res://scenes/RerouteArrowNode.tscn");
+		_transitFleetScene = GD.Load<PackedScene>("res://scenes/fleet/TransitFleetNode.tscn");
+		_combatEffectScene = GD.Load<PackedScene>("res://scenes/effects/CombatEffectNode.tscn");
+		_rerouteArrowScene = GD.Load<PackedScene>("res://scenes/system/RerouteArrowNode.tscn");
 		_upgradeCfg = ConfigLoader.Load<UpgradeConfig>("res://config/upgrade.json");
 		_routeSet = new HashSet<(int, int)>(data.Routes);
 		BuildAdjacency(data.Systems.Count);
@@ -293,7 +293,7 @@ public partial class Level : Node2D
 	{
 		var layer = new CanvasLayer { Layer = 10 };
 		AddChild(layer);
-		_selectionPanel = GD.Load<PackedScene>("res://scenes/SelectionPanel.tscn").Instantiate<SelectionPanel>();
+		_selectionPanel = GD.Load<PackedScene>("res://scenes/ui/SelectionPanel.tscn").Instantiate<SelectionPanel>();
 		layer.AddChild(_selectionPanel);
 	}
 
@@ -301,7 +301,7 @@ public partial class Level : Node2D
 	{
 		var layer = new CanvasLayer { Layer = 10 };
 		AddChild(layer);
-		_aiSystemPanel = GD.Load<PackedScene>("res://scenes/AiSystemPanel.tscn").Instantiate<AiSystemPanel>();
+		_aiSystemPanel = GD.Load<PackedScene>("res://scenes/ui/AiSystemPanel.tscn").Instantiate<AiSystemPanel>();
 		layer.AddChild(_aiSystemPanel);
 	}
 
@@ -309,7 +309,7 @@ public partial class Level : Node2D
 	{
 		var layer = new CanvasLayer { Layer = 11 };
 		AddChild(layer);
-		_notificationPanel = GD.Load<PackedScene>("res://scenes/NotificationPanel.tscn").Instantiate<NotificationPanel>();
+		_notificationPanel = GD.Load<PackedScene>("res://scenes/ui/NotificationPanel.tscn").Instantiate<NotificationPanel>();
 		layer.AddChild(_notificationPanel);
 	}
 
@@ -331,7 +331,7 @@ public partial class Level : Node2D
 	{
 		var layer = new CanvasLayer { Layer = 12 };
 		AddChild(layer);
-		_infoButton = GD.Load<PackedScene>("res://scenes/InfoButton.tscn").Instantiate<InfoButton>();
+		_infoButton = GD.Load<PackedScene>("res://scenes/ui/InfoButton.tscn").Instantiate<InfoButton>();
 		layer.AddChild(_infoButton);
 	}
 
@@ -339,7 +339,7 @@ public partial class Level : Node2D
 	{
 		var layer = new CanvasLayer { Layer = 12 };
 		AddChild(layer);
-		_rerouteButtonNode = GD.Load<PackedScene>("res://scenes/RerouteButtonNode.tscn").Instantiate<RerouteButtonNode>();
+		_rerouteButtonNode = GD.Load<PackedScene>("res://scenes/ui/RerouteButtonNode.tscn").Instantiate<RerouteButtonNode>();
 		layer.AddChild(_rerouteButtonNode);
 	}
 
@@ -347,7 +347,7 @@ public partial class Level : Node2D
 	{
 		var layer = new CanvasLayer { Layer = 12 };
 		AddChild(layer);
-		_forgeButtonNode = GD.Load<PackedScene>("res://scenes/ForgeButtonNode.tscn").Instantiate<UpgradeButtonNode>();
+		_forgeButtonNode = GD.Load<PackedScene>("res://scenes/ui/ForgeButtonNode.tscn").Instantiate<UpgradeButtonNode>();
 		layer.AddChild(_forgeButtonNode);
 	}
 
@@ -355,7 +355,7 @@ public partial class Level : Node2D
 	{
 		var layer = new CanvasLayer { Layer = 12 };
 		AddChild(layer);
-		_fortifyButtonNode = GD.Load<PackedScene>("res://scenes/FortifyButtonNode.tscn").Instantiate<UpgradeButtonNode>();
+		_fortifyButtonNode = GD.Load<PackedScene>("res://scenes/ui/FortifyButtonNode.tscn").Instantiate<UpgradeButtonNode>();
 		layer.AddChild(_fortifyButtonNode);
 	}
 
@@ -363,7 +363,7 @@ public partial class Level : Node2D
 	{
 		var layer = new CanvasLayer { Layer = 12 };
 		AddChild(layer);
-		_splitButtonNode = GD.Load<PackedScene>("res://scenes/SplitButtonNode.tscn").Instantiate<SplitButtonNode>();
+		_splitButtonNode = GD.Load<PackedScene>("res://scenes/ui/SplitButtonNode.tscn").Instantiate<SplitButtonNode>();
 		layer.AddChild(_splitButtonNode);
 	}
 
@@ -371,7 +371,7 @@ public partial class Level : Node2D
 	{
 		var layer = new CanvasLayer { Layer = 10 };
 		AddChild(layer);
-		_countdownTimer = GD.Load<PackedScene>("res://scenes/CountdownTimerNode.tscn").Instantiate<CountdownTimerNode>();
+		_countdownTimer = GD.Load<PackedScene>("res://scenes/ui/CountdownTimerNode.tscn").Instantiate<CountdownTimerNode>();
 		layer.AddChild(_countdownTimer);
 		var viewportSize = GetViewport().GetVisibleRect().Size;
 		const float timerWidth = 90f;
@@ -384,7 +384,7 @@ public partial class Level : Node2D
 	{
 		var layer = new CanvasLayer { Layer = 10 };
 		AddChild(layer);
-		_chatWindow = GD.Load<PackedScene>("res://scenes/ChatWindowNode.tscn").Instantiate<ChatWindowNode>();
+		_chatWindow = GD.Load<PackedScene>("res://scenes/ui/ChatWindowNode.tscn").Instantiate<ChatWindowNode>();
 		layer.AddChild(_chatWindow);
 		var viewportSize = GetViewport().GetVisibleRect().Size;
 		const float chatHeight = 54f;

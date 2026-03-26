@@ -95,20 +95,20 @@ public partial class Level
 		var upgrade = _systems[systemIndex].Upgrade;
 		var canAfford = _systems[systemIndex].Ships >= _upgradeCfg.UpgradeCost;
 
-		var fortifyLabel = upgrade == SystemUpgrade.Fortify ? "Remove\nFortify" : "Fortify\nSystem";
-		var fortifyDisabled = upgrade == SystemUpgrade.Fortify ? false : (upgrade != SystemUpgrade.None || !canAfford);
-		Action fortifyAction = upgrade == SystemUpgrade.Fortify
+		var fortifyActive = upgrade == SystemUpgrade.Fortify;
+		var fortifyDisabled = !fortifyActive && (upgrade != SystemUpgrade.None || !canAfford);
+		Action fortifyAction = fortifyActive
 			? () => DoUpgrade(systemIndex, SystemUpgrade.None)
 			: () => DoUpgrade(systemIndex, SystemUpgrade.Fortify);
 
-		var forgeLabel = upgrade == SystemUpgrade.Forge ? "Remove\nForge" : "Forge\nSystem";
-		var forgeDisabled = upgrade == SystemUpgrade.Forge ? false : (upgrade != SystemUpgrade.None || !canAfford);
-		Action forgeAction = upgrade == SystemUpgrade.Forge
+		var forgeActive = upgrade == SystemUpgrade.Forge;
+		var forgeDisabled = !forgeActive && (upgrade != SystemUpgrade.None || !canAfford);
+		Action forgeAction = forgeActive
 			? () => DoUpgrade(systemIndex, SystemUpgrade.None)
 			: () => DoUpgrade(systemIndex, SystemUpgrade.Forge);
 
-		_fortifyButtonNode.ShowFor(viewportSize, slotFromRight: 3, label: fortifyLabel, disabled: fortifyDisabled, onPressed: fortifyAction);
-		_forgeButtonNode.ShowFor(viewportSize, slotFromRight: 4, label: forgeLabel, disabled: forgeDisabled, onPressed: forgeAction);
+		_fortifyButtonNode.ShowFor(viewportSize, slotFromRight: 3, isActive: fortifyActive, disabled: fortifyDisabled, onPressed: fortifyAction);
+		_forgeButtonNode.ShowFor(viewportSize, slotFromRight: 4, isActive: forgeActive, disabled: forgeDisabled, onPressed: forgeAction);
 	}
 
 	private void ShowSplitButton(int systemIndex, int fleetSlot)

@@ -7,7 +7,7 @@ public partial class PlayerFleetNode : FleetNodeBase
 	private Color _fill;
 	private Color _outline;
 
-	private const string PlayerVisualScenePath = "res://scenes/FleetNode.tscn";
+	private const string PlayerVisualScenePath = "res://scenes/fleet/FleetNode.tscn";
 	private const int CountFontSize = 11;
 
 	protected override string? VisualScenePath => PlayerVisualScenePath;

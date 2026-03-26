@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://ccombateff01"]
 
-[ext_resource type="Script" uid="uid://bmdp5gvq7w5r4" path="res://scripts/CombatEffectNode.cs" id="1_"]
+[ext_resource type="Script" uid="uid://bmdp5gvq7w5r4" path="res://scripts/effects/CombatEffectNode.cs" id="1_"]
 
 [sub_resource type="Animation" id="Animation_capture"]
 resource_name = "capture"

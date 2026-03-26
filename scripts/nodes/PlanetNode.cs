@@ -11,7 +11,7 @@ public partial class PlanetNode : Node2D
 
 	private const float MinTapRadius = 10f;
 	private const int ArcSegments = 16;
-	private const string VisualScenePath = "res://scenes/PlanetNode.tscn";
+	private const string VisualScenePath = "res://scenes/system/PlanetNode.tscn";
 
 	public override void _Ready()
 	{

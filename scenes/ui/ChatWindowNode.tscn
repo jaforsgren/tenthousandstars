@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://chatwnd12345"]
 
-[ext_resource type="Script" path="res://scripts/ChatWindowNode.cs" id="1_script"]
+[ext_resource type="Script" path="res://scripts/ui/ChatWindowNode.cs" id="1_script"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_line"]
 font_size = 10
