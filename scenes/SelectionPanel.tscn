@@ -11,31 +11,23 @@ line_spacing = 0.0
 font_size = 10
 
 [node name="SelectionPanel" type="PanelContainer" unique_id=532847577]
-offset_right = 200.0
-offset_bottom = 90.0
 theme_override_styles/panel = ExtResource("2_style")
 script = ExtResource("1_selp")
 
-[node name="Content" type="Control" parent="." unique_id=532847578]
+[node name="Content" type="VBoxContainer" parent="." unique_id=532847578]
 layout_mode = 2
 
 [node name="Title" type="Label" parent="Content" unique_id=1298544557]
 unique_name_in_owner = true
-layout_mode = 0
-offset_left = 0.0
-offset_top = 0.0
-offset_right = 180.0
-offset_bottom = 20.0
+custom_minimum_size = Vector2(0, 20)
+layout_mode = 2
 text = "System Name"
 label_settings = SubResource("LabelSettings_title")
 
 [node name="Description" type="Label" parent="Content" unique_id=1298544558]
 unique_name_in_owner = true
-layout_mode = 0
-offset_left = 0.0
-offset_top = 24.0
-offset_right = 180.0
-offset_bottom = 70.0
+custom_minimum_size = Vector2(0, 46)
+layout_mode = 2
 text = "Description text goes here."
 label_settings = SubResource("LabelSettings_desc")
 autowrap_mode = 3

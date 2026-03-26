@@ -46,9 +46,7 @@ public partial class SelectionPanel : PanelContainer
 		_titleLabel.Text = title;
 		_descriptionLabel.Text = description;
 		Visible = true;
-
-		var x = (viewportSize.X - PanelWidth) / 2f;
-		Position = new Vector2(x, TopPadding);
+		Position = new Vector2((viewportSize.X - PanelWidth) / 2f, TopPadding);
 	}
 
 	private void ApplyEditorPreview()

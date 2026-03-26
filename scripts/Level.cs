@@ -76,6 +76,13 @@ public partial class Level : Node2D
 	private AiController _aiController = null!;
 	private double _lastSystemClickTime = double.MinValue;
 	private int _lastClickedSystemIndex = -1;
+	private RerouteButtonNode _rerouteButtonNode = null!;
+	private readonly Dictionary<int, int> _rerouteTargets = [];
+	private readonly Dictionary<int, RerouteArrowNode> _rerouteArrows = [];
+	private bool _isPickingRerouteTarget;
+	private int _rerouteSourceIndex = -1;
+	private PackedScene _rerouteArrowScene = null!;
+	private const float RerouteMinFleet = 1.0f;
 
 	public override void _Ready()
 	{
@@ -126,6 +133,7 @@ public partial class Level : Node2D
 		SpawnAiSystemPanel();
 		SpawnNotificationPanel();
 		SpawnInfoButton();
+		SpawnRerouteButtonNode();
 		SpawnAiController(data, aiCfg);
 		SpawnChatWindow();
 
@@ -219,6 +227,7 @@ public partial class Level : Node2D
 		_transitDurationSeconds = levelCfg.TransitDurationSeconds;
 		_transitFleetScene = GD.Load<PackedScene>("res://scenes/TransitFleetNode.tscn");
 		_combatEffectScene = GD.Load<PackedScene>("res://scenes/CombatEffectNode.tscn");
+		_rerouteArrowScene = GD.Load<PackedScene>("res://scenes/RerouteArrowNode.tscn");
 		_routeSet = new HashSet<(int, int)>(data.Routes);
 
 		SpawnRoutes(data);
@@ -308,6 +317,15 @@ public partial class Level : Node2D
 		layer.AddChild(_infoButton);
 	}
 
+	private void SpawnRerouteButtonNode()
+	{
+		var layer = new CanvasLayer { Layer = 12 };
+		AddChild(layer);
+		var scene = GD.Load<PackedScene>("res://scenes/RerouteButtonNode.tscn");
+		_rerouteButtonNode = scene.Instantiate<RerouteButtonNode>();
+		layer.AddChild(_rerouteButtonNode);
+	}
+
 	private void ShowMissionBrief()
 	{
 		_notificationPanel.Show(
@@ -329,6 +347,7 @@ public partial class Level : Node2D
 		_endConditionReached = true;
 		_selectionPanel.Hide();
 		_aiSystemPanel.Hide();
+		_rerouteButtonNode.Hide();
 		ShowEndSequence("Mission Complete", _activeCondition.EndDescription);
 	}
 
@@ -344,6 +363,7 @@ public partial class Level : Node2D
 			_endConditionReached = true;
 			_selectionPanel.Hide();
 			_aiSystemPanel.Hide();
+			_rerouteButtonNode.Hide();
 			ShowEndSequence("Defeated", "The marked system has fallen. The mission is lost.");
 			return;
 		}
@@ -354,6 +374,7 @@ public partial class Level : Node2D
 		_endConditionReached = true;
 		_selectionPanel.Hide();
 		_aiSystemPanel.Hide();
+		_rerouteButtonNode.Hide();
 		var description = _endStateCfg.DefeatDescriptions[_rng.Next(_endStateCfg.DefeatDescriptions.Length)];
 		ShowEndSequence("Defeated", description);
 	}
@@ -459,9 +480,15 @@ public partial class Level : Node2D
 		_chatWindow = null;
 		_camera = null!;
 		_infoButton = null!;
+		_rerouteButtonNode = null!;
 		_aiController = null!;
 		_lastSystemClickTime = double.MinValue;
 		_lastClickedSystemIndex = -1;
+		_rerouteTargets.Clear();
+		_rerouteArrows.Clear();
+		_isPickingRerouteTarget = false;
+		_rerouteSourceIndex = -1;
+		_rerouteArrowScene = null!;
 	}
 
 	private void SpawnRoutes(LevelData data)
@@ -637,6 +664,7 @@ public partial class Level : Node2D
 		_endConditionReached = true;
 		_selectionPanel.Hide();
 		_aiSystemPanel.Hide();
+		_rerouteButtonNode.Hide();
 		ShowEndSequence("Time Expired", _activeCondition?.TimeoutMessage ?? "The mission clock has run out.");
 	}
 
@@ -750,6 +778,12 @@ public partial class Level : Node2D
 
 	private void HandleClick(Vector2 worldPos)
 	{
+		if (_isPickingRerouteTarget)
+		{
+			HandleRerouteTargetPick(worldPos);
+			return;
+		}
+
 		for (var i = 0; i < _systems.Count; i++)
 		{
 			if (_systems[i].FogState == FogState.Hidden)
@@ -787,22 +821,34 @@ public partial class Level : Node2D
 		_aiSystemPanel.Hide();
 		_camera.ExitFollowMode();
 		_infoButton.Hide();
+		_rerouteButtonNode.Hide();
 		_selectionPanel.Hide();
 	}
 
 	private void SelectFleet(int systemIndex)
 	{
-		_infoButton.ShowFor(GetViewport().GetVisibleRect().Size, () => ShowFleetInfo(systemIndex));
+		var viewportSize = GetViewport().GetVisibleRect().Size;
+		_infoButton.ShowFor(viewportSize, () => ShowFleetInfo(systemIndex));
+		if (_systems[systemIndex].IsPlayerOwned)
+			_rerouteButtonNode.ShowFor(viewportSize, _rerouteTargets.ContainsKey(systemIndex), () => OnRerouteButtonPressed(systemIndex));
+		else
+			_rerouteButtonNode.Hide();
 	}
 
 	private void SelectSystem(int systemIndex)
 	{
-		_infoButton.ShowFor(GetViewport().GetVisibleRect().Size, () => ShowSystemInfo(systemIndex));
+		var viewportSize = GetViewport().GetVisibleRect().Size;
+		_infoButton.ShowFor(viewportSize, () => ShowSystemInfo(systemIndex));
+		if (_systems[systemIndex].IsPlayerOwned)
+			_rerouteButtonNode.ShowFor(viewportSize, _rerouteTargets.ContainsKey(systemIndex), () => OnRerouteButtonPressed(systemIndex));
+		else
+			_rerouteButtonNode.Hide();
 	}
 
 	private void SelectAiSystem(int systemIndex)
 	{
 		_infoButton.ShowFor(GetViewport().GetVisibleRect().Size, () => ShowAiSystemInfo(systemIndex));
+		_rerouteButtonNode.Hide();
 	}
 
 	private void ShowAiSystemInfo(int systemIndex)
@@ -964,6 +1010,7 @@ public partial class Level : Node2D
 			{
 				target.Capture(result.AttackerRemainder, senderOwner, aiPlayer, aiOwnerColor);
 				SpawnCombatEffect(toIndex, attackerWon: true);
+				ClearReroute(toIndex);
 			}
 			else
 			{
@@ -1006,5 +1053,100 @@ public partial class Level : Node2D
 	{
 		var edge = a < b ? (a, b) : (b, a);
 		return _routeSet.Contains(edge);
+	}
+
+	public override void _Process(double delta)
+	{
+		if (Engine.IsEditorHint() || _endConditionReached)
+			return;
+		ProcessReroutes();
+	}
+
+	private void ProcessReroutes()
+	{
+		var fogUpdateNeeded = false;
+		foreach (var (sourceIndex, targetIndex) in _rerouteTargets)
+		{
+			var source = _systems[sourceIndex];
+			if (!source.IsPlayerOwned || source.Ships < RerouteMinFleet)
+				continue;
+			if (!AreConnected(sourceIndex, targetIndex))
+				continue;
+
+			var fleet = source.TakeFleet();
+			var fromEdge = EdgeToward(source.Position, _systems[targetIndex].Position, _systemRadius);
+			var toEdge = EdgeToward(_systems[targetIndex].Position, source.Position, _systemRadius);
+			var transit = _transitFleetScene.Instantiate<TransitFleetNode>();
+			AddChild(transit);
+			var si = sourceIndex;
+			var ti = targetIndex;
+			var f = fleet;
+			transit.Launch(fromEdge, toEdge, _ghostFleetOutline, _transitDurationSeconds,
+				() => ResolvePlayerTransitArrival(si, ti, f));
+			fogUpdateNeeded = true;
+		}
+
+		if (fogUpdateNeeded)
+			UpdateFogOfWar();
+	}
+
+	private void OnRerouteButtonPressed(int systemIndex)
+	{
+		if (_rerouteTargets.ContainsKey(systemIndex))
+		{
+			ClearReroute(systemIndex);
+			_rerouteButtonNode.UpdateRouteState(hasActiveRoute: false);
+		}
+		else
+		{
+			_isPickingRerouteTarget = true;
+			_rerouteSourceIndex = systemIndex;
+			_rerouteButtonNode.Hide();
+			_infoButton.Hide();
+			_selectionPanel.Hide();
+		}
+	}
+
+	private void HandleRerouteTargetPick(Vector2 worldPos)
+	{
+		_isPickingRerouteTarget = false;
+
+		for (var i = 0; i < _systems.Count; i++)
+		{
+			if (i == _rerouteSourceIndex) continue;
+			if (_systems[i].FogState == FogState.Hidden) continue;
+			if (!AreConnected(_rerouteSourceIndex, i)) continue;
+			if (!_systems[i].ContainsSystemAt(worldPos)) continue;
+
+			var si = _rerouteSourceIndex;
+			SetRerouteTarget(si, i);
+			_rerouteButtonNode.ShowFor(GetViewport().GetVisibleRect().Size, hasActiveRoute: true,
+				() => OnRerouteButtonPressed(si));
+			_rerouteSourceIndex = -1;
+			return;
+		}
+
+		_rerouteSourceIndex = -1;
+	}
+
+	private void SetRerouteTarget(int sourceIndex, int targetIndex)
+	{
+		ClearReroute(sourceIndex);
+		_rerouteTargets[sourceIndex] = targetIndex;
+
+		var arrow = _rerouteArrowScene.Instantiate<RerouteArrowNode>();
+		_systems[sourceIndex].AddChild(arrow);
+		arrow.Initialize(_systems[sourceIndex].GlobalPosition, _systems[targetIndex].GlobalPosition, _systemRadius);
+		_rerouteArrows[sourceIndex] = arrow;
+	}
+
+	private void ClearReroute(int systemIndex)
+	{
+		if (_rerouteArrows.TryGetValue(systemIndex, out var arrow))
+		{
+			arrow.QueueFree();
+			_rerouteArrows.Remove(systemIndex);
+		}
+		_rerouteTargets.Remove(systemIndex);
 	}
 }
