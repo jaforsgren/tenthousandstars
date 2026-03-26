@@ -79,6 +79,7 @@ public partial class Level : Node2D
 	private RerouteButtonNode _rerouteButtonNode = null!;
 	private UpgradeButtonNode _forgeButtonNode = null!;
 	private UpgradeButtonNode _fortifyButtonNode = null!;
+	private SplitButtonNode _splitButtonNode = null!;
 	private UpgradeConfig _upgradeCfg = null!;
 	private readonly Dictionary<int, int> _rerouteTargets = [];
 	private readonly Dictionary<int, RerouteArrowNode> _rerouteArrows = [];
@@ -86,6 +87,8 @@ public partial class Level : Node2D
 	private int _rerouteSourceIndex = -1;
 	private PackedScene _rerouteArrowScene = null!;
 	private const float RerouteMinFleet = 1.0f;
+	private int _dragFleetSlot = -1;
+	private int _selectedFleetSlot = -1;
 
 	public override void _Ready()
 	{
@@ -139,6 +142,7 @@ public partial class Level : Node2D
 		SpawnRerouteButtonNode();
 		SpawnForgeButtonNode();
 		SpawnFortifyButtonNode();
+		SpawnSplitButtonNode();
 		SpawnAiController(data, aiCfg);
 		SpawnChatWindow();
 
@@ -350,6 +354,15 @@ public partial class Level : Node2D
 		layer.AddChild(_fortifyButtonNode);
 	}
 
+	private void SpawnSplitButtonNode()
+	{
+		var layer = new CanvasLayer { Layer = 12 };
+		AddChild(layer);
+		var scene = GD.Load<PackedScene>("res://scenes/SplitButtonNode.tscn");
+		_splitButtonNode = scene.Instantiate<SplitButtonNode>();
+		layer.AddChild(_splitButtonNode);
+	}
+
 	private void ShowMissionBrief()
 	{
 		_notificationPanel.Show(
@@ -374,6 +387,7 @@ public partial class Level : Node2D
 		_rerouteButtonNode.Hide();
 		_forgeButtonNode.Hide();
 		_fortifyButtonNode.Hide();
+		_splitButtonNode.Hide();
 		ShowEndSequence("Mission Complete", _activeCondition.EndDescription);
 	}
 
@@ -392,6 +406,7 @@ public partial class Level : Node2D
 			_rerouteButtonNode.Hide();
 			_forgeButtonNode.Hide();
 			_fortifyButtonNode.Hide();
+			_splitButtonNode.Hide();
 			ShowEndSequence("Defeated", "The marked system has fallen. The mission is lost.");
 			return;
 		}
@@ -405,6 +420,7 @@ public partial class Level : Node2D
 		_rerouteButtonNode.Hide();
 		_forgeButtonNode.Hide();
 		_fortifyButtonNode.Hide();
+		_splitButtonNode.Hide();
 		var description = _endStateCfg.DefeatDescriptions[_rng.Next(_endStateCfg.DefeatDescriptions.Length)];
 		ShowEndSequence("Defeated", description);
 	}
@@ -513,9 +529,12 @@ public partial class Level : Node2D
 		_rerouteButtonNode = null!;
 		_forgeButtonNode = null!;
 		_fortifyButtonNode = null!;
+		_splitButtonNode = null!;
 		_aiController = null!;
 		_lastSystemClickTime = double.MinValue;
 		_lastClickedSystemIndex = -1;
+		_dragFleetSlot = -1;
+		_selectedFleetSlot = -1;
 		_rerouteTargets.Clear();
 		_rerouteArrows.Clear();
 		_isPickingRerouteTarget = false;
@@ -700,6 +719,7 @@ public partial class Level : Node2D
 		_rerouteButtonNode.Hide();
 		_forgeButtonNode.Hide();
 		_fortifyButtonNode.Hide();
+		_splitButtonNode.Hide();
 		ShowEndSequence("Time Expired", _activeCondition?.TimeoutMessage ?? "The mission clock has run out.");
 	}
 
@@ -801,10 +821,13 @@ public partial class Level : Node2D
 	{
 		for (var i = 0; i < _systems.Count; i++)
 		{
-			if (!_systems[i].IsPlayerOwned || !_systems[i].HasFleet || !_systems[i].ContainsFleetAt(_pressWorldPos))
+			if (!_systems[i].IsPlayerOwned || !_systems[i].HasFleet)
 				continue;
+			var slot = _systems[i].GetFleetSlotAt(_pressWorldPos);
+			if (slot < 0) continue;
 
 			_dragCandidateIndex = i;
+			_dragFleetSlot = slot;
 			_hasDragCandidate = true;
 			GetViewport().SetInputAsHandled();
 			return;
@@ -823,8 +846,10 @@ public partial class Level : Node2D
 		{
 			if (_systems[i].FogState == FogState.Hidden)
 				continue;
-			if (_systems[i].HasFleet && _systems[i].ContainsFleetAt(worldPos))
+			var fleetSlot = _systems[i].GetFleetSlotAt(worldPos);
+			if (_systems[i].HasFleet && fleetSlot >= 0)
 			{
+				_selectedFleetSlot = fleetSlot;
 				SelectFleet(i);
 				return;
 			}
@@ -859,6 +884,7 @@ public partial class Level : Node2D
 		_rerouteButtonNode.Hide();
 		_forgeButtonNode.Hide();
 		_fortifyButtonNode.Hide();
+		_splitButtonNode.Hide();
 		_selectionPanel.Hide();
 	}
 
@@ -870,12 +896,14 @@ public partial class Level : Node2D
 		{
 			_rerouteButtonNode.ShowFor(viewportSize, _rerouteTargets.ContainsKey(systemIndex), () => OnRerouteButtonPressed(systemIndex));
 			ShowPlayerUpgradeButtons(systemIndex);
+			ShowSplitButton(systemIndex, _selectedFleetSlot);
 		}
 		else
 		{
 			_rerouteButtonNode.Hide();
 			_forgeButtonNode.Hide();
 			_fortifyButtonNode.Hide();
+			_splitButtonNode.Hide();
 		}
 	}
 
@@ -894,6 +922,7 @@ public partial class Level : Node2D
 			_forgeButtonNode.Hide();
 			_fortifyButtonNode.Hide();
 		}
+		_splitButtonNode.Hide();
 	}
 
 	private void SelectAiSystem(int systemIndex)
@@ -902,6 +931,7 @@ public partial class Level : Node2D
 		_rerouteButtonNode.Hide();
 		_forgeButtonNode.Hide();
 		_fortifyButtonNode.Hide();
+		_splitButtonNode.Hide();
 	}
 
 	private void ShowAiSystemInfo(int systemIndex)
@@ -971,6 +1001,19 @@ public partial class Level : Node2D
 		_forgeButtonNode.ShowFor(viewportSize, slotFromRight: 4, label: forgeLabel, disabled: forgeDisabled, onPressed: forgeAction);
 	}
 
+	private void ShowSplitButton(int systemIndex, int fleetSlot)
+	{
+		var viewportSize = GetViewport().GetVisibleRect().Size;
+		var ships = _systems[systemIndex].GetFleetShips(fleetSlot);
+		_splitButtonNode.ShowFor(viewportSize, disabled: ships < 2f, onPressed: () => OnSplitButtonPressed(systemIndex, fleetSlot));
+	}
+
+	private void OnSplitButtonPressed(int systemIndex, int fleetSlot)
+	{
+		_systems[systemIndex].SplitFleet(fleetSlot);
+		ShowSplitButton(systemIndex, fleetSlot);
+	}
+
 	private void DoUpgrade(int systemIndex, SystemUpgrade upgrade)
 	{
 		if (upgrade != SystemUpgrade.None)
@@ -1012,7 +1055,7 @@ public partial class Level : Node2D
 
 			var fromIndex = _draggingFromIndex;
 			var toIndex = i;
-			var fleet = _systems[fromIndex].TakeFleet();
+			var fleet = _systems[fromIndex].TakeFleet(_dragFleetSlot);
 
 			PostPlayerTransitBark(toIndex);
 
@@ -1033,6 +1076,7 @@ public partial class Level : Node2D
 
 		_isDragging = false;
 		_draggingFromIndex = -1;
+		_dragFleetSlot = -1;
 		QueueRedraw();
 
 		if (resolved)
@@ -1198,6 +1242,7 @@ public partial class Level : Node2D
 			_rerouteButtonNode.Hide();
 			_forgeButtonNode.Hide();
 			_fortifyButtonNode.Hide();
+			_splitButtonNode.Hide();
 			_infoButton.Hide();
 			_selectionPanel.Hide();
 		}

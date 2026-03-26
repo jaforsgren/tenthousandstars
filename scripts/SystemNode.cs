@@ -7,7 +7,8 @@ namespace Tts;
 public partial class SystemNode : Node2D
 {
 	private IReadOnlyList<Planet> _planets = [];
-	private float _ships;
+	private readonly List<float> _fleetShips = [];
+	private readonly List<FleetNodeBase> _fleetNodes = [];
 	private SystemOwner _owner;
 	private bool _selected;
 	private AiPlayerData? _aiPlayerData;
@@ -31,7 +32,6 @@ public partial class SystemNode : Node2D
 	private Color _neutralFleetOutline;
 
 	private SystemCircleNode _systemCircle = null!;
-	private FleetNodeBase? _fleetNode;
 	private readonly List<PlanetNode> _planetNodes = [];
 	private SystemUpgrade _upgrade = SystemUpgrade.None;
 	private Node2D? _upgradeBadge;
@@ -40,6 +40,7 @@ public partial class SystemNode : Node2D
 
 	private const string ForgeBadgePath = "res://scenes/ForgeUpgradeBadge.tscn";
 	private const string FortifyBadgePath = "res://scenes/FortifyUpgradeBadge.tscn";
+	private const float FleetNodeSpacing = 4f;
 
 	private static readonly Color ScoutedModulate = new(0.5f, 0.55f, 0.65f, 0.45f);
 	private static readonly Color ObjectiveRingColor = new(1f, 0.85f, 0.2f, 0.8f);
@@ -63,14 +64,24 @@ public partial class SystemNode : Node2D
 		* (_upgrade == SystemUpgrade.Forge ? 1f + _forgeProductionBonus : 1f);
 	public float DefenseBonusMultiplier => _upgrade == SystemUpgrade.Fortify ? _fortifyDefenseBonusMultiplier : 0f;
 	public SystemUpgrade Upgrade => _upgrade;
-	public float Ships => _ships;
+	public float Ships => _fleetShips.Count > 0 ? _fleetShips.Sum() : 0f;
 	public SystemOwner Owner => _owner;
 	public FogState FogState => _fogState;
-	public bool HasFleet => _ships > 0;
+	public bool HasFleet => _fleetShips.Any(s => s > 0f);
 	public bool IsPlayerOwned => _owner == SystemOwner.Player;
 	public bool IsAiOwned => _owner.IsAi();
 
-	public bool ContainsFleetAt(Vector2 worldPos) => _fleetNode?.ContainsPoint(worldPos) ?? false;
+	public bool ContainsFleetAt(Vector2 worldPos) => GetFleetSlotAt(worldPos) >= 0;
+
+	public int GetFleetSlotAt(Vector2 worldPos)
+	{
+		for (var i = 0; i < _fleetNodes.Count; i++)
+			if (_fleetNodes[i].ContainsPoint(worldPos)) return i;
+		return -1;
+	}
+
+	public float GetFleetShips(int slot) =>
+		slot >= 0 && slot < _fleetShips.Count ? _fleetShips[slot] : 0f;
 
 	public bool ContainsSystemAt(Vector2 worldPos)
 		=> worldPos.DistanceTo(GlobalPosition) <= _systemRadius;
@@ -85,25 +96,43 @@ public partial class SystemNode : Node2D
 		return null;
 	}
 
-	public float TakeFleet()
+	public float TakeFleet(int slot = 0)
 	{
-		var taken = _ships;
-		_ships = 0f;
+		if (slot < 0 || slot >= _fleetShips.Count) return 0f;
+		var taken = _fleetShips[slot];
+		_fleetShips.RemoveAt(slot);
+		_fleetNodes[slot].QueueFree();
+		_fleetNodes.RemoveAt(slot);
 		_selected = false;
-		_fleetNode?.UpdateFleet(_ships, _selected);
+		RepositionFleetNodes();
 		return taken;
 	}
 
 	public void AddFleet(float ships)
 	{
-		_ships += ships;
-		_fleetNode?.UpdateFleet(_ships, _selected);
+		if (_fleetShips.Count == 0)
+		{
+			AddFleetSlot(ships);
+			return;
+		}
+		_fleetShips[0] += ships;
+		_fleetNodes[0].UpdateFleet(_fleetShips[0], _selected);
+	}
+
+	public void SplitFleet(int slot)
+	{
+		if (slot < 0 || slot >= _fleetShips.Count) return;
+		var half = _fleetShips[slot] / 2f;
+		_fleetShips[slot] = half;
+		_fleetNodes[slot].UpdateFleet(half, false);
+		AddFleetSlot(half);
 	}
 
 	public void SpendShips(float amount)
 	{
-		_ships = Mathf.Max(0f, _ships - amount);
-		_fleetNode?.UpdateFleet(_ships, _selected);
+		if (_fleetShips.Count == 0) return;
+		_fleetShips[0] = Mathf.Max(0f, _fleetShips[0] - amount);
+		_fleetNodes[0].UpdateFleet(_fleetShips[0], _selected);
 	}
 
 	public void ApplyUpgrade(SystemUpgrade upgrade)
@@ -124,19 +153,20 @@ public partial class SystemNode : Node2D
 	public void Capture(float ships, SystemOwner newOwner, AiPlayerData? aiPlayer = null, Color? aiOwnerColor = null)
 	{
 		_owner = newOwner;
-		_ships = ships;
 		_aiPlayerData = aiPlayer;
 		_aiOwnerColor = aiOwnerColor;
 		_systemCircle.SetOutline(newOwner == SystemOwner.None ? _neutralSystemOutline : _playerSystemOutline);
 		ApplyUpgrade(SystemUpgrade.None);
-		SwapFleetNode();
+		ClearAllFleets();
+		AddFleetSlot(ships);
 		QueueRedraw();
 	}
 
 	public void SustainDefense(float remainingShips)
 	{
-		_ships = Mathf.Max(0f, remainingShips);
-		_fleetNode?.UpdateFleet(_ships, _selected);
+		// Collapse all fleet slots into one after taking losses
+		ClearAllFleets();
+		AddFleetSlot(Mathf.Max(0f, remainingShips));
 	}
 
 	public void MarkAsObjective()
@@ -175,7 +205,8 @@ public partial class SystemNode : Node2D
 	public void SetSelected(bool selected)
 	{
 		_selected = selected;
-		_fleetNode?.UpdateFleet(_ships, _selected);
+		for (var i = 0; i < _fleetNodes.Count; i++)
+			_fleetNodes[i].UpdateFleet(_fleetShips[i], _selected);
 	}
 
 	public void SetFogState(FogState fogState, float clearSeconds)
@@ -203,7 +234,6 @@ public partial class SystemNode : Node2D
 	{
 		_planets = planets;
 		_owner = owner;
-		_ships = initialShips;
 		_aiPlayerData = aiPlayer;
 		_aiOwnerColor = aiOwnerColor;
 
@@ -219,10 +249,7 @@ public partial class SystemNode : Node2D
 		}
 
 		if (!Engine.IsEditorHint())
-		{
-			_fleetNode = CreateFleetNode(_owner);
-			_fleetNode.UpdateFleet(_ships, _selected);
-		}
+			AddFleetSlot(initialShips);
 
 		if (_owner.IsAi())
 			QueueRedraw();
@@ -266,8 +293,42 @@ public partial class SystemNode : Node2D
 		if (Engine.IsEditorHint() || _owner == SystemOwner.None)
 			return;
 
-		_ships += ProductionRate * (float)delta;
-		_fleetNode!.UpdateFleet(_ships, _selected);
+		if (_fleetShips.Count == 0)
+			AddFleetSlot(0f);
+
+		_fleetShips[0] += ProductionRate * (float)delta;
+		_fleetNodes[0].UpdateFleet(_fleetShips[0], _selected);
+	}
+
+	private void AddFleetSlot(float ships)
+	{
+		var node = CreateFleetNode(_owner);
+		node.UpdateFleet(ships, false);
+		_fleetShips.Add(ships);
+		_fleetNodes.Add(node);
+		RepositionFleetNodes();
+	}
+
+	private void ClearAllFleets()
+	{
+		foreach (var node in _fleetNodes)
+			node.QueueFree();
+		_fleetNodes.Clear();
+		_fleetShips.Clear();
+		_selected = false;
+	}
+
+	private void RepositionFleetNodes()
+	{
+		var count = _fleetNodes.Count;
+		if (count == 0) return;
+		var step = _fleetCircleRadius * 2f + FleetNodeSpacing;
+		var totalWidth = (count - 1) * step;
+		for (var i = 0; i < count; i++)
+		{
+			var pos = _fleetNodes[i].Position;
+			_fleetNodes[i].Position = new Vector2(-totalWidth / 2f + i * step, pos.Y);
+		}
 	}
 
 	private FleetNodeBase CreateFleetNode(SystemOwner owner)
@@ -292,12 +353,5 @@ public partial class SystemNode : Node2D
 		AddChild(neutral);
 		neutral.Initialize(_systemRadius, _fleetCircleGap, _fleetCircleRadius, _labelWidth, _labelHeight, _fleetOutlineWidth, _neutralFleetFill, _neutralFleetOutline);
 		return neutral;
-	}
-
-	private void SwapFleetNode()
-	{
-		_fleetNode?.QueueFree();
-		_fleetNode = CreateFleetNode(_owner);
-		_fleetNode.UpdateFleet(_ships, _selected);
 	}
 }
