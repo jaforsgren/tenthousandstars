@@ -46,6 +46,9 @@ public partial class Level : Node2D
 	private Color _ghostFleetOutline;
 	private float _ghostFleetOutlineWidth;
 	private float _defenderBonus;
+	private float _systemRadius;
+	private float _transitDurationSeconds;
+	private PackedScene _transitFleetScene = null!;
 	private bool _fogEnabled;
 	private float _fogClearSeconds;
 	private float _fadeOutSeconds;
@@ -182,11 +185,14 @@ public partial class Level : Node2D
 		_ghostFleetFill = sysCfg.FleetFill.ToColor();
 		_ghostFleetOutline = sysCfg.FleetOutline.ToColor();
 		_ghostFleetOutlineWidth = sysCfg.FleetOutlineWidth;
+		_systemRadius = sysCfg.SystemRadius;
 		_defenderBonus = ConfigLoader.Load<CombatConfig>("res://config/combat.json").DefenderBonus;
 		var levelCfg = ConfigLoader.Load<LevelConfig>("res://config/level.json");
 		_fogEnabled = levelCfg.FogEnabled;
 		_fogClearSeconds = levelCfg.FogClearSeconds;
 		_fadeOutSeconds = levelCfg.FadeOutSeconds;
+		_transitDurationSeconds = levelCfg.TransitDurationSeconds;
+		_transitFleetScene = GD.Load<PackedScene>("res://scenes/TransitFleetNode.tscn");
 		_routeSet = new HashSet<(int, int)>(data.Routes);
 
 		SpawnRoutes(data);
@@ -257,7 +263,7 @@ public partial class Level : Node2D
 	{
 		_aiController = new AiController();
 		AddChild(_aiController);
-		_aiController.Initialize(_systems, _routeSet, _defenderBonus, data.AiPlayers, aiCfg, _rng, OnAiActionTaken);
+		_aiController.Initialize(_systems, _routeSet, _defenderBonus, data.AiPlayers, aiCfg, _rng, OnAiActionTaken, LaunchAiTransit);
 	}
 
 	private void OnAiActionTaken()
@@ -405,12 +411,19 @@ public partial class Level : Node2D
 	{
 		foreach (var (from, to) in data.Routes)
 		{
+			var fromPos = data.Systems[from].Position;
+			var toPos = data.Systems[to].Position;
 			var route = new RouteNode();
 			AddChild(route);
-			route.Initialize(data.Systems[from].Position, data.Systems[to].Position);
+			route.Initialize(
+				EdgeToward(fromPos, toPos, _systemRadius),
+				EdgeToward(toPos, fromPos, _systemRadius));
 			_routeNodes.Add((from, to, route));
 		}
 	}
+
+	private static Vector2 EdgeToward(Vector2 origin, Vector2 target, float radius)
+		=> origin + (target - origin).Normalized() * radius;
 
 	private void UpdateFogOfWar()
 	{
@@ -693,26 +706,17 @@ public partial class Level : Node2D
 			if (!AreConnected(_draggingFromIndex, i))
 				continue;
 
-			var attacker = _systems[_draggingFromIndex];
-			var target = _systems[i];
-			var attackerFleet = attacker.TakeFleet();
+			var fromIndex = _draggingFromIndex;
+			var toIndex = i;
+			var fleet = _systems[fromIndex].TakeFleet();
 
-			if (target.Owner == attacker.Owner)
-			{
-				target.AddFleet(attackerFleet);
-			}
-			else
-			{
-				var result = CombatResolver.Resolve(attackerFleet, target.Ships, _defenderBonus);
-				if (result.AttackerWins)
-				{
-					target.Capture(result.AttackerRemainder, attacker.Owner);
-					if (_camera.IsFollowing)
-						_camera.FollowSystem(target.GlobalPosition);
-				}
-				else
-					target.SustainDefense(result.DefenderRemainder);
-			}
+			var fromEdge = EdgeToward(_systems[fromIndex].Position, _systems[toIndex].Position, _systemRadius);
+			var toEdge = EdgeToward(_systems[toIndex].Position, _systems[fromIndex].Position, _systemRadius);
+
+			var transit = _transitFleetScene.Instantiate<TransitFleetNode>();
+			AddChild(transit);
+			transit.Launch(fromEdge, toEdge, _ghostFleetOutline, _transitDurationSeconds,
+				() => ResolvePlayerTransitArrival(fromIndex, toIndex, fleet));
 
 			resolved = true;
 			break;
@@ -726,10 +730,64 @@ public partial class Level : Node2D
 		QueueRedraw();
 
 		if (resolved)
-		{
 			UpdateFogOfWar();
-			CheckEndCondition();
+	}
+
+	private void ResolvePlayerTransitArrival(int fromIndex, int toIndex, float fleet)
+	{
+		var target = _systems[toIndex];
+
+		if (target.Owner == SystemOwner.Player)
+		{
+			target.AddFleet(fleet);
 		}
+		else
+		{
+			var result = CombatResolver.Resolve(fleet, target.Ships, _defenderBonus);
+			if (result.AttackerWins)
+			{
+				target.Capture(result.AttackerRemainder, SystemOwner.Player);
+				if (_camera.IsFollowing)
+					_camera.FollowSystem(target.GlobalPosition);
+			}
+			else
+				target.SustainDefense(result.DefenderRemainder);
+		}
+
+		UpdateFogOfWar();
+		CheckEndCondition();
+		CheckDefeatCondition();
+	}
+
+	private void LaunchAiTransit(int fromIndex, int toIndex, float fleet, AiPlayerData aiPlayer, Color dotColor)
+	{
+		var fromEdge = EdgeToward(_systems[fromIndex].Position, _systems[toIndex].Position, _systemRadius);
+		var toEdge = EdgeToward(_systems[toIndex].Position, _systems[fromIndex].Position, _systemRadius);
+
+		var transit = _transitFleetScene.Instantiate<TransitFleetNode>();
+		AddChild(transit);
+		transit.Launch(fromEdge, toEdge, dotColor, _transitDurationSeconds,
+			() => ResolveAiTransitArrival(toIndex, fleet, aiPlayer.Owner, aiPlayer, dotColor));
+	}
+
+	private void ResolveAiTransitArrival(int toIndex, float fleet, SystemOwner senderOwner, AiPlayerData aiPlayer, Color aiOwnerColor)
+	{
+		var target = _systems[toIndex];
+
+		if (target.Owner == senderOwner)
+		{
+			target.AddFleet(fleet);
+		}
+		else
+		{
+			var result = CombatResolver.Resolve(fleet, target.Ships, _defenderBonus);
+			if (result.AttackerWins)
+				target.Capture(result.AttackerRemainder, senderOwner, aiPlayer, aiOwnerColor);
+			else
+				target.SustainDefense(result.DefenderRemainder);
+		}
+
+		OnAiActionTaken();
 	}
 
 	public override void _Draw()

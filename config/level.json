@@ -2,5 +2,6 @@
   "DefaultPreviewSeed": 42,
   "FogEnabled": false,
   "FogClearSeconds": 1.5,
-  "FadeOutSeconds": 4.0
+  "FadeOutSeconds": 4.0,
+  "TransitDurationSeconds": 1.2
 }

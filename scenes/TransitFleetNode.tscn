@@ -1,0 +1,7 @@
+[gd_scene format=3 uid="uid://ctransitfl001"]
+
+[ext_resource type="Script" path="res://scripts/TransitFleetNode.cs" id="1_"]
+
+[node name="TransitFleetNode" type="Node2D"]
+script = ExtResource("1_")
+DotRadius = 5.0
