@@ -3,6 +3,8 @@
   "MaxSystems": 20,
   "MinSpacing": 200.0,
   "Margin": 140.0,
+  "SpawnWidth": 1200.0,
+  "SpawnHeight": 1800.0,
   "PlanetProductionRate": 0.1,
   "MinOrbit": 14.0,
   "MaxOrbit": 38.0,

@@ -21,10 +21,10 @@ public static class LevelGenerator
 {
 	private static readonly SystemOwner[] AiOwners = [SystemOwner.Ai1, SystemOwner.Ai2, SystemOwner.Ai3, SystemOwner.Ai4];
 
-	public static LevelData Generate(Random rng, LevelGeneratorConfig cfg, AiConfig aiCfg, int viewportWidth = 480, int viewportHeight = 720)
+	public static LevelData Generate(Random rng, LevelGeneratorConfig cfg, AiConfig aiCfg)
 	{
 		var count = rng.Next(cfg.MinSystems, cfg.MaxSystems + 1);
-		var systems = PlaceSystems(rng, count, viewportWidth, viewportHeight, cfg);
+		var systems = PlaceSystems(rng, count, (int)cfg.SpawnWidth, (int)cfg.SpawnHeight, cfg);
 		var routes = BuildRoutes(rng, systems, cfg);
 		var withPlayer = AssignPlayerStart(rng, systems);
 		var opponentCount = rng.Next(aiCfg.MinOpponents, aiCfg.MaxOpponents + 1);

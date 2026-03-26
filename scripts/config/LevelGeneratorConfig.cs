@@ -5,6 +5,8 @@ public record LevelGeneratorConfig(
 	int MaxSystems,
 	float MinSpacing,
 	float Margin,
+	float SpawnWidth,
+	float SpawnHeight,
 	float PlanetProductionRate,
 	float MinOrbit,
 	float MaxOrbit,
