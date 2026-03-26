@@ -204,6 +204,7 @@ public partial class Level : Node2D
 	private void Build(LevelData data)
 	{
 		var sysCfg = ConfigLoader.Load<SystemConfig>("res://config/system.json");
+		var aiCfg = ConfigLoader.Load<AiConfig>("res://config/ai.json");
 		_ghostFleetRadius = sysCfg.FleetCircleRadius;
 		_ghostFleetFill = sysCfg.FleetFill.ToColor();
 		_ghostFleetOutline = sysCfg.FleetOutline.ToColor();
@@ -222,9 +223,11 @@ public partial class Level : Node2D
 		_routeSet = new HashSet<(int, int)>(data.Routes);
 		BuildAdjacency(data.Systems.Count);
 
+		var camCfg = ConfigLoader.Load<CameraConfig>("res://config/camera.json");
+
 		SpawnRoutes(data);
-		SpawnSystems(data);
-		SpawnCamera(data);
+		SpawnSystems(data, aiCfg, sysCfg);
+		SpawnCamera(data, camCfg);
 	}
 
 	private void AssignLoreSeeds(LevelData data)
@@ -599,10 +602,8 @@ public partial class Level : Node2D
 		}
 	}
 
-	private void SpawnSystems(LevelData data)
+	private void SpawnSystems(LevelData data, AiConfig aiCfg, SystemConfig sysCfg)
 	{
-		var aiCfg = ConfigLoader.Load<AiConfig>("res://config/ai.json");
-		var sysCfg = ConfigLoader.Load<SystemConfig>("res://config/system.json");
 		_aiColors = BuildAiColors(data.AiPlayers, aiCfg);
 		_aiColors[SystemOwner.Player] = sysCfg.FleetOutline.ToColor();
 
@@ -725,12 +726,11 @@ public partial class Level : Node2D
 		return colors;
 	}
 
-	private void SpawnCamera(LevelData data)
+	private void SpawnCamera(LevelData data, CameraConfig camCfg)
 	{
 		if (Engine.IsEditorHint())
 			return;
 
-		var camCfg = ConfigLoader.Load<CameraConfig>("res://config/camera.json");
 		var playerSystem = data.Systems.FirstOrDefault(s => s.Owner == SystemOwner.Player);
 		_camera = new CameraController();
 		AddChild(_camera);
@@ -906,9 +906,9 @@ public partial class Level : Node2D
 	private void ShowAiSystemInfo(int systemIndex)
 	{
 		var owner = _systems[systemIndex].Owner;
-		var aiPlayer = _aiPlayers.First(p => p.Owner == owner);
-		var aiCfg = ConfigLoader.Load<AiConfig>("res://config/ai.json");
-		var color = aiCfg.DispositionColors[aiPlayer.Disposition.ToString()].ToColor();
+		var aiPlayer = _aiPlayers.FirstOrDefault(p => p.Owner == owner);
+		if (aiPlayer == null) return;
+		_aiColors.TryGetValue(owner, out var color);
 		_selectionPanel.Hide();
 		_aiSystemPanel.ShowFor(aiPlayer, color, _systemLoreSeeds[systemIndex], GetViewport().GetVisibleRect().Size);
 	}
@@ -1034,7 +1034,7 @@ public partial class Level : Node2D
 			var transit = _transitFleetScene.Instantiate<TransitFleetNode>();
 			AddChild(transit);
 			transit.Launch(fromEdge, toEdge, _ghostFleetOutline, _transitDurationSeconds,
-				() => ResolvePlayerTransitArrival(fromIndex, toIndex, fleet));
+				() => ResolvePlayerTransitArrival(toIndex, fleet));
 
 			resolved = true;
 			break;
@@ -1052,7 +1052,7 @@ public partial class Level : Node2D
 			UpdateFogOfWar();
 	}
 
-	private void ResolvePlayerTransitArrival(int fromIndex, int toIndex, float fleet)
+	private void ResolvePlayerTransitArrival(int toIndex, float fleet)
 	{
 		var target = _systems[toIndex];
 
@@ -1189,7 +1189,7 @@ public partial class Level : Node2D
 			var ti = targetIndex;
 			var f = fleet;
 			transit.Launch(fromEdge, toEdge, _ghostFleetOutline, _transitDurationSeconds,
-				() => ResolvePlayerTransitArrival(si, ti, f));
+				() => ResolvePlayerTransitArrival(ti, f));
 			fogUpdateNeeded = true;
 		}
 

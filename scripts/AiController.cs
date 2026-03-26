@@ -206,7 +206,8 @@ public partial class AiController : Node
 	private bool ExecuteReinforce((int From, int To) option)
 	{
 		var fromSystem = _systems[option.From];
-		var player = _players.First(p => p.Owner == fromSystem.Owner);
+		var player = _players.FirstOrDefault(p => p.Owner == fromSystem.Owner);
+		if (player == null) return false;
 		var fleet = fromSystem.TakeFleet();
 		_launchTransit(option.From, option.To, fleet, player);
 		return true;
