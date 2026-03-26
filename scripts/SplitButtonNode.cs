@@ -5,9 +5,6 @@ namespace Tts;
 
 public partial class SplitButtonNode : Control
 {
-	private const float ButtonSize = 48f;
-	private const float ButtonMargin = 20f;
-	private const float Gap = 8f;
 	private const int Slot = 5;
 
 	private Button _button = null!;
@@ -24,10 +21,7 @@ public partial class SplitButtonNode : Control
 	{
 		_onPressed = onPressed;
 		_button.Disabled = disabled;
-		_button.Position = new Vector2(
-			viewportSize.X - ButtonSize * Slot - ButtonMargin - Gap * (Slot - 1),
-			viewportSize.Y - ButtonSize - ButtonMargin
-		);
+		_button.Position = UILayout.BottomRightButtonPosition(viewportSize, Slot);
 		Visible = true;
 	}
 }

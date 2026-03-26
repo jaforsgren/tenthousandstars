@@ -5,9 +5,7 @@ namespace Tts;
 
 public partial class RerouteButtonNode : Control
 {
-	private const float InfoButtonSize = 48f;
-	private const float InfoButtonMargin = 20f;
-	private const float Gap = 8f;
+	private const int Slot = 2;
 
 	private Button _button = null!;
 	private Action? _onPressed;
@@ -23,10 +21,7 @@ public partial class RerouteButtonNode : Control
 	{
 		_onPressed = onPressed;
 		_button.Text = hasActiveRoute ? "Cancel\nRoute" : "Set\nRoute";
-		_button.Position = new Vector2(
-			viewportSize.X - InfoButtonSize * 2 - InfoButtonMargin - Gap,
-			viewportSize.Y - InfoButtonSize - InfoButtonMargin
-		);
+		_button.Position = UILayout.BottomRightButtonPosition(viewportSize, Slot);
 		Visible = true;
 	}
 

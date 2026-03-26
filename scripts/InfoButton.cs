@@ -5,8 +5,7 @@ namespace Tts;
 
 public partial class InfoButton : Control
 {
-	private const float ButtonSize = 48f;
-	private const float Margin = 20f;
+	private const int Slot = 1;
 
 	private Button _button = null!;
 	private Action? _onPressed;
@@ -14,7 +13,7 @@ public partial class InfoButton : Control
 	public override void _Ready()
 	{
 		_button = new Button { Text = "i" };
-		_button.CustomMinimumSize = new Vector2(ButtonSize, ButtonSize);
+		_button.CustomMinimumSize = new Vector2(UILayout.ButtonSize, UILayout.ButtonSize);
 		_button.Pressed += () => _onPressed?.Invoke();
 		AddChild(_button);
 		Visible = false;
@@ -23,10 +22,7 @@ public partial class InfoButton : Control
 	public void ShowFor(Vector2 viewportSize, Action onPressed)
 	{
 		_onPressed = onPressed;
-		_button.Position = new Vector2(
-			viewportSize.X - ButtonSize - Margin,
-			viewportSize.Y - ButtonSize - Margin
-		);
+		_button.Position = UILayout.BottomRightButtonPosition(viewportSize, Slot);
 		Visible = true;
 	}
 }

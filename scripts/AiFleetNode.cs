@@ -18,7 +18,7 @@ public partial class AiFleetNode : FleetNodeBase
 
 	public void Initialize(float systemRadius, float gap, float radius, float labelWidth, float labelHeight, float outlineWidth, Color dispositionColor, AiPlayerData aiPlayer)
 	{
-		_fill = new Color(dispositionColor.R, dispositionColor.G, dispositionColor.B, 0.3f);
+		_fill = dispositionColor.WithAlpha(0.3f);
 		_outline = dispositionColor;
 
 		var idText = aiPlayer.FactionName;

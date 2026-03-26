@@ -50,7 +50,7 @@ public static class LevelGenerator
 		var dispositions = Enum.GetValues<AiDisposition>();
 
 		var playerIndex = list.FindIndex(s => s.Owner == SystemOwner.Player);
-		var hopDistances = BfsHopDistances(playerIndex, systems.Count, routes);
+		var hopDistances = GraphUtils.BfsHopDistances(playerIndex, systems.Count, routes);
 
 		var neutralIndices = Enumerable.Range(0, list.Count)
 			.Where(i => list[i].Owner == SystemOwner.None && hopDistances[i] >= cfg.AiMinHopsFromPlayer)
@@ -179,30 +179,6 @@ public static class LevelGenerator
 		}
 
 		return [.. routes];
-	}
-
-	private static int[] BfsHopDistances(int startIndex, int systemCount, IReadOnlyList<(int, int)> routes)
-	{
-		var distances = new int[systemCount];
-		Array.Fill(distances, -1);
-		distances[startIndex] = 0;
-
-		var queue = new Queue<int>();
-		queue.Enqueue(startIndex);
-
-		while (queue.Count > 0)
-		{
-			var current = queue.Dequeue();
-			foreach (var (from, to) in routes)
-			{
-				var neighbor = from == current ? to : to == current ? from : -1;
-				if (neighbor < 0 || distances[neighbor] >= 0) continue;
-				distances[neighbor] = distances[current] + 1;
-				queue.Enqueue(neighbor);
-			}
-		}
-
-		return distances;
 	}
 
 	private static (int, int) NormalizedEdge(int a, int b) => a < b ? (a, b) : (b, a);

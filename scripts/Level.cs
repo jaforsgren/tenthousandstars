@@ -158,7 +158,7 @@ public partial class Level : Node2D
 		var playerIndex = _systems.FindIndex(s => s.IsPlayerOwned);
 		if (playerIndex < 0) return -1;
 
-		var distances = BfsHopDistances(playerIndex);
+		var distances = GraphUtils.BfsHopDistances(playerIndex, _systems.Count, _routeSet);
 
 		var maxHops = 0;
 		var maxIndex = -1;
@@ -189,29 +189,6 @@ public partial class Level : Node2D
 		return bestIndex;
 	}
 
-	private int[] BfsHopDistances(int startIndex)
-	{
-		var distances = new int[_systems.Count];
-		Array.Fill(distances, -1);
-		distances[startIndex] = 0;
-
-		var queue = new Queue<int>();
-		queue.Enqueue(startIndex);
-
-		while (queue.Count > 0)
-		{
-			var current = queue.Dequeue();
-			foreach (var neighbor in GetRouteNeighbors(current))
-			{
-				if (distances[neighbor] >= 0) continue;
-				distances[neighbor] = distances[current] + 1;
-				queue.Enqueue(neighbor);
-			}
-		}
-
-		return distances;
-	}
-
 	private void BuildAdjacency(int systemCount)
 	{
 		_adjacency = new Dictionary<int, List<int>>(systemCount);
@@ -223,9 +200,6 @@ public partial class Level : Node2D
 			_adjacency[to].Add(from);
 		}
 	}
-
-	private List<int> GetRouteNeighbors(int index)
-		=> _adjacency.TryGetValue(index, out var neighbors) ? neighbors : [];
 
 	private void Build(LevelData data)
 	{

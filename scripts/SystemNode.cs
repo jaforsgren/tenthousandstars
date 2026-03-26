@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace Tts;
 
-public partial class SystemNode : Node2D
+public partial class SystemNode : FogAwareNode
 {
 	private IReadOnlyList<Planet> _planets = [];
 	private readonly List<float> _fleetShips = [];
@@ -42,7 +42,6 @@ public partial class SystemNode : Node2D
 	private const string FortifyBadgePath = "res://scenes/FortifyUpgradeBadge.tscn";
 	private const float FleetNodeSpacing = 4f;
 
-	private static readonly Color ScoutedModulate = new(0.5f, 0.55f, 0.65f, 0.45f);
 	private static readonly Color ObjectiveRingColor = new(1f, 0.85f, 0.2f, 0.8f);
 	private const float ObjectiveRingGap = 5f;
 	private const float ObjectiveRingWidth = 1.5f;
@@ -55,7 +54,6 @@ public partial class SystemNode : Node2D
 	private const float AiOwnerRingGap = 2f;
 	private const float AiOwnerRingWidth = 1.5f;
 
-	private FogState _fogState = FogState.Revealed;
 	private bool _isObjective;
 	private bool _isDefend;
 	private SystemOwner _targetOwner = SystemOwner.None;
@@ -66,7 +64,6 @@ public partial class SystemNode : Node2D
 	public SystemUpgrade Upgrade => _upgrade;
 	public float Ships => _fleetShips.Count > 0 ? _fleetShips.Sum() : 0f;
 	public SystemOwner Owner => _owner;
-	public FogState FogState => _fogState;
 	public bool HasFleet => _fleetShips.Any(s => s > 0f);
 	public bool IsPlayerOwned => _owner == SystemOwner.Player;
 	public bool IsAiOwned => _owner.IsAi();
@@ -217,27 +214,6 @@ public partial class SystemNode : Node2D
 		_selected = selected;
 		for (var i = 0; i < _fleetNodes.Count; i++)
 			_fleetNodes[i].UpdateFleet(_fleetShips[i], _selected);
-	}
-
-	public void SetFogState(FogState fogState, float clearSeconds)
-	{
-		var previousState = _fogState;
-		_fogState = fogState;
-
-		if (fogState == FogState.Hidden)
-		{
-			Visible = false;
-			return;
-		}
-
-		var targetModulate = fogState == FogState.Scouted ? ScoutedModulate : Colors.White;
-		Visible = true;
-
-		if (previousState == FogState.Hidden)
-			Modulate = new Color(targetModulate.R, targetModulate.G, targetModulate.B, 0f);
-
-		var tween = CreateTween();
-		tween.TweenProperty(this, "modulate", targetModulate, clearSeconds);
 	}
 
 	public void Initialize(IReadOnlyList<Planet> planets, SystemOwner owner, float initialShips = 0f, AiPlayerData? aiPlayer = null, Color? aiOwnerColor = null)

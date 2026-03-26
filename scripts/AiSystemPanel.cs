@@ -60,7 +60,7 @@ public partial class AiSystemPanel : PanelContainer
 
 		var barks = _aiConfig.DispositionBarks[aiPlayer.Disposition.ToString()];
 		_barkLabel.Text = $"\"{barks[seed % barks.Length]}\"";
-		_barkLabel.AddThemeColorOverride("font_color", new Color(dispositionColor.R, dispositionColor.G, dispositionColor.B, 0.65f));
+		_barkLabel.AddThemeColorOverride("font_color", dispositionColor.WithAlpha(0.65f));
 
 		Visible = true;
 		Position = new Vector2((viewportSize.X - PanelWidth) / 2f, TopPadding);
@@ -77,7 +77,7 @@ public partial class AiSystemPanel : PanelContainer
 			_dispositionLabel.AddThemeColorOverride("font_color", previewColor);
 			_descriptionLabel.Text = "They expand through force alone. Every system taken by blood.";
 			_barkLabel.Text = "\"Your kind is weak.\"";
-			_barkLabel.AddThemeColorOverride("font_color", new Color(previewColor.R, previewColor.G, previewColor.B, 0.65f));
+			_barkLabel.AddThemeColorOverride("font_color", previewColor.WithAlpha(0.65f));
 		}
 		else
 		{
