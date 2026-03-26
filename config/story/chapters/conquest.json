@@ -1,0 +1,16 @@
+{
+  "Id": "conquest",
+  "Title": "Total Dominion",
+  "MissionTags": ["conquest"],
+  "When": null,
+  "IntroBarks": [
+    "Leave nothing standing. Every system, every fleet.",
+    "This ends now. Total annihilation.",
+    "No quarter. No retreat. Finish it."
+  ],
+  "OutroBarks": [
+    "Total victory. The stars are ours.",
+    "Nothing remains to oppose us.",
+    "The galaxy belongs to us now."
+  ]
+}

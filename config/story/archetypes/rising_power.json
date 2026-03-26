@@ -1,0 +1,11 @@
+{
+  "Id": "rising_power",
+  "Name": "The Rising Power",
+  "ChapterSequence": ["skirmish", "assault", "conquest"],
+  "PlayerFactionName": "The Ascending Order",
+  "OpeningBarks": [
+    "We are small now. We will not always be.",
+    "Every system taken is a step toward dominance.",
+    "The galaxy does not yet know our name. It will."
+  ]
+}

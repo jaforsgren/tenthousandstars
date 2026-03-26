@@ -1,0 +1,11 @@
+{
+  "Id": "conquest",
+  "Name": "Total Conquest",
+  "ChapterSequence": ["assault", "assault", "conquest"],
+  "PlayerFactionName": "The Iron Vanguard",
+  "OpeningBarks": [
+    "We do not negotiate. We take.",
+    "Every system will fall. Every fleet will burn.",
+    "Conquest is not a goal. It is a promise."
+  ]
+}

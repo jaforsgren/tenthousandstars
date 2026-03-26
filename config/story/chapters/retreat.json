@@ -1,0 +1,16 @@
+{
+  "Id": "retreat",
+  "Title": "Rearguard",
+  "MissionTags": ["retreat"],
+  "When": null,
+  "IntroBarks": [
+    "Hold the line. Buy time for the withdrawal.",
+    "We cannot advance. Not yet. Hold.",
+    "Defensive posture. Every second counts."
+  ],
+  "OutroBarks": [
+    "We survived. For now.",
+    "The line held. Barely.",
+    "We bought time. Use it well."
+  ]
+}

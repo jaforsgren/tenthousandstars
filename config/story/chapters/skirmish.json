@@ -1,0 +1,16 @@
+{
+  "Id": "skirmish",
+  "Title": "Contested Space",
+  "MissionTags": ["skirmish"],
+  "When": null,
+  "IntroBarks": [
+    "This sector is contested. Take it.",
+    "Neither side controls this space. That changes now.",
+    "Probe their defenses. Find the weakness."
+  ],
+  "OutroBarks": [
+    "The sector is cleared.",
+    "We control this space now.",
+    "Contested no more."
+  ]
+}

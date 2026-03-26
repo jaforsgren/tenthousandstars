@@ -1,0 +1,54 @@
+{
+  "Conditions": [
+    {
+      "Id": "total_annihilation",
+      "Tags": ["assault", "conquest"],
+      "EnemiesLeft": 0,
+      "SystemsLeft": 0,
+      "Description": "Eliminate all enemy fleets and capture every system.",
+      "EndDescription": "Total conquest. Every system bends to your will."
+    },
+    {
+      "Id": "fleet_elimination",
+      "Tags": ["assault", "skirmish"],
+      "EnemiesLeft": 0,
+      "Description": "Eliminate all enemy fleets.",
+      "EndDescription": "The void is silent. No fleet dares challenge you."
+    },
+    {
+      "Id": "capture_target_system",
+      "Tags": ["assault", "conquest", "skirmish"],
+      "TargetSystemHops": 3,
+      "Description": "Capture the marked system deep in enemy territory.",
+      "EndDescription": "The distant system falls under your command."
+    },
+    {
+      "Id": "eliminate_faction",
+      "Tags": ["assault", "skirmish"],
+      "EliminateTargetPlayer": true,
+      "TimeoutSeconds": 300.0,
+      "TimeoutMessage": "Enemy reinforcements arrived. The window has closed.",
+      "Description": "Eliminate the marked faction before time runs out.",
+      "EndDescription": "The marked faction is destroyed. The stars are yours."
+    },
+    {
+      "Id": "defend_and_eliminate",
+      "Tags": ["retreat", "skirmish"],
+      "DefendObjectiveSystem": true,
+      "EnemiesLeft": 0,
+      "TimeoutSeconds": 360.0,
+      "TimeoutMessage": "The enemy has entrenched. You failed to hold the line.",
+      "Description": "Defend the marked system and eliminate all enemies.",
+      "EndDescription": "All enemies destroyed. The marked system stands."
+    },
+    {
+      "Id": "rearguard_action",
+      "Tags": ["retreat"],
+      "DefendObjectiveSystem": true,
+      "TimeoutSeconds": 240.0,
+      "TimeoutMessage": "Your position was overrun. The retreat failed.",
+      "Description": "Hold the marked system long enough for your forces to regroup.",
+      "EndDescription": "The line held. Your forces have regrouped."
+    }
+  ]
+}

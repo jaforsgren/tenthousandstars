@@ -1,0 +1,14 @@
+{
+  "Barks": [
+    { "Tags": ["chapter_start"], "When": null, "Npc": "Commander", "Message": "New orders received. Stand by." },
+    { "Tags": ["chapter_start"], "When": null, "Npc": "Tactical", "Message": "Situation updated. Here is what we know." },
+    { "Tags": ["mission_won"], "When": null, "Npc": "Commander", "Message": "Sector secured. Move to the next objective." },
+    { "Tags": ["mission_won"], "When": null, "Npc": "Wing Commander", "Message": "Well fought. We press on." },
+    { "Tags": ["mission_lost"], "When": null, "Npc": "Commander", "Message": "We regroup. This is not over." },
+    { "Tags": ["mission_lost"], "When": null, "Npc": "Tactical", "Message": "Fall back. Reassess. We try again." },
+    { "Tags": ["enemy_winning"], "When": { "EnemyIsWinning": true }, "Npc": "Commander", "Message": "They are gaining ground. Hold the line." },
+    { "Tags": ["enemy_winning"], "When": { "EnemyIsWinning": true }, "Npc": "Wing Commander", "Message": "We are taking heavy losses. We need to push back." },
+    { "Tags": ["player_leading"], "When": { "PlayerStrongerThanEnemy": true }, "Npc": "Wing Commander", "Message": "We have the advantage. Push it." },
+    { "Tags": ["player_leading"], "When": { "PlayerStrongerThanEnemy": true }, "Npc": "Tactical", "Message": "Enemy strength is declining. Maintain pressure." }
+  ]
+}

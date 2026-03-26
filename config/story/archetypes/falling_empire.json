@@ -1,0 +1,11 @@
+{
+  "Id": "falling_empire",
+  "Name": "The Falling Empire",
+  "ChapterSequence": ["retreat", "skirmish", "assault"],
+  "PlayerFactionName": "The Last Command",
+  "OpeningBarks": [
+    "We have lost too much. But we are not finished.",
+    "The empire shrinks. We hold what we can.",
+    "Retreat is not defeat. Not yet."
+  ]
+}

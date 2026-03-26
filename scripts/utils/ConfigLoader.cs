@@ -1,13 +1,18 @@
 using System;
 using System.Collections.Generic;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using Godot;
 
 namespace Tts;
 
 public static class ConfigLoader
 {
-	private static readonly JsonSerializerOptions _options = new() { PropertyNameCaseInsensitive = true };
+	private static readonly JsonSerializerOptions _options = new()
+	{
+		PropertyNameCaseInsensitive = true,
+		Converters = { new JsonStringEnumConverter() }
+	};
 	private static readonly Dictionary<string, object> _cache = new();
 
 	public static T Load<T>(string resPath) where T : class

@@ -1,0 +1,39 @@
+{
+  "Templates": [
+    {
+      "Tags": ["retreat"],
+      "When": null,
+      "Template": "{EnemyFaction} is pressing hard. Hold your ground and buy time for the withdrawal."
+    },
+    {
+      "Tags": ["retreat"],
+      "When": { "EnemyIsWinning": true },
+      "Template": "We are being overrun. {EnemyFaction} shows no sign of stopping. Hold — or everything is lost."
+    },
+    {
+      "Tags": ["assault"],
+      "When": null,
+      "Template": "{EnemyFaction} is overextended. Strike now — this is the moment."
+    },
+    {
+      "Tags": ["assault"],
+      "When": { "PlayerStrongerThanEnemy": true },
+      "Template": "{EnemyFaction} cannot match our strength. Overwhelm them. Leave nothing standing."
+    },
+    {
+      "Tags": ["conquest"],
+      "When": null,
+      "Template": "{EnemyFaction} controls this sector. {PlayerFaction} will not tolerate it. Crush them."
+    },
+    {
+      "Tags": ["skirmish"],
+      "When": null,
+      "Template": "This sector is contested. {EnemyFaction} holds a presence here. Clear them out."
+    },
+    {
+      "Tags": ["skirmish"],
+      "When": { "EnemyIsWinning": true },
+      "Template": "{EnemyFaction} is gaining ground across the sector. We need a win here — any win."
+    }
+  ]
+}

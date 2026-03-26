@@ -86,6 +86,7 @@ public partial class Level : Node2D
 	private CameraController _camera = null!;
 	private InfoButton _infoButton = null!;
 	private AiController _aiController = null!;
+	private NarrativeController? _narrativeController;
 	private double _lastSystemClickTime = double.MinValue;
 	private int _lastClickedSystemIndex = -1;
 	private RerouteButtonNode _rerouteButtonNode = null!;
@@ -143,8 +144,30 @@ public partial class Level : Node2D
 		Build(data);
 		_aiPlayers = data.AiPlayers;
 		_endStateCfg = ConfigLoader.Load<EndStateConfig>("res://config/end_states.json");
-		_activeCondition = _endStateCfg.Conditions[_rng.Next(_endStateCfg.Conditions.Length)];
-		_resolvedMissionDescription = null;
+
+		if (_narrativeController == null)
+		{
+			var gameModeConfig = ConfigLoader.Load<GameModeConfig>("res://config/game_mode.json");
+			if (gameModeConfig.Mode == GameMode.Story)
+			{
+				_narrativeController = NarrativeController.Create(_rng);
+				_narrativeController.StartCampaign();
+			}
+		}
+
+		if (_narrativeController != null && !_narrativeController.IsCampaignComplete)
+		{
+			var primaryAi = _aiPlayers.Count > 0 ? _aiPlayers[_rng.Next(_aiPlayers.Count)] : null;
+			_narrativeController.UpdateEnemyFaction(primaryAi?.FactionName ?? "the Enemy");
+			var missionContext = _narrativeController.GetNextMission();
+			_activeCondition = missionContext.Condition.ToEndCondition();
+			_resolvedMissionDescription = missionContext.Briefing;
+		}
+		else
+		{
+			_activeCondition = _endStateCfg.Conditions[_rng.Next(_endStateCfg.Conditions.Length)];
+			_resolvedMissionDescription = null;
+		}
 
 		if (_activeCondition.TargetSystemHops.HasValue)
 			_objectiveSystemIndex = FindObjectiveSystemIndex(_activeCondition.TargetSystemHops.Value);
@@ -418,7 +441,7 @@ public partial class Level : Node2D
 		_forgeButtonNode.Hide();
 		_fortifyButtonNode.Hide();
 		_splitButtonNode.Hide();
-		ShowEndSequence("Mission Complete", _activeCondition.EndDescription);
+		ShowEndSequence("Mission Complete", _activeCondition.EndDescription, won: true);
 	}
 
 	private void CheckDefeatCondition()
@@ -437,7 +460,7 @@ public partial class Level : Node2D
 			_forgeButtonNode.Hide();
 			_fortifyButtonNode.Hide();
 			_splitButtonNode.Hide();
-			ShowEndSequence("Defeated", "The marked system has fallen. The mission is lost.");
+			ShowEndSequence("Defeated", "The marked system has fallen. The mission is lost.", won: false);
 			return;
 		}
 
@@ -452,11 +475,16 @@ public partial class Level : Node2D
 		_fortifyButtonNode.Hide();
 		_splitButtonNode.Hide();
 		var description = _endStateCfg.DefeatDescriptions[_rng.Next(_endStateCfg.DefeatDescriptions.Length)];
-		ShowEndSequence("Defeated", description);
+		ShowEndSequence("Defeated", description, won: false);
 	}
 
-	private void ShowEndSequence(string title, string description)
+	private void ShowEndSequence(string title, string description, bool won)
 	{
+		_narrativeController?.OnMissionComplete(
+			won,
+			_systems.Count(s => s.IsPlayerOwned),
+			_systems.Count(s => s.IsAiOwned),
+			_systems.Count(s => s.IsAiOwned && s.HasFleet));
 		_fadeOverlay.MouseFilter = Control.MouseFilterEnum.Stop;
 		_camera.PanTo(ComputeMapCenter(), _endStateCfg.EndStateSeconds);
 		StartFadeOut(_fadeOutSeconds);
@@ -527,7 +555,7 @@ public partial class Level : Node2D
 		_forgeButtonNode.Hide();
 		_fortifyButtonNode.Hide();
 		_splitButtonNode.Hide();
-		ShowEndSequence("Time Expired", _activeCondition?.TimeoutMessage ?? "The mission clock has run out.");
+		ShowEndSequence("Time Expired", _activeCondition?.TimeoutMessage ?? "The mission clock has run out.", won: false);
 	}
 
 	private void RegenerateLevel()
