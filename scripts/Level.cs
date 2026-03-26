@@ -64,6 +64,10 @@ public partial class Level : Node2D
 	private EndCondition? _activeCondition;
 	private bool _endConditionReached;
 	private int _objectiveSystemIndex = -1;
+	private SystemOwner _targetPlayerOwner = SystemOwner.None;
+	private int _defendSystemIndex = -1;
+	private CountdownTimerNode? _countdownTimer;
+	private string? _resolvedMissionDescription;
 	private CameraController _camera = null!;
 	private InfoButton _infoButton = null!;
 	private AiController _aiController = null!;
@@ -97,10 +101,19 @@ public partial class Level : Node2D
 		_aiPlayers = data.AiPlayers;
 		_endStateCfg = ConfigLoader.Load<EndStateConfig>("res://config/end_states.json");
 		_activeCondition = _endStateCfg.Conditions[_rng.Next(_endStateCfg.Conditions.Length)];
+		_resolvedMissionDescription = null;
+
 		if (_activeCondition.TargetSystemHops.HasValue)
 			_objectiveSystemIndex = FindObjectiveSystemIndex(_activeCondition.TargetSystemHops.Value);
 		if (_objectiveSystemIndex >= 0)
 			_systems[_objectiveSystemIndex].MarkAsObjective();
+
+		if (_activeCondition.EliminateTargetPlayer == true && _aiPlayers.Count > 0)
+			ResolveTargetPlayer();
+
+		if (_activeCondition.DefendObjectiveSystem == true)
+			ResolveDefendSystem();
+
 		UpdateFogOfWar();
 		AssignLoreSeeds(data);
 		SpawnFadeOverlay();
@@ -109,6 +122,10 @@ public partial class Level : Node2D
 		SpawnNotificationPanel();
 		SpawnInfoButton();
 		SpawnAiController(data, aiCfg);
+
+		if (_activeCondition.TimeoutSeconds.HasValue)
+			SpawnCountdownTimer(_activeCondition.TimeoutSeconds.Value);
+
 		ShowMissionBrief();
 	}
 
@@ -289,7 +306,7 @@ public partial class Level : Node2D
 	{
 		_notificationPanel.Show(
 			"Mission",
-			_activeCondition!.Description,
+			_resolvedMissionDescription ?? _activeCondition!.Description,
 			_endStateCfg.MissionBriefSeconds,
 			GetViewport().GetVisibleRect().Size,
 			onDismiss: () => { }
@@ -313,6 +330,18 @@ public partial class Level : Node2D
 	{
 		if (_endConditionReached)
 			return;
+
+		if (_activeCondition?.DefendObjectiveSystem == true &&
+			_defendSystemIndex >= 0 &&
+			!_systems[_defendSystemIndex].IsPlayerOwned)
+		{
+			_endConditionReached = true;
+			_selectionPanel.Hide();
+			_aiSystemPanel.Hide();
+			ShowEndSequence("Defeated", "The marked system has fallen. The mission is lost.");
+			return;
+		}
+
 		if (_systems.Any(s => s.IsPlayerOwned))
 			return;
 
@@ -375,6 +404,20 @@ public partial class Level : Node2D
 				return false;
 		}
 
+		if (condition.EliminateTargetPlayer == true)
+		{
+			if (_targetPlayerOwner == SystemOwner.None)
+				return false;
+			if (_systems.Any(s => s.Owner == _targetPlayerOwner && s.HasFleet))
+				return false;
+		}
+
+		if (condition.DefendObjectiveSystem == true)
+		{
+			if (_defendSystemIndex < 0 || !_systems[_defendSystemIndex].IsPlayerOwned)
+				return false;
+		}
+
 		return true;
 	}
 
@@ -403,6 +446,10 @@ public partial class Level : Node2D
 		_activeCondition = null;
 		_endConditionReached = false;
 		_objectiveSystemIndex = -1;
+		_targetPlayerOwner = SystemOwner.None;
+		_defendSystemIndex = -1;
+		_countdownTimer = null;
+		_resolvedMissionDescription = null;
 		_camera = null!;
 		_infoButton = null!;
 		_aiController = null!;
@@ -504,6 +551,46 @@ public partial class Level : Node2D
 			system.Initialize(systemData.Planets, systemData.Owner, systemData.InitialFleet, aiPlayer, aiColor);
 			_systems.Add(system);
 		}
+	}
+
+	private void ResolveTargetPlayer()
+	{
+		var target = _aiPlayers[_rng.Next(_aiPlayers.Count)];
+		_targetPlayerOwner = target.Owner;
+		foreach (var system in _systems)
+			system.SetTargetOwner(_targetPlayerOwner);
+		_resolvedMissionDescription = $"{target.Disposition} faction marked for elimination. Destroy them before time runs out.";
+	}
+
+	private void ResolveDefendSystem()
+	{
+		_defendSystemIndex = _systems.FindIndex(s => s.IsPlayerOwned);
+		if (_defendSystemIndex >= 0)
+			_systems[_defendSystemIndex].MarkAsDefend();
+	}
+
+	private void SpawnCountdownTimer(float seconds)
+	{
+		var layer = new CanvasLayer { Layer = 10 };
+		AddChild(layer);
+		var scene = GD.Load<PackedScene>("res://scenes/CountdownTimerNode.tscn");
+		_countdownTimer = scene.Instantiate<CountdownTimerNode>();
+		layer.AddChild(_countdownTimer);
+		var viewportSize = GetViewport().GetVisibleRect().Size;
+		const float timerWidth = 90f;
+		const float timerPad = 8f;
+		_countdownTimer.Position = new Vector2(viewportSize.X - timerWidth - timerPad, timerPad);
+		_countdownTimer.Initialize(seconds, OnCountdownExpired);
+	}
+
+	private void OnCountdownExpired()
+	{
+		if (_endConditionReached)
+			return;
+		_endConditionReached = true;
+		_selectionPanel.Hide();
+		_aiSystemPanel.Hide();
+		ShowEndSequence("Time Expired", _activeCondition?.TimeoutMessage ?? "The mission clock has run out.");
 	}
 
 	private Color? SharedOwnerColor(int fromIndex, int toIndex)

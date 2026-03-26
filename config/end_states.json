@@ -24,6 +24,21 @@
 	  "TargetSystemHops": 3,
 	  "Description": "Capture the marked system deep in enemy territory.",
 	  "EndDescription": "The distant system falls under your command."
+	},
+	{
+	  "EliminateTargetPlayer": true,
+	  "TimeoutSeconds": 150.0,
+	  "TimeoutMessage": "Enemy reinforcements arrived. The window has closed.",
+	  "Description": "Eliminate the marked faction before time runs out.",
+	  "EndDescription": "The marked faction is destroyed. The stars are yours."
+	},
+	{
+	  "DefendObjectiveSystem": true,
+	  "EnemiesLeft": 0,
+	  "TimeoutSeconds": 180.0,
+	  "TimeoutMessage": "The enemy has entrenched. You failed to hold the line.",
+	  "Description": "Defend the marked system and eliminate all enemies.",
+	  "EndDescription": "All enemies destroyed. The marked system stands."
 	}
   ]
 }

@@ -38,11 +38,19 @@ public partial class SystemNode : Node2D
 	private static readonly Color ObjectiveRingColor = new(1f, 0.85f, 0.2f, 0.8f);
 	private const float ObjectiveRingGap = 5f;
 	private const float ObjectiveRingWidth = 1.5f;
+	private static readonly Color TargetRingColor = new(1f, 0.25f, 0.2f, 0.85f);
+	private const float TargetRingGap = 10f;
+	private const float TargetRingWidth = 1.5f;
+	private static readonly Color DefendRingColor = new(0.3f, 0.7f, 1f, 0.85f);
+	private const float DefendRingGap = 10f;
+	private const float DefendRingWidth = 1.5f;
 	private const float AiOwnerRingGap = 2f;
 	private const float AiOwnerRingWidth = 1.5f;
 
 	private FogState _fogState = FogState.Revealed;
 	private bool _isObjective;
+	private bool _isDefend;
+	private SystemOwner _targetOwner = SystemOwner.None;
 
 	public float ProductionRate => _planets.Sum(p => p.ProductionRate) + _baseProduction;
 	public float Ships => _ships;
@@ -105,10 +113,28 @@ public partial class SystemNode : Node2D
 		QueueRedraw();
 	}
 
+	public void MarkAsDefend()
+	{
+		_isDefend = true;
+		QueueRedraw();
+	}
+
+	public void SetTargetOwner(SystemOwner owner)
+	{
+		_targetOwner = owner;
+		QueueRedraw();
+	}
+
 	public override void _Draw()
 	{
 		if (_isObjective)
 			DrawArc(Vector2.Zero, _systemRadius + ObjectiveRingGap, 0f, Mathf.Tau, 64, ObjectiveRingColor, ObjectiveRingWidth);
+
+		if (_isDefend)
+			DrawArc(Vector2.Zero, _systemRadius + DefendRingGap, 0f, Mathf.Tau, 64, DefendRingColor, DefendRingWidth);
+
+		if (_targetOwner != SystemOwner.None && _owner == _targetOwner)
+			DrawArc(Vector2.Zero, _systemRadius + TargetRingGap, 0f, Mathf.Tau, 64, TargetRingColor, TargetRingWidth);
 
 		if (_owner.IsAi() && _aiOwnerColor.HasValue)
 			DrawArc(Vector2.Zero, _systemRadius + AiOwnerRingGap, 0f, Mathf.Tau, 64, _aiOwnerColor.Value, AiOwnerRingWidth);
