@@ -1,11 +1,17 @@
-[gd_scene format=3 uid="uid://forge_btn_node1"]
+[gd_scene format=3 uid="uid://bmjk6ww1t5etk"]
 
-[ext_resource type="Script" uid="uid://upgrade_btn_cs01" path="res://scripts/UpgradeButtonNode.cs" id="1_ub"]
+[ext_resource type="Script" uid="uid://dd26tcheku2bg" path="res://scripts/UpgradeButtonNode.cs" id="1_ub"]
 
-[node name="ForgeButtonNode" type="Control"]
+[node name="ForgeButtonNode" type="Control" unique_id=412164208]
+layout_mode = 3
+anchors_preset = 0
 script = ExtResource("1_ub")
 
-[node name="UpgradeButton" type="Button" parent="."]
+[node name="UpgradeButton" type="Button" parent="." unique_id=1010173402]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(48, 48)
-text = "Forge\nSystem"
+layout_mode = 0
+offset_right = 48.0
+offset_bottom = 48.0
+text = "˄
+"

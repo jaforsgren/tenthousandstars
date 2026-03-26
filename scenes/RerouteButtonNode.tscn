@@ -1,11 +1,14 @@
 [gd_scene format=3 uid="uid://cxmdt4qr7pf3a"]
 
-[ext_resource type="Script" uid="uid://bq8n3pxm6c5yt" path="res://scripts/RerouteButtonNode.cs" id="1_rb"]
+[ext_resource type="Script" uid="uid://cuasa4yboowrn" path="res://scripts/RerouteButtonNode.cs" id="1_rb"]
 
-[node name="RerouteButtonNode" type="Control"]
+[node name="RerouteButtonNode" type="Control" unique_id=455735488]
+layout_mode = 3
+anchors_preset = 0
 script = ExtResource("1_rb")
 
-[node name="RerouteButton" type="Button" parent="."]
+[node name="RerouteButton" type="Button" parent="." unique_id=89170232]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(48, 48)
-text = "Set\nRoute"
+layout_mode = 0
+text = ">>"

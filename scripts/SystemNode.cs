@@ -59,9 +59,9 @@ public partial class SystemNode : Node2D
 	private bool _isObjective;
 	private bool _isDefend;
 	private SystemOwner _targetOwner = SystemOwner.None;
+	private float _cachedProductionRate;
 
-	public float ProductionRate => (_planets.Sum(p => p.ProductionRate) + _baseProduction)
-		* (_upgrade == SystemUpgrade.Forge ? 1f + _forgeProductionBonus : 1f);
+	public float ProductionRate => _cachedProductionRate;
 	public float DefenseBonusMultiplier => _upgrade == SystemUpgrade.Fortify ? _fortifyDefenseBonusMultiplier : 0f;
 	public SystemUpgrade Upgrade => _upgrade;
 	public float Ships => _fleetShips.Count > 0 ? _fleetShips.Sum() : 0f;
@@ -135,9 +135,19 @@ public partial class SystemNode : Node2D
 		_fleetNodes[0].UpdateFleet(_fleetShips[0], _selected);
 	}
 
+	private void RefreshProductionRate()
+	{
+		var planetSum = 0f;
+		for (var i = 0; i < _planets.Count; i++)
+			planetSum += _planets[i].ProductionRate;
+		_cachedProductionRate = (planetSum + _baseProduction)
+			* (_upgrade == SystemUpgrade.Forge ? 1f + _forgeProductionBonus : 1f);
+	}
+
 	public void ApplyUpgrade(SystemUpgrade upgrade)
 	{
 		_upgrade = upgrade;
+		RefreshProductionRate();
 		_upgradeBadge?.QueueFree();
 		_upgradeBadge = null;
 
@@ -236,6 +246,7 @@ public partial class SystemNode : Node2D
 		_owner = owner;
 		_aiPlayerData = aiPlayer;
 		_aiOwnerColor = aiOwnerColor;
+		RefreshProductionRate();
 
 		if (owner != SystemOwner.None)
 			_systemCircle.SetOutline(_playerSystemOutline);

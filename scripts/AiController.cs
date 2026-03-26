@@ -16,6 +16,9 @@ public partial class AiController : Node
 	private Action _onActionTaken = null!;
 	private Action<int, int, float, AiPlayerData> _launchTransit = null!;
 	private double _thinkTimer;
+	private Dictionary<int, List<int>> _adjacency = new();
+	private readonly List<(int From, int To)> _viableAttacksBuffer = [];
+	private readonly List<(int From, int To)> _reinforceOptionsBuffer = [];
 
 	public void Initialize(
 		IReadOnlyList<SystemNode> systems,
@@ -36,6 +39,19 @@ public partial class AiController : Node
 		_onActionTaken = onActionTaken;
 		_launchTransit = launchTransit;
 		_thinkTimer = config.ThinkIntervalSeconds;
+		BuildAdjacency();
+	}
+
+	private void BuildAdjacency()
+	{
+		_adjacency = new Dictionary<int, List<int>>(_systems.Count);
+		for (var i = 0; i < _systems.Count; i++)
+			_adjacency[i] = [];
+		foreach (var (from, to) in _routeSet)
+		{
+			_adjacency[from].Add(to);
+			_adjacency[to].Add(from);
+		}
 	}
 
 	public override void _Process(double delta)
@@ -57,16 +73,14 @@ public partial class AiController : Node
 
 	private bool TryTakeAction(AiPlayerData player)
 	{
-		var viableAttacks = BuildAttackOptions(player)
-			.Where(o => IsViableAttack(o.From, o.To, player.Disposition))
-			.ToList();
-		var reinforceOptions = BuildReinforceOptions(player);
+		BuildViableAttacks(player, _viableAttacksBuffer);
+		BuildReinforceOptions(player, _reinforceOptionsBuffer);
 
 		return player.Disposition switch
 		{
-			AiDisposition.Aggressive => TryAggressiveAction(player, viableAttacks, reinforceOptions),
-			AiDisposition.Strategic  => TryStrategicAction(player, viableAttacks, reinforceOptions),
-			AiDisposition.Cautious   => TryCautiousAction(player, viableAttacks, reinforceOptions),
+			AiDisposition.Aggressive => TryAggressiveAction(player, _viableAttacksBuffer, _reinforceOptionsBuffer),
+			AiDisposition.Strategic  => TryStrategicAction(player, _viableAttacksBuffer, _reinforceOptionsBuffer),
+			AiDisposition.Cautious   => TryCautiousAction(player, _viableAttacksBuffer, _reinforceOptionsBuffer),
 			_ => false
 		};
 	}
@@ -107,35 +121,43 @@ public partial class AiController : Node
 		return false;
 	}
 
-	private List<(int From, int To)> BuildAttackOptions(AiPlayerData player)
+	private void BuildViableAttacks(AiPlayerData player, List<(int From, int To)> buffer)
 	{
-		var options = new List<(int From, int To)>();
+		buffer.Clear();
 		for (var i = 0; i < _systems.Count; i++)
 		{
 			if (_systems[i].Owner != player.Owner || !_systems[i].HasFleet) continue;
-			foreach (var neighbor in GetNeighbors(i))
+			foreach (var neighbor in GetAdjacentSystemIndices(i))
 			{
 				if (_systems[neighbor].Owner == player.Owner) continue;
-				options.Add((i, neighbor));
+				if (IsViableAttack(i, neighbor, player.Disposition))
+					buffer.Add((i, neighbor));
 			}
 		}
-		return options;
 	}
 
 	// Multi-source BFS from all frontline systems back through owned territory.
 	// Each rear system records which adjacent owned system is one hop toward the front.
 	// Fleets move one hop per tick, naturally pathing through owned systems.
-	private List<(int From, int To)> BuildReinforceOptions(AiPlayerData player)
+	private void BuildReinforceOptions(AiPlayerData player, List<(int From, int To)> buffer)
 	{
+		buffer.Clear();
 		var frontline = new HashSet<int>();
 		for (var i = 0; i < _systems.Count; i++)
 		{
 			if (_systems[i].Owner != player.Owner) continue;
-			if (GetNeighbors(i).Any(n => _systems[n].Owner != player.Owner))
-				frontline.Add(i);
+			var neighbors = GetAdjacentSystemIndices(i);
+			for (var j = 0; j < neighbors.Count; j++)
+			{
+				if (_systems[neighbors[j]].Owner != player.Owner)
+				{
+					frontline.Add(i);
+					break;
+				}
+			}
 		}
 
-		if (frontline.Count == 0) return [];
+		if (frontline.Count == 0) return;
 
 		var visited = new HashSet<int>(frontline);
 		var nextHopTowardFront = new Dictionary<int, int>();
@@ -144,7 +166,7 @@ public partial class AiController : Node
 		while (queue.Count > 0)
 		{
 			var current = queue.Dequeue();
-			foreach (var neighbor in GetNeighbors(current))
+			foreach (var neighbor in GetAdjacentSystemIndices(current))
 			{
 				if (_systems[neighbor].Owner != player.Owner) continue;
 				if (!visited.Add(neighbor)) continue;
@@ -153,15 +175,13 @@ public partial class AiController : Node
 			}
 		}
 
-		var options = new List<(int From, int To)>();
 		for (var i = 0; i < _systems.Count; i++)
 		{
 			if (_systems[i].Owner != player.Owner || !_systems[i].HasFleet) continue;
 			if (frontline.Contains(i)) continue;
 			if (nextHopTowardFront.TryGetValue(i, out var destination))
-				options.Add((i, destination));
+				buffer.Add((i, destination));
 		}
-		return options;
 	}
 
 	private bool IsViableAttack(int fromIndex, int toIndex, AiDisposition disposition)
@@ -192,12 +212,6 @@ public partial class AiController : Node
 		return true;
 	}
 
-	private IEnumerable<int> GetNeighbors(int index)
-	{
-		foreach (var (from, to) in _routeSet)
-		{
-			if (from == index) yield return to;
-			else if (to == index) yield return from;
-		}
-	}
+	private List<int> GetAdjacentSystemIndices(int index)
+		=> _adjacency.TryGetValue(index, out var neighbors) ? neighbors : [];
 }

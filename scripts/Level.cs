@@ -34,6 +34,7 @@ public partial class Level : Node2D
 	private readonly List<int[]> _planetLoreSeeds = [];
 
 	private HashSet<(int, int)> _routeSet = [];
+	private Dictionary<int, List<int>> _adjacency = [];
 	private readonly List<(int From, int To, RouteNode Node)> _routeNodes = [];
 	private bool _isDragging;
 	private bool _hasDragCandidate;
@@ -211,14 +212,20 @@ public partial class Level : Node2D
 		return distances;
 	}
 
-	private IEnumerable<int> GetRouteNeighbors(int index)
+	private void BuildAdjacency(int systemCount)
 	{
+		_adjacency = new Dictionary<int, List<int>>(systemCount);
+		for (var i = 0; i < systemCount; i++)
+			_adjacency[i] = [];
 		foreach (var (from, to) in _routeSet)
 		{
-			if (from == index) yield return to;
-			else if (to == index) yield return from;
+			_adjacency[from].Add(to);
+			_adjacency[to].Add(from);
 		}
 	}
+
+	private List<int> GetRouteNeighbors(int index)
+		=> _adjacency.TryGetValue(index, out var neighbors) ? neighbors : [];
 
 	private void Build(LevelData data)
 	{
@@ -239,6 +246,7 @@ public partial class Level : Node2D
 		_rerouteArrowScene = GD.Load<PackedScene>("res://scenes/RerouteArrowNode.tscn");
 		_upgradeCfg = ConfigLoader.Load<UpgradeConfig>("res://config/upgrade.json");
 		_routeSet = new HashSet<(int, int)>(data.Routes);
+		BuildAdjacency(data.Systems.Count);
 
 		SpawnRoutes(data);
 		SpawnSystems(data);
@@ -506,6 +514,7 @@ public partial class Level : Node2D
 			child.QueueFree();
 		_systems.Clear();
 		_routeSet.Clear();
+		_adjacency.Clear();
 		_routeNodes.Clear();
 		_isDragging = false;
 		_hasDragCandidate = false;
@@ -578,13 +587,9 @@ public partial class Level : Node2D
 		var scoutedByPlayer = new HashSet<int>();
 		for (var i = 0; i < _systems.Count; i++)
 		{
-			if (!_systems[i].IsPlayerOwned)
-				continue;
-			foreach (var (from, to) in _routeSet)
-			{
-				if (from == i) scoutedByPlayer.Add(to);
-				else if (to == i) scoutedByPlayer.Add(from);
-			}
+			if (!_systems[i].IsPlayerOwned) continue;
+			foreach (var neighbor in _adjacency[i])
+				scoutedByPlayer.Add(neighbor);
 		}
 
 		for (var i = 0; i < _systems.Count; i++)
@@ -844,8 +849,8 @@ public partial class Level : Node2D
 
 		for (var i = 0; i < _systems.Count; i++)
 		{
-			if (_systems[i].FogState == FogState.Hidden)
-				continue;
+			if (_systems[i].FogState == FogState.Hidden) continue;
+
 			var fleetSlot = _systems[i].GetFleetSlotAt(worldPos);
 			if (_systems[i].HasFleet && fleetSlot >= 0)
 			{
@@ -853,24 +858,14 @@ public partial class Level : Node2D
 				SelectFleet(i);
 				return;
 			}
-		}
 
-		for (var i = 0; i < _systems.Count; i++)
-		{
-			if (_systems[i].FogState == FogState.Hidden)
-				continue;
 			var planetIndex = _systems[i].PlanetIndexAt(worldPos);
 			if (planetIndex.HasValue)
 			{
 				ShowPlanetInfo(i, planetIndex.Value);
 				return;
 			}
-		}
 
-		for (var i = 0; i < _systems.Count; i++)
-		{
-			if (_systems[i].FogState == FogState.Hidden)
-				continue;
 			if (_systems[i].ContainsSystemAt(worldPos))
 			{
 				HandleSystemClick(i);
