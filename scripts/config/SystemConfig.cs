@@ -9,6 +9,7 @@ public record SystemConfig(
 	float LabelHeight,
 	ColorData SystemFill,
 	ColorData SystemOutline,
+	ColorData NeutralSystemOutline,
 	float SystemOutlineWidth,
 	ColorData PlanetFill,
 	ColorData PlanetOutline,

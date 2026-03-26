@@ -50,6 +50,7 @@ public partial class Level : Node2D
 	private float _transitDurationSeconds;
 	private PackedScene _transitFleetScene = null!;
 	private PackedScene _combatEffectScene = null!;
+	private Dictionary<SystemOwner, Color> _aiColors = [];
 	private bool _fogEnabled;
 	private float _fogClearSeconds;
 	private float _fadeOutSeconds;
@@ -485,18 +486,32 @@ public partial class Level : Node2D
 	private void SpawnSystems(LevelData data)
 	{
 		var aiCfg = ConfigLoader.Load<AiConfig>("res://config/ai.json");
+		_aiColors = BuildAiColors(data.AiPlayers, aiCfg);
+
 		foreach (var systemData in data.Systems)
 		{
 			var system = new SystemNode();
 			system.Position = systemData.Position;
 			AddChild(system);
 			var aiPlayer = data.AiPlayers.FirstOrDefault(a => a.Owner == systemData.Owner);
-			var aiColor = aiPlayer != null
-				? aiCfg.DispositionColors[aiPlayer.Disposition.ToString()].ToColor()
-				: (Godot.Color?)null;
+			var aiColor = aiPlayer != null ? _aiColors[aiPlayer.Owner] : (Color?)null;
 			system.Initialize(systemData.Planets, systemData.Owner, systemData.InitialFleet, aiPlayer, aiColor);
 			_systems.Add(system);
 		}
+	}
+
+	private Dictionary<SystemOwner, Color> BuildAiColors(IReadOnlyList<AiPlayerData> aiPlayers, AiConfig aiCfg)
+	{
+		var colors = new Dictionary<SystemOwner, Color>();
+		foreach (var player in aiPlayers)
+		{
+			var baseColor = aiCfg.DispositionColors[player.Disposition.ToString()].ToColor();
+			var hueShift = (float)(_rng.NextDouble() * 0.2 - 0.1);
+			baseColor.ToHsv(out var h, out var s, out var v);
+			h = (h + hueShift + 1f) % 1f;
+			colors[player.Owner] = Color.FromHsv(h, s, v, baseColor.A);
+		}
+		return colors;
 	}
 
 	private void SpawnCamera(LevelData data)
@@ -765,8 +780,9 @@ public partial class Level : Node2D
 		CheckDefeatCondition();
 	}
 
-	private void LaunchAiTransit(int fromIndex, int toIndex, float fleet, AiPlayerData aiPlayer, Color dotColor)
+	private void LaunchAiTransit(int fromIndex, int toIndex, float fleet, AiPlayerData aiPlayer)
 	{
+		var dotColor = _aiColors[aiPlayer.Owner];
 		var fromEdge = EdgeToward(_systems[fromIndex].Position, _systems[toIndex].Position, _systemRadius);
 		var toEdge = EdgeToward(_systems[toIndex].Position, _systems[fromIndex].Position, _systemRadius);
 

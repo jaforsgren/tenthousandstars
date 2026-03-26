@@ -23,6 +23,8 @@ public partial class SystemNode : Node2D
 	private Color _planetFill;
 	private Color _planetOutline;
 	private float _planetOutlineWidth;
+	private Color _playerSystemOutline;
+	private Color _neutralSystemOutline;
 	private Color _playerFleetFill;
 	private Color _playerFleetOutline;
 	private Color _neutralFleetFill;
@@ -86,6 +88,7 @@ public partial class SystemNode : Node2D
 		_ships = ships;
 		_aiPlayerData = aiPlayer;
 		_aiOwnerColor = aiOwnerColor;
+		_systemCircle.SetOutline(newOwner == SystemOwner.None ? _neutralSystemOutline : _playerSystemOutline);
 		SwapFleetNode();
 		QueueRedraw();
 	}
@@ -146,6 +149,9 @@ public partial class SystemNode : Node2D
 		_aiPlayerData = aiPlayer;
 		_aiOwnerColor = aiOwnerColor;
 
+		if (owner != SystemOwner.None)
+			_systemCircle.SetOutline(_playerSystemOutline);
+
 		foreach (var planet in _planets)
 		{
 			var planetNode = new PlanetNode();
@@ -174,6 +180,8 @@ public partial class SystemNode : Node2D
 		_labelHeight = cfg.LabelHeight;
 		_fleetOutlineWidth = cfg.FleetOutlineWidth;
 		_baseProduction = cfg.BaseProduction;
+		_playerSystemOutline = cfg.SystemOutline.ToColor();
+		_neutralSystemOutline = cfg.NeutralSystemOutline.ToColor();
 		_planetFill = cfg.PlanetFill.ToColor();
 		_planetOutline = cfg.PlanetOutline.ToColor();
 		_planetOutlineWidth = cfg.PlanetOutlineWidth;
@@ -183,10 +191,11 @@ public partial class SystemNode : Node2D
 		_neutralFleetOutline = cfg.NeutralFleetOutline.ToColor();
 		_systemCircle = new SystemCircleNode();
 		AddChild(_systemCircle);
+		// Default to neutral outline; Initialize() updates it once the owner is known
 		_systemCircle.Initialize(
 			_systemRadius,
 			cfg.SystemFill.ToColor(),
-			cfg.SystemOutline.ToColor(),
+			_neutralSystemOutline,
 			cfg.SystemOutlineWidth
 		);
 	}

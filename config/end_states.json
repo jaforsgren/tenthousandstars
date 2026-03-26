@@ -2,28 +2,28 @@
   "MissionBriefSeconds": 10.0,
   "EndStateSeconds": 6.0,
   "DefeatDescriptions": [
-    "Your last system has fallen. The stars no longer answer to you.",
-    "The enemy consumed everything. Silence where your fleets once roared.",
-    "Overrun. Your empire exists only in memory.",
-    "The void swallowed you whole. Nothing remains but dust.",
+	"Your last system has fallen. The stars no longer answer to you.",
+	"The enemy consumed everything. Silence where your fleets once roared.",
+	"Overrun. Your empire exists only in memory.",
+	"The void swallowed you whole. Nothing remains but dust.",
     "Every system lost. Every fleet gone. The galaxy moves on without you."
   ],
   "Conditions": [
-    {
-      "EnemiesLeft": 0,
-      "SystemsLeft": 0,
-      "Description": "Eliminate all enemy fleets and capture every system.",
-      "EndDescription": "Total conquest. Every system bends to your will."
-    },
-    {
-      "EnemiesLeft": 0,
-      "Description": "Eliminate all enemy fleets.",
-      "EndDescription": "The void is silent. No fleet dares challenge you."
-    },
-    {
-      "TargetSystemHops": 3,
-      "Description": "Capture the marked system deep in enemy territory.",
-      "EndDescription": "The distant system falls under your command."
-    }
+	{
+	  "EnemiesLeft": 0,
+	  "SystemsLeft": 0,
+	  "Description": "Eliminate all enemy fleets and capture every system.",
+	  "EndDescription": "Total conquest. Every system bends to your will."
+	},
+	{
+	  "EnemiesLeft": 0,
+	  "Description": "Eliminate all enemy fleets.",
+	  "EndDescription": "The void is silent. No fleet dares challenge you."
+	},
+	{
+	  "TargetSystemHops": 3,
+	  "Description": "Capture the marked system deep in enemy territory.",
+	  "EndDescription": "The distant system falls under your command."
+	}
   ]
 }

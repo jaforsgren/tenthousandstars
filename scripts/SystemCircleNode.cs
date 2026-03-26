@@ -28,6 +28,12 @@ public partial class SystemCircleNode : Node2D
 		_outlineWidth = outlineWidth;
 	}
 
+	public void SetOutline(Color outline)
+	{
+		_outline = outline;
+		QueueRedraw();
+	}
+
 	public override void _Draw()
 	{
 		DrawCircle(Vector2.Zero, _radius, _fill);

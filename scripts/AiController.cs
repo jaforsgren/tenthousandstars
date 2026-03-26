@@ -14,7 +14,7 @@ public partial class AiController : Node
 	private AiConfig _config = null!;
 	private Random _rng = null!;
 	private Action _onActionTaken = null!;
-	private Action<int, int, float, AiPlayerData, Color> _launchTransit = null!;
+	private Action<int, int, float, AiPlayerData> _launchTransit = null!;
 	private double _thinkTimer;
 
 	public void Initialize(
@@ -25,7 +25,7 @@ public partial class AiController : Node
 		AiConfig config,
 		Random rng,
 		Action onActionTaken,
-		Action<int, int, float, AiPlayerData, Color> launchTransit)
+		Action<int, int, float, AiPlayerData> launchTransit)
 	{
 		_systems = systems;
 		_routeSet = routeSet;
@@ -179,8 +179,7 @@ public partial class AiController : Node
 	private bool ExecuteAttack((int From, int To) option, AiPlayerData player)
 	{
 		var fleet = _systems[option.From].TakeFleet();
-		var dotColor = _config.DispositionColors[player.Disposition.ToString()].ToColor();
-		_launchTransit(option.From, option.To, fleet, player, dotColor);
+		_launchTransit(option.From, option.To, fleet, player);
 		return true;
 	}
 
@@ -189,8 +188,7 @@ public partial class AiController : Node
 		var fromSystem = _systems[option.From];
 		var player = _players.First(p => p.Owner == fromSystem.Owner);
 		var fleet = fromSystem.TakeFleet();
-		var dotColor = _config.DispositionColors[player.Disposition.ToString()].ToColor();
-		_launchTransit(option.From, option.To, fleet, player, dotColor);
+		_launchTransit(option.From, option.To, fleet, player);
 		return true;
 	}
 

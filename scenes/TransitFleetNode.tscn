@@ -4,7 +4,6 @@
 
 [node name="TransitFleetNode" type="Node2D" unique_id=226965548]
 script = ExtResource("1_")
-DotRadius = null
 
 [node name="Dot" type="Polygon2D" parent="." unique_id=290977268]
 polygon = PackedVector2Array(5, 0, 4.33, 2.5, 2.5, 4.33, 0, 5, -2.5, 4.33, -4.33, 2.5, -5, 0, -4.33, -2.5, -2.5, -4.33, 0, -5, 2.5, -4.33, 4.33, -2.5)
