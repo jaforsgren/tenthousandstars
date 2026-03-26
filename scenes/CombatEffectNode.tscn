@@ -1,0 +1,97 @@
+[gd_scene format=3 uid="uid://ccombateff01"]
+
+[ext_resource type="Script" uid="uid://bmdp5gvq7w5r4" path="res://scripts/CombatEffectNode.cs" id="1_"]
+
+[sub_resource type="Animation" id="Animation_capture"]
+resource_name = "capture"
+length = 0.8
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("CaptureLayer:modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.035, 0.25, 0.53333336),
+"transitions": PackedFloat32Array(1, 1, 1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 0), Color(1, 1, 1, 1), Color(1, 1, 1, 1), Color(1, 1, 1, 0)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("CaptureLayer:scale")
+tracks/1/interp = 2
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 0.8),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector2(0.85, 0.85), Vector2(1.35, 1.35)]
+}
+
+[sub_resource type="Animation" id="Animation_impact"]
+resource_name = "impact"
+length = 0.8
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("ImpactLayer:modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0.033333335, 0.19999999, 0.3, 0.8),
+"transitions": PackedFloat32Array(1, 1, 1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 0), Color(1, 1, 1, 1), Color(1, 1, 1, 1), Color(1, 1, 1, 0)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("ImpactLayer:scale")
+tracks/1/interp = 2
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 0.8),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector2(1.2, 1.2), Vector2(1.35, 1.35)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_1"]
+_data = {
+&"capture": SubResource("Animation_capture"),
+&"impact": SubResource("Animation_impact")
+}
+
+[node name="CombatEffectNode" type="Node2D" unique_id=2089427591]
+script = ExtResource("1_")
+RingRadius = null
+RingWidth = null
+ImpactColor = null
+CaptureColor = null
+ImpactDurationSeconds = null
+CaptureDurationSeconds = null
+
+[node name="ImpactLayer" type="Node2D" parent="." unique_id=1964193974]
+modulate = Color(1, 1, 1, 0)
+scale = Vector2(1.2, 1.2)
+
+[node name="Ring" type="Line2D" parent="ImpactLayer" unique_id=142930611]
+points = PackedVector2Array(30, 0, 28.98, 7.76, 25.98, 15, 21.21, 21.21, 15, 25.98, 7.76, 28.98, 0, 30, -7.76, 28.98, -15, 25.98, -21.21, 21.21, -25.98, 15, -28.98, 7.76, -30, 0, -28.98, -7.76, -25.98, -15, -21.21, -21.21, -15, -25.98, -7.76, -28.98, 0, -30, 7.76, -28.98, 15, -25.98, 21.21, -21.21, 25.98, -15, 28.98, -7.76)
+closed = true
+width = 1.0
+default_color = Color(1, 0.2, 0.2, 1)
+
+[node name="CaptureLayer" type="Node2D" parent="." unique_id=1909409996]
+modulate = Color(1, 1, 1, 0)
+scale = Vector2(1.3027626, 1.3027626)
+
+[node name="Ring" type="Line2D" parent="CaptureLayer" unique_id=318371770]
+points = PackedVector2Array(38, 0, 36.71, 9.83, 32.91, 19, 26.87, 26.87, 19, 32.91, 9.83, 36.71, 0, 38, -9.83, 36.71, -19, 32.91, -26.87, 26.87, -32.91, 19, -36.71, 9.83, -38, 0, -36.71, -9.83, -32.91, -19, -26.87, -26.87, -19, -32.91, -9.83, -36.71, 0, -38, 9.83, -36.71, 19, -32.91, 26.87, -26.87, 32.91, -19, 36.71, -9.83)
+closed = true
+width = 1.5
+default_color = Color(0.30782935, 0.509923, 1, 1)
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=552887919]
+libraries/ = SubResource("AnimationLibrary_1")

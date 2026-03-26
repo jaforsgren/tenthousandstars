@@ -7,8 +7,9 @@ blend_mode = 1
 
 [sub_resource type="Gradient" id="Gradient_sygu2"]
 interpolation_mode = 2
-offsets = PackedFloat32Array(0, 0.3772563, 0.54873645, 0.72021663)
-colors = PackedColorArray(0.7328067, 0.61960703, 0.54492956, 0.95686275, 0.40069348, 0.31112665, 0.11470831, 0.9827152, 0.08737427, 0.067843504, 0.02501301, 0.99623084, 0, 0, 0, 1)
+interpolation_color_space = 2
+offsets = PackedFloat32Array(0, 0.036101084, 0.299639, 0.71119136)
+colors = PackedColorArray(1.5448625, 1.0405341, 0.7555223, 0.9843137, 1.2870692, 0.8580292, 0.6163186, 0.98944354, 0.406631, 0.25874728, 0.17547049, 0.99570036, 0, 0, 0, 1)
 
 [sub_resource type="GradientTexture2D" id="GradientTexture2D_klkxq"]
 gradient = SubResource("Gradient_sygu2")
@@ -19,20 +20,24 @@ fill_from = Vector2(0.4957265, 0.5192308)
 blend_mode = 1
 
 [sub_resource type="CanvasItemMaterial" id="CanvasItemMaterial_sygu2"]
+blend_mode = 2
 
 [node name="SystemCircleNode" type="Node2D" unique_id=1335027929]
 
 [node name="gradient" type="Sprite2D" parent="." unique_id=1116226013]
 material = SubResource("CanvasItemMaterial_ps4o4")
-scale = Vector2(1.321, 1.163)
+position = Vector2(9.536743e-07, 0)
+scale = Vector2(1.6761252, 1.472125)
 texture = SubResource("GradientTexture2D_klkxq")
 
 [node name="gradient2" type="Sprite2D" parent="." unique_id=35142583]
 material = SubResource("CanvasItemMaterial_ps4o4")
-scale = Vector2(0.181, 0.159)
+position = Vector2(-4.7683716e-07, 0)
+scale = Vector2(0.106125005, 0.09512499)
 texture = SubResource("GradientTexture2D_klkxq")
 
 [node name="Sun" type="Sprite2D" parent="." unique_id=2144270667]
+visible = false
 material = SubResource("CanvasItemMaterial_ysmf3")
 scale = Vector2(0.105, 0.105)
 texture = ExtResource("1_ps4o4")

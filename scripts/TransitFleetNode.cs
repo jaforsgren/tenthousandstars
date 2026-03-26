@@ -3,19 +3,16 @@ using System;
 
 namespace Tts;
 
+// Color is applied via Modulate so the white Polygon2D takes the fleet's color.
 public partial class TransitFleetNode : Node2D
 {
-	[Export] public float DotRadius { get; set; } = 5f;
-
-	private Color _dotColor;
 	private Action? _onArrive;
 
 	public void Launch(Vector2 from, Vector2 to, Color color, float durationSeconds, Action onArrive)
 	{
-		_dotColor = color;
+		Modulate = color;
 		_onArrive = onArrive;
 		Position = from;
-		QueueRedraw();
 
 		var tween = CreateTween();
 		tween.TweenProperty(this, "position", to, durationSeconds)
@@ -28,6 +25,4 @@ public partial class TransitFleetNode : Node2D
 		_onArrive?.Invoke();
 		QueueFree();
 	}
-
-	public override void _Draw() => DrawCircle(Vector2.Zero, DotRadius, _dotColor);
 }

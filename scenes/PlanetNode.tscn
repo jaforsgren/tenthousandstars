@@ -2,10 +2,18 @@
 
 [ext_resource type="Texture2D" uid="uid://b1nciwk0gguj7" path="res://assets/images/systems/planet01.png" id="1_vbjpx"]
 
+[sub_resource type="CanvasItemMaterial" id="CanvasItemMaterial_vbjpx"]
+blend_mode = 2
+
+[sub_resource type="CanvasItemMaterial" id="CanvasItemMaterial_otpry"]
+blend_mode = 1
+
 [node name="PlanetNode" type="Node2D" unique_id=2095391403]
+material = SubResource("CanvasItemMaterial_vbjpx")
 
 [node name="Planet01" type="Sprite2D" parent="." unique_id=1494034074]
 z_index = 1
+material = SubResource("CanvasItemMaterial_otpry")
 position = Vector2(0, 4.7683716e-07)
 scale = Vector2(0.1, 0.1)
 texture = ExtResource("1_vbjpx")

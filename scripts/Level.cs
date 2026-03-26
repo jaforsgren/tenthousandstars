@@ -49,6 +49,7 @@ public partial class Level : Node2D
 	private float _systemRadius;
 	private float _transitDurationSeconds;
 	private PackedScene _transitFleetScene = null!;
+	private PackedScene _combatEffectScene = null!;
 	private bool _fogEnabled;
 	private float _fogClearSeconds;
 	private float _fadeOutSeconds;
@@ -193,6 +194,7 @@ public partial class Level : Node2D
 		_fadeOutSeconds = levelCfg.FadeOutSeconds;
 		_transitDurationSeconds = levelCfg.TransitDurationSeconds;
 		_transitFleetScene = GD.Load<PackedScene>("res://scenes/TransitFleetNode.tscn");
+		_combatEffectScene = GD.Load<PackedScene>("res://scenes/CombatEffectNode.tscn");
 		_routeSet = new HashSet<(int, int)>(data.Routes);
 
 		SpawnRoutes(data);
@@ -747,11 +749,15 @@ public partial class Level : Node2D
 			if (result.AttackerWins)
 			{
 				target.Capture(result.AttackerRemainder, SystemOwner.Player);
+				SpawnCombatEffect(toIndex, attackerWon: true);
 				if (_camera.IsFollowing)
 					_camera.FollowSystem(target.GlobalPosition);
 			}
 			else
+			{
 				target.SustainDefense(result.DefenderRemainder);
+				SpawnCombatEffect(toIndex, attackerWon: false);
+			}
 		}
 
 		UpdateFogOfWar();
@@ -782,12 +788,36 @@ public partial class Level : Node2D
 		{
 			var result = CombatResolver.Resolve(fleet, target.Ships, _defenderBonus);
 			if (result.AttackerWins)
+			{
 				target.Capture(result.AttackerRemainder, senderOwner, aiPlayer, aiOwnerColor);
+				SpawnCombatEffect(toIndex, attackerWon: true);
+			}
 			else
+			{
 				target.SustainDefense(result.DefenderRemainder);
+				SpawnCombatEffect(toIndex, attackerWon: false);
+			}
 		}
 
 		OnAiActionTaken();
+	}
+
+	private void SpawnCombatEffect(int systemIndex, bool attackerWon)
+	{
+		var pos = _systems[systemIndex].Position;
+
+		var impact = _combatEffectScene.Instantiate<CombatEffectNode>();
+		AddChild(impact);
+		impact.Position = pos;
+		impact.PlayImpact();
+
+		if (!attackerWon)
+			return;
+
+		var capture = _combatEffectScene.Instantiate<CombatEffectNode>();
+		AddChild(capture);
+		capture.Position = pos;
+		capture.PlayCapture();
 	}
 
 	public override void _Draw()
