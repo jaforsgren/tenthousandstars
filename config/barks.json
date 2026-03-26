@@ -20,5 +20,19 @@
 	{ "Npc": "Pilot",          "Message": "Hostile contacts detected!" },
 	{ "Npc": "Wing Commander", "Message": "Defense grid online. Brace for impact." },
 	{ "Npc": "Tactical",       "Message": "Enemy fleet approaching our position." }
+  ],
+  "PlayerForge": [
+	{ "Npc": "Engineer",       "Message": "Forge systems online. Production up." },
+	{ "Npc": "Engineer",       "Message": "Retrofitting complete. Output increased." },
+	{ "Npc": "Engineer",       "Message": "Industrial capacity expanded." },
+	{ "Npc": "Logistics",      "Message": "Supply lines optimized. Fleet output up." },
+	{ "Npc": "Engineer",       "Message": "Manufacturing cores at full capacity." }
+  ],
+  "PlayerFortify": [
+	{ "Npc": "Commander",      "Message": "Fortifications in place. Hold this system." },
+	{ "Npc": "Engineer",       "Message": "Defense grid active. They won't get through easy." },
+	{ "Npc": "Commander",      "Message": "Perimeter secured. Dig in." },
+	{ "Npc": "Tactical",       "Message": "Defensive emplacements online." },
+	{ "Npc": "Commander",      "Message": "This position is reinforced. Hold the line." }
   ]
 }

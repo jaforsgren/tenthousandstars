@@ -33,6 +33,13 @@ public partial class SystemNode : Node2D
 	private SystemCircleNode _systemCircle = null!;
 	private FleetNodeBase? _fleetNode;
 	private readonly List<PlanetNode> _planetNodes = [];
+	private SystemUpgrade _upgrade = SystemUpgrade.None;
+	private Node2D? _upgradeBadge;
+	private float _forgeProductionBonus;
+	private float _fortifyDefenseBonusMultiplier;
+
+	private const string ForgeBadgePath = "res://scenes/ForgeUpgradeBadge.tscn";
+	private const string FortifyBadgePath = "res://scenes/FortifyUpgradeBadge.tscn";
 
 	private static readonly Color ScoutedModulate = new(0.5f, 0.55f, 0.65f, 0.45f);
 	private static readonly Color ObjectiveRingColor = new(1f, 0.85f, 0.2f, 0.8f);
@@ -52,7 +59,10 @@ public partial class SystemNode : Node2D
 	private bool _isDefend;
 	private SystemOwner _targetOwner = SystemOwner.None;
 
-	public float ProductionRate => _planets.Sum(p => p.ProductionRate) + _baseProduction;
+	public float ProductionRate => (_planets.Sum(p => p.ProductionRate) + _baseProduction)
+		* (_upgrade == SystemUpgrade.Forge ? 1f + _forgeProductionBonus : 1f);
+	public float DefenseBonusMultiplier => _upgrade == SystemUpgrade.Fortify ? _fortifyDefenseBonusMultiplier : 0f;
+	public SystemUpgrade Upgrade => _upgrade;
 	public float Ships => _ships;
 	public SystemOwner Owner => _owner;
 	public FogState FogState => _fogState;
@@ -90,6 +100,27 @@ public partial class SystemNode : Node2D
 		_fleetNode?.UpdateFleet(_ships, _selected);
 	}
 
+	public void SpendShips(float amount)
+	{
+		_ships = Mathf.Max(0f, _ships - amount);
+		_fleetNode?.UpdateFleet(_ships, _selected);
+	}
+
+	public void ApplyUpgrade(SystemUpgrade upgrade)
+	{
+		_upgrade = upgrade;
+		_upgradeBadge?.QueueFree();
+		_upgradeBadge = null;
+
+		if (upgrade == SystemUpgrade.None || Engine.IsEditorHint())
+			return;
+
+		var scenePath = upgrade == SystemUpgrade.Forge ? ForgeBadgePath : FortifyBadgePath;
+		_upgradeBadge = GD.Load<PackedScene>(scenePath).Instantiate<Node2D>();
+		AddChild(_upgradeBadge);
+		_upgradeBadge.Position = new Vector2(_systemRadius * 0.6f, -_systemRadius * 0.9f);
+	}
+
 	public void Capture(float ships, SystemOwner newOwner, AiPlayerData? aiPlayer = null, Color? aiOwnerColor = null)
 	{
 		_owner = newOwner;
@@ -97,6 +128,7 @@ public partial class SystemNode : Node2D
 		_aiPlayerData = aiPlayer;
 		_aiOwnerColor = aiOwnerColor;
 		_systemCircle.SetOutline(newOwner == SystemOwner.None ? _neutralSystemOutline : _playerSystemOutline);
+		ApplyUpgrade(SystemUpgrade.None);
 		SwapFleetNode();
 		QueueRedraw();
 	}
@@ -215,6 +247,9 @@ public partial class SystemNode : Node2D
 		_playerFleetOutline = cfg.FleetOutline.ToColor();
 		_neutralFleetFill = cfg.NeutralFleetFill.ToColor();
 		_neutralFleetOutline = cfg.NeutralFleetOutline.ToColor();
+		var upgradeCfg = ConfigLoader.Load<UpgradeConfig>("res://config/upgrade.json");
+		_forgeProductionBonus = upgradeCfg.ForgeProductionBonus;
+		_fortifyDefenseBonusMultiplier = upgradeCfg.FortifyDefenseBonusMultiplier;
 		_systemCircle = new SystemCircleNode();
 		AddChild(_systemCircle);
 		// Default to neutral outline; Initialize() updates it once the owner is known

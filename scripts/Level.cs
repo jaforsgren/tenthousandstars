@@ -77,6 +77,9 @@ public partial class Level : Node2D
 	private double _lastSystemClickTime = double.MinValue;
 	private int _lastClickedSystemIndex = -1;
 	private RerouteButtonNode _rerouteButtonNode = null!;
+	private UpgradeButtonNode _forgeButtonNode = null!;
+	private UpgradeButtonNode _fortifyButtonNode = null!;
+	private UpgradeConfig _upgradeCfg = null!;
 	private readonly Dictionary<int, int> _rerouteTargets = [];
 	private readonly Dictionary<int, RerouteArrowNode> _rerouteArrows = [];
 	private bool _isPickingRerouteTarget;
@@ -134,6 +137,8 @@ public partial class Level : Node2D
 		SpawnNotificationPanel();
 		SpawnInfoButton();
 		SpawnRerouteButtonNode();
+		SpawnForgeButtonNode();
+		SpawnFortifyButtonNode();
 		SpawnAiController(data, aiCfg);
 		SpawnChatWindow();
 
@@ -228,6 +233,7 @@ public partial class Level : Node2D
 		_transitFleetScene = GD.Load<PackedScene>("res://scenes/TransitFleetNode.tscn");
 		_combatEffectScene = GD.Load<PackedScene>("res://scenes/CombatEffectNode.tscn");
 		_rerouteArrowScene = GD.Load<PackedScene>("res://scenes/RerouteArrowNode.tscn");
+		_upgradeCfg = ConfigLoader.Load<UpgradeConfig>("res://config/upgrade.json");
 		_routeSet = new HashSet<(int, int)>(data.Routes);
 
 		SpawnRoutes(data);
@@ -326,6 +332,24 @@ public partial class Level : Node2D
 		layer.AddChild(_rerouteButtonNode);
 	}
 
+	private void SpawnForgeButtonNode()
+	{
+		var layer = new CanvasLayer { Layer = 12 };
+		AddChild(layer);
+		var scene = GD.Load<PackedScene>("res://scenes/ForgeButtonNode.tscn");
+		_forgeButtonNode = scene.Instantiate<UpgradeButtonNode>();
+		layer.AddChild(_forgeButtonNode);
+	}
+
+	private void SpawnFortifyButtonNode()
+	{
+		var layer = new CanvasLayer { Layer = 12 };
+		AddChild(layer);
+		var scene = GD.Load<PackedScene>("res://scenes/FortifyButtonNode.tscn");
+		_fortifyButtonNode = scene.Instantiate<UpgradeButtonNode>();
+		layer.AddChild(_fortifyButtonNode);
+	}
+
 	private void ShowMissionBrief()
 	{
 		_notificationPanel.Show(
@@ -348,6 +372,8 @@ public partial class Level : Node2D
 		_selectionPanel.Hide();
 		_aiSystemPanel.Hide();
 		_rerouteButtonNode.Hide();
+		_forgeButtonNode.Hide();
+		_fortifyButtonNode.Hide();
 		ShowEndSequence("Mission Complete", _activeCondition.EndDescription);
 	}
 
@@ -364,6 +390,8 @@ public partial class Level : Node2D
 			_selectionPanel.Hide();
 			_aiSystemPanel.Hide();
 			_rerouteButtonNode.Hide();
+			_forgeButtonNode.Hide();
+			_fortifyButtonNode.Hide();
 			ShowEndSequence("Defeated", "The marked system has fallen. The mission is lost.");
 			return;
 		}
@@ -375,6 +403,8 @@ public partial class Level : Node2D
 		_selectionPanel.Hide();
 		_aiSystemPanel.Hide();
 		_rerouteButtonNode.Hide();
+		_forgeButtonNode.Hide();
+		_fortifyButtonNode.Hide();
 		var description = _endStateCfg.DefeatDescriptions[_rng.Next(_endStateCfg.DefeatDescriptions.Length)];
 		ShowEndSequence("Defeated", description);
 	}
@@ -481,6 +511,8 @@ public partial class Level : Node2D
 		_camera = null!;
 		_infoButton = null!;
 		_rerouteButtonNode = null!;
+		_forgeButtonNode = null!;
+		_fortifyButtonNode = null!;
 		_aiController = null!;
 		_lastSystemClickTime = double.MinValue;
 		_lastClickedSystemIndex = -1;
@@ -489,6 +521,7 @@ public partial class Level : Node2D
 		_isPickingRerouteTarget = false;
 		_rerouteSourceIndex = -1;
 		_rerouteArrowScene = null!;
+		_upgradeCfg = null!;
 	}
 
 	private void SpawnRoutes(LevelData data)
@@ -665,6 +698,8 @@ public partial class Level : Node2D
 		_selectionPanel.Hide();
 		_aiSystemPanel.Hide();
 		_rerouteButtonNode.Hide();
+		_forgeButtonNode.Hide();
+		_fortifyButtonNode.Hide();
 		ShowEndSequence("Time Expired", _activeCondition?.TimeoutMessage ?? "The mission clock has run out.");
 	}
 
@@ -822,6 +857,8 @@ public partial class Level : Node2D
 		_camera.ExitFollowMode();
 		_infoButton.Hide();
 		_rerouteButtonNode.Hide();
+		_forgeButtonNode.Hide();
+		_fortifyButtonNode.Hide();
 		_selectionPanel.Hide();
 	}
 
@@ -830,9 +867,16 @@ public partial class Level : Node2D
 		var viewportSize = GetViewport().GetVisibleRect().Size;
 		_infoButton.ShowFor(viewportSize, () => ShowFleetInfo(systemIndex));
 		if (_systems[systemIndex].IsPlayerOwned)
+		{
 			_rerouteButtonNode.ShowFor(viewportSize, _rerouteTargets.ContainsKey(systemIndex), () => OnRerouteButtonPressed(systemIndex));
+			ShowPlayerUpgradeButtons(systemIndex);
+		}
 		else
+		{
 			_rerouteButtonNode.Hide();
+			_forgeButtonNode.Hide();
+			_fortifyButtonNode.Hide();
+		}
 	}
 
 	private void SelectSystem(int systemIndex)
@@ -840,15 +884,24 @@ public partial class Level : Node2D
 		var viewportSize = GetViewport().GetVisibleRect().Size;
 		_infoButton.ShowFor(viewportSize, () => ShowSystemInfo(systemIndex));
 		if (_systems[systemIndex].IsPlayerOwned)
+		{
 			_rerouteButtonNode.ShowFor(viewportSize, _rerouteTargets.ContainsKey(systemIndex), () => OnRerouteButtonPressed(systemIndex));
+			ShowPlayerUpgradeButtons(systemIndex);
+		}
 		else
+		{
 			_rerouteButtonNode.Hide();
+			_forgeButtonNode.Hide();
+			_fortifyButtonNode.Hide();
+		}
 	}
 
 	private void SelectAiSystem(int systemIndex)
 	{
 		_infoButton.ShowFor(GetViewport().GetVisibleRect().Size, () => ShowAiSystemInfo(systemIndex));
 		_rerouteButtonNode.Hide();
+		_forgeButtonNode.Hide();
+		_fortifyButtonNode.Hide();
 	}
 
 	private void ShowAiSystemInfo(int systemIndex)
@@ -894,6 +947,45 @@ public partial class Level : Node2D
 		var description = Pick(_loreConfig.System.Descriptions, seed);
 		_aiSystemPanel.Hide();
 		_selectionPanel.ShowAt(title, description, GetViewport().GetVisibleRect().Size);
+	}
+
+	private void ShowPlayerUpgradeButtons(int systemIndex)
+	{
+		var viewportSize = GetViewport().GetVisibleRect().Size;
+		var upgrade = _systems[systemIndex].Upgrade;
+		var canAfford = _systems[systemIndex].Ships >= _upgradeCfg.UpgradeCost;
+
+		var fortifyLabel = upgrade == SystemUpgrade.Fortify ? "Remove\nFortify" : "Fortify\nSystem";
+		var fortifyDisabled = upgrade == SystemUpgrade.Fortify ? false : (upgrade != SystemUpgrade.None || !canAfford);
+		Action fortifyAction = upgrade == SystemUpgrade.Fortify
+			? () => DoUpgrade(systemIndex, SystemUpgrade.None)
+			: () => DoUpgrade(systemIndex, SystemUpgrade.Fortify);
+
+		var forgeLabel = upgrade == SystemUpgrade.Forge ? "Remove\nForge" : "Forge\nSystem";
+		var forgeDisabled = upgrade == SystemUpgrade.Forge ? false : (upgrade != SystemUpgrade.None || !canAfford);
+		Action forgeAction = upgrade == SystemUpgrade.Forge
+			? () => DoUpgrade(systemIndex, SystemUpgrade.None)
+			: () => DoUpgrade(systemIndex, SystemUpgrade.Forge);
+
+		_fortifyButtonNode.ShowFor(viewportSize, slotFromRight: 3, label: fortifyLabel, disabled: fortifyDisabled, onPressed: fortifyAction);
+		_forgeButtonNode.ShowFor(viewportSize, slotFromRight: 4, label: forgeLabel, disabled: forgeDisabled, onPressed: forgeAction);
+	}
+
+	private void DoUpgrade(int systemIndex, SystemUpgrade upgrade)
+	{
+		if (upgrade != SystemUpgrade.None)
+			_systems[systemIndex].SpendShips(_upgradeCfg.UpgradeCost);
+		_systems[systemIndex].ApplyUpgrade(upgrade);
+
+		var pool = upgrade switch
+		{
+			SystemUpgrade.Forge => _barkConfig?.PlayerForge,
+			SystemUpgrade.Fortify => _barkConfig?.PlayerFortify,
+			_ => null
+		};
+		PostBark(pool);
+
+		ShowPlayerUpgradeButtons(systemIndex);
 	}
 
 	private void ShowPlanetInfo(int systemIndex, int planetIndex)
@@ -957,7 +1049,8 @@ public partial class Level : Node2D
 		}
 		else
 		{
-			var result = CombatResolver.Resolve(fleet, target.Ships, _defenderBonus);
+			var defBonus = _defenderBonus * (1f + target.DefenseBonusMultiplier);
+			var result = CombatResolver.Resolve(fleet, target.Ships, defBonus);
 			if (result.AttackerWins)
 			{
 				target.Capture(result.AttackerRemainder, SystemOwner.Player);
@@ -1005,7 +1098,8 @@ public partial class Level : Node2D
 		}
 		else
 		{
-			var result = CombatResolver.Resolve(fleet, target.Ships, _defenderBonus);
+			var defBonus = _defenderBonus * (1f + target.DefenseBonusMultiplier);
+			var result = CombatResolver.Resolve(fleet, target.Ships, defBonus);
 			if (result.AttackerWins)
 			{
 				target.Capture(result.AttackerRemainder, senderOwner, aiPlayer, aiOwnerColor);
@@ -1102,6 +1196,8 @@ public partial class Level : Node2D
 			_isPickingRerouteTarget = true;
 			_rerouteSourceIndex = systemIndex;
 			_rerouteButtonNode.Hide();
+			_forgeButtonNode.Hide();
+			_fortifyButtonNode.Hide();
 			_infoButton.Hide();
 			_selectionPanel.Hide();
 		}
@@ -1120,8 +1216,9 @@ public partial class Level : Node2D
 
 			var si = _rerouteSourceIndex;
 			SetRerouteTarget(si, i);
-			_rerouteButtonNode.ShowFor(GetViewport().GetVisibleRect().Size, hasActiveRoute: true,
-				() => OnRerouteButtonPressed(si));
+			var viewportSize = GetViewport().GetVisibleRect().Size;
+			_rerouteButtonNode.ShowFor(viewportSize, hasActiveRoute: true, () => OnRerouteButtonPressed(si));
+			ShowPlayerUpgradeButtons(si);
 			_rerouteSourceIndex = -1;
 			return;
 		}
