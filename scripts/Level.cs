@@ -434,8 +434,11 @@ public partial class Level : Node2D
 		{
 			for (var i = 0; i < _systems.Count; i++)
 				_systems[i].SetFogState(FogState.Revealed, _fogClearSeconds);
-			foreach (var (_, _, routeNode) in _routeNodes)
+			foreach (var (from, to, routeNode) in _routeNodes)
+			{
 				routeNode.SetFogState(FogState.Revealed, _fogClearSeconds);
+				routeNode.SetOwnerColor(SharedOwnerColor(from, to));
+			}
 			return;
 		}
 
@@ -480,13 +483,16 @@ public partial class Level : Node2D
 				routeState = FogState.Scouted;
 
 			routeNode.SetFogState(routeState, _fogClearSeconds);
+			routeNode.SetOwnerColor(SharedOwnerColor(from, to));
 		}
 	}
 
 	private void SpawnSystems(LevelData data)
 	{
 		var aiCfg = ConfigLoader.Load<AiConfig>("res://config/ai.json");
+		var sysCfg = ConfigLoader.Load<SystemConfig>("res://config/system.json");
 		_aiColors = BuildAiColors(data.AiPlayers, aiCfg);
+		_aiColors[SystemOwner.Player] = sysCfg.FleetOutline.ToColor();
 
 		foreach (var systemData in data.Systems)
 		{
@@ -498,6 +504,15 @@ public partial class Level : Node2D
 			system.Initialize(systemData.Planets, systemData.Owner, systemData.InitialFleet, aiPlayer, aiColor);
 			_systems.Add(system);
 		}
+	}
+
+	private Color? SharedOwnerColor(int fromIndex, int toIndex)
+	{
+		var fromOwner = _systems[fromIndex].Owner;
+		var toOwner = _systems[toIndex].Owner;
+		if (fromOwner == SystemOwner.None || fromOwner != toOwner)
+			return null;
+		return _aiColors.TryGetValue(fromOwner, out var color) ? color : null;
 	}
 
 	private Dictionary<SystemOwner, Color> BuildAiColors(IReadOnlyList<AiPlayerData> aiPlayers, AiConfig aiCfg)

@@ -1,6 +1,6 @@
 {
   "MinOpponents": 1,
-  "MaxOpponents": 2,
+  "MaxOpponents": 10,
   "ThinkIntervalSeconds": 3.0,
   "StrategicMinSpareShips": 2.0,
   "CautiousAttackChance": 0.15,

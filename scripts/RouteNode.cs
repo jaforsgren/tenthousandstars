@@ -10,12 +10,19 @@ public partial class RouteNode : Node2D
 	private Vector2 _from;
 	private Vector2 _to;
 	private float _routeWidth;
+	private Color? _ownerColor;
 
 	// Positions are in Level (parent) local space; RouteNode sits at (0,0) so local == parent local.
 	public void Initialize(Vector2 from, Vector2 to)
 	{
 		_from = from;
 		_to = to;
+	}
+
+	public void SetOwnerColor(Color? color)
+	{
+		_ownerColor = color;
+		QueueRedraw();
 	}
 
 	private FogState _fogState = FogState.Revealed;
@@ -46,5 +53,11 @@ public partial class RouteNode : Node2D
 		_routeWidth = ConfigLoader.Load<RouteConfig>("res://config/route.json").RouteWidth;
 	}
 
-	public override void _Draw() => DrawLine(_from, _to, RouteColor, _routeWidth);
+	public override void _Draw()
+	{
+		var color = _ownerColor.HasValue
+			? new Color(_ownerColor.Value.R, _ownerColor.Value.G, _ownerColor.Value.B, 0.5f)
+			: RouteColor;
+		DrawLine(_from, _to, color, _routeWidth);
+	}
 }
