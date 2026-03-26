@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Text.Json;
 using Godot;
@@ -14,7 +15,16 @@ public static class ConfigLoader
 		if (_cache.TryGetValue(resPath, out var cached))
 			return (T)cached;
 		using var file = FileAccess.Open(resPath, FileAccess.ModeFlags.Read);
-		var result = JsonSerializer.Deserialize<T>(file.GetAsText(), _options)!;
+		T result;
+		try
+		{
+			result = JsonSerializer.Deserialize<T>(file.GetAsText(), _options)
+				?? throw new InvalidOperationException($"Failed to load config '{resPath}': deserialized to null");
+		}
+		catch (JsonException ex)
+		{
+			throw new InvalidOperationException($"Failed to load config '{resPath}': {ex.Message}", ex);
+		}
 		_cache[resPath] = result;
 		return result;
 	}
