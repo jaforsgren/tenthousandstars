@@ -21,8 +21,7 @@ public partial class AiFleetNode : FleetNodeBase
 		_fill = new Color(dispositionColor.R, dispositionColor.G, dispositionColor.B, 0.3f);
 		_outline = dispositionColor;
 
-		var index = (int)aiPlayer.Owner - (int)SystemOwner.Ai1 + 1;
-		var idText = $"AI{index} {aiPlayer.Name}";
+		var idText = aiPlayer.FactionName;
 
 		BaseInitialize(systemRadius, gap, radius, labelWidth, labelHeight, outlineWidth, CountFontSize);
 

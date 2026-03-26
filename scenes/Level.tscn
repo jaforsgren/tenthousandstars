@@ -1,38 +1,7 @@
 [gd_scene format=3 uid="uid://oh7xwg5sdut4"]
 
 [ext_resource type="Script" uid="uid://ct5eymu2l0jtw" path="res://scripts/Level.cs" id="1"]
-[ext_resource type="PackedScene" uid="uid://ctransitfl001" path="res://scenes/TransitFleetNode.tscn" id="2_6vs76"]
-[ext_resource type="PackedScene" uid="uid://ccombateff01" path="res://scenes/CombatEffectNode.tscn" id="3_kl8ac"]
 
 [node name="Level" type="Node2D" unique_id=2067866758]
 script = ExtResource("1")
 PreviewSeed = -1
-_isDragging = false
-_hasDragCandidate = false
-_draggingFromIndex = -1
-_dragCandidateIndex = -1
-_pressWorldPos = Vector2(0, 0)
-_dragWorldPos = Vector2(0, 0)
-_ghostFleetRadius = 8.0
-_ghostFleetFill = Color(0.9, 0.2, 0.2, 0.3)
-_ghostFleetOutline = Color(1, 0.3, 0, 1)
-_ghostFleetOutlineWidth = 0.5
-_defenderBonus = 1.0
-_systemRadius = 50.0
-_transitDurationSeconds = 1.2
-_transitFleetScene = ExtResource("2_6vs76")
-_combatEffectScene = ExtResource("3_kl8ac")
-_fogEnabled = false
-_fogClearSeconds = 1.5
-_fadeOutSeconds = 4.0
-_fadeOverlay = null
-_selectionPanel = null
-_aiSystemPanel = null
-_notificationPanel = null
-_endConditionReached = false
-_objectiveSystemIndex = -1
-_camera = null
-_infoButton = null
-_aiController = null
-_lastSystemClickTime = -1.7976931348623157e+308
-_lastClickedSystemIndex = -1

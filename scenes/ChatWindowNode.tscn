@@ -1,0 +1,38 @@
+[gd_scene format=3 uid="uid://chatwnd12345"]
+
+[ext_resource type="Script" path="res://scripts/ChatWindowNode.cs" id="1_script"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_line"]
+font_size = 10
+line_spacing = 2.0
+
+[node name="ChatWindowNode" type="Control"]
+custom_minimum_size = Vector2(464, 54)
+script = ExtResource("1_script")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+layout_mode = 0
+offset_right = 464.0
+offset_bottom = 54.0
+theme_override_constants/separation = 0
+
+[node name="Line1" type="Label" parent="VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+self_modulate = Color(1, 1, 1, 0.35)
+text = ""
+label_settings = SubResource("LabelSettings_line")
+
+[node name="Line2" type="Label" parent="VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+self_modulate = Color(1, 1, 1, 0.6)
+text = ""
+label_settings = SubResource("LabelSettings_line")
+
+[node name="Line3" type="Label" parent="VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+self_modulate = Color(1, 1, 1, 1)
+text = ""
+label_settings = SubResource("LabelSettings_line")

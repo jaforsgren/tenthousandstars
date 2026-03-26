@@ -68,6 +68,9 @@ public partial class Level : Node2D
 	private int _defendSystemIndex = -1;
 	private CountdownTimerNode? _countdownTimer;
 	private string? _resolvedMissionDescription;
+	private ChatWindowNode? _chatWindow;
+	private BarkConfig? _barkConfig;
+	private Dictionary<string, string[]> _aiDispositionBarks = [];
 	private CameraController _camera = null!;
 	private InfoButton _infoButton = null!;
 	private AiController _aiController = null!;
@@ -96,6 +99,8 @@ public partial class Level : Node2D
 	{
 		var genCfg = ConfigLoader.Load<LevelGeneratorConfig>("res://config/level_generator.json");
 		var aiCfg = ConfigLoader.Load<AiConfig>("res://config/ai.json");
+		_barkConfig = ConfigLoader.Load<BarkConfig>("res://config/barks.json");
+		_aiDispositionBarks = aiCfg.DispositionBarks;
 		var data = LevelGenerator.Generate(_rng, genCfg, aiCfg);
 		Build(data);
 		_aiPlayers = data.AiPlayers;
@@ -122,6 +127,7 @@ public partial class Level : Node2D
 		SpawnNotificationPanel();
 		SpawnInfoButton();
 		SpawnAiController(data, aiCfg);
+		SpawnChatWindow();
 
 		if (_activeCondition.TimeoutSeconds.HasValue)
 			SpawnCountdownTimer(_activeCondition.TimeoutSeconds.Value);
@@ -450,6 +456,7 @@ public partial class Level : Node2D
 		_defendSystemIndex = -1;
 		_countdownTimer = null;
 		_resolvedMissionDescription = null;
+		_chatWindow = null;
 		_camera = null!;
 		_infoButton = null!;
 		_aiController = null!;
@@ -559,7 +566,7 @@ public partial class Level : Node2D
 		_targetPlayerOwner = target.Owner;
 		foreach (var system in _systems)
 			system.SetTargetOwner(_targetPlayerOwner);
-		_resolvedMissionDescription = $"{target.Disposition} faction marked for elimination. Destroy them before time runs out.";
+		_resolvedMissionDescription = $"{target.FactionName} marked for elimination. Destroy them before time runs out.";
 	}
 
 	private void ResolveDefendSystem()
@@ -581,6 +588,46 @@ public partial class Level : Node2D
 		const float timerPad = 8f;
 		_countdownTimer.Position = new Vector2(viewportSize.X - timerWidth - timerPad, timerPad);
 		_countdownTimer.Initialize(seconds, OnCountdownExpired);
+	}
+
+	private void SpawnChatWindow()
+	{
+		var layer = new CanvasLayer { Layer = 10 };
+		AddChild(layer);
+		var scene = GD.Load<PackedScene>("res://scenes/ChatWindowNode.tscn");
+		_chatWindow = scene.Instantiate<ChatWindowNode>();
+		layer.AddChild(_chatWindow);
+		var viewportSize = GetViewport().GetVisibleRect().Size;
+		const float chatHeight = 54f;
+		const float sidePad = 8f;
+		const float bottomPad = 8f;
+		_chatWindow.Position = new Vector2(sidePad, viewportSize.Y - chatHeight - bottomPad);
+	}
+
+	private void PostPlayerTransitBark(int toIndex)
+	{
+		var pool = _systems[toIndex].Owner == SystemOwner.Player
+			? _barkConfig?.PlayerMove
+			: _barkConfig?.PlayerAttack;
+		PostBark(pool);
+	}
+
+	private void PostBark(Bark[]? pool)
+	{
+		if (pool == null || pool.Length == 0 || _chatWindow == null)
+			return;
+		var bark = pool[_rng.Next(pool.Length)];
+		_chatWindow.PostMessage(bark.Npc, bark.Message);
+	}
+
+	private void PostAiBark(AiPlayerData aiPlayer)
+	{
+		if (_chatWindow == null)
+			return;
+		if (!_aiDispositionBarks.TryGetValue(aiPlayer.Disposition.ToString(), out var messages) || messages.Length == 0)
+			return;
+		var message = messages[_rng.Next(messages.Length)];
+		_chatWindow.PostMessage(aiPlayer.FactionName, message);
 	}
 
 	private void OnCountdownExpired()
@@ -829,6 +876,8 @@ public partial class Level : Node2D
 			var toIndex = i;
 			var fleet = _systems[fromIndex].TakeFleet();
 
+			PostPlayerTransitBark(toIndex);
+
 			var fromEdge = EdgeToward(_systems[fromIndex].Position, _systems[toIndex].Position, _systemRadius);
 			var toEdge = EdgeToward(_systems[toIndex].Position, _systems[fromIndex].Position, _systemRadius);
 
@@ -884,6 +933,12 @@ public partial class Level : Node2D
 
 	private void LaunchAiTransit(int fromIndex, int toIndex, float fleet, AiPlayerData aiPlayer)
 	{
+		if (_systems[toIndex].Owner == SystemOwner.Player)
+		{
+			PostBark(_barkConfig?.PlayerUnderAttack);
+			PostAiBark(aiPlayer);
+		}
+
 		var dotColor = _aiColors[aiPlayer.Owner];
 		var fromEdge = EdgeToward(_systems[fromIndex].Position, _systems[toIndex].Position, _systemRadius);
 		var toEdge = EdgeToward(_systems[toIndex].Position, _systems[fromIndex].Position, _systemRadius);

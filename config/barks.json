@@ -1,0 +1,24 @@
+{
+  "PlayerMove": [
+	{ "Npc": "Wing Commander", "Message": "On route to system." },
+	{ "Npc": "Wing Commander", "Message": "Fleet inbound, ETA nominal." },
+	{ "Npc": "Pilot",          "Message": "Holding formation. Moving out." },
+	{ "Npc": "Navigator",      "Message": "Course plotted. Advancing." },
+	{ "Npc": "Wing Commander", "Message": "All ships, tighten up." }
+  ],
+  "PlayerAttack": [
+	{ "Npc": "Fleet Commander", "Message": "Securing the system." },
+	{ "Npc": "Fleet Commander", "Message": "All ships, engage on my mark." },
+	{ "Npc": "Tactical",        "Message": "Firing solutions locked in." },
+	{ "Npc": "Fleet Commander", "Message": "Weapons free. Take them down." },
+	{ "Npc": "Tactical",        "Message": "Target acquired. Advancing." },
+	{ "Npc": "Fleet Commander", "Message": "Capture that system." }
+  ],
+  "PlayerUnderAttack": [
+	{ "Npc": "Wing Commander", "Message": "Incoming! All hands to stations!" },
+	{ "Npc": "Wing Commander", "Message": "We are under attack, hold the line!" },
+	{ "Npc": "Pilot",          "Message": "Hostile contacts detected!" },
+	{ "Npc": "Wing Commander", "Message": "Defense grid online. Brace for impact." },
+	{ "Npc": "Tactical",       "Message": "Enemy fleet approaching our position." }
+  ]
+}
