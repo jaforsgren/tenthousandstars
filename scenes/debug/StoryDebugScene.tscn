@@ -1,6 +1,6 @@
-[gd_scene format=3]
+[gd_scene format=3 uid="uid://wd3wd0eab5dw"]
 
-[ext_resource type="Script" path="res://scripts/debug/StoryDebugScene.cs" id="1_storydbg"]
+[ext_resource type="Script" uid="uid://buef1i2k1a7fe" path="res://scripts/debug/StoryDebugScene.cs" id="1_storydbg"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_title"]
 font_size = 10
@@ -8,92 +8,95 @@ font_size = 10
 [sub_resource type="LabelSettings" id="LabelSettings_hint"]
 font_size = 8
 
-[node name="StoryDebugScene" type="Control"]
+[node name="StoryDebugScene" type="Control" unique_id=78424044]
+layout_mode = 3
+anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 script = ExtResource("1_storydbg")
 
-[node name="Background" type="ColorRect" parent="."]
+[node name="Background" type="ColorRect" parent="." unique_id=293818016]
+layout_mode = 0
 anchor_right = 1.0
 anchor_bottom = 1.0
-color = Color(0.05, 0.05, 0.07, 1)
 mouse_filter = 2
+color = Color(0.05, 0.05, 0.07, 1)
 
-[node name="DebugLayout" type="VBoxContainer" parent="."]
+[node name="DebugLayout" type="VBoxContainer" parent="." unique_id=487558841]
+layout_mode = 0
 anchor_right = 1.0
 anchor_bottom = 1.0
 
-[node name="HeaderRow" type="HBoxContainer" parent="DebugLayout"]
+[node name="HeaderRow" type="HBoxContainer" parent="DebugLayout" unique_id=1647838489]
 layout_mode = 2
 
-[node name="TitleLabel" type="Label" parent="DebugLayout/HeaderRow"]
+[node name="TitleLabel" type="Label" parent="DebugLayout/HeaderRow" unique_id=317419009]
 layout_mode = 2
-label_settings = SubResource("LabelSettings_title")
 text = "Story Debug"
-
-[node name="ArchetypeLabel" type="Label" parent="DebugLayout/HeaderRow"]
-layout_mode = 2
 label_settings = SubResource("LabelSettings_title")
-text = "Archetype:"
 
-[node name="ArchetypeOption" type="OptionButton" parent="DebugLayout/HeaderRow"]
+[node name="ArchetypeLabel" type="Label" parent="DebugLayout/HeaderRow" unique_id=894280516]
+layout_mode = 2
+text = "Archetype:"
+label_settings = SubResource("LabelSettings_title")
+
+[node name="ArchetypeOption" type="OptionButton" parent="DebugLayout/HeaderRow" unique_id=1753079572]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 fit_to_longest_item = false
 
-[node name="PatternLabel" type="Label" parent="DebugLayout/HeaderRow"]
+[node name="PatternLabel" type="Label" parent="DebugLayout/HeaderRow" unique_id=899959168]
 layout_mode = 2
-label_settings = SubResource("LabelSettings_title")
 text = "Pattern:"
+label_settings = SubResource("LabelSettings_title")
 
-[node name="WinPatternInput" type="LineEdit" parent="DebugLayout/HeaderRow"]
+[node name="WinPatternInput" type="LineEdit" parent="DebugLayout/HeaderRow" unique_id=847204082]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 placeholder_text = "W,W,W  or  W,L,W"
 
-[node name="GenerateButton" type="Button" parent="DebugLayout/HeaderRow"]
+[node name="GenerateButton" type="Button" parent="DebugLayout/HeaderRow" unique_id=1844689699]
 unique_name_in_owner = true
 layout_mode = 2
 text = "Generate"
 
-[node name="BackButton" type="Button" parent="DebugLayout/HeaderRow"]
+[node name="BackButton" type="Button" parent="DebugLayout/HeaderRow" unique_id=1758182091]
 unique_name_in_owner = true
 layout_mode = 2
 text = "Back"
 
-[node name="HintRow" type="HBoxContainer" parent="DebugLayout"]
+[node name="HintRow" type="HBoxContainer" parent="DebugLayout" unique_id=1666167503]
 layout_mode = 2
 
-[node name="HintLabel" type="Label" parent="DebugLayout/HintRow"]
+[node name="HintLabel" type="Label" parent="DebugLayout/HintRow" unique_id=300059165]
 layout_mode = 2
-label_settings = SubResource("LabelSettings_hint")
 text = "W = win  L = loss  (fewer entries than chapters repeats last)     Preview:"
+label_settings = SubResource("LabelSettings_hint")
 
-[node name="InterludePreviewButtons" type="HBoxContainer" parent="DebugLayout/HintRow"]
+[node name="InterludePreviewButtons" type="HBoxContainer" parent="DebugLayout/HintRow" unique_id=515618240]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="PreviewOutroButton" type="Button" parent="DebugLayout/HintRow"]
+[node name="PreviewOutroButton" type="Button" parent="DebugLayout/HintRow" unique_id=1094727616]
 unique_name_in_owner = true
 layout_mode = 2
 text = "Outro"
 
-[node name="OutputPanel" type="PanelContainer" parent="DebugLayout"]
+[node name="OutputPanel" type="PanelContainer" parent="DebugLayout" unique_id=1641925527]
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="OutputScroll" type="ScrollContainer" parent="DebugLayout/OutputPanel"]
+[node name="OutputScroll" type="ScrollContainer" parent="DebugLayout/OutputPanel" unique_id=1641102515]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
-[node name="OutputText" type="RichTextLabel" parent="DebugLayout/OutputPanel/OutputScroll"]
+[node name="OutputText" type="RichTextLabel" parent="DebugLayout/OutputPanel/OutputScroll" unique_id=100694602]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 bbcode_enabled = true
 text = "[i]Press Generate to simulate a full campaign.[/i]"
-fit_content = true
