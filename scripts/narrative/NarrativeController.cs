@@ -10,11 +10,13 @@ public class NarrativeController
 {
     private readonly INarrativeService _service;
     private readonly INarrativeBarkSystem _barkSystem;
+    private readonly OutroGenerator _outroGenerator;
 
-    private NarrativeController(INarrativeService service, INarrativeBarkSystem barkSystem)
+    private NarrativeController(INarrativeService service, INarrativeBarkSystem barkSystem, OutroGenerator outroGenerator)
     {
         _service = service;
         _barkSystem = barkSystem;
+        _outroGenerator = outroGenerator;
     }
 
     public static NarrativeController Create(Random rng)
@@ -33,12 +35,14 @@ public class NarrativeController
         var briefingConfig = ConfigLoader.Load<BriefingConfig>("res://config/story/briefings/templates.json");
         var barkConfig = ConfigLoader.Load<NarrativeBarkConfig>("res://config/story/barks/barks.json");
         var interludeConfig = ConfigLoader.Load<InterludeConfig>("res://config/story/interludes/templates.json");
+        var outroConfig = ConfigLoader.Load<OutroConfig>("res://config/story/outro/templates.json");
 
-        var db = new NarrativeDatabase(archetypes, chapters, conditionSet.Conditions, briefingConfig, barkConfig, interludeConfig);
+        var db = new NarrativeDatabase(archetypes, chapters, conditionSet.Conditions, briefingConfig, barkConfig, interludeConfig, outroConfig);
         var service = new NarrativeService(db, new ChapterGenerator(), new MissionGenerator(db), new BriefingGenerator(db, rng), rng);
         var barkSystem = new NarrativeBarkSystem(db, rng);
+        var outroGenerator = new OutroGenerator(outroConfig, db, rng);
 
-        return new NarrativeController(service, barkSystem);
+        return new NarrativeController(service, barkSystem, outroGenerator);
     }
 
     public bool IsCampaignComplete => _service.IsCampaignComplete;
@@ -66,6 +70,13 @@ public class NarrativeController
     {
         _service.OnMissionComplete(new MissionResult(won, playerSystems, enemySystems, enemyFleets));
         GD.Print($"[Narrative] Mission complete — won: {won}, chapter: {_service.CurrentState.CurrentChapterIndex}/{_service.CurrentState.TotalChapters}");
+    }
+
+    public (string Title, string Text) GenerateOutro()
+    {
+        var (title, text) = _outroGenerator.Generate(_service.CurrentState);
+        GD.Print($"[Narrative] Outro: {title}");
+        return (title, text);
     }
 
     public string? TryGetBark(BarkTrigger trigger)

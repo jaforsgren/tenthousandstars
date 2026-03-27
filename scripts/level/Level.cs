@@ -88,6 +88,7 @@ public partial class Level : Node2D
 	private AiController _aiController = null!;
 	private NarrativeController? _narrativeController;
 	private InterludeContent? _pendingInterlude;
+	private GameMode? _gameModeOverride;
 	private double _lastSystemClickTime = double.MinValue;
 	private int _lastClickedSystemIndex = -1;
 	private RerouteButtonNode _rerouteButtonNode = null!;
@@ -148,8 +149,8 @@ public partial class Level : Node2D
 
 		if (_narrativeController == null)
 		{
-			var gameModeConfig = ConfigLoader.Load<GameModeConfig>("res://config/game_mode.json");
-			if (gameModeConfig.Mode == GameMode.Story)
+			var gameMode = _gameModeOverride ?? ConfigLoader.Load<GameModeConfig>("res://config/game_mode.json").Mode;
+			if (gameMode == GameMode.Story)
 			{
 				_narrativeController = NarrativeController.Create(_rng);
 				_narrativeController.StartCampaign();
@@ -408,6 +409,41 @@ public partial class Level : Node2D
 		_countdownTimer.Initialize(seconds, OnCountdownExpired);
 	}
 
+	private void OnEndSequenceDismissed()
+	{
+		if (_narrativeController?.IsCampaignComplete == true)
+			SpawnOutroPanel();
+		else
+			RegenerateLevel();
+	}
+
+	private void SpawnOutroPanel()
+	{
+		var (title, text) = _narrativeController!.GenerateOutro();
+		var layer = new CanvasLayer { Layer = 14 };
+		AddChild(layer);
+		var panel = GD.Load<PackedScene>("res://scenes/ui/OutroPanel.tscn").Instantiate<OutroPanel>();
+		layer.AddChild(panel);
+		panel.Show(title, text, GetViewport().GetVisibleRect().Size);
+		panel.NewCampaignPressed += OnNewCampaignPressed;
+		panel.RandomMissionsPressed += OnRandomMissionsPressed;
+		panel.QuitPressed += () => GetTree().Quit();
+	}
+
+	private void OnNewCampaignPressed()
+	{
+		_narrativeController = null;
+		_gameModeOverride = GameMode.Story;
+		RegenerateLevel();
+	}
+
+	private void OnRandomMissionsPressed()
+	{
+		_narrativeController = null;
+		_gameModeOverride = GameMode.Random;
+		RegenerateLevel();
+	}
+
 	private void SpawnInterludePanel(string text, Action onDismiss)
 	{
 		var layer = new CanvasLayer { Layer = 13 };
@@ -507,7 +543,7 @@ public partial class Level : Node2D
 			description,
 			_endStateCfg.EndStateSeconds,
 			GetViewport().GetVisibleRect().Size,
-			onDismiss: RegenerateLevel,
+			onDismiss: OnEndSequenceDismissed,
 			allowEarlyDismiss: false
 		);
 	}
