@@ -49,9 +49,9 @@ public partial class InterludePanel : Control
         Visible = true;
     }
 
-    public override void _UnhandledInput(InputEvent @event)
+    public override void _Input(InputEvent @event)
     {
-        if (!_active) return;
+        if (!_active || !Visible) return;
         if (@event is InputEventMouseButton { Pressed: true, ButtonIndex: MouseButton.Left })
         {
             Dismiss();
