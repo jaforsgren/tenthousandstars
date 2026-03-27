@@ -11,6 +11,7 @@ public class NarrativeService : INarrativeService
     private readonly Random _rng;
 
     private ArchetypeConfig _archetype = null!;
+    private IInterludeGenerator _interludeGenerator = null!;
     private int _missionsCompleted;
     private int _missionsWon;
     private bool _lastMissionWon;
@@ -46,6 +47,7 @@ public class NarrativeService : INarrativeService
         _currentChapterIndex = 0;
         IsCampaignComplete = false;
 
+        _interludeGenerator = new InterludeGenerator(_db.Interludes, _rng, _archetype.Id);
         CurrentState = BuildState();
     }
 
@@ -66,7 +68,11 @@ public class NarrativeService : INarrativeService
         var condition = _missionGenerator.SelectCondition(chapterDef.MissionTags, CurrentState, _rng);
         var briefing = _briefingGenerator.GenerateBriefing(condition, chapter, CurrentState);
 
-        return new MissionContext(condition, briefing, chapter, CurrentState);
+        // Interlude requires a partially-built MissionContext for token substitution, so build without interlude first
+        var contextWithoutInterlude = new MissionContext(condition, briefing, chapter, CurrentState, Interlude: null);
+        var interlude = _interludeGenerator.TryGenerate(contextWithoutInterlude);
+
+        return contextWithoutInterlude with { Interlude = interlude };
     }
 
     public void OnMissionComplete(MissionResult result)

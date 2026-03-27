@@ -87,6 +87,7 @@ public partial class Level : Node2D
 	private InfoButton _infoButton = null!;
 	private AiController _aiController = null!;
 	private NarrativeController? _narrativeController;
+	private InterludeContent? _pendingInterlude;
 	private double _lastSystemClickTime = double.MinValue;
 	private int _lastClickedSystemIndex = -1;
 	private RerouteButtonNode _rerouteButtonNode = null!;
@@ -162,6 +163,7 @@ public partial class Level : Node2D
 			var missionContext = _narrativeController.GetNextMission();
 			_activeCondition = missionContext.Condition.ToEndCondition();
 			_resolvedMissionDescription = missionContext.Briefing;
+			_pendingInterlude = missionContext.Interlude;
 		}
 		else
 		{
@@ -197,7 +199,10 @@ public partial class Level : Node2D
 		if (_activeCondition.TimeoutSeconds.HasValue)
 			SpawnCountdownTimer(_activeCondition.TimeoutSeconds.Value);
 
-		ShowMissionBrief();
+		if (_pendingInterlude != null)
+			SpawnInterludePanel(_pendingInterlude.Text, onDismiss: ShowMissionBrief);
+		else
+			ShowMissionBrief();
 	}
 
 	private int FindObjectiveSystemIndex(int targetHops)
@@ -403,6 +408,15 @@ public partial class Level : Node2D
 		_countdownTimer.Initialize(seconds, OnCountdownExpired);
 	}
 
+	private void SpawnInterludePanel(string text, Action onDismiss)
+	{
+		var layer = new CanvasLayer { Layer = 13 };
+		AddChild(layer);
+		var panel = GD.Load<PackedScene>("res://scenes/ui/InterludePanel.tscn").Instantiate<InterludePanel>();
+		layer.AddChild(panel);
+		panel.Show(text, GetViewport().GetVisibleRect().Size, onDismiss);
+	}
+
 	private void SpawnChatWindow()
 	{
 		var layer = new CanvasLayer { Layer = 10 };
@@ -585,6 +599,7 @@ public partial class Level : Node2D
 		_defendSystemIndex = -1;
 		_countdownTimer = null;
 		_resolvedMissionDescription = null;
+		_pendingInterlude = null;
 		_chatWindow = null;
 		_camera = null!;
 		_infoButton = null!;

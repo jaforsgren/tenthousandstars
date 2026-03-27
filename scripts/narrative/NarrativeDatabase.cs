@@ -10,19 +10,22 @@ public class NarrativeDatabase
 	public IReadOnlyList<NarrativeConditionConfig> Conditions { get; }
 	public BriefingConfig BriefingTemplates { get; }
 	public NarrativeBarkConfig Barks { get; }
+	public InterludeConfig Interludes { get; }
 
 	public NarrativeDatabase(
 		IReadOnlyList<ArchetypeConfig> archetypes,
 		IReadOnlyList<ChapterDefConfig> chapters,
 		IReadOnlyList<NarrativeConditionConfig> conditions,
 		BriefingConfig briefingTemplates,
-		NarrativeBarkConfig barks)
+		NarrativeBarkConfig barks,
+		InterludeConfig interludes)
 	{
 		Archetypes = archetypes;
 		Chapters = chapters;
 		Conditions = conditions;
 		BriefingTemplates = briefingTemplates;
 		Barks = barks;
+		Interludes = interludes;
 	}
 
 	public ArchetypeConfig GetArchetype(string id)

@@ -1,0 +1,56 @@
+{
+  "BaseYear": 2847,
+  "DateFormat": "Sequence {MissionIndex}-{Year}",
+  "SectorNames": [
+    "Kepler", "Vega", "Proxima", "Arcturus", "Deneb",
+    "Aldebaran", "Rigel", "Castor", "Pollux", "Sirius",
+    "Altair", "Fomalhaut", "Spica", "Antares", "Canopus"
+  ],
+  "Templates": [
+    {
+      "Id": "fall_opening",
+      "Tags": ["start", "falling_empire"],
+      "Text": "{PlayerFaction} — Internal Memo\n{Date}\n\nThe situation has deteriorated faster than we anticipated. {EnemyFaction} moves through our outer systems with impunity.\n\nThis engagement at {SectorName} is not optional. We go to {MissionObjective}.\n\nWe do not know what they have in store for us. We put our faith in our commanders."
+    },
+    {
+      "Id": "fall_mid",
+      "Tags": ["mid", "falling_empire"],
+      "Text": "{PlayerFaction} — Encrypted Channel\n{Date}\n\nWe are still standing. That alone is a victory.\n\n{EnemyFaction} has taken much from us, but they have not taken {SectorName}. Not yet.\n\nNew orders: {MissionObjective}. Our commanders have not failed us. They will not start now."
+    },
+    {
+      "Id": "fall_final",
+      "Tags": ["end", "falling_empire"],
+      "Text": "{PlayerFaction} — Command Directive\n{Date}\n\nThis is the last transmission before the push.\n\n{EnemyFaction} believes us broken. They are wrong. Everything we have lost has only narrowed our focus.\n\nThe order is simple: {MissionObjective}. Nothing else matters."
+    },
+    {
+      "Id": "rise_opening",
+      "Tags": ["start", "rising_power"],
+      "Text": "{PlayerFaction} — Command Dispatch\n{Date}\n\nWe began with nothing. We have clawed our way to this.\n\n{EnemyFaction} does not yet take us seriously. That is their mistake. The {SectorName} sector is next.\n\nMission: {MissionObjective}. Prove to them — and to ourselves — what we are capable of."
+    },
+    {
+      "Id": "rise_mid",
+      "Tags": ["mid", "rising_power"],
+      "Text": "{PlayerFaction} — Strategic Update\n{Date}\n\nThey know our name now. {EnemyFaction} has begun to respond in force.\n\nGood. Let them come. We have earned every system in {SectorName} and we will not surrender them.\n\nNext objective: {MissionObjective}. We press forward."
+    },
+    {
+      "Id": "rise_final",
+      "Tags": ["end", "rising_power"],
+      "Text": "{PlayerFaction} — Command Authority\n{Date}\n\nThe galaxy watches. {EnemyFaction} is on the back foot and they know it.\n\n{SectorName} will be the final test. After this — there is no question of who holds power.\n\nAll forces: {MissionObjective}. Make it count."
+    },
+    {
+      "Id": "conquest_opening",
+      "Tags": ["start", "conquest"],
+      "Text": "{PlayerFaction} — Operational Order\n{Date}\n\nThis is not a war of survival. This is a war of ambition.\n\n{EnemyFaction} holds {SectorName}. They will not hold it for long.\n\nOrder of the day: {MissionObjective}. We do not negotiate. We do not retreat. We take."
+    },
+    {
+      "Id": "conquest_mid",
+      "Tags": ["mid", "conquest"],
+      "Text": "{PlayerFaction} — Field Directive\n{Date}\n\nThe {SectorName} campaign proceeds as planned. {EnemyFaction} shows desperation.\n\nDesperate enemies make mistakes. We will be there when they do.\n\nNew directive: {MissionObjective}. No delays. No excuses."
+    },
+    {
+      "Id": "conquest_final",
+      "Tags": ["end", "conquest"],
+      "Text": "{PlayerFaction} — Final Directive\n{Date}\n\nOne last push. {EnemyFaction} has nowhere left to run.\n\n{SectorName} will be remembered as where we ended this.\n\nAll commands: {MissionObjective}. Leave nothing standing."
+    }
+  ]
+}

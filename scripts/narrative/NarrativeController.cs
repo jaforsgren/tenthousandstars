@@ -32,8 +32,9 @@ public class NarrativeController
         var conditionSet = ConfigLoader.Load<NarrativeConditionSet>("res://config/story/missions/conditions.json");
         var briefingConfig = ConfigLoader.Load<BriefingConfig>("res://config/story/briefings/templates.json");
         var barkConfig = ConfigLoader.Load<NarrativeBarkConfig>("res://config/story/barks/barks.json");
+        var interludeConfig = ConfigLoader.Load<InterludeConfig>("res://config/story/interludes/templates.json");
 
-        var db = new NarrativeDatabase(archetypes, chapters, conditionSet.Conditions, briefingConfig, barkConfig);
+        var db = new NarrativeDatabase(archetypes, chapters, conditionSet.Conditions, briefingConfig, barkConfig, interludeConfig);
         var service = new NarrativeService(db, new ChapterGenerator(), new MissionGenerator(db), new BriefingGenerator(db, rng), rng);
         var barkSystem = new NarrativeBarkSystem(db, rng);
 
