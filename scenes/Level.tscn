@@ -1,7 +1,46 @@
 [gd_scene format=3 uid="uid://oh7xwg5sdut4"]
 
 [ext_resource type="Script" uid="uid://ct5eymu2l0jtw" path="res://scripts/level/Level.cs" id="1"]
+[ext_resource type="PackedScene" uid="uid://ctransitfl001" path="res://scenes/fleet/TransitFleetNode.tscn" id="2_kl8ac"]
+[ext_resource type="PackedScene" uid="uid://ccombateff01" path="res://scenes/effects/CombatEffectNode.tscn" id="3_qifjx"]
+[ext_resource type="PackedScene" uid="uid://dm4r7wfxbp3te" path="res://scenes/system/RerouteArrowNode.tscn" id="4_dke22"]
 
 [node name="Level" type="Node2D" unique_id=2067866758]
 script = ExtResource("1")
 PreviewSeed = -1
+_pressWorldPos = Vector2(0, 0)
+_ghostFleetRadius = 8.0
+_ghostFleetFill = Color(0.9, 0.2, 0.2, 0.3)
+_ghostFleetOutline = Color(1, 0.3, 0, 1)
+_ghostFleetOutlineWidth = 0.5
+_defenderBonus = 1.0
+_systemRadius = 50.0
+_transitDurationSeconds = 1.2
+_transitFleetScene = ExtResource("2_kl8ac")
+_combatEffectScene = ExtResource("3_qifjx")
+_fogEnabled = false
+_fogClearSeconds = 1.5
+_fadeOutSeconds = 4.0
+_fadeOverlay = null
+_selectionPanel = null
+_aiSystemPanel = null
+_notificationPanel = null
+_endConditionReached = false
+_objectiveSystemIndex = -1
+_targetPlayerOwner = 0
+_defendSystemIndex = -1
+_countdownTimer = null
+_resolvedMissionDescription = ""
+_chatWindow = null
+_camera = null
+_infoButton = null
+_aiController = null
+_lastSystemClickTime = -1.7976931348623157e+308
+_lastClickedSystemIndex = -1
+_rerouteButtonNode = null
+_forgeButtonNode = null
+_fortifyButtonNode = null
+_splitButtonNode = null
+_isPickingRerouteTarget = false
+_rerouteArrowScene = ExtResource("4_dke22")
+_selectedFleetSlot = -1

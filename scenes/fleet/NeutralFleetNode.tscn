@@ -1,12 +1,11 @@
 [gd_scene format=3 uid="uid://cn8x4mfr2k0a"]
 
-[ext_resource type="Texture2D" uid="uid://cabbnoum5q3uv" path="res://icon.svg" id="1_neutral"]
+[ext_resource type="Texture2D" uid="uid://cui4akk4pmiik" path="res://assets/images/icons/fleet.svg" id="1_27l74"]
 
-[node name="NeutralFleetNode" type="Node2D"]
+[node name="NeutralFleetNode" type="Node2D" unique_id=1981769648]
 
-[node name="Sprite2D" type="Sprite2D" parent="."]
-modulate = Color(1, 1, 1, 0.69411767)
-self_modulate = Color(0.7, 0.7, 0.7, 1)
-show_behind_parent = true
-scale = Vector2(0.2, 0.2)
-texture = ExtResource("1_neutral")
+[node name="Fleet" type="Sprite2D" parent="." unique_id=709541454]
+modulate = Color(0.41981313, 0.41981313, 0.4198131, 1)
+position = Vector2(0, 3)
+rotation = 3.1415927
+texture = ExtResource("1_27l74")
