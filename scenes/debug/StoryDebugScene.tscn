@@ -1,0 +1,99 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/debug/StoryDebugScene.cs" id="1_storydbg"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_title"]
+font_size = 10
+
+[sub_resource type="LabelSettings" id="LabelSettings_hint"]
+font_size = 8
+
+[node name="StoryDebugScene" type="Control"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+script = ExtResource("1_storydbg")
+
+[node name="Background" type="ColorRect" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color(0.05, 0.05, 0.07, 1)
+mouse_filter = 2
+
+[node name="DebugLayout" type="VBoxContainer" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="HeaderRow" type="HBoxContainer" parent="DebugLayout"]
+layout_mode = 2
+
+[node name="TitleLabel" type="Label" parent="DebugLayout/HeaderRow"]
+layout_mode = 2
+label_settings = SubResource("LabelSettings_title")
+text = "Story Debug"
+
+[node name="ArchetypeLabel" type="Label" parent="DebugLayout/HeaderRow"]
+layout_mode = 2
+label_settings = SubResource("LabelSettings_title")
+text = "Archetype:"
+
+[node name="ArchetypeOption" type="OptionButton" parent="DebugLayout/HeaderRow"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+fit_to_longest_item = false
+
+[node name="PatternLabel" type="Label" parent="DebugLayout/HeaderRow"]
+layout_mode = 2
+label_settings = SubResource("LabelSettings_title")
+text = "Pattern:"
+
+[node name="WinPatternInput" type="LineEdit" parent="DebugLayout/HeaderRow"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+placeholder_text = "W,W,W  or  W,L,W"
+
+[node name="GenerateButton" type="Button" parent="DebugLayout/HeaderRow"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Generate"
+
+[node name="BackButton" type="Button" parent="DebugLayout/HeaderRow"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Back"
+
+[node name="HintRow" type="HBoxContainer" parent="DebugLayout"]
+layout_mode = 2
+
+[node name="HintLabel" type="Label" parent="DebugLayout/HintRow"]
+layout_mode = 2
+label_settings = SubResource("LabelSettings_hint")
+text = "W = win  L = loss  (fewer entries than chapters repeats last)     Preview:"
+
+[node name="InterludePreviewButtons" type="HBoxContainer" parent="DebugLayout/HintRow"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="PreviewOutroButton" type="Button" parent="DebugLayout/HintRow"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Outro"
+
+[node name="OutputPanel" type="PanelContainer" parent="DebugLayout"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="OutputScroll" type="ScrollContainer" parent="DebugLayout/OutputPanel"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="OutputText" type="RichTextLabel" parent="DebugLayout/OutputPanel/OutputScroll"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+bbcode_enabled = true
+text = "[i]Press Generate to simulate a full campaign.[/i]"
+fit_content = true
