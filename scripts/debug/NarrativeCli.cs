@@ -21,18 +21,21 @@ public static class NarrativeCli
 
         controller.StartCampaign(archetype);
 
+        var aiNamingCfg = ConfigLoader.Load<AiNamingConfig>("res://config/ai_naming.json");
+        var enemy = AiNaming.GenerateCharacter(aiNamingCfg, AiDisposition.Strategic, rng);
+        controller.UpdateEnemy(enemy);
+
         var state = controller.CurrentState;
         var wins = ParseWinPattern(pattern, state.TotalChapters);
 
         var sb = new StringBuilder();
 
         sb.AppendLine($"CAMPAIGN: {state.ArchetypeId}");
-        sb.AppendLine($"Faction: {state.PlayerFactionName}");
+        sb.AppendLine($"Faction: {state.Player.FactionName}");
         sb.AppendLine();
 
         for (int i = 0; i < state.TotalChapters; i++)
         {
-            controller.UpdateEnemyFaction("The Dominion");
 
             var ctx = controller.GetNextMission();
             var won = wins[i];

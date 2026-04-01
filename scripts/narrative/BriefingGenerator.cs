@@ -29,8 +29,8 @@ public class BriefingGenerator : IBriefingGenerator
             : condition.Description;
 
         return text
-            .Replace("{PlayerFaction}", state.PlayerFactionName)
-            .Replace("{EnemyFaction}", state.EnemyFactionName);
+            .Replace("{PlayerFaction}", state.Player.FactionName)
+            .Replace("{EnemyFaction}", state.Enemy.FactionName);
     }
 
     private static bool HasAnyTag(string[] conditionTags, string[] templateTags)

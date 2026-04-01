@@ -42,8 +42,8 @@ public class OutroGenerator
 
     private static string ApplyTokens(string text, StoryState state, string archetypeName)
         => text
-            .Replace("{PlayerFaction}", state.PlayerFactionName)
-            .Replace("{EnemyFaction}", state.EnemyFactionName)
+            .Replace("{PlayerFaction}", state.Player.FactionName)
+            .Replace("{EnemyFaction}", state.Enemy.FactionName)
             .Replace("{MissionsWon}", state.MissionsWon.ToString())
             .Replace("{TotalMissions}", state.TotalChapters.ToString())
             .Replace("{ArchetypeName}", archetypeName);

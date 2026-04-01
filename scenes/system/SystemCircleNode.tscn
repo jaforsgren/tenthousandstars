@@ -1,6 +1,7 @@
 [gd_scene format=3 uid="uid://ccfeu0kvy1pat"]
 
-[ext_resource type="Texture2D" uid="uid://527mbb6n1kpm" path="res://assets/images/systems/sun.png" id="1_ps4o4"]
+[ext_resource type="Texture2D" uid="uid://cvngafkmuwdnh" path="res://assets/images/systems/circle dashed.svg" id="2_1s7tc"]
+[ext_resource type="Texture2D" uid="uid://bfhh8rlhweacc" path="res://assets/images/systems/circle dash-5-40.svg" id="2_x51l5"]
 
 [sub_resource type="CanvasItemMaterial" id="CanvasItemMaterial_ps4o4"]
 blend_mode = 1
@@ -16,34 +17,32 @@ gradient = SubResource("Gradient_sygu2")
 fill = 1
 fill_from = Vector2(0.4957265, 0.5192308)
 
-[sub_resource type="CanvasItemMaterial" id="CanvasItemMaterial_ysmf3"]
-blend_mode = 1
-
-[sub_resource type="CanvasItemMaterial" id="CanvasItemMaterial_sygu2"]
-blend_mode = 2
-
 [node name="SystemCircleNode" type="Node2D" unique_id=1335027929]
 
-[node name="gradient" type="Sprite2D" parent="." unique_id=1116226013]
+[node name="sun gradient" type="Sprite2D" parent="." unique_id=1116226013]
 material = SubResource("CanvasItemMaterial_ps4o4")
 position = Vector2(9.536743e-07, 0)
 scale = Vector2(1.6761252, 1.472125)
 texture = SubResource("GradientTexture2D_klkxq")
 
-[node name="gradient2" type="Sprite2D" parent="." unique_id=35142583]
+[node name="sun glare gradient" type="Sprite2D" parent="." unique_id=35142583]
 material = SubResource("CanvasItemMaterial_ps4o4")
 position = Vector2(-4.7683716e-07, 0)
 scale = Vector2(0.106125005, 0.09512499)
 texture = SubResource("GradientTexture2D_klkxq")
 
-[node name="Sun" type="Sprite2D" parent="." unique_id=2144270667]
-visible = false
-material = SubResource("CanvasItemMaterial_ysmf3")
-scale = Vector2(0.105, 0.105)
-texture = ExtResource("1_ps4o4")
+[node name="CircleDashed" type="Sprite2D" parent="." unique_id=1452468083]
+scale = Vector2(0.21, 0.21)
+texture = ExtResource("2_1s7tc")
 
-[node name="Sun2" type="Sprite2D" parent="." unique_id=509448965]
-visible = false
-material = SubResource("CanvasItemMaterial_sygu2")
-scale = Vector2(0.105, 0.105)
-texture = ExtResource("1_ps4o4")
+[node name="CircleDashed2" type="Sprite2D" parent="." unique_id=1212709092]
+scale = Vector2(0.225, 0.225)
+texture = ExtResource("2_1s7tc")
+
+[node name="CircleDash540" type="Sprite2D" parent="." unique_id=216094167]
+scale = Vector2(0.22, 0.22)
+texture = ExtResource("2_x51l5")
+
+[node name="CircleDash541" type="Sprite2D" parent="." unique_id=741160179]
+scale = Vector2(0.24, 0.24)
+texture = ExtResource("2_x51l5")

@@ -4,6 +4,7 @@
 [ext_resource type="PackedScene" uid="uid://ctransitfl001" path="res://scenes/fleet/TransitFleetNode.tscn" id="2_kl8ac"]
 [ext_resource type="PackedScene" uid="uid://ccombateff01" path="res://scenes/effects/CombatEffectNode.tscn" id="3_qifjx"]
 [ext_resource type="PackedScene" uid="uid://dm4r7wfxbp3te" path="res://scenes/system/RerouteArrowNode.tscn" id="4_dke22"]
+[ext_resource type="Texture2D" uid="uid://bqg8m2xnho5vy" path="res://assets/images/stars01_v1.jpg" id="5_qifjx"]
 
 [node name="Level" type="Node2D" unique_id=2067866758]
 script = ExtResource("1")
@@ -18,7 +19,7 @@ _systemRadius = 50.0
 _transitDurationSeconds = 1.2
 _transitFleetScene = ExtResource("2_kl8ac")
 _combatEffectScene = ExtResource("3_qifjx")
-_fogEnabled = false
+_fogEnabled = true
 _fogClearSeconds = 1.5
 _fadeOutSeconds = 4.0
 _fadeOverlay = null
@@ -44,3 +45,12 @@ _splitButtonNode = null
 _isPickingRerouteTarget = false
 _rerouteArrowScene = ExtResource("4_dke22")
 _selectedFleetSlot = -1
+
+[node name="Stars01V1" type="Sprite2D" parent="." unique_id=2051090164]
+visible = false
+modulate = Color(1, 1, 1, 0.39215687)
+z_index = -1
+texture_repeat = 2
+position = Vector2(805, 1392)
+scale = Vector2(0.397, 0.4)
+texture = ExtResource("5_qifjx")

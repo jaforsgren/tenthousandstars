@@ -2,7 +2,7 @@
   "Id": "conquest",
   "Name": "Total Conquest",
   "ChapterSequence": ["assault", "assault", "conquest"],
-  "PlayerFactionName": "The Iron Vanguard",
+  "PlayerDisposition": "Aggressive",
   "OpeningBarks": [
     "We will crush them",
     "Every system will fall. Every fleet will burn.",

@@ -46,8 +46,8 @@ public class InterludeGenerator : IInterludeGenerator
         var sector = _config.SectorNames[_rng.Next(_config.SectorNames.Length)];
 
         return text
-            .Replace("{PlayerFaction}", ctx.State.PlayerFactionName)
-            .Replace("{EnemyFaction}", ctx.State.EnemyFactionName)
+            .Replace("{PlayerFaction}", ctx.State.Player.FactionName)
+            .Replace("{EnemyFaction}", ctx.State.Enemy.FactionName)
             .Replace("{MissionObjective}", ctx.Condition.Description)
             .Replace("{SectorName}", sector)
             .Replace("{ChapterTitle}", ctx.Chapter.ChapterTitle)

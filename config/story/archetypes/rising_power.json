@@ -2,7 +2,7 @@
   "Id": "rising_power",
   "Name": "The Rising Power",
   "ChapterSequence": ["skirmish", "assault", "conquest"],
-  "PlayerFactionName": "The Ascending Order",
+  "PlayerDisposition": "Strategic",
   "OpeningBarks": [
     "We are small now. We will not always be.",
     "For ten thousand years of glory!",

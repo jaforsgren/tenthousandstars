@@ -25,6 +25,15 @@
     <Compile Include="../scripts/narrative/**/*.cs" />
     <!-- EndCondition record referenced by NarrativeConditionConfig.ToEndCondition() -->
     <Compile Include="../scripts/config/EndStateConfig.cs" />
+    <!-- AiNamingConfig used by NarrativeService; AiConfig for completeness -->
+    <Compile Include="../scripts/config/AiConfig.cs" />
+    <Compile Include="../scripts/config/ColorData.cs" />
+    <!-- AiDisposition enum used by ArchetypeConfig and AiNaming -->
+    <Compile Include="../scripts/ai/AiDisposition.cs" />
+    <!-- Character base record shared by AiPlayerData and narrative factions -->
+    <Compile Include="../scripts/ai/Character.cs" />
+    <!-- Shared faction name generation used by NarrativeService -->
+    <Compile Include="../scripts/ai/AiNaming.cs" />
     <!--
       ConfigLoader is included so the Tts namespace resolves fully.
       NarrativeController.Create() calls it, but tests bypass Create() via the

@@ -7,8 +7,8 @@ public record StoryState(
     int CurrentChapterIndex,
     string CurrentChapterId,
     string ArchetypeId,
-    string PlayerFactionName,
-    string EnemyFactionName,
+    Character Player,
+    Character Enemy,
     bool LastMissionWon,
     bool EnemyIsWinning,
     bool PlayerStrongerThanEnemy);

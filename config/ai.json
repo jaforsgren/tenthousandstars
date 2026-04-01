@@ -5,15 +5,15 @@
   "StrategicMinSpareShips": 2.0,
   "CautiousAttackChance": 0.15,
   "DispositionReinforceChance": {
-    "Aggressive": 0.4,
-    "Strategic": 0.75,
-    "Cautious": 0.7,
-    "Dormant": 0.0
+	"Aggressive": 0.4,
+	"Strategic": 0.75,
+	"Cautious": 0.7,
+	"Dormant": 0.0
   },
   "DispositionColors": {
-    "Aggressive": { "R": 1.0, "G": 0.2, "B": 0.1, "A": 1.0 },
-    "Strategic": { "R": 0.9, "G": 0.7, "B": 0.1, "A": 1.0 },
-    "Cautious": { "R": 0.8, "G": 0.0, "B": 0.8, "A": 1.0 },
-    "Dormant": { "R": 0.2, "G": 0.2, "B": 0.5, "A": 1.0 }
+	"Aggressive": { "R": 1.0, "G": 0.2, "B": 0.1, "A": 1.0 },
+	"Strategic": { "R": 0.9, "G": 0.7, "B": 0.1, "A": 1.0 },
+	"Cautious": { "R": 0.8, "G": 0.0, "B": 0.8, "A": 1.0 },
+	"Dormant": { "R": 0.2, "G": 0.2, "B": 0.5, "A": 1.0 }
   }
 }

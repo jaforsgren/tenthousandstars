@@ -5,7 +5,7 @@ public interface INarrativeService
     StoryState CurrentState { get; }
     bool IsCampaignComplete { get; }
     void StartCampaign(string archetypeId);
-    void UpdateEnemyFactionName(string enemyFaction);
+    void UpdateEnemy(Character enemy);
     MissionContext GetNextMission();
     void OnMissionComplete(MissionResult result);
 }

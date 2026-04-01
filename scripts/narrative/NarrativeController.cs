@@ -48,9 +48,10 @@ public class NarrativeController
         var barkConfig = ConfigLoader.Load<NarrativeBarkConfig>("res://config/story/barks/barks.json");
         var interludeConfig = ConfigLoader.Load<InterludeConfig>("res://config/story/interludes/templates.json");
         var outroConfig = ConfigLoader.Load<OutroConfig>("res://config/story/outro/templates.json");
+        var aiNamingConfig = ConfigLoader.Load<AiNamingConfig>("res://config/ai_naming.json");
 
         var db = new NarrativeDatabase(archetypes, chapters, conditionSet.Conditions, briefingConfig, barkConfig, interludeConfig, outroConfig);
-        var service = new NarrativeService(db, new ChapterGenerator(), new MissionGenerator(db), new BriefingGenerator(db, rng), rng);
+        var service = new NarrativeService(db, new ChapterGenerator(), new MissionGenerator(db), new BriefingGenerator(db, rng), aiNamingConfig, rng);
         var barkSystem = new NarrativeBarkSystem(db, rng);
         var outroGenerator = new OutroGenerator(outroConfig, db, rng);
 
@@ -64,11 +65,11 @@ public class NarrativeController
     public void StartCampaign(string archetypeId = "")
     {
         _service.StartCampaign(archetypeId);
-        Log($"[Narrative] Campaign started — archetype: {_service.CurrentState.ArchetypeId}, player: {_service.CurrentState.PlayerFactionName}");
+        Log($"[Narrative] Campaign started — archetype: {_service.CurrentState.ArchetypeId}, player: {_service.CurrentState.Player.FactionName}");
     }
 
-    public void UpdateEnemyFaction(string enemyFaction)
-        => _service.UpdateEnemyFactionName(enemyFaction);
+    public void UpdateEnemy(Character enemy)
+        => _service.UpdateEnemy(enemy);
 
     public MissionContext GetNextMission()
     {
@@ -99,6 +100,6 @@ public class NarrativeController
         var s = _service.CurrentState;
         Log($"[Narrative Debug] Archetype: {s.ArchetypeId} | Chapter: {s.CurrentChapterIndex}/{s.TotalChapters} ({s.CurrentChapterId})");
         Log($"[Narrative Debug] Missions: {s.MissionsWon}/{s.MissionsCompleted} won | Enemy winning: {s.EnemyIsWinning} | Player stronger: {s.PlayerStrongerThanEnemy}");
-        Log($"[Narrative Debug] Factions: {s.PlayerFactionName} vs {s.EnemyFactionName}");
+        Log($"[Narrative Debug] Factions: {s.Player.FactionName} ({s.Player.Title}) vs {s.Enemy.FactionName} ({s.Enemy.Title})");
     }
 }

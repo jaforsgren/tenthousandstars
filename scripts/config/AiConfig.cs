@@ -10,10 +10,10 @@ public record AiConfig(
     float ThinkIntervalSeconds,
     float StrategicMinSpareShips,
     float CautiousAttackChance,
+    Dictionary<string, float> DispositionReinforceChance,
     Dictionary<string, ColorData> DispositionColors);
 
 public record AiNamingConfig(
-    Dictionary<string, float> DispositionReinforceChance,
     Dictionary<string, string[]> DispositionDescriptions,
     Dictionary<string, string[]> DispositionBarks,
     Dictionary<string, string[]> DispositionAbbreviations,

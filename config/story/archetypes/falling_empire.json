@@ -2,7 +2,7 @@
   "Id": "falling_empire",
   "Name": "The Falling Empire",
   "ChapterSequence": ["retreat", "skirmish", "assault"],
-  "PlayerFactionName": "The Last Command",
+  "PlayerDisposition": "Cautious",
   "OpeningBarks": [
     "What do we have left to fight over...",
     "Death over defeat!",

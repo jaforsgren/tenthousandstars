@@ -13,7 +13,6 @@ public partial class AiSystemPanel : PanelContainer
     private Label _descriptionLabel = null!;
     private Label _barkLabel = null!;
     private AiConfig _aiConfig = null!;
-    private AiNamingConfig _aiNamingConfig = null!;
 
     private bool _previewInEditor;
 
@@ -45,7 +44,6 @@ public partial class AiSystemPanel : PanelContainer
         }
 
         _aiConfig = ConfigLoader.Load<AiConfig>("res://config/ai.json");
-        _aiNamingConfig = ConfigLoader.Load<AiNamingConfig>("res//config/ai_naming.json");
         Visible = false;
     }
 
@@ -54,14 +52,14 @@ public partial class AiSystemPanel : PanelContainer
         _nameLabel.Text = aiPlayer.FactionName;
         _nameLabel.AddThemeColorOverride("font_color", dispositionColor);
 
-        _dispositionLabel.Text = $"{aiPlayer.Disposition} — {aiPlayer.Name}";
+        _dispositionLabel.Text = $"{aiPlayer.Disposition} — {aiPlayer.Title}";
         _dispositionLabel.AddThemeColorOverride("font_color", dispositionColor);
 
-        var descriptions = _aiNamingConfig.DispositionDescriptions[aiPlayer.Disposition.ToString()];
-        _descriptionLabel.Text = descriptions[seed % descriptions.Length];
+        _descriptionLabel.Text = aiPlayer.Description;
 
-        var barks = _aiNamingConfig.DispositionBarks[aiPlayer.Disposition.ToString()];
-        _barkLabel.Text = $"\"{barks[seed % barks.Length]}\"";
+        _barkLabel.Text = aiPlayer.Barks.Length > 0
+            ? $"\"{aiPlayer.Barks[seed % aiPlayer.Barks.Length]}\""
+            : string.Empty;
         _barkLabel.AddThemeColorOverride("font_color", dispositionColor.WithAlpha(0.65f));
 
         Visible = true;

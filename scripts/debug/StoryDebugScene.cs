@@ -69,6 +69,10 @@ public partial class StoryDebugScene : Control
 		var controller = NarrativeController.Create(rng);
 		controller.StartCampaign(archetypeId);
 
+		var aiNamingCfg = ConfigLoader.Load<AiNamingConfig>("res://config/ai_naming.json");
+		var enemy = AiNaming.GenerateCharacter(aiNamingCfg, AiDisposition.Aggressive, rng);
+		controller.UpdateEnemy(enemy);
+
 		var state = controller.CurrentState;
 		var chapters = state.TotalChapters;
 		var wins = ParseWinPattern(rawPattern, chapters);
@@ -78,14 +82,14 @@ public partial class StoryDebugScene : Control
 		// ── Campaign header ──
 		AppendHeader(sb, $"CAMPAIGN: {GetArchetypeName(state.ArchetypeId)}");
 		AppendField(sb, "Archetype", state.ArchetypeId);
-		AppendField(sb, "Faction", state.PlayerFactionName);
+		AppendField(sb, "Faction", $"{state.Player.FactionName} ({state.Player.Title})");
+		AppendField(sb, "Enemy", $"{state.Enemy.FactionName} ({state.Enemy.Title})");
 		AppendField(sb, "Chapters", chapters.ToString());
 		AppendField(sb, "Pattern", string.Join(", ", Array.ConvertAll(wins, w => w ? "W" : "L")));
 		sb.AppendLine();
 
 		for (var i = 0; i < chapters; i++)
 		{
-			controller.UpdateEnemyFaction("The Dominion");
 			var ctx = controller.GetNextMission();
 			var won = wins[i];
 

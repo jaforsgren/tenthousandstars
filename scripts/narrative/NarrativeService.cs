@@ -8,6 +8,7 @@ public class NarrativeService : INarrativeService
     private readonly IChapterGenerator _chapterGenerator;
     private readonly IMissionGenerator _missionGenerator;
     private readonly IBriefingGenerator _briefingGenerator;
+    private readonly AiNamingConfig _aiNamingCfg;
     private readonly Random _rng;
 
     private ArchetypeConfig _archetype = null!;
@@ -16,7 +17,8 @@ public class NarrativeService : INarrativeService
     private int _missionsWon;
     private bool _lastMissionWon;
     private int _currentChapterIndex;
-    private string _enemyFactionName = "The Enemy";
+    private Character _player = null!;
+    private Character _enemy = null!;
 
     public StoryState CurrentState { get; private set; } = null!;
     public bool IsCampaignComplete { get; private set; }
@@ -26,12 +28,14 @@ public class NarrativeService : INarrativeService
         IChapterGenerator chapterGenerator,
         IMissionGenerator missionGenerator,
         IBriefingGenerator briefingGenerator,
+        AiNamingConfig aiNamingCfg,
         Random rng)
     {
         _db = db;
         _chapterGenerator = chapterGenerator;
         _missionGenerator = missionGenerator;
         _briefingGenerator = briefingGenerator;
+        _aiNamingCfg = aiNamingCfg;
         _rng = rng;
     }
 
@@ -46,15 +50,17 @@ public class NarrativeService : INarrativeService
         _lastMissionWon = false;
         _currentChapterIndex = 0;
         IsCampaignComplete = false;
+        _player = AiNaming.GenerateCharacter(_aiNamingCfg, _archetype.PlayerDisposition, _rng);
+        _enemy = AiNaming.GenerateCharacter(_aiNamingCfg, (AiDisposition)_rng.Next(Enum.GetValues<AiDisposition>().Length), _rng);
 
         _interludeGenerator = new InterludeGenerator(_db.Interludes, _rng, _archetype.Id);
         CurrentState = BuildState();
     }
 
-    public void UpdateEnemyFactionName(string enemyFaction)
+    public void UpdateEnemy(Character enemy)
     {
-        _enemyFactionName = enemyFaction;
-        CurrentState = CurrentState with { EnemyFactionName = enemyFaction };
+        _enemy = enemy;
+        CurrentState = CurrentState with { Enemy = enemy };
     }
 
     public MissionContext GetNextMission()
@@ -102,8 +108,8 @@ public class NarrativeService : INarrativeService
             CurrentChapterIndex: _currentChapterIndex,
             CurrentChapterId: chapterId,
             ArchetypeId: _archetype.Id,
-            PlayerFactionName: _archetype.PlayerFactionName,
-            EnemyFactionName: _enemyFactionName,
+            Player: _player,
+            Enemy: _enemy,
             LastMissionWon: _lastMissionWon,
             EnemyIsWinning: enemyIsWinning,
             PlayerStrongerThanEnemy: playerStronger);

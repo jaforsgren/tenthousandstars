@@ -13,12 +13,12 @@ public sealed class NarrativeControllerTests
         public StoryState CurrentState { get; set; } = DefaultState();
         public bool IsCampaignComplete { get; set; }
         public string? LastStartedArchetypeId { get; private set; }
-        public string? LastUpdatedEnemyFaction { get; private set; }
+        public Character? LastUpdatedEnemy { get; private set; }
         public MissionContext? MissionToReturn { get; set; }
         public MissionResult? LastMissionResult { get; private set; }
 
         public void StartCampaign(string archetypeId) => LastStartedArchetypeId = archetypeId;
-        public void UpdateEnemyFactionName(string enemyFaction) => LastUpdatedEnemyFaction = enemyFaction;
+        public void UpdateEnemy(Character enemy) => LastUpdatedEnemy = enemy;
         public MissionContext GetNextMission() => MissionToReturn!;
         public void OnMissionComplete(MissionResult result) => LastMissionResult = result;
     }
@@ -39,6 +39,11 @@ public sealed class NarrativeControllerTests
 
     // ── Builder helpers ───────────────────────────────────────────────────────
 
+    private static Character TestCharacter(
+        string factionName = "Alpha Fleet",
+        AiDisposition disposition = AiDisposition.Strategic)
+        => new(disposition, "Test", factionName, "Test description.", Array.Empty<string>());
+
     private static StoryState DefaultState(
         int missionsCompleted = 0,
         int missionsWon = 0,
@@ -52,7 +57,8 @@ public sealed class NarrativeControllerTests
         bool enemyIsWinning = false,
         bool playerStronger = true)
         => new(missionsCompleted, missionsWon, totalChapters, currentChapterIndex,
-               currentChapterId, archetypeId, playerFaction, enemyFaction,
+               currentChapterId, archetypeId,
+               TestCharacter(playerFaction), TestCharacter(enemyFaction),
                lastMissionWon, enemyIsWinning, playerStronger);
 
     private static MissionContext DefaultMissionContext(StoryState? state = null)
@@ -71,7 +77,7 @@ public sealed class NarrativeControllerTests
         var archetype = new ArchetypeConfig(
             archetypeId, "Rising Power",
             new[] { "ch1", "ch2", "ch3" },
-            "Alpha Fleet",
+            AiDisposition.Strategic,
             Array.Empty<string>());
 
         var db = new NarrativeDatabase(
@@ -192,28 +198,30 @@ public sealed class NarrativeControllerTests
         Assert.Equal("", service.LastStartedArchetypeId);
     }
 
-    // ── UpdateEnemyFaction ────────────────────────────────────────────────────
+    // ── UpdateEnemy ───────────────────────────────────────────────────────────
 
     [Fact]
-    public void UpdateEnemyFaction_ForwardsNameToService()
+    public void UpdateEnemy_ForwardsCharacterToService()
     {
         var service = new StubNarrativeService();
         var controller = CreateController(service);
+        var enemy = TestCharacter("The Dominion");
 
-        controller.UpdateEnemyFaction("The Dominion");
+        controller.UpdateEnemy(enemy);
 
-        Assert.Equal("The Dominion", service.LastUpdatedEnemyFaction);
+        Assert.Equal("The Dominion", service.LastUpdatedEnemy?.FactionName);
     }
 
     [Fact]
-    public void UpdateEnemyFaction_ForwardsEmptyNameToService()
+    public void UpdateEnemy_PreservesFullCharacterOnService()
     {
         var service = new StubNarrativeService();
         var controller = CreateController(service);
+        var enemy = TestCharacter("Iron Pact", AiDisposition.Aggressive);
 
-        controller.UpdateEnemyFaction("");
+        controller.UpdateEnemy(enemy);
 
-        Assert.Equal("", service.LastUpdatedEnemyFaction);
+        Assert.Equal(enemy, service.LastUpdatedEnemy);
     }
 
     // ── GetNextMission ────────────────────────────────────────────────────────
