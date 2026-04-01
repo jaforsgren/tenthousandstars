@@ -1,52 +1,12 @@
 {
   "Templates": [
-    {
-      "Id": "fall_win",
-      "Tags": ["win", "falling_empire"],
-      "Title": "From the Ashes",
-      "Text": "Commander,\n\nThey said {PlayerFaction} was finished. They were wrong.\n\nAfter {MissionsWon} of {TotalMissions} engagements, we stand. {EnemyFaction} retreats.\n\nWe did not just survive. We prevailed."
-    },
-    {
-      "Id": "fall_loss",
-      "Tags": ["loss", "falling_empire"],
-      "Title": "A Costly Retreat",
-      "Text": "Commander,\n\n{PlayerFaction} fought to the last. We won {MissionsWon} of {TotalMissions} engagements.\n\nIt was not enough. {EnemyFaction} holds the field.\n\nWe withdraw. For now."
-    },
-    {
-      "Id": "rise_win",
-      "Tags": ["win", "rising_power"],
-      "Title": "A New Power",
-      "Text": "Commander,\n\n{PlayerFaction} is no longer an upstart. After {MissionsWon} of {TotalMissions} engagements, the galaxy takes notice.\n\n{EnemyFaction} knows our name. So does everyone else.\n\nThe stars have a new power."
-    },
-    {
-      "Id": "rise_loss",
-      "Tags": ["loss", "rising_power"],
-      "Title": "Ambition Checked",
-      "Text": "Commander,\n\n{PlayerFaction} reached too far. {MissionsWon} wins from {TotalMissions} was not enough.\n\n{EnemyFaction} held firm. Our ascent is delayed.\n\nWe are not done. But we are not yet what we hoped to be."
-    },
-    {
-      "Id": "conq_win",
-      "Tags": ["win", "conquest"],
-      "Title": "Total Dominion",
-      "Text": "Commander,\n\n{MissionsWon} of {TotalMissions} engagements. {EnemyFaction} broken. The stars bow.\n\n{PlayerFaction} does not negotiate. It does not retreat.\n\nIt conquers."
-    },
-    {
-      "Id": "conq_loss",
-      "Tags": ["loss", "conquest"],
-      "Title": "Conquest Denied",
-      "Text": "Commander,\n\n{PlayerFaction} marched on the stars. We won {MissionsWon} of {TotalMissions} engagements.\n\n{EnemyFaction} refused to fall. Our conquest is incomplete.\n\nThe stars are not yet ours."
-    },
-    {
-      "Id": "generic_win",
-      "Tags": ["win"],
-      "Title": "Campaign Complete",
-      "Text": "Commander,\n\n{PlayerFaction} has concluded the {ArchetypeName} campaign.\n\n{MissionsWon} victories from {TotalMissions} engagements. {EnemyFaction} is pushed back.\n\nThe stars remember those who fought here."
-    },
-    {
-      "Id": "generic_loss",
-      "Tags": ["loss"],
-      "Title": "Campaign Ended",
-      "Text": "Commander,\n\n{PlayerFaction} could not hold the line. {MissionsWon} wins from {TotalMissions} was not enough to overcome {EnemyFaction}.\n\nThe campaign is over. The stars remain contested."
-    }
+    { "Id": "fall_win",     "Tags": ["win",  "falling_empire"], "Title": "From the Ashes",    "TextFile": "config/story/outro/fall_win.md" },
+    { "Id": "fall_loss",    "Tags": ["loss", "falling_empire"], "Title": "A Costly Retreat",  "TextFile": "config/story/outro/fall_loss.md" },
+    { "Id": "rise_win",     "Tags": ["win",  "rising_power"],   "Title": "A New Power",       "TextFile": "config/story/outro/rise_win.md" },
+    { "Id": "rise_loss",    "Tags": ["loss", "rising_power"],   "Title": "Ambition Checked",  "TextFile": "config/story/outro/rise_loss.md" },
+    { "Id": "conq_win",     "Tags": ["win",  "conquest"],       "Title": "Total Dominion",    "TextFile": "config/story/outro/conq_win.md" },
+    { "Id": "conq_loss",    "Tags": ["loss", "conquest"],       "Title": "Conquest Denied",   "TextFile": "config/story/outro/conq_loss.md" },
+    { "Id": "generic_win",  "Tags": ["win"],                    "Title": "Campaign Complete", "TextFile": "config/story/outro/generic_win.md" },
+    { "Id": "generic_loss", "Tags": ["loss"],                   "Title": "Campaign Ended",    "TextFile": "config/story/outro/generic_loss.md" }
   ]
 }

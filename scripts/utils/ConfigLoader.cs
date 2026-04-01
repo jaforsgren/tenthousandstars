@@ -31,6 +31,14 @@ public static class ConfigLoader
     };
     private static readonly Dictionary<string, object> _cache = new();
 
+    public static string LoadText(string resPath)
+    {
+        var path = ResolvePath(resPath);
+        if (!File.Exists(path))
+            throw new InvalidOperationException($"Text file not found: {path}");
+        return File.ReadAllText(path);
+    }
+
     public static T Load<T>(string resPath) where T : class
     {
         if (_cache.TryGetValue(resPath, out var cached))

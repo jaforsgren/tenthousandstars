@@ -45,9 +45,10 @@ public class NarrativeController
 
         var conditionSet = ConfigLoader.Load<NarrativeConditionSet>("res://config/story/missions/conditions.json");
         var briefingConfig = ConfigLoader.Load<BriefingConfig>("res://config/story/briefings/templates.json");
-        var barkConfig = ConfigLoader.Load<NarrativeBarkConfig>("res://config/story/barks/barks.json");
+        var barkConfig = ConfigLoader.Load<BarkConfig>("res://config/barks.json");
         var interludeConfig = ConfigLoader.Load<InterludeConfig>("res://config/story/interludes/templates.json");
-        var outroConfig = ConfigLoader.Load<OutroConfig>("res://config/story/outro/templates.json");
+        var outroConfig = ResolveOutroConfig(
+            ConfigLoader.Load<OutroConfigSource>("res://config/story/outro/templates.json"));
         var aiNamingConfig = ConfigLoader.Load<AiNamingConfig>("res://config/ai_naming.json");
 
         var db = new NarrativeDatabase(archetypes, chapters, conditionSet.Conditions, briefingConfig, barkConfig, interludeConfig, outroConfig);
@@ -56,6 +57,18 @@ public class NarrativeController
         var outroGenerator = new OutroGenerator(outroConfig, db, rng);
 
         return new NarrativeController(service, barkSystem, outroGenerator);
+    }
+
+    private static OutroConfig ResolveOutroConfig(OutroConfigSource source)
+    {
+        var templates = new OutroTemplate[source.Templates.Length];
+        for (var i = 0; i < source.Templates.Length; i++)
+        {
+            var t = source.Templates[i];
+            var text = ConfigLoader.LoadText($"res://{t.TextFile}");
+            templates[i] = new OutroTemplate(t.Id, t.Tags, t.Title, text);
+        }
+        return new OutroConfig(templates);
     }
 
     public bool IsCampaignComplete => _service.IsCampaignComplete;

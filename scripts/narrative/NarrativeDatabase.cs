@@ -9,7 +9,7 @@ public class NarrativeDatabase
 	public IReadOnlyList<ChapterDefConfig> Chapters { get; }
 	public IReadOnlyList<NarrativeConditionConfig> Conditions { get; }
 	public BriefingConfig BriefingTemplates { get; }
-	public NarrativeBarkConfig Barks { get; }
+	public BarkConfig Barks { get; }
 	public InterludeConfig Interludes { get; }
 	public OutroConfig Outro { get; }
 
@@ -18,7 +18,7 @@ public class NarrativeDatabase
 		IReadOnlyList<ChapterDefConfig> chapters,
 		IReadOnlyList<NarrativeConditionConfig> conditions,
 		BriefingConfig briefingTemplates,
-		NarrativeBarkConfig barks,
+		BarkConfig barks,
 		InterludeConfig interludes,
 		OutroConfig outro)
 	{
