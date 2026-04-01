@@ -39,7 +39,7 @@ public partial class Level
 	{
 		if (_systems[toIndex].OwnerPlayer == SystemOwner.Player)
 		{
-			PostBark(_barkConfig?.PlayerUnderAttack);
+			PostBark(_barkConfig?.Get("player_under_attack"));
 			PostAiBark(aiPlayer);
 		}
 
@@ -102,8 +102,8 @@ public partial class Level
 	private void PostPlayerTransitBark(int toIndex)
 	{
 		var pool = _systems[toIndex].OwnerPlayer == SystemOwner.Player
-			? _barkConfig?.PlayerMove
-			: _barkConfig?.PlayerAttack;
+			? _barkConfig?.Get("player_move")
+			: _barkConfig?.Get("player_attack");
 		PostBark(pool);
 	}
 

@@ -17,7 +17,7 @@ public class NarrativeBarkSystem : INarrativeBarkSystem
     public string? TryGetBark(BarkTrigger trigger, StoryState state)
     {
         var tag = TriggerToTag(trigger);
-        var candidates = new List<NarrativeBark>();
+        var candidates = new List<Bark>();
 
         foreach (var bark in _db.Barks.Barks)
         {

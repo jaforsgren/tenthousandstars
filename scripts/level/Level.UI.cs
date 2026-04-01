@@ -132,8 +132,8 @@ public partial class Level
 
 		var pool = upgrade switch
 		{
-			SystemUpgrade.Forge => _barkConfig?.PlayerForge,
-			SystemUpgrade.Fortify => _barkConfig?.PlayerFortify,
+			SystemUpgrade.Forge    => _barkConfig?.Get("player_forge"),
+			SystemUpgrade.Fortify  => _barkConfig?.Get("player_fortify"),
 			_ => null
 		};
 		PostBark(pool);
