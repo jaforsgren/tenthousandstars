@@ -5,13 +5,11 @@ namespace Tts;
 public abstract partial class FleetNodeBase : Node2D
 {
 	protected float _radius;
-	protected float _outlineWidth;
 	protected float _ships;
 	protected bool _selected;
 	protected Label _label = null!;
 
-	private const float SelectedOutlineWidthMultiplier = 4f;
-	protected const int ArcSegments = 32;
+	private Node2D? _visualRoot;
 
 	protected virtual string? VisualScenePath => null;
 
@@ -19,14 +17,16 @@ public abstract partial class FleetNodeBase : Node2D
 	{
 		if (VisualScenePath is null) return;
 		var scene = GD.Load<PackedScene>(VisualScenePath);
-		if (scene != null)
-			AddChild(scene.Instantiate());
+		if (scene == null) return;
+		_visualRoot = scene.Instantiate<Node2D>();
+		AddChild(_visualRoot);
 	}
 
-	protected void BaseInitialize(float systemRadius, float gap, float radius, float labelWidth, float labelHeight, float outlineWidth, int fontSize)
+	protected Sprite2D? GetIconSprite() => _visualRoot?.GetNodeOrNull<Sprite2D>("Fleet");
+
+	protected void BaseInitialize(float systemRadius, float gap, float radius, float labelWidth, float labelHeight, int fontSize)
 	{
 		_radius = radius;
-		_outlineWidth = outlineWidth;
 		Position = new Vector2(0f, systemRadius + gap + radius);
 
 		_label = new Label
@@ -56,15 +56,5 @@ public abstract partial class FleetNodeBase : Node2D
 			_label.Text = Mathf.FloorToInt(ships).ToString();
 			_label.Visible = true;
 		}
-		QueueRedraw();
-	}
-
-	protected void DrawFleetCircle(Color fill, Color outline)
-	{
-		if (_ships <= 0) return;
-		DrawCircle(Vector2.Zero, _radius, fill);
-		var width = _selected ? _outlineWidth * SelectedOutlineWidthMultiplier : _outlineWidth;
-		var color = _selected ? Colors.White : outline;
-		DrawArc(Vector2.Zero, _radius, 0f, Mathf.Tau, ArcSegments, color, width);
 	}
 }

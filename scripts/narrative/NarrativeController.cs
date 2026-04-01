@@ -19,10 +19,22 @@ public class NarrativeController
         _outroGenerator = outroGenerator;
     }
 
+    private static void Log(string msg)
+    {
+        if (Type.GetType("Godot.Engine, Godot") != null)
+            GD.Print(msg); 
+        else
+            Console.WriteLine(msg);
+    }
+
     public static NarrativeController Create(Random rng)
     {
         var archetypeFiles = new[] { "falling_empire", "rising_power", "conquest" };
         var archetypes = new List<ArchetypeConfig>(archetypeFiles.Length);
+
+        
+        // here i need to add mode stuff.. 
+        // TODO: make a configload.loadFolder meothod
         foreach (var file in archetypeFiles)
             archetypes.Add(ConfigLoader.Load<ArchetypeConfig>($"res://config/story/archetypes/{file}.json"));
 
@@ -52,7 +64,7 @@ public class NarrativeController
     public void StartCampaign(string archetypeId = "")
     {
         _service.StartCampaign(archetypeId);
-        GD.Print($"[Narrative] Campaign started — archetype: {_service.CurrentState.ArchetypeId}, player: {_service.CurrentState.PlayerFactionName}");
+        Log($"[Narrative] Campaign started — archetype: {_service.CurrentState.ArchetypeId}, player: {_service.CurrentState.PlayerFactionName}");
     }
 
     public void UpdateEnemyFaction(string enemyFaction)
@@ -61,21 +73,21 @@ public class NarrativeController
     public MissionContext GetNextMission()
     {
         var ctx = _service.GetNextMission();
-        GD.Print($"[Narrative] Mission {ctx.State.MissionsCompleted + 1} — chapter: {ctx.Chapter.ChapterId}, condition: {ctx.Condition.Id}");
-        GD.Print($"[Narrative] Briefing: {ctx.Briefing}");
+        Log($"[Narrative] Mission {ctx.State.MissionsCompleted + 1} — chapter: {ctx.Chapter.ChapterId}, condition: {ctx.Condition.Id}");
+        Log($"[Narrative] Briefing: {ctx.Briefing}");
         return ctx;
     }
 
     public void OnMissionComplete(bool won, int playerSystems, int enemySystems, int enemyFleets)
     {
         _service.OnMissionComplete(new MissionResult(won, playerSystems, enemySystems, enemyFleets));
-        GD.Print($"[Narrative] Mission complete — won: {won}, chapter: {_service.CurrentState.CurrentChapterIndex}/{_service.CurrentState.TotalChapters}");
+        Log($"[Narrative] Mission complete — won: {won}, chapter: {_service.CurrentState.CurrentChapterIndex}/{_service.CurrentState.TotalChapters}");
     }
 
     public (string Title, string Text) GenerateOutro()
     {
         var (title, text) = _outroGenerator.Generate(_service.CurrentState);
-        GD.Print($"[Narrative] Outro: {title}");
+        Log($"[Narrative] Outro: {title}");
         return (title, text);
     }
 
@@ -85,8 +97,8 @@ public class NarrativeController
     public void PrintDebugState()
     {
         var s = _service.CurrentState;
-        GD.Print($"[Narrative Debug] Archetype: {s.ArchetypeId} | Chapter: {s.CurrentChapterIndex}/{s.TotalChapters} ({s.CurrentChapterId})");
-        GD.Print($"[Narrative Debug] Missions: {s.MissionsWon}/{s.MissionsCompleted} won | Enemy winning: {s.EnemyIsWinning} | Player stronger: {s.PlayerStrongerThanEnemy}");
-        GD.Print($"[Narrative Debug] Factions: {s.PlayerFactionName} vs {s.EnemyFactionName}");
+        Log($"[Narrative Debug] Archetype: {s.ArchetypeId} | Chapter: {s.CurrentChapterIndex}/{s.TotalChapters} ({s.CurrentChapterId})");
+        Log($"[Narrative Debug] Missions: {s.MissionsWon}/{s.MissionsCompleted} won | Enemy winning: {s.EnemyIsWinning} | Player stronger: {s.PlayerStrongerThanEnemy}");
+        Log($"[Narrative Debug] Factions: {s.PlayerFactionName} vs {s.EnemyFactionName}");
     }
 }

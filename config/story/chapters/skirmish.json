@@ -4,13 +4,15 @@
   "MissionTags": ["skirmish"],
   "When": null,
   "IntroBarks": [
-    "This sector is contested. Take it.",
+    "This sector is ours.",
     "Neither side controls this space. That changes now.",
-    "Probe their defenses. Find the weakness."
+    "Probe their defenses. Find the weakness.",
+    "We must secure this system"
   ],
   "OutroBarks": [
-    "The sector is cleared.",
+    "The sector is cleared!",
     "We control this space now.",
-    "Contested no more."
+    "Contested no more...",
+    "Victory!"
   ]
 }

@@ -4,8 +4,9 @@
   "ChapterSequence": ["retreat", "skirmish", "assault"],
   "PlayerFactionName": "The Last Command",
   "OpeningBarks": [
-    "We have lost too much. But we are not finished.",
-    "The empire shrinks. We hold what we can.",
-    "Retreat is not defeat. Not yet."
+    "What do we have left to fight over...",
+    "Death over defeat!",
+    "For our glorious forefathers",
+    "We will rise again!"
   ]
 }

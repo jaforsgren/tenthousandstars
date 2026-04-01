@@ -5,6 +5,5 @@
 [node name="AiFleetNode" type="Node2D" unique_id=301442302]
 
 [node name="Fleet" type="Sprite2D" parent="." unique_id=1802660384]
-position = Vector2(0, 3)
-rotation = 3.1415927
+position = Vector2(20, 19)
 texture = ExtResource("2_6e64n")

@@ -1,0 +1,35 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <IsPackable>false</IsPackable>
+    <RootNamespace>Tts.Tests</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.11.1" />
+    <PackageReference Include="xunit" Version="2.9.2" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.8.2">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <!--
+      GodotSharp is required at compile time only: NarrativeController.cs imports Godot
+      for a guarded GD.Print call that is never executed outside the engine runtime.
+    -->
+    <PackageReference Include="GodotSharp" Version="4.3.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- Narrative module — pure C#, no engine runtime dependency -->
+    <Compile Include="../scripts/narrative/**/*.cs" />
+    <!-- EndCondition record referenced by NarrativeConditionConfig.ToEndCondition() -->
+    <Compile Include="../scripts/config/EndStateConfig.cs" />
+    <!--
+      ConfigLoader is included so the Tts namespace resolves fully.
+      NarrativeController.Create() calls it, but tests bypass Create() via the
+      private constructor, so ConfigLoader is never invoked during tests.
+    -->
+    <Compile Include="../scripts/utils/ConfigLoader.cs" />
+  </ItemGroup>
+</Project>

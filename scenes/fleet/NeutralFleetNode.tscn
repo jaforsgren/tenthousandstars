@@ -5,7 +5,5 @@
 [node name="NeutralFleetNode" type="Node2D" unique_id=1981769648]
 
 [node name="Fleet" type="Sprite2D" parent="." unique_id=709541454]
-modulate = Color(0.41981313, 0.41981313, 0.4198131, 1)
-position = Vector2(0, 3)
-rotation = 3.1415927
+position = Vector2(20, 19)
 texture = ExtResource("1_27l74")

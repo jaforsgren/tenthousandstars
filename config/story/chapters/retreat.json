@@ -4,13 +4,16 @@
   "MissionTags": ["retreat"],
   "When": null,
   "IntroBarks": [
-    "Hold the line. Buy time for the withdrawal.",
+    "Hold the line. Buy time for the withdrawal!",
     "We cannot advance. Not yet. Hold.",
+    "Brace for attack!",
+    "Prepare yourself, they are comming.",
     "Defensive posture. Every second counts."
   ],
   "OutroBarks": [
     "We survived. For now.",
-    "The line held. Barely.",
+    "So many ships lost...",
+    "We wont survive another onslaguht like that",
     "We bought time. Use it well."
   ]
 }

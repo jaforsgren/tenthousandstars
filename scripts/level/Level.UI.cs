@@ -54,7 +54,7 @@ public partial class Level
 
 	private void ShowAiSystemInfo(int systemIndex)
 	{
-		var owner = _systems[systemIndex].Owner;
+		var owner = _systems[systemIndex].OwnerPlayer;
 		var aiPlayer = _aiPlayers.FirstOrDefault(p => p.Owner == owner);
 		if (aiPlayer == null) return;
 		_aiColors.TryGetValue(owner, out var color);

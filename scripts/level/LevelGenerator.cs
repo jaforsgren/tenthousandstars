@@ -9,8 +9,8 @@ public enum SystemOwner { None, Player, Ai1, Ai2, Ai3, Ai4 }
 
 public static class SystemOwnerExtensions
 {
-	public static bool IsAi(this SystemOwner owner) =>
-		owner is SystemOwner.Ai1 or SystemOwner.Ai2 or SystemOwner.Ai3 or SystemOwner.Ai4;
+    public static bool IsAi(this SystemOwner owner) =>
+        owner is SystemOwner.Ai1 or SystemOwner.Ai2 or SystemOwner.Ai3 or SystemOwner.Ai4;
 }
 
 public record AiPlayerData(SystemOwner Owner, AiDisposition Disposition, string Name, string FactionName);
@@ -19,167 +19,167 @@ public record LevelData(IReadOnlyList<SystemData> Systems, IReadOnlyList<(int Fr
 
 public static class LevelGenerator
 {
-	private static readonly SystemOwner[] AiOwners = [SystemOwner.Ai1, SystemOwner.Ai2, SystemOwner.Ai3, SystemOwner.Ai4];
+    private static readonly SystemOwner[] AiOwners = [SystemOwner.Ai1, SystemOwner.Ai2, SystemOwner.Ai3, SystemOwner.Ai4];
 
-	public static LevelData Generate(Random rng, LevelGeneratorConfig cfg, AiConfig aiCfg)
-	{
-		var count = rng.Next(cfg.MinSystems, cfg.MaxSystems + 1);
-		var systems = PlaceSystems(rng, count, (int)cfg.SpawnWidth, (int)cfg.SpawnHeight, cfg);
-		var routes = BuildRoutes(rng, systems, cfg);
-		var withPlayer = AssignPlayerStart(rng, systems);
-		var opponentCount = rng.Next(aiCfg.MinOpponents, aiCfg.MaxOpponents + 1);
-		var (withAi, aiPlayers) = AssignAiStarts(rng, withPlayer, routes, opponentCount, cfg, aiCfg);
-		var withFleets = AssignNeutralFleets(rng, withAi, cfg);
-		return new LevelData(withFleets, routes, aiPlayers);
-	}
+    public static LevelData Generate(Random rng, LevelGeneratorConfig cfg, AiConfig aiCfg, AiNamingConfig aiNamingCfg)
+    {
+        var count = rng.Next(cfg.MinSystems, cfg.MaxSystems + 1);
+        var systems = PlaceSystems(rng, count, (int)cfg.SpawnWidth, (int)cfg.SpawnHeight, cfg);
+        var routes = BuildRoutes(rng, systems, cfg);
+        var withPlayer = AssignPlayerStart(rng, systems);
+        var opponentCount = rng.Next(aiCfg.MinOpponents, aiCfg.MaxOpponents + 1);
+        var (withAi, aiPlayers) = AssignAiStarts(rng, withPlayer, routes, opponentCount, cfg, aiCfg, aiNamingCfg);
+        var withFleets = AssignNeutralFleets(rng, withAi, cfg);
+        return new LevelData(withFleets, routes, aiPlayers);
+    }
 
-	private static IReadOnlyList<SystemData> AssignPlayerStart(Random rng, IReadOnlyList<SystemData> systems)
-	{
-		var list = new List<SystemData>(systems);
-		var playerIndex = rng.Next(0, list.Count);
-		list[playerIndex] = list[playerIndex] with { Owner = SystemOwner.Player };
-		return list;
-	}
+    private static IReadOnlyList<SystemData> AssignPlayerStart(Random rng, IReadOnlyList<SystemData> systems)
+    {
+        var list = new List<SystemData>(systems);
+        var playerIndex = rng.Next(0, list.Count);
+        list[playerIndex] = list[playerIndex] with { Owner = SystemOwner.Player };
+        return list;
+    }
 
-	private static (IReadOnlyList<SystemData> Systems, IReadOnlyList<AiPlayerData> AiPlayers) AssignAiStarts(
-		Random rng, IReadOnlyList<SystemData> systems, IReadOnlyList<(int, int)> routes,
-		int opponentCount, LevelGeneratorConfig cfg, AiConfig aiCfg)
-	{
-		var list = new List<SystemData>(systems);
-		var aiPlayers = new List<AiPlayerData>();
-		var dispositions = Enum.GetValues<AiDisposition>();
+    private static (IReadOnlyList<SystemData> Systems, IReadOnlyList<AiPlayerData> AiPlayers) AssignAiStarts(
+        Random rng, IReadOnlyList<SystemData> systems, IReadOnlyList<(int, int)> routes,
+        int opponentCount, LevelGeneratorConfig cfg, AiConfig aiCfg, AiNamingConfig aiNamingCfg)
+    {
+        var list = new List<SystemData>(systems);
+        var aiPlayers = new List<AiPlayerData>();
+        var dispositions = Enum.GetValues<AiDisposition>();
 
-		var playerIndex = list.FindIndex(s => s.Owner == SystemOwner.Player);
-		var hopDistances = GraphUtils.BfsHopDistances(playerIndex, systems.Count, routes);
+        var playerIndex = list.FindIndex(s => s.Owner == SystemOwner.Player);
+        var hopDistances = GraphUtils.BfsHopDistances(playerIndex, systems.Count, routes);
 
-		var neutralIndices = Enumerable.Range(0, list.Count)
-			.Where(i => list[i].Owner == SystemOwner.None && hopDistances[i] >= cfg.AiMinHopsFromPlayer)
-			.OrderBy(_ => rng.Next())
-			.ToList();
+        var neutralIndices = Enumerable.Range(0, list.Count)
+            .Where(i => list[i].Owner == SystemOwner.None && hopDistances[i] >= cfg.AiMinHopsFromPlayer)
+            .OrderBy(_ => rng.Next())
+            .ToList();
 
-		var assignCount = Math.Min(opponentCount, Math.Min(neutralIndices.Count, AiOwners.Length));
-		for (var i = 0; i < assignCount; i++)
-		{
-			var idx = neutralIndices[i];
-			var owner = AiOwners[i];
-			var disposition = dispositions[rng.Next(dispositions.Length)];
-			var abbrevs = aiCfg.DispositionAbbreviations[disposition.ToString()];
-			var name = abbrevs[rng.Next(abbrevs.Length)];
-			var nameEntry = aiCfg.Names[rng.Next(aiCfg.Names.Length)];
-			var suffix = aiCfg.Suffix[disposition.ToString()];
-			var chosenSuffix = suffix[rng.Next(suffix.Length)];
-			var factionName = string.IsNullOrEmpty(chosenSuffix)
-				? nameEntry.Noun
-				: $"{nameEntry.Adjective} {chosenSuffix}";
-			list[idx] = list[idx] with { Owner = owner };
-			aiPlayers.Add(new AiPlayerData(owner, disposition, name, factionName));
-		}
+        var assignCount = Math.Min(opponentCount, Math.Min(neutralIndices.Count, AiOwners.Length));
+        for (var i = 0; i < assignCount; i++)
+        {
+            var idx = neutralIndices[i];
+            var owner = AiOwners[i];
+            var disposition = dispositions[rng.Next(dispositions.Length)];
+            var abbrevs = aiNamingCfg.DispositionAbbreviations[disposition.ToString()];
+            var name = abbrevs[rng.Next(abbrevs.Length)];
+            var nameEntry = aiNamingCfg.Names[rng.Next(aiNamingCfg.Names.Length)];
+            var suffix = aiNamingCfg.Suffix[disposition.ToString()];
+            var chosenSuffix = suffix[rng.Next(suffix.Length)];
+            var factionName = string.IsNullOrEmpty(chosenSuffix)
+                ? nameEntry.Noun
+                : $"{nameEntry.Adjective} {chosenSuffix}";
+            list[idx] = list[idx] with { Owner = owner };
+            aiPlayers.Add(new AiPlayerData(owner, disposition, name, factionName));
+        }
 
-		return (list, aiPlayers);
-	}
+        return (list, aiPlayers);
+    }
 
-	private static IReadOnlyList<SystemData> AssignNeutralFleets(Random rng, IReadOnlyList<SystemData> systems, LevelGeneratorConfig cfg)
-	{
-		return systems.Select(s => s.Owner == SystemOwner.None
-			? s with { InitialFleet = rng.Next(cfg.NeutralFleetMin, cfg.NeutralFleetMax + 1) }
-			: s
-		).ToList();
-	}
+    private static IReadOnlyList<SystemData> AssignNeutralFleets(Random rng, IReadOnlyList<SystemData> systems, LevelGeneratorConfig cfg)
+    {
+        return systems.Select(s => s.Owner == SystemOwner.None
+            ? s with { InitialFleet = rng.Next(cfg.NeutralFleetMin, cfg.NeutralFleetMax + 1) }
+            : s
+        ).ToList();
+    }
 
-	private static IReadOnlyList<SystemData> PlaceSystems(Random rng, int count, int width, int height, LevelGeneratorConfig cfg)
-	{
-		var positions = new List<Vector2>();
-		var attempts = cfg.MaxPlacementAttempts;
+    private static IReadOnlyList<SystemData> PlaceSystems(Random rng, int count, int width, int height, LevelGeneratorConfig cfg)
+    {
+        var positions = new List<Vector2>();
+        var attempts = cfg.MaxPlacementAttempts;
 
-		while (positions.Count < count && attempts-- > 0)
-		{
-			var candidate = new Vector2(
-				cfg.Margin + (float)rng.NextDouble() * (width - cfg.Margin * 2f),
-				cfg.Margin + (float)rng.NextDouble() * (height - cfg.Margin * 2f)
-			);
-			if (IsWellSpaced(candidate, positions, cfg.MinSpacing))
-				positions.Add(candidate);
-		}
+        while (positions.Count < count && attempts-- > 0)
+        {
+            var candidate = new Vector2(
+                cfg.Margin + (float)rng.NextDouble() * (width - cfg.Margin * 2f),
+                cfg.Margin + (float)rng.NextDouble() * (height - cfg.Margin * 2f)
+            );
+            if (IsWellSpaced(candidate, positions, cfg.MinSpacing))
+                positions.Add(candidate);
+        }
 
-		return positions.ConvertAll(p => new SystemData(p, GeneratePlanets(rng, cfg)));
-	}
+        return positions.ConvertAll(p => new SystemData(p, GeneratePlanets(rng, cfg)));
+    }
 
-	private static bool IsWellSpaced(Vector2 candidate, List<Vector2> placed, float minSpacing)
-	{
-		foreach (var pos in placed)
-			if (pos.DistanceTo(candidate) < minSpacing) return false;
-		return true;
-	}
+    private static bool IsWellSpaced(Vector2 candidate, List<Vector2> placed, float minSpacing)
+    {
+        foreach (var pos in placed)
+            if (pos.DistanceTo(candidate) < minSpacing) return false;
+        return true;
+    }
 
-	private static IReadOnlyList<Planet> GeneratePlanets(Random rng, LevelGeneratorConfig cfg)
-	{
-		var count = rng.Next(0, 6);
-		var planets = new List<Planet>(count);
-		var angleStep = count > 0 ? Mathf.Tau / count : 0f;
+    private static IReadOnlyList<Planet> GeneratePlanets(Random rng, LevelGeneratorConfig cfg)
+    {
+        var count = rng.Next(0, 6);
+        var planets = new List<Planet>(count);
+        var angleStep = count > 0 ? Mathf.Tau / count : 0f;
 
-		for (var i = 0; i < count; i++)
-		{
-			var orbit = cfg.MinOrbit + (float)rng.NextDouble() * (cfg.MaxOrbit - cfg.MinOrbit);
-			var angle = angleStep * i + (float)(rng.NextDouble() * 0.4);
-			var size = cfg.MinPlanetSize + (float)rng.NextDouble() * (cfg.MaxPlanetSize - cfg.MinPlanetSize);
-			planets.Add(new Planet(cfg.PlanetProductionRate, orbit, angle, size));
-		}
+        for (var i = 0; i < count; i++)
+        {
+            var orbit = cfg.MinOrbit + (float)rng.NextDouble() * (cfg.MaxOrbit - cfg.MinOrbit);
+            var angle = angleStep * i + (float)(rng.NextDouble() * 0.4);
+            var size = cfg.MinPlanetSize + (float)rng.NextDouble() * (cfg.MaxPlanetSize - cfg.MinPlanetSize);
+            planets.Add(new Planet(cfg.PlanetProductionRate, orbit, angle, size));
+        }
 
-		return planets;
-	}
+        return planets;
+    }
 
-	private static IReadOnlyList<(int, int)> BuildRoutes(Random rng, IReadOnlyList<SystemData> systems, LevelGeneratorConfig cfg)
-	{
-		var routes = new HashSet<(int, int)>();
-		var connections = new int[systems.Count];
+    private static IReadOnlyList<(int, int)> BuildRoutes(Random rng, IReadOnlyList<SystemData> systems, LevelGeneratorConfig cfg)
+    {
+        var routes = new HashSet<(int, int)>();
+        var connections = new int[systems.Count];
 
-		// Minimum spanning tree guarantees full traversability
-		var inTree = new HashSet<int> { 0 };
-		while (inTree.Count < systems.Count)
-		{
-			var bestDist = float.MaxValue;
-			var bestFrom = -1;
-			var bestTo = -1;
+        // Minimum spanning tree guarantees full traversability
+        var inTree = new HashSet<int> { 0 };
+        while (inTree.Count < systems.Count)
+        {
+            var bestDist = float.MaxValue;
+            var bestFrom = -1;
+            var bestTo = -1;
 
-			foreach (var from in inTree)
-			{
-				for (var to = 0; to < systems.Count; to++)
-				{
-					if (inTree.Contains(to)) continue;
-					var dist = systems[from].Position.DistanceTo(systems[to].Position);
-					if (dist < bestDist) { bestDist = dist; bestFrom = from; bestTo = to; }
-				}
-			}
+            foreach (var from in inTree)
+            {
+                for (var to = 0; to < systems.Count; to++)
+                {
+                    if (inTree.Contains(to)) continue;
+                    var dist = systems[from].Position.DistanceTo(systems[to].Position);
+                    if (dist < bestDist) { bestDist = dist; bestFrom = from; bestTo = to; }
+                }
+            }
 
-			inTree.Add(bestTo);
-			routes.Add(NormalizedEdge(bestFrom, bestTo));
-			connections[bestFrom]++;
-			connections[bestTo]++;
-		}
+            inTree.Add(bestTo);
+            routes.Add(NormalizedEdge(bestFrom, bestTo));
+            connections[bestFrom]++;
+            connections[bestTo]++;
+        }
 
-		// Extra routes for variety, respecting the per-system connection cap
-		var extras = new List<(int, int)>();
-		for (var i = 0; i < systems.Count; i++)
-			for (var j = i + 1; j < systems.Count; j++)
-				if (!routes.Contains((i, j)) && connections[i] < cfg.MaxConnectionsPerSystem && connections[j] < cfg.MaxConnectionsPerSystem)
-					extras.Add((i, j));
+        // Extra routes for variety, respecting the per-system connection cap
+        var extras = new List<(int, int)>();
+        for (var i = 0; i < systems.Count; i++)
+            for (var j = i + 1; j < systems.Count; j++)
+                if (!routes.Contains((i, j)) && connections[i] < cfg.MaxConnectionsPerSystem && connections[j] < cfg.MaxConnectionsPerSystem)
+                    extras.Add((i, j));
 
-		extras.Sort((a, b) =>
-			systems[a.Item1].Position.DistanceTo(systems[a.Item2].Position)
-			.CompareTo(systems[b.Item1].Position.DistanceTo(systems[b.Item2].Position)));
+        extras.Sort((a, b) =>
+            systems[a.Item1].Position.DistanceTo(systems[a.Item2].Position)
+            .CompareTo(systems[b.Item1].Position.DistanceTo(systems[b.Item2].Position)));
 
-		var extraCount = rng.Next(1, Math.Min(5, extras.Count + 1));
-		for (var i = 0; i < extraCount && i < extras.Count; i++)
-		{
-			var (f, t) = extras[i];
-			if (connections[f] >= cfg.MaxConnectionsPerSystem || connections[t] >= cfg.MaxConnectionsPerSystem) continue;
-			routes.Add((f, t));
-			connections[f]++;
-			connections[t]++;
-		}
+        var extraCount = rng.Next(1, Math.Min(5, extras.Count + 1));
+        for (var i = 0; i < extraCount && i < extras.Count; i++)
+        {
+            var (f, t) = extras[i];
+            if (connections[f] >= cfg.MaxConnectionsPerSystem || connections[t] >= cfg.MaxConnectionsPerSystem) continue;
+            routes.Add((f, t));
+            connections[f]++;
+            connections[t]++;
+        }
 
-		return [.. routes];
-	}
+        return [.. routes];
+    }
 
-	private static (int, int) NormalizedEdge(int a, int b) => a < b ? (a, b) : (b, a);
+    private static (int, int) NormalizedEdge(int a, int b) => a < b ? (a, b) : (b, a);
 }

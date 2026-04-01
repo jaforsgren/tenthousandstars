@@ -13,6 +13,8 @@ layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 script = ExtResource("1_storydbg")
 
 [node name="Background" type="ColorRect" parent="." unique_id=293818016]
@@ -29,11 +31,6 @@ anchor_bottom = 1.0
 
 [node name="HeaderRow" type="HBoxContainer" parent="DebugLayout" unique_id=1647838489]
 layout_mode = 2
-
-[node name="TitleLabel" type="Label" parent="DebugLayout/HeaderRow" unique_id=317419009]
-layout_mode = 2
-text = "Story Debug"
-label_settings = SubResource("LabelSettings_title")
 
 [node name="ArchetypeLabel" type="Label" parent="DebugLayout/HeaderRow" unique_id=894280516]
 layout_mode = 2
@@ -57,12 +54,15 @@ layout_mode = 2
 size_flags_horizontal = 3
 placeholder_text = "W,W,W  or  W,L,W"
 
-[node name="GenerateButton" type="Button" parent="DebugLayout/HeaderRow" unique_id=1844689699]
+[node name="HeaderRow2" type="HBoxContainer" parent="DebugLayout" unique_id=866618807]
+layout_mode = 2
+
+[node name="GenerateButton" type="Button" parent="DebugLayout/HeaderRow2" unique_id=1825117906]
 unique_name_in_owner = true
 layout_mode = 2
 text = "Generate"
 
-[node name="BackButton" type="Button" parent="DebugLayout/HeaderRow" unique_id=1758182091]
+[node name="BackButton" type="Button" parent="DebugLayout/HeaderRow2" unique_id=1679465337]
 unique_name_in_owner = true
 layout_mode = 2
 text = "Back"
@@ -89,14 +89,11 @@ text = "Outro"
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="OutputScroll" type="ScrollContainer" parent="DebugLayout/OutputPanel" unique_id=1641102515]
-layout_mode = 2
-size_flags_horizontal = 3
-size_flags_vertical = 3
-
-[node name="OutputText" type="RichTextLabel" parent="DebugLayout/OutputPanel/OutputScroll" unique_id=100694602]
+[node name="OutputText" type="RichTextLabel" parent="DebugLayout/OutputPanel" unique_id=100694602]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
+size_flags_vertical = 3
 bbcode_enabled = true
+scroll_active = true
 text = "[i]Press Generate to simulate a full campaign.[/i]"

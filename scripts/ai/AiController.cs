@@ -126,10 +126,10 @@ public partial class AiController : Node
 		buffer.Clear();
 		for (var i = 0; i < _systems.Count; i++)
 		{
-			if (_systems[i].Owner != player.Owner || !_systems[i].HasFleet) continue;
+			if (_systems[i].OwnerPlayer != player.Owner || !_systems[i].HasFleet) continue;
 			foreach (var neighbor in GetAdjacentSystemIndices(i))
 			{
-				if (_systems[neighbor].Owner == player.Owner) continue;
+				if (_systems[neighbor].OwnerPlayer == player.Owner) continue;
 				if (IsViableAttack(i, neighbor, player.Disposition))
 					buffer.Add((i, neighbor));
 			}
@@ -145,11 +145,11 @@ public partial class AiController : Node
 		var frontline = new HashSet<int>();
 		for (var i = 0; i < _systems.Count; i++)
 		{
-			if (_systems[i].Owner != player.Owner) continue;
+			if (_systems[i].OwnerPlayer != player.Owner) continue;
 			var neighbors = GetAdjacentSystemIndices(i);
 			for (var j = 0; j < neighbors.Count; j++)
 			{
-				if (_systems[neighbors[j]].Owner != player.Owner)
+				if (_systems[neighbors[j]].OwnerPlayer != player.Owner)
 				{
 					frontline.Add(i);
 					break;
@@ -168,7 +168,7 @@ public partial class AiController : Node
 			var current = queue.Dequeue();
 			foreach (var neighbor in GetAdjacentSystemIndices(current))
 			{
-				if (_systems[neighbor].Owner != player.Owner) continue;
+				if (_systems[neighbor].OwnerPlayer != player.Owner) continue;
 				if (!visited.Add(neighbor)) continue;
 				nextHopTowardFront[neighbor] = current;
 				queue.Enqueue(neighbor);
@@ -177,7 +177,7 @@ public partial class AiController : Node
 
 		for (var i = 0; i < _systems.Count; i++)
 		{
-			if (_systems[i].Owner != player.Owner || !_systems[i].HasFleet) continue;
+			if (_systems[i].OwnerPlayer != player.Owner || !_systems[i].HasFleet) continue;
 			if (frontline.Contains(i)) continue;
 			if (nextHopTowardFront.TryGetValue(i, out var destination))
 				buffer.Add((i, destination));
@@ -206,7 +206,7 @@ public partial class AiController : Node
 	private bool ExecuteReinforce((int From, int To) option)
 	{
 		var fromSystem = _systems[option.From];
-		var player = _players.FirstOrDefault(p => p.Owner == fromSystem.Owner);
+		var player = _players.FirstOrDefault(p => p.Owner == fromSystem.OwnerPlayer);
 		if (player == null) return false;
 		var fleet = fromSystem.TakeFleet();
 		_launchTransit(option.From, option.To, fleet, player);

@@ -8,7 +8,7 @@ public partial class Level
 	{
 		var target = _systems[toIndex];
 
-		if (target.Owner == SystemOwner.Player)
+		if (target.OwnerPlayer == SystemOwner.Player)
 		{
 			target.AddFleet(fleet);
 		}
@@ -37,7 +37,7 @@ public partial class Level
 
 	private void LaunchAiTransit(int fromIndex, int toIndex, float fleet, AiPlayerData aiPlayer)
 	{
-		if (_systems[toIndex].Owner == SystemOwner.Player)
+		if (_systems[toIndex].OwnerPlayer == SystemOwner.Player)
 		{
 			PostBark(_barkConfig?.PlayerUnderAttack);
 			PostAiBark(aiPlayer);
@@ -57,7 +57,7 @@ public partial class Level
 	{
 		var target = _systems[toIndex];
 
-		if (target.Owner == senderOwner)
+		if (target.OwnerPlayer == senderOwner)
 		{
 			target.AddFleet(fleet);
 		}
@@ -101,7 +101,7 @@ public partial class Level
 
 	private void PostPlayerTransitBark(int toIndex)
 	{
-		var pool = _systems[toIndex].Owner == SystemOwner.Player
+		var pool = _systems[toIndex].OwnerPlayer == SystemOwner.Player
 			? _barkConfig?.PlayerMove
 			: _barkConfig?.PlayerAttack;
 		PostBark(pool);
@@ -117,11 +117,9 @@ public partial class Level
 
 	private void PostAiBark(AiPlayerData aiPlayer)
 	{
-		if (_chatWindow == null)
+		if (_chatWindow == null || aiPlayer.Barks.Length == 0)
 			return;
-		if (!_aiDispositionBarks.TryGetValue(aiPlayer.Disposition.ToString(), out var messages) || messages.Length == 0)
-			return;
-		var message = messages[_rng.Next(messages.Length)];
+		var message = aiPlayer.Barks[_rng.Next(aiPlayer.Barks.Length)];
 		_chatWindow.PostMessage(aiPlayer.FactionName, message);
 	}
 }

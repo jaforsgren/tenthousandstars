@@ -4,8 +4,10 @@
   "ChapterSequence": ["assault", "assault", "conquest"],
   "PlayerFactionName": "The Iron Vanguard",
   "OpeningBarks": [
-    "We do not negotiate. We take.",
+    "We will crush them",
     "Every system will fall. Every fleet will burn.",
-    "Conquest is not a goal. It is a promise."
+    "Let them burn",
+    "For glory and death!",
+    "They wont know what hit them"
   ]
 }

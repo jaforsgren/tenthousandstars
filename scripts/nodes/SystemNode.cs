@@ -9,7 +9,7 @@ public partial class SystemNode : FogAwareNode
 	private IReadOnlyList<Planet> _planets = [];
 	private readonly List<float> _fleetShips = [];
 	private readonly List<FleetNodeBase> _fleetNodes = [];
-	private SystemOwner _owner;
+	private SystemOwner _ownerPlayer;
 	private bool _selected;
 	private AiPlayerData? _aiPlayerData;
 	private Color? _aiOwnerColor;
@@ -63,10 +63,10 @@ public partial class SystemNode : FogAwareNode
 	public float DefenseBonusMultiplier => _upgrade == SystemUpgrade.Fortify ? _fortifyDefenseBonusMultiplier : 0f;
 	public SystemUpgrade Upgrade => _upgrade;
 	public float Ships => _fleetShips.Count > 0 ? _fleetShips.Sum() : 0f;
-	public SystemOwner Owner => _owner;
+	public SystemOwner OwnerPlayer => _ownerPlayer;
 	public bool HasFleet => _fleetShips.Any(s => s > 0f);
-	public bool IsPlayerOwned => _owner == SystemOwner.Player;
-	public bool IsAiOwned => _owner.IsAi();
+	public bool IsPlayerOwned => _ownerPlayer == SystemOwner.Player;
+	public bool IsAiOwned => _ownerPlayer.IsAi();
 
 	public bool ContainsFleetAt(Vector2 worldPos) => GetFleetSlotAt(worldPos) >= 0;
 
@@ -159,7 +159,7 @@ public partial class SystemNode : FogAwareNode
 
 	public void Capture(float ships, SystemOwner newOwner, AiPlayerData? aiPlayer = null, Color? aiOwnerColor = null)
 	{
-		_owner = newOwner;
+		_ownerPlayer = newOwner;
 		_aiPlayerData = aiPlayer;
 		_aiOwnerColor = aiOwnerColor;
 		_systemCircle.SetOutline(newOwner == SystemOwner.None ? _neutralSystemOutline : _playerSystemOutline);
@@ -202,10 +202,10 @@ public partial class SystemNode : FogAwareNode
 		if (_isDefend)
 			DrawArc(Vector2.Zero, _systemRadius + DefendRingGap, 0f, Mathf.Tau, 64, DefendRingColor, DefendRingWidth);
 
-		if (_targetOwner != SystemOwner.None && _owner == _targetOwner)
+		if (_targetOwner != SystemOwner.None && _ownerPlayer == _targetOwner)
 			DrawArc(Vector2.Zero, _systemRadius + TargetRingGap, 0f, Mathf.Tau, 64, TargetRingColor, TargetRingWidth);
 
-		if (_owner.IsAi() && _aiOwnerColor.HasValue)
+		if (_ownerPlayer.IsAi() && _aiOwnerColor.HasValue)
 			DrawArc(Vector2.Zero, _systemRadius + AiOwnerRingGap, 0f, Mathf.Tau, 64, _aiOwnerColor.Value, AiOwnerRingWidth);
 	}
 
@@ -219,7 +219,7 @@ public partial class SystemNode : FogAwareNode
 	public void Initialize(IReadOnlyList<Planet> planets, SystemOwner owner, float initialShips = 0f, AiPlayerData? aiPlayer = null, Color? aiOwnerColor = null)
 	{
 		_planets = planets;
-		_owner = owner;
+		_ownerPlayer = owner;
 		_aiPlayerData = aiPlayer;
 		_aiOwnerColor = aiOwnerColor;
 		RefreshProductionRate();
@@ -238,7 +238,7 @@ public partial class SystemNode : FogAwareNode
 		if (!Engine.IsEditorHint())
 			AddFleetSlot(initialShips);
 
-		if (_owner.IsAi())
+		if (_ownerPlayer.IsAi())
 			QueueRedraw();
 	}
 
@@ -277,7 +277,7 @@ public partial class SystemNode : FogAwareNode
 
 	public override void _Process(double delta)
 	{
-		if (Engine.IsEditorHint() || _owner == SystemOwner.None)
+		if (Engine.IsEditorHint() || _ownerPlayer == SystemOwner.None)
 			return;
 
 		if (_fleetShips.Count == 0)
@@ -289,7 +289,7 @@ public partial class SystemNode : FogAwareNode
 
 	private void AddFleetSlot(float ships)
 	{
-		var node = CreateFleetNode(_owner);
+		var node = CreateFleetNode(_ownerPlayer);
 		node.UpdateFleet(ships, false);
 		_fleetShips.Add(ships);
 		_fleetNodes.Add(node);
