@@ -15,11 +15,8 @@ public partial class SystemNode : FogAwareNode
 	private Color? _aiOwnerColor;
 
 	private float _systemRadius;
-	private float _fleetCircleRadius;
 	private float _fleetCircleGap;
 	private float _labelWidth;
-	private float _labelHeight;
-	private float _fleetOutlineWidth;
 	private float _baseProduction;
 	private Color _planetFill;
 	private Color _planetOutline;
@@ -40,6 +37,9 @@ public partial class SystemNode : FogAwareNode
 
 	private const string ForgeBadgePath = "res://scenes/system/ForgeUpgradeBadge.tscn";
 	private const string FortifyBadgePath = "res://scenes/system/FortifyUpgradeBadge.tscn";
+	private const string PlayerFleetScenePath = "res://scenes/fleet/PlayerFleetNode.tscn";
+	private const string NeutralFleetScenePath = "res://scenes/fleet/NeutralFleetNode.tscn";
+	private const string AiFleetScenePath = "res://scenes/fleet/AiFleetNode.tscn";
 	private const float FleetNodeSpacing = 4f;
 
 	private static readonly Color ObjectiveRingColor = new(1f, 0.85f, 0.2f, 0.8f);
@@ -246,11 +246,8 @@ public partial class SystemNode : FogAwareNode
 	{
 		var cfg = ConfigLoader.Load<SystemConfig>("res://config/system.json");
 		_systemRadius = cfg.SystemRadius;
-		_fleetCircleRadius = cfg.FleetCircleRadius;
 		_fleetCircleGap = cfg.FleetCircleGap;
 		_labelWidth = cfg.LabelWidth;
-		_labelHeight = cfg.LabelHeight;
-		_fleetOutlineWidth = cfg.FleetOutlineWidth;
 		_baseProduction = cfg.BaseProduction;
 		_playerSystemOutline = cfg.SystemOutline.ToColor();
 		_neutralSystemOutline = cfg.NeutralSystemOutline.ToColor();
@@ -309,7 +306,7 @@ public partial class SystemNode : FogAwareNode
 	{
 		var count = _fleetNodes.Count;
 		if (count == 0) return;
-		var step = _fleetCircleRadius * 2f + FleetNodeSpacing;
+		var step = _labelWidth + FleetNodeSpacing;
 		var totalWidth = (count - 1) * step;
 		for (var i = 0; i < count; i++)
 		{
@@ -322,23 +319,23 @@ public partial class SystemNode : FogAwareNode
 	{
 		if (owner == SystemOwner.Player)
 		{
-			var node = new PlayerFleetNode();
+			var node = GD.Load<PackedScene>(PlayerFleetScenePath).Instantiate<PlayerFleetNode>();
 			AddChild(node);
-			node.Initialize(_systemRadius, _fleetCircleGap, _fleetCircleRadius, _labelWidth, _labelHeight, _fleetOutlineWidth, _playerFleetFill, _playerFleetOutline);
+			node.Initialize(_systemRadius, _fleetCircleGap, _playerFleetFill, _playerFleetOutline);
 			return node;
 		}
 
 		if (owner.IsAi() && _aiPlayerData != null && _aiOwnerColor.HasValue)
 		{
-			var node = new AiFleetNode();
+			var node = GD.Load<PackedScene>(AiFleetScenePath).Instantiate<AiFleetNode>();
 			AddChild(node);
-			node.Initialize(_systemRadius, _fleetCircleGap, _fleetCircleRadius, _labelWidth, _labelHeight, _fleetOutlineWidth, _aiOwnerColor.Value, _aiPlayerData);
+			node.Initialize(_systemRadius, _fleetCircleGap, _aiOwnerColor.Value, _aiPlayerData);
 			return node;
 		}
 
-		var neutral = new NeutralFleetNode();
+		var neutral = GD.Load<PackedScene>(NeutralFleetScenePath).Instantiate<NeutralFleetNode>();
 		AddChild(neutral);
-		neutral.Initialize(_systemRadius, _fleetCircleGap, _fleetCircleRadius, _labelWidth, _labelHeight, _fleetOutlineWidth, _neutralFleetFill, _neutralFleetOutline);
+		neutral.Initialize(_systemRadius, _fleetCircleGap, _neutralFleetFill, _neutralFleetOutline);
 		return neutral;
 	}
 }

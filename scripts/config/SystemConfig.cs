@@ -2,7 +2,6 @@ namespace Tts;
 
 public record SystemConfig(
 	float SystemRadius,
-	float FleetCircleRadius,
 	float FleetCircleGap,
 	float BaseProduction,
 	float LabelWidth,

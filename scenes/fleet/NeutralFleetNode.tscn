@@ -1,9 +1,16 @@
-[gd_scene format=3 uid="uid://cn8x4mfr2k0a"]
+[gd_scene format=3 uid="uid://cneutralfleet1"]
 
-[ext_resource type="Texture2D" uid="uid://cui4akk4pmiik" path="res://assets/images/icons/fleet.svg" id="1_27l74"]
+[ext_resource type="Script" path="res://scripts/fleet/NeutralFleetNode.cs" id="1_nf"]
 
-[node name="NeutralFleetNode" type="Node2D" unique_id=1981769648]
+[node name="NeutralFleetNode" type="Node2D" unique_id=220000001]
+script = ExtResource("1_nf")
 
-[node name="Fleet" type="Sprite2D" parent="." unique_id=709541454]
-position = Vector2(20, 19)
-texture = ExtResource("1_27l74")
+[node name="CountButton" type="Button" parent="." unique_id=220000002]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = -18.0
+offset_top = -9.0
+offset_right = 18.0
+offset_bottom = 9.0
+custom_minimum_size = Vector2(36, 18)
+mouse_filter = 2

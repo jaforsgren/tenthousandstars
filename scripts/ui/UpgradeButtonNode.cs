@@ -5,9 +5,6 @@ namespace Tts;
 
 public partial class UpgradeButtonNode : Control
 {
-	[Export] public string DefaultLabel { get; set; } = "";
-	[Export] public string ActiveLabel { get; set; } = "";
-
 	private Button _button = null!;
 	private Action? _onPressed;
 
@@ -21,7 +18,7 @@ public partial class UpgradeButtonNode : Control
 	public void ShowFor(Vector2 viewportSize, int slotFromRight, bool isActive, bool disabled, Action? onPressed)
 	{
 		_onPressed = onPressed;
-		_button.Text = isActive ? ActiveLabel : DefaultLabel;
+		_button.ButtonPressed = isActive;
 		_button.Disabled = disabled;
 		_button.Position = UILayout.BottomRightButtonPosition(viewportSize, slotFromRight);
 		Visible = true;

@@ -12,10 +12,8 @@ public partial class InfoButton : Control
 
 	public override void _Ready()
 	{
-		_button = new Button { Text = "i" };
-		_button.CustomMinimumSize = new Vector2(UILayout.ButtonSize, UILayout.ButtonSize);
+		_button = GetNode<Button>("%InfoButton");
 		_button.Pressed += () => _onPressed?.Invoke();
-		AddChild(_button);
 		Visible = false;
 	}
 

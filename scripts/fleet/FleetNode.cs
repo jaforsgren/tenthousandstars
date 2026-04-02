@@ -4,46 +4,40 @@ namespace Tts;
 
 public abstract partial class FleetNodeBase : Node2D
 {
-	protected float _radius;
+	protected float _width;
+	protected float _height;
 	protected float _ships;
 	protected bool _selected;
-	protected Label _label = null!;
+	protected Button _button = null!;
 
-	private Node2D? _visualRoot;
-
-	protected virtual string? VisualScenePath => null;
+	private StyleBoxFlat _normalStyle = null!;
+	private Color _outline;
 
 	public override void _Ready()
 	{
-		if (VisualScenePath is null) return;
-		var scene = GD.Load<PackedScene>(VisualScenePath);
-		if (scene == null) return;
-		_visualRoot = scene.Instantiate<Node2D>();
-		AddChild(_visualRoot);
-	}
-
-	protected Sprite2D? GetIconSprite() => _visualRoot?.GetNodeOrNull<Sprite2D>("Fleet");
-
-	protected void BaseInitialize(float systemRadius, float gap, float radius, float labelWidth, float labelHeight, int fontSize)
-	{
-		_radius = radius;
-		Position = new Vector2(0f, systemRadius + gap + radius);
-
-		_label = new Label
-		{
-			Position = new Vector2(-labelWidth / 2f, -labelHeight / 2f),
-			Size = new Vector2(labelWidth, labelHeight),
-			HorizontalAlignment = HorizontalAlignment.Center,
-			VerticalAlignment = VerticalAlignment.Center,
-			Visible = false
-		};
-		_label.AddThemeColorOverride("font_color", Colors.White);
-		_label.AddThemeFontSizeOverride("font_size", fontSize);
-		AddChild(_label);
+		_button = GetNode<Button>("%CountButton");
+		_width = _button.CustomMinimumSize.X;
+		_height = _button.CustomMinimumSize.Y;
 		Visible = false;
 	}
 
-	public bool ContainsPoint(Vector2 worldPos) => worldPos.DistanceTo(GlobalPosition) <= _radius;
+	public bool ContainsPoint(Vector2 worldPos)
+	{
+		var local = worldPos - GlobalPosition;
+		return Mathf.Abs(local.X) <= _width / 2f && Mathf.Abs(local.Y) <= _height / 2f;
+	}
+
+	protected void BaseInitialize(float systemRadius, float gap, Color fill, Color outline)
+	{
+		_outline = outline;
+		Position = new Vector2(0f, systemRadius + gap + _height / 2f);
+
+		_normalStyle = new StyleBoxFlat { BgColor = fill, BorderColor = outline };
+		_button.AddThemeStyleboxOverride("normal", _normalStyle);
+		_button.AddThemeStyleboxOverride("hover", _normalStyle);
+		_button.AddThemeStyleboxOverride("pressed", _normalStyle);
+		_button.AddThemeColorOverride("font_color", Colors.White);
+	}
 
 	public virtual void UpdateFleet(float ships, bool selected)
 	{
@@ -52,9 +46,7 @@ public abstract partial class FleetNodeBase : Node2D
 		var hasFleet = ships > 0;
 		Visible = hasFleet;
 		if (hasFleet)
-		{
-			_label.Text = Mathf.FloorToInt(ships).ToString();
-			_label.Visible = true;
-		}
+			_button.Text = Mathf.FloorToInt(ships).ToString();
+		_normalStyle.BorderColor = selected ? Colors.White : _outline;
 	}
 }

@@ -1,65 +1,79 @@
-[gd_scene format=3]
+[gd_scene format=3 uid="uid://da5l120lcjlg"]
 
-[ext_resource type="Script" path="res://scripts/ui/OutroPanel.cs" id="1_outropanel"]
+[ext_resource type="Script" uid="uid://bb7k0mp471isf" path="res://scripts/ui/OutroPanel.cs" id="1_outropanel"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_panel"]
+bg_color = Color(0.7729517, 0.7729508, 0.77295107, 0.92156863)
 
 [sub_resource type="LabelSettings" id="LabelSettings_title"]
-font_size = 16
+font_color = Color(0.8244638, 0.27462858, 0.17559487, 1)
+
+[sub_resource type="Theme" id="Theme_gasrp"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_summary"]
-font_size = 11
 line_spacing = 6.0
+font_size = 11
+font_color = Color(0, 0, 0, 1)
 
-[node name="OutroPanel" type="Control"]
+[node name="OutroPanel" type="Control" unique_id=1715674476]
+layout_mode = 3
+anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-mouse_filter = 0
+grow_horizontal = 2
+grow_vertical = 2
 script = ExtResource("1_outropanel")
 PreviewInEditor = true
 
-[node name="BlackBackground" type="ColorRect" parent="."]
+[node name="BlackBackground" type="ColorRect" parent="." unique_id=1279519520]
+layout_mode = 1
+anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-color = Color(0, 0, 0, 1)
 mouse_filter = 2
+color = Color(0, 0, 0, 1)
 
-[node name="ContentBox" type="PanelContainer" parent="."]
+[node name="ContentBox" type="PanelContainer" parent="." unique_id=2142087627]
+layout_mode = 0
 offset_left = 24.0
 offset_top = 80.0
 offset_right = 456.0
 offset_bottom = 640.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_panel")
 
-[node name="ContentLayout" type="VBoxContainer" parent="ContentBox"]
+[node name="ContentLayout" type="VBoxContainer" parent="ContentBox" unique_id=2065409187]
 layout_mode = 2
 
-[node name="TitleLabel" type="Label" parent="ContentBox/ContentLayout"]
+[node name="TitleLabel" type="Label" parent="ContentBox/ContentLayout" unique_id=1003224402]
 unique_name_in_owner = true
 layout_mode = 2
-label_settings = SubResource("LabelSettings_title")
 text = "Campaign Complete"
+label_settings = SubResource("LabelSettings_title")
 horizontal_alignment = 1
 
-[node name="SummaryText" type="Label" parent="ContentBox/ContentLayout"]
+[node name="SummaryText" type="Label" parent="ContentBox/ContentLayout" unique_id=1961260005]
 unique_name_in_owner = true
 layout_mode = 2
-label_settings = SubResource("LabelSettings_summary")
-text = "..."
-autowrap_mode = 3
 size_flags_vertical = 3
+theme = SubResource("Theme_gasrp")
+text = "Test test test test"
+label_settings = SubResource("LabelSettings_summary")
+autowrap_mode = 3
 
-[node name="ButtonLayout" type="VBoxContainer" parent="ContentBox/ContentLayout"]
+[node name="ButtonLayout" type="VBoxContainer" parent="ContentBox/ContentLayout" unique_id=2079205866]
 layout_mode = 2
 
-[node name="NewCampaignButton" type="Button" parent="ContentBox/ContentLayout/ButtonLayout"]
+[node name="NewCampaignButton" type="Button" parent="ContentBox/ContentLayout/ButtonLayout" unique_id=997125524]
 unique_name_in_owner = true
 layout_mode = 2
 text = "New Campaign"
 
-[node name="RandomMissionsButton" type="Button" parent="ContentBox/ContentLayout/ButtonLayout"]
+[node name="RandomMissionsButton" type="Button" parent="ContentBox/ContentLayout/ButtonLayout" unique_id=602121110]
 unique_name_in_owner = true
 layout_mode = 2
 text = "Random Missions"
 
-[node name="QuitButton" type="Button" parent="ContentBox/ContentLayout/ButtonLayout"]
+[node name="QuitButton" type="Button" parent="ContentBox/ContentLayout/ButtonLayout" unique_id=388808082]
 unique_name_in_owner = true
 layout_mode = 2
 text = "Quit"

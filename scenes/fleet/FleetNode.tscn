@@ -1,9 +1,0 @@
-[gd_scene format=3 uid="uid://qttx0ct47l76"]
-
-[ext_resource type="Texture2D" uid="uid://cui4akk4pmiik" path="res://assets/images/icons/fleet.svg" id="1_ju16q"]
-
-[node name="FleetNode" type="Node2D" unique_id=2107832246]
-
-[node name="Fleet" type="Sprite2D" parent="." unique_id=179533578]
-position = Vector2(20, 19)
-texture = ExtResource("1_ju16q")

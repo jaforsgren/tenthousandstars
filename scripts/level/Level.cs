@@ -260,7 +260,7 @@ public partial class Level : Node2D
 	{
 		var sysCfg = ConfigLoader.Load<SystemConfig>("res://config/system.json");
 		var aiCfg = ConfigLoader.Load<AiConfig>("res://config/ai.json");
-		_ghostFleetRadius = sysCfg.FleetCircleRadius;
+		_ghostFleetRadius = sysCfg.LabelHeight / 2f;
 		_ghostFleetFill = sysCfg.FleetFill.ToColor();
 		_ghostFleetOutline = sysCfg.FleetOutline.ToColor();
 		_ghostFleetOutlineWidth = sysCfg.FleetOutlineWidth;

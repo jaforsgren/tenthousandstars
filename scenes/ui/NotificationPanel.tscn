@@ -1,28 +1,32 @@
 [gd_scene format=3 uid="uid://bfc704rs71xe2"]
 
 [ext_resource type="Script" uid="uid://bfvdp74xmdry3" path="res://scripts/ui/NotificationPanel.cs" id="1_notp"]
-[ext_resource type="StyleBox" path="res://scenes/InfoPanelStyle.tres" id="2_style"]
+[ext_resource type="StyleBox" uid="uid://c2o0epuw7wqij" path="res://scenes/InfoPanelStyle.tres" id="2_style"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_title"]
 font_size = 13
+font_color = Color(1, 0.18431373, 0, 1)
 
 [sub_resource type="LabelSettings" id="LabelSettings_desc"]
 line_spacing = 0.0
 font_size = 10
+font_color = Color(0, 0, 0, 1)
 
 [node name="NotificationPanel" type="PanelContainer" unique_id=1186808605 node_paths=PackedStringArray("_titleLabel", "_descriptionLabel")]
 custom_minimum_size = Vector2(240, 0)
+offset_top = 194.0
 offset_right = 240.0
-offset_bottom = 100.0
+offset_bottom = 294.0
 theme_override_styles/panel = ExtResource("2_style")
 script = ExtResource("1_notp")
 PreviewInEditor = true
-_titleLabel = NodePath("Content/Title")
-_descriptionLabel = NodePath("Content/Description")
 _timeRemaining = 0.0
 _active = false
 _allowEarlyDismiss = false
 _previewInEditor = true
+_titleLabel = NodePath("Content/Title")
+_descriptionLabel = NodePath("Content/Description")
+theme_override_styles/panel = ExtResource("2_style")
 
 [node name="Content" type="Control" parent="." unique_id=1186808606]
 layout_mode = 2

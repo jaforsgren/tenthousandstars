@@ -4,39 +4,24 @@ namespace Tts;
 
 public partial class AiFleetNode : FleetNodeBase
 {
-	private Label _idLabel = null!;
+	private Label _factionLabel = null!;
 
-	private const string AiVisualScenePath = "res://scenes/fleet/AiFleetNode.tscn";
-	private const int CountFontSize = 9;
-	private const int IdFontSize = 7;
-	private const float IdLabelOffsetBelowCircle = 2f;
-	private const float IdLabelHeight = 10f;
-
-	protected override string? VisualScenePath => AiVisualScenePath;
-
-	public void Initialize(float systemRadius, float gap, float radius, float labelWidth, float labelHeight, float outlineWidth, Color dispositionColor, AiPlayerData aiPlayer)
+	public override void _Ready()
 	{
-		BaseInitialize(systemRadius, gap, radius, labelWidth, labelHeight, CountFontSize);
+		base._Ready();
+		_factionLabel = GetNode<Label>("%FactionLabel");
+	}
 
-		if (GetIconSprite() is Sprite2D sprite)
-			sprite.Modulate = dispositionColor;
-
-		_idLabel = new Label
-		{
-			Position = new Vector2(-labelWidth / 2f, radius + IdLabelOffsetBelowCircle),
-			Size = new Vector2(labelWidth, IdLabelHeight),
-			HorizontalAlignment = HorizontalAlignment.Center,
-			Text = aiPlayer.FactionName,
-			Visible = false
-		};
-		_idLabel.AddThemeColorOverride("font_color", dispositionColor);
-		_idLabel.AddThemeFontSizeOverride("font_size", IdFontSize);
-		AddChild(_idLabel);
+	public void Initialize(float systemRadius, float gap, Color dispositionColor, AiPlayerData aiPlayer)
+	{
+		BaseInitialize(systemRadius, gap, dispositionColor with { A = 0.3f }, dispositionColor);
+		_factionLabel.Text = aiPlayer.FactionName;
+		_factionLabel.AddThemeColorOverride("font_color", dispositionColor);
 	}
 
 	public override void UpdateFleet(float ships, bool selected)
 	{
 		base.UpdateFleet(ships, selected);
-		_idLabel.Visible = ships > 0;
+		_factionLabel.Visible = ships > 0;
 	}
 }

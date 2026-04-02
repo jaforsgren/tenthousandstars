@@ -6,3 +6,10 @@
 layout_mode = 3
 anchors_preset = 0
 script = ExtResource("1_infbtn")
+
+[node name="InfoButton" type="Button" parent="." unique_id=785341210]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(48, 48)
+offset_right = 48.0
+offset_bottom = 48.0
+text = "i"

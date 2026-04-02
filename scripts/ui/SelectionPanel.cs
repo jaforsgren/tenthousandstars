@@ -6,7 +6,7 @@ namespace Tts;
 public partial class SelectionPanel : PanelContainer
 {
 	private const float PanelWidth = 200f;
-	private const float TopPadding = 12f;
+	private const float TopPadding = 20f;
 
 	private Label _titleLabel = null!;
 	private Label _descriptionLabel = null!;

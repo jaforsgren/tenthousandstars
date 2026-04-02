@@ -1,50 +1,115 @@
-[gd_scene format=3]
+[gd_scene format=3 uid="uid://dd86ekyqc6bhv"]
 
-[ext_resource type="Script" path="res://scripts/ui/InterludePanel.cs" id="1_intpanel"]
+[ext_resource type="Script" uid="uid://d75j14i8mbmw" path="res://scripts/ui/InterludePanel.cs" id="1_intpanel"]
+
+[sub_resource type="Theme" id="Theme_t4fmt"]
+
+[sub_resource type="Theme" id="Theme_288vk"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_t4fmt"]
+content_margin_left = 20.0
+content_margin_top = 5.0
+content_margin_right = 20.0
+content_margin_bottom = 20.0
+bg_color = Color(0.86036915, 0.8603692, 0.8603692, 1)
+border_width_left = 2
+border_width_top = 2
+border_color = Color(1, 1, 1, 1)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+corner_detail = 20
+
+[sub_resource type="Theme" id="Theme_p7rpn"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_t4fmt"]
+font_size = 30
+font_color = Color(0, 0, 0, 1)
 
 [sub_resource type="LabelSettings" id="LabelSettings_memo"]
-font_size = 11
 line_spacing = 6.0
+font_size = 11
+font_color = Color(0, 0, 0, 1)
 
 [sub_resource type="LabelSettings" id="LabelSettings_hint"]
-font_size = 9
+font_size = 10
+font_color = Color(0.9430248, 0.24127927, 0.1972788, 1)
 
-[node name="InterludePanel" type="Control"]
+[node name="InterludePanel" type="Control" unique_id=1806566831]
+layout_mode = 3
+anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-mouse_filter = 0
+theme = SubResource("Theme_t4fmt")
 script = ExtResource("1_intpanel")
 PreviewInEditor = true
 
-[node name="BlackBackground" type="ColorRect" parent="."]
+[node name="BlackBackground" type="ColorRect" parent="." unique_id=1564455309]
+visible = false
+layout_mode = 0
 anchor_right = 1.0
 anchor_bottom = 1.0
+theme = SubResource("Theme_288vk")
 color = Color(0, 0, 0, 1)
-mouse_filter = 0
 
-[node name="MemoBox" type="PanelContainer" parent="."]
+[node name="MemoBox" type="PanelContainer" parent="." unique_id=415158323]
+modulate = Color(1, 1, 1, 0.9411765)
+clip_contents = true
+custom_minimum_size = Vector2(40, 40)
+layout_mode = 0
 offset_left = 24.0
 offset_top = 80.0
 offset_right = 456.0
 offset_bottom = 620.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_t4fmt")
 
-[node name="MemoContent" type="VBoxContainer" parent="MemoBox"]
+[node name="MemoContent" type="VBoxContainer" parent="MemoBox" unique_id=65704076]
 layout_mode = 2
+theme = SubResource("Theme_p7rpn")
 
-[node name="MemoText" type="Label" parent="MemoBox/MemoContent"]
+[node name="Label" type="Label" parent="MemoBox/MemoContent" unique_id=429611526]
+layout_mode = 2
+text = "Stocastic Collapse..."
+label_settings = SubResource("LabelSettings_t4fmt")
+
+[node name="MemoText" type="Label" parent="MemoBox/MemoContent" unique_id=1835515344]
 unique_name_in_owner = true
 layout_mode = 2
-label_settings = SubResource("LabelSettings_memo")
 text = "Awaiting transmission..."
+label_settings = SubResource("LabelSettings_memo")
 autowrap_mode = 3
+justification_flags = 171
 
-[node name="DismissHint" type="Label" parent="."]
+[node name="DismissHint" type="Label" parent="." unique_id=287878635]
 unique_name_in_owner = true
-anchor_left = 0.0
+layout_mode = 1
+anchors_preset = 12
 anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_top = -32.0
+offset_left = 25.0
+offset_top = -223.0
+offset_right = -25.0
+offset_bottom = -101.0
+grow_horizontal = 2
+grow_vertical = 0
+text = "CONFIRM MESSAGE"
 label_settings = SubResource("LabelSettings_hint")
-text = "Tap to continue"
 horizontal_alignment = 1
+
+[node name="ColorRect" type="ColorRect" parent="." unique_id=285206602]
+modulate = Color(1, 1, 1, 0.5882353)
+layout_mode = 0
+offset_left = 18.0
+offset_top = 150.0
+offset_right = 19.0
+offset_bottom = 450.0
+
+[node name="ColorRect2" type="ColorRect" parent="." unique_id=509363504]
+modulate = Color(1, 1, 1, 0.5882353)
+layout_mode = 0
+offset_left = 39.0
+offset_top = 67.0
+offset_right = 427.0
+offset_bottom = 68.0
