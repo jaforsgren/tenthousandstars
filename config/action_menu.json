@@ -1,0 +1,8 @@
+{
+	"ArcStartAngleDeg": 180,
+	"ArcEndAngleDeg": 360,
+	"ArcButtonGap":45,
+	"MinDisplayZoom": 0.5,
+	"LineColor": { "R": 1.0, "G": 1.0, "B": 1.0, "A": 0.3 },
+	"LineWidth": 1.5
+}

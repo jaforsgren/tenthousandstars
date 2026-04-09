@@ -5,8 +5,6 @@ namespace Tts;
 
 public partial class InfoButton : Control
 {
-	private const int Slot = 1;
-
 	private Button _button = null!;
 	private Action? _onPressed;
 
@@ -14,13 +12,13 @@ public partial class InfoButton : Control
 	{
 		_button = GetNode<Button>("%InfoButton");
 		_button.Pressed += () => _onPressed?.Invoke();
+		_button.Position = new Vector2(-UILayout.ButtonSize / 2f, -UILayout.ButtonSize / 2f);
 		Visible = false;
 	}
 
-	public void ShowFor(Vector2 viewportSize, Action onPressed)
+	public void Configure(Action onPressed)
 	{
 		_onPressed = onPressed;
-		_button.Position = UILayout.BottomRightButtonPosition(viewportSize, Slot);
 		Visible = true;
 	}
 }

@@ -1,23 +1,25 @@
 [gd_scene format=3 uid="uid://caifleetnode1"]
 
-[ext_resource type="Script" path="res://scripts/fleet/AiFleetNode.cs" id="1_af"]
+[ext_resource type="Script" uid="uid://ceb0cnjtaitf1" path="res://scripts/fleet/AiFleetNode.cs" id="1_af"]
+
+[sub_resource type="Theme" id="Theme_j8wvh"]
 
 [node name="AiFleetNode" type="Node2D" unique_id=230000001]
 script = ExtResource("1_af")
 
 [node name="CountButton" type="Button" parent="." unique_id=230000002]
 unique_name_in_owner = true
-layout_mode = 0
+custom_minimum_size = Vector2(36, 18)
 offset_left = -18.0
 offset_top = -9.0
 offset_right = 18.0
 offset_bottom = 9.0
-custom_minimum_size = Vector2(36, 18)
 mouse_filter = 2
+theme = SubResource("Theme_j8wvh")
+text = "1"
 
 [node name="FactionLabel" type="Label" parent="." unique_id=230000003]
 unique_name_in_owner = true
-layout_mode = 0
 offset_left = -18.0
 offset_top = 11.0
 offset_right = 18.0

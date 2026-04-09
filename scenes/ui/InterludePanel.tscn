@@ -37,10 +37,13 @@ font_size = 10
 font_color = Color(0.9430248, 0.24127927, 0.1972788, 1)
 
 [node name="InterludePanel" type="Control" unique_id=1806566831]
+z_index = 99
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 theme = SubResource("Theme_t4fmt")
 script = ExtResource("1_intpanel")
 PreviewInEditor = true
@@ -76,7 +79,14 @@ label_settings = SubResource("LabelSettings_t4fmt")
 [node name="MemoText" type="Label" parent="MemoBox/MemoContent" unique_id=1835515344]
 unique_name_in_owner = true
 layout_mode = 2
-text = "Awaiting transmission..."
+text = "The Last Command — Internal Memo
+Sequence 1-2847
+
+The situation has deteriorated faster than we anticipated. The Enemy moves through our outer systems with impunity.
+
+This engagement at Kepler is not optional. We go to eliminate all enemy fleets.
+
+We do not know what they have in store for us. We put our faith in our commanders."
 label_settings = SubResource("LabelSettings_memo")
 autowrap_mode = 3
 justification_flags = 171
@@ -94,7 +104,7 @@ offset_right = -25.0
 offset_bottom = -101.0
 grow_horizontal = 2
 grow_vertical = 0
-text = "CONFIRM MESSAGE"
+text = "Tap to continue"
 label_settings = SubResource("LabelSettings_hint")
 horizontal_alignment = 1
 

@@ -83,17 +83,13 @@ public partial class Level : Node2D
 	private ChatWindowNode? _chatWindow;
 	private BarkConfig? _barkConfig;
 	private CameraController _camera = null!;
-	private InfoButton _infoButton = null!;
+	private SystemActionMenu _systemActionMenu = null!;
 	private AiController _aiController = null!;
 	private NarrativeController? _narrativeController;
 	private InterludeContent? _pendingInterlude;
 	private GameMode? _gameModeOverride;
 	private double _lastSystemClickTime = double.MinValue;
 	private int _lastClickedSystemIndex = -1;
-	private RerouteButtonNode _rerouteButtonNode = null!;
-	private UpgradeButtonNode _forgeButtonNode = null!;
-	private UpgradeButtonNode _fortifyButtonNode = null!;
-	private SplitButtonNode _splitButtonNode = null!;
 	private UpgradeConfig _upgradeCfg = null!;
 	private readonly Dictionary<int, int> _rerouteTargets = [];
 	private readonly Dictionary<int, RerouteArrowNode> _rerouteArrows = [];
@@ -191,11 +187,7 @@ public partial class Level : Node2D
 		SpawnSelectionPanel();
 		SpawnAiSystemPanel();
 		SpawnNotificationPanel();
-		SpawnInfoButton();
-		SpawnRerouteButtonNode();
-		SpawnForgeButtonNode();
-		SpawnFortifyButtonNode();
-		SpawnSplitButtonNode();
+		SpawnSystemActionMenu();
 		SpawnAiController(data, aiCfg);
 		SpawnChatWindow();
 
@@ -358,44 +350,14 @@ public partial class Level : Node2D
 		CheckDefeatCondition();
 	}
 
-	private void SpawnInfoButton()
+	private void SpawnSystemActionMenu()
 	{
 		var layer = new CanvasLayer { Layer = 12 };
 		AddChild(layer);
-		_infoButton = GD.Load<PackedScene>("res://scenes/ui/InfoButton.tscn").Instantiate<InfoButton>();
-		layer.AddChild(_infoButton);
-	}
-
-	private void SpawnRerouteButtonNode()
-	{
-		var layer = new CanvasLayer { Layer = 12 };
-		AddChild(layer);
-		_rerouteButtonNode = GD.Load<PackedScene>("res://scenes/ui/RerouteButtonNode.tscn").Instantiate<RerouteButtonNode>();
-		layer.AddChild(_rerouteButtonNode);
-	}
-
-	private void SpawnForgeButtonNode()
-	{
-		var layer = new CanvasLayer { Layer = 12 };
-		AddChild(layer);
-		_forgeButtonNode = GD.Load<PackedScene>("res://scenes/ui/ForgeButtonNode.tscn").Instantiate<UpgradeButtonNode>();
-		layer.AddChild(_forgeButtonNode);
-	}
-
-	private void SpawnFortifyButtonNode()
-	{
-		var layer = new CanvasLayer { Layer = 12 };
-		AddChild(layer);
-		_fortifyButtonNode = GD.Load<PackedScene>("res://scenes/ui/FortifyButtonNode.tscn").Instantiate<UpgradeButtonNode>();
-		layer.AddChild(_fortifyButtonNode);
-	}
-
-	private void SpawnSplitButtonNode()
-	{
-		var layer = new CanvasLayer { Layer = 12 };
-		AddChild(layer);
-		_splitButtonNode = GD.Load<PackedScene>("res://scenes/ui/SplitButtonNode.tscn").Instantiate<SplitButtonNode>();
-		layer.AddChild(_splitButtonNode);
+		_systemActionMenu = GD.Load<PackedScene>("res://scenes/ui/SystemActionMenu.tscn").Instantiate<SystemActionMenu>();
+		layer.AddChild(_systemActionMenu);
+		var cfg = ConfigLoader.Load<ActionMenuConfig>("res://config/action_menu.json");
+		_systemActionMenu.Initialize(_camera, _systemRadius, cfg);
 	}
 
 	private void SpawnCountdownTimer(float seconds)
@@ -489,10 +451,7 @@ public partial class Level : Node2D
 		_endConditionReached = true;
 		_selectionPanel.Hide();
 		_aiSystemPanel.Hide();
-		_rerouteButtonNode.Hide();
-		_forgeButtonNode.Hide();
-		_fortifyButtonNode.Hide();
-		_splitButtonNode.Hide();
+		_systemActionMenu.HideAll();
 		ShowEndSequence("Mission Complete", _activeCondition.EndDescription, won: true);
 	}
 
@@ -508,10 +467,7 @@ public partial class Level : Node2D
 			_endConditionReached = true;
 			_selectionPanel.Hide();
 			_aiSystemPanel.Hide();
-			_rerouteButtonNode.Hide();
-			_forgeButtonNode.Hide();
-			_fortifyButtonNode.Hide();
-			_splitButtonNode.Hide();
+			_systemActionMenu.HideAll();
 			ShowEndSequence("Defeated", "The marked system has fallen. The mission is lost.", won: false);
 			return;
 		}
@@ -522,10 +478,7 @@ public partial class Level : Node2D
 		_endConditionReached = true;
 		_selectionPanel.Hide();
 		_aiSystemPanel.Hide();
-		_rerouteButtonNode.Hide();
-		_forgeButtonNode.Hide();
-		_fortifyButtonNode.Hide();
-		_splitButtonNode.Hide();
+		_systemActionMenu.HideAll();
 		var description = _endStateCfg.DefeatDescriptions[_rng.Next(_endStateCfg.DefeatDescriptions.Length)];
 		ShowEndSequence("Defeated", description, won: false);
 	}
@@ -603,10 +556,7 @@ public partial class Level : Node2D
 		_endConditionReached = true;
 		_selectionPanel.Hide();
 		_aiSystemPanel.Hide();
-		_rerouteButtonNode.Hide();
-		_forgeButtonNode.Hide();
-		_fortifyButtonNode.Hide();
-		_splitButtonNode.Hide();
+		_systemActionMenu.HideAll();
 		ShowEndSequence("Time Expired", _activeCondition?.TimeoutMessage ?? "The mission clock has run out.", won: false);
 	}
 
@@ -640,11 +590,7 @@ public partial class Level : Node2D
 		_pendingInterlude = null;
 		_chatWindow = null;
 		_camera = null!;
-		_infoButton = null!;
-		_rerouteButtonNode = null!;
-		_forgeButtonNode = null!;
-		_fortifyButtonNode = null!;
-		_splitButtonNode = null!;
+		_systemActionMenu = null!;
 		_aiController = null!;
 		_lastSystemClickTime = double.MinValue;
 		_lastClickedSystemIndex = -1;
@@ -748,7 +694,8 @@ public partial class Level : Node2D
 				state = FogState.Scouted;
 			else
 				state = FogState.Hidden;
-			_systems[i].SetFogState(state, _fogClearSeconds);
+			var permanent = (FogState)Math.Max((int)state, (int)_systems[i].FogState);
+			_systems[i].SetFogState(permanent, _fogClearSeconds);
 		}
 
 		if (_objectiveSystemIndex >= 0 && _systems[_objectiveSystemIndex].FogState == FogState.Hidden)

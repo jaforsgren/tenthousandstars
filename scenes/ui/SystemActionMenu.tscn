@@ -1,0 +1,120 @@
+[gd_scene format=3 uid="uid://dsam00001"]
+
+[ext_resource type="Script" uid="uid://bowaw8efma06e" path="res://scripts/ui/SystemActionMenu.cs" id="1_sam"]
+[ext_resource type="PackedScene" uid="uid://dq2mkcxbvhp7t" path="res://scenes/ui/InfoButton.tscn" id="2_ib"]
+[ext_resource type="PackedScene" uid="uid://cxmdt4qr7pf3a" path="res://scenes/ui/RerouteButtonNode.tscn" id="3_rb"]
+[ext_resource type="PackedScene" uid="uid://cwdh8sq4a1une" path="res://scenes/ui/FortifyButtonNode.tscn" id="4_fb"]
+[ext_resource type="PackedScene" uid="uid://bmjk6ww1t5etk" path="res://scenes/ui/ForgeButtonNode.tscn" id="5_gb"]
+[ext_resource type="PackedScene" uid="uid://1gclrocd8aav" path="res://scenes/ui/SplitButtonNode.tscn" id="6_sb"]
+
+[sub_resource type="Animation" id="Animation_ynj1i"]
+length = 0.3
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("InfoButton:scale")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.18),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector2(0, 0), Vector2(1, 1)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("RerouteButtonNode:scale")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 0.03, 0.21000001),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [Vector2(0, 0), Vector2(0, 0), Vector2(1, 1)]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("FortifyButtonNode:scale")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0, 0.06, 0.24000001),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [Vector2(0, 0), Vector2(0, 0), Vector2(1, 1)]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("ForgeButtonNode:scale")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0, 0.089999996, 0.27),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [Vector2(0, 0), Vector2(0, 0), Vector2(1, 1)]
+}
+tracks/4/type = "value"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath("SplitButtonNode:scale")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = {
+"times": PackedFloat32Array(0, 0.12, 0.3),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [Vector2(0, 0), Vector2(0, 0), Vector2(1, 1)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_p1211"]
+_data = {
+&"show": SubResource("Animation_ynj1i")
+}
+
+[node name="SystemActionMenu" type="Control" unique_id=1836546081]
+layout_mode = 3
+anchors_preset = 0
+mouse_filter = 2
+script = ExtResource("1_sam")
+PreviewSystemRadius = 100.0
+PreviewArcButtonGap = 100.0
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=1796586504]
+libraries/ = SubResource("AnimationLibrary_p1211")
+
+[node name="InfoButton" parent="." unique_id=189051135 instance=ExtResource("2_ib")]
+layout_mode = 0
+offset_left = -200.0
+offset_top = -1.7484555e-05
+offset_right = -200.0
+offset_bottom = -1.7484555e-05
+
+[node name="RerouteButtonNode" parent="." unique_id=1417045580 instance=ExtResource("3_rb")]
+layout_mode = 0
+offset_left = -141.42137
+offset_top = -141.42134
+offset_right = -141.42137
+offset_bottom = -141.42134
+
+[node name="FortifyButtonNode" parent="." unique_id=1242886704 instance=ExtResource("4_fb")]
+layout_mode = 0
+offset_top = -200.0
+offset_bottom = -200.0
+
+[node name="ForgeButtonNode" parent="." unique_id=1200555411 instance=ExtResource("5_gb")]
+layout_mode = 0
+offset_left = 141.42133
+offset_top = -141.42137
+offset_right = 141.42133
+offset_bottom = -141.42137
+
+[node name="SplitButtonNode" parent="." unique_id=1594883056 instance=ExtResource("6_sb")]
+layout_mode = 0
+offset_left = 200.0
+offset_top = 3.496911e-05
+offset_right = 200.0
+offset_bottom = 3.496911e-05

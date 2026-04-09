@@ -1,6 +1,9 @@
 [gd_scene format=3 uid="uid://dq2mkcxbvhp7t"]
 
-[ext_resource type="Script" path="res://scripts/ui/InfoButton.cs" id="1_infbtn"]
+[ext_resource type="Script" uid="uid://bg4m8ylpdv2rn" path="res://scripts/ui/InfoButton.cs" id="1_infbtn"]
+
+[sub_resource type="Theme" id="Theme_t7yrw"]
+default_font_size = 20
 
 [node name="InfoButton" type="Control" unique_id=785341209]
 layout_mode = 3
@@ -10,6 +13,9 @@ script = ExtResource("1_infbtn")
 [node name="InfoButton" type="Button" parent="." unique_id=785341210]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(48, 48)
+layout_mode = 0
 offset_right = 48.0
 offset_bottom = 48.0
-text = "i"
+theme = SubResource("Theme_t7yrw")
+theme_override_constants/outline_size = 2
+text = "﹗"

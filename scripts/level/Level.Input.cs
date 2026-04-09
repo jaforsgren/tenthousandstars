@@ -114,13 +114,9 @@ public partial class Level
 		}
 
 		_aiSystemPanel.Hide();
-		_camera.ExitFollowMode();
-		_infoButton.Hide();
-		_rerouteButtonNode.Hide();
-		_forgeButtonNode.Hide();
-		_fortifyButtonNode.Hide();
-		_splitButtonNode.Hide();
 		_selectionPanel.Hide();
+		_camera.ExitFollowMode();
+		_systemActionMenu.HideAll();
 	}
 
 	private void HandleSystemClick(int systemIndex)
@@ -144,17 +140,13 @@ public partial class Level
 		if (_rerouteTargets.ContainsKey(systemIndex))
 		{
 			ClearReroute(systemIndex);
-			_rerouteButtonNode.UpdateRouteState(hasActiveRoute: false);
+			_systemActionMenu.RefreshRerouteButton(hasActiveRoute: false, () => OnRerouteButtonPressed(systemIndex));
 		}
 		else
 		{
 			_isPickingRerouteTarget = true;
 			_rerouteSourceIndex = systemIndex;
-			_rerouteButtonNode.Hide();
-			_forgeButtonNode.Hide();
-			_fortifyButtonNode.Hide();
-			_splitButtonNode.Hide();
-			_infoButton.Hide();
+			_systemActionMenu.HideAll();
 			_selectionPanel.Hide();
 		}
 	}
@@ -174,9 +166,7 @@ public partial class Level
 			if (!_systems[i].ContainsSystemAt(worldPos)) continue;
 
 			SetRerouteTarget(sourceIndex, i);
-			var viewportSize = GetViewport().GetVisibleRect().Size;
-			_rerouteButtonNode.ShowFor(viewportSize, hasActiveRoute: true, () => OnRerouteButtonPressed(sourceIndex));
-			ShowPlayerUpgradeButtons(sourceIndex);
+			SelectSystem(sourceIndex);
 			_rerouteSourceIndex = null;
 			return;
 		}

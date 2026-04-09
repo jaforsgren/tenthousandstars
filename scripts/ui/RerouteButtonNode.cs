@@ -5,8 +5,6 @@ namespace Tts;
 
 public partial class RerouteButtonNode : Control
 {
-	private const int Slot = 2;
-
 	private Button _button = null!;
 	private Action? _onPressed;
 
@@ -14,19 +12,14 @@ public partial class RerouteButtonNode : Control
 	{
 		_button = GetNode<Button>("%RerouteButton");
 		_button.Pressed += () => _onPressed?.Invoke();
+		_button.Position = new Vector2(-UILayout.ButtonSize / 2f, -UILayout.ButtonSize / 2f);
 		Visible = false;
 	}
 
-	public void ShowFor(Vector2 viewportSize, bool hasActiveRoute, Action onPressed)
+	public void Configure(bool hasActiveRoute, Action onPressed)
 	{
 		_onPressed = onPressed;
 		_button.ButtonPressed = hasActiveRoute;
-		_button.Position = UILayout.BottomRightButtonPosition(viewportSize, Slot);
 		Visible = true;
-	}
-
-	public void UpdateRouteState(bool hasActiveRoute)
-	{
-		_button.ButtonPressed = hasActiveRoute;
 	}
 }

@@ -8,48 +8,59 @@ public partial class Level
 {
 	private void SelectFleet(int systemIndex)
 	{
-		var viewportSize = GetViewport().GetVisibleRect().Size;
-		_infoButton.ShowFor(viewportSize, () => ShowFleetInfo(systemIndex));
 		if (_systems[systemIndex].IsPlayerOwned)
 		{
-			_rerouteButtonNode.ShowFor(viewportSize, _rerouteTargets.ContainsKey(systemIndex), () => OnRerouteButtonPressed(systemIndex));
-			ShowPlayerUpgradeButtons(systemIndex);
-			ShowSplitButton(systemIndex, _selectedFleetSlot);
+			ComputeUpgradeStates(systemIndex, out var fa, out var fd, out var ga, out var gd);
+			var slot = _selectedFleetSlot;
+			var splitDisabled = _systems[systemIndex].GetFleetShips(slot) < 2f;
+			_systemActionMenu.ShowForPlayerFleet(
+				_systems[systemIndex].GlobalPosition,
+				() => ShowFleetInfo(systemIndex),
+				_rerouteTargets.ContainsKey(systemIndex), () => OnRerouteButtonPressed(systemIndex),
+				fa, fd, () => DoUpgrade(systemIndex, SystemUpgrade.Fortify),
+				ga, gd, () => DoUpgrade(systemIndex, SystemUpgrade.Forge),
+				splitDisabled, () => OnSplitButtonPressed(systemIndex, slot));
 		}
 		else
 		{
-			_rerouteButtonNode.Hide();
-			_forgeButtonNode.Hide();
-			_fortifyButtonNode.Hide();
-			_splitButtonNode.Hide();
+			_systemActionMenu.ShowInfoOnly(_systems[systemIndex].GlobalPosition, () => ShowFleetInfo(systemIndex));
 		}
 	}
 
 	private void SelectSystem(int systemIndex)
 	{
-		var viewportSize = GetViewport().GetVisibleRect().Size;
-		_infoButton.ShowFor(viewportSize, () => ShowSystemInfo(systemIndex));
 		if (_systems[systemIndex].IsPlayerOwned)
 		{
-			_rerouteButtonNode.ShowFor(viewportSize, _rerouteTargets.ContainsKey(systemIndex), () => OnRerouteButtonPressed(systemIndex));
-			ShowPlayerUpgradeButtons(systemIndex);
+			ComputeUpgradeStates(systemIndex, out var fa, out var fd, out var ga, out var gd);
+			_systemActionMenu.ShowForPlayerSystem(
+				_systems[systemIndex].GlobalPosition,
+				() => ShowSystemInfo(systemIndex),
+				_rerouteTargets.ContainsKey(systemIndex), () => OnRerouteButtonPressed(systemIndex),
+				fa, fd, () => DoUpgrade(systemIndex, SystemUpgrade.Fortify),
+				ga, gd, () => DoUpgrade(systemIndex, SystemUpgrade.Forge));
 		}
 		else
 		{
-			_rerouteButtonNode.Hide();
-			_forgeButtonNode.Hide();
-			_fortifyButtonNode.Hide();
+			_systemActionMenu.ShowInfoOnly(_systems[systemIndex].GlobalPosition, () => ShowSystemInfo(systemIndex));
 		}
-		_splitButtonNode.Hide();
 	}
 
 	private void SelectAiSystem(int systemIndex)
 	{
-		_infoButton.ShowFor(GetViewport().GetVisibleRect().Size, () => ShowAiSystemInfo(systemIndex));
-		_rerouteButtonNode.Hide();
-		_forgeButtonNode.Hide();
-		_fortifyButtonNode.Hide();
-		_splitButtonNode.Hide();
+		_systemActionMenu.ShowInfoOnly(_systems[systemIndex].GlobalPosition, () => ShowAiSystemInfo(systemIndex));
+	}
+
+	private void ComputeUpgradeStates(
+		int systemIndex,
+		out bool fortifyActive, out bool fortifyDisabled,
+		out bool forgeActive, out bool forgeDisabled)
+	{
+		var upgrade = _systems[systemIndex].Upgrade;
+		var canAfford = _systems[systemIndex].Ships >= _upgradeCfg.UpgradeCost;
+		fortifyActive = upgrade == SystemUpgrade.Fortify;
+		fortifyDisabled = !fortifyActive && (upgrade != SystemUpgrade.None || !canAfford);
+		forgeActive = upgrade == SystemUpgrade.Forge;
+		forgeDisabled = !forgeActive && (upgrade != SystemUpgrade.None || !canAfford);
 	}
 
 	private void ShowAiSystemInfo(int systemIndex)
@@ -89,41 +100,6 @@ public partial class Level
 		_selectionPanel.ShowAt(title, description, GetViewport().GetVisibleRect().Size);
 	}
 
-	private void ShowPlayerUpgradeButtons(int systemIndex)
-	{
-		var viewportSize = GetViewport().GetVisibleRect().Size;
-		var upgrade = _systems[systemIndex].Upgrade;
-		var canAfford = _systems[systemIndex].Ships >= _upgradeCfg.UpgradeCost;
-
-		var fortifyActive = upgrade == SystemUpgrade.Fortify;
-		var fortifyDisabled = !fortifyActive && (upgrade != SystemUpgrade.None || !canAfford);
-		Action fortifyAction = fortifyActive
-			? () => DoUpgrade(systemIndex, SystemUpgrade.None)
-			: () => DoUpgrade(systemIndex, SystemUpgrade.Fortify);
-
-		var forgeActive = upgrade == SystemUpgrade.Forge;
-		var forgeDisabled = !forgeActive && (upgrade != SystemUpgrade.None || !canAfford);
-		Action forgeAction = forgeActive
-			? () => DoUpgrade(systemIndex, SystemUpgrade.None)
-			: () => DoUpgrade(systemIndex, SystemUpgrade.Forge);
-
-		_fortifyButtonNode.ShowFor(viewportSize, slotFromRight: 3, isActive: fortifyActive, disabled: fortifyDisabled, onPressed: fortifyAction);
-		_forgeButtonNode.ShowFor(viewportSize, slotFromRight: 4, isActive: forgeActive, disabled: forgeDisabled, onPressed: forgeAction);
-	}
-
-	private void ShowSplitButton(int systemIndex, int fleetSlot)
-	{
-		var viewportSize = GetViewport().GetVisibleRect().Size;
-		var ships = _systems[systemIndex].GetFleetShips(fleetSlot);
-		_splitButtonNode.ShowFor(viewportSize, disabled: ships < 2f, onPressed: () => OnSplitButtonPressed(systemIndex, fleetSlot));
-	}
-
-	private void OnSplitButtonPressed(int systemIndex, int fleetSlot)
-	{
-		_systems[systemIndex].SplitFleet(fleetSlot);
-		ShowSplitButton(systemIndex, fleetSlot);
-	}
-
 	private void DoUpgrade(int systemIndex, SystemUpgrade upgrade)
 	{
 		if (upgrade != SystemUpgrade.None)
@@ -132,13 +108,23 @@ public partial class Level
 
 		var pool = upgrade switch
 		{
-			SystemUpgrade.Forge    => _barkConfig?.Get("player_forge"),
-			SystemUpgrade.Fortify  => _barkConfig?.Get("player_fortify"),
+			SystemUpgrade.Forge   => _barkConfig?.Get("player_forge"),
+			SystemUpgrade.Fortify => _barkConfig?.Get("player_fortify"),
 			_ => null
 		};
 		PostBark(pool);
 
-		ShowPlayerUpgradeButtons(systemIndex);
+		ComputeUpgradeStates(systemIndex, out var fa, out var fd, out var ga, out var gd);
+		_systemActionMenu.RefreshUpgradeButtons(
+			fa, fd, () => DoUpgrade(systemIndex, SystemUpgrade.Fortify),
+			ga, gd, () => DoUpgrade(systemIndex, SystemUpgrade.Forge));
+	}
+
+	private void OnSplitButtonPressed(int systemIndex, int fleetSlot)
+	{
+		_systems[systemIndex].SplitFleet(fleetSlot);
+		var splitDisabled = _systems[systemIndex].GetFleetShips(fleetSlot) < 2f;
+		_systemActionMenu.RefreshSplitButton(splitDisabled, () => OnSplitButtonPressed(systemIndex, fleetSlot));
 	}
 
 	private static string Pick(string[] pool, int seed) => pool[seed % pool.Length];

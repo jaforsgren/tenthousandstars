@@ -12,7 +12,8 @@ line_spacing = 0.0
 font_size = 10
 font_color = Color(0, 0, 0, 1)
 
-[node name="NotificationPanel" type="PanelContainer" unique_id=1186808605 node_paths=PackedStringArray("_titleLabel", "_descriptionLabel")]
+[node name="NotificationPanel" type="PanelContainer" unique_id=1186808605]
+z_index = 99
 custom_minimum_size = Vector2(240, 0)
 offset_top = 194.0
 offset_right = 240.0
@@ -20,13 +21,6 @@ offset_bottom = 294.0
 theme_override_styles/panel = ExtResource("2_style")
 script = ExtResource("1_notp")
 PreviewInEditor = true
-_timeRemaining = 0.0
-_active = false
-_allowEarlyDismiss = false
-_previewInEditor = true
-_titleLabel = NodePath("Content/Title")
-_descriptionLabel = NodePath("Content/Description")
-theme_override_styles/panel = ExtResource("2_style")
 
 [node name="Content" type="Control" parent="." unique_id=1186808606]
 layout_mode = 2

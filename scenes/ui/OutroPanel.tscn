@@ -30,6 +30,8 @@ layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 mouse_filter = 2
 color = Color(0, 0, 0, 1)
 
@@ -47,16 +49,23 @@ layout_mode = 2
 [node name="TitleLabel" type="Label" parent="ContentBox/ContentLayout" unique_id=1003224402]
 unique_name_in_owner = true
 layout_mode = 2
-text = "Campaign Complete"
+text = "From the Ashes"
 label_settings = SubResource("LabelSettings_title")
 horizontal_alignment = 1
 
 [node name="SummaryText" type="Label" parent="ContentBox/ContentLayout" unique_id=1961260005]
 unique_name_in_owner = true
+z_index = 99
 layout_mode = 2
 size_flags_vertical = 3
 theme = SubResource("Theme_gasrp")
-text = "Test test test test"
+text = "Commander,
+
+They said The Last Command was finished. They were wrong.
+
+After 2 of 3 engagements, we stand. The Enemy retreats.
+
+We did not just survive. We prevailed."
 label_settings = SubResource("LabelSettings_summary")
 autowrap_mode = 3
 

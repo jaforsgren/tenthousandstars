@@ -12,15 +12,15 @@ public partial class UpgradeButtonNode : Control
 	{
 		_button = GetNode<Button>("%UpgradeButton");
 		_button.Pressed += () => _onPressed?.Invoke();
+		_button.Position = new Vector2(-UILayout.ButtonSize / 2f, -UILayout.ButtonSize / 2f);
 		Visible = false;
 	}
 
-	public void ShowFor(Vector2 viewportSize, int slotFromRight, bool isActive, bool disabled, Action? onPressed)
+	public void Configure(bool isActive, bool disabled, Action? onPressed)
 	{
 		_onPressed = onPressed;
 		_button.ButtonPressed = isActive;
 		_button.Disabled = disabled;
-		_button.Position = UILayout.BottomRightButtonPosition(viewportSize, slotFromRight);
 		Visible = true;
 	}
 }

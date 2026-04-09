@@ -6,7 +6,7 @@ namespace Tts;
 public partial class SelectionPanel : PanelContainer
 {
 	private const float PanelWidth = 200f;
-	private const float TopPadding = 20f;
+	private const float TopPadding = 100f;
 
 	private Label _titleLabel = null!;
 	private Label _descriptionLabel = null!;
@@ -53,7 +53,7 @@ public partial class SelectionPanel : PanelContainer
 	{
 		if (_previewInEditor)
 		{
-			_titleLabel.Text = "Vantara Prime";
+			_titleLabel.Text = "Test Prime";
 			_descriptionLabel.Text = "A contested frontier world. Rich in ore deposits but scarred by old campaigns.";
 		}
 		else

@@ -19,6 +19,7 @@ font_size = 10
 font_color = Color(1, 0.3019608, 0.09803922, 1)
 
 [node name="AiSystemPanel" type="PanelContainer" unique_id=2037952806]
+z_index = 1
 custom_minimum_size = Vector2(200, 0)
 offset_right = 200.0
 offset_bottom = 94.0
