@@ -1,9 +1,7 @@
 [gd_scene format=3 uid="uid://1gclrocd8aav"]
 
 [ext_resource type="Script" uid="uid://bwlxbto30jgje" path="res://scripts/ui/SplitButtonNode.cs" id="1_sb"]
-
-[sub_resource type="Theme" id="Theme_2eumh"]
-default_font_size = 20
+[ext_resource type="Theme" uid="uid://6r4gcsr0tf77" path="res://scenes/ui/UiTheme.tres" id="2_theme"]
 
 [node name="SplitButtonNode" type="Control" unique_id=950248262]
 layout_mode = 3
@@ -16,5 +14,6 @@ custom_minimum_size = Vector2(48, 48)
 layout_mode = 0
 offset_right = 48.0
 offset_bottom = 48.0
-theme = SubResource("Theme_2eumh")
+theme = ExtResource("2_theme")
+theme_override_font_sizes/font_size = 20
 text = "⚯"

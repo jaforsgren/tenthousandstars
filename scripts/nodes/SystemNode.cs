@@ -10,7 +10,6 @@ public partial class SystemNode : FogAwareNode
 	private readonly List<float> _fleetShips = [];
 	private readonly List<FleetNodeBase> _fleetNodes = [];
 	private SystemOwner _ownerPlayer;
-	private bool _selected;
 	private AiPlayerData? _aiPlayerData;
 	private Color? _aiOwnerColor;
 
@@ -23,10 +22,6 @@ public partial class SystemNode : FogAwareNode
 	private float _planetOutlineWidth;
 	private Color _playerSystemOutline;
 	private Color _neutralSystemOutline;
-	private Color _playerFleetFill;
-	private Color _playerFleetOutline;
-	private Color _neutralFleetFill;
-	private Color _neutralFleetOutline;
 
 	private SystemCircleNode _systemCircle = null!;
 	private readonly List<PlanetNode> _planetNodes = [];
@@ -83,16 +78,6 @@ public partial class SystemNode : FogAwareNode
 	public bool ContainsSystemAt(Vector2 worldPos)
 		=> worldPos.DistanceTo(GlobalPosition) <= _systemRadius;
 
-	public int? PlanetIndexAt(Vector2 worldPos)
-	{
-		for (var i = 0; i < _planetNodes.Count; i++)
-		{
-			if (_planetNodes[i].ContainsPoint(worldPos))
-				return i;
-		}
-		return null;
-	}
-
 	public float TakeFleet(int slot = 0)
 	{
 		if (slot < 0 || slot >= _fleetShips.Count) return 0f;
@@ -100,7 +85,6 @@ public partial class SystemNode : FogAwareNode
 		_fleetShips.RemoveAt(slot);
 		_fleetNodes[slot].QueueFree();
 		_fleetNodes.RemoveAt(slot);
-		_selected = false;
 		RepositionFleetNodes();
 		return taken;
 	}
@@ -113,7 +97,7 @@ public partial class SystemNode : FogAwareNode
 			return;
 		}
 		_fleetShips[0] += ships;
-		_fleetNodes[0].UpdateFleet(_fleetShips[0], _selected);
+		_fleetNodes[0].UpdateFleet(_fleetShips[0]);
 	}
 
 	public void SplitFleet(int slot)
@@ -121,7 +105,7 @@ public partial class SystemNode : FogAwareNode
 		if (slot < 0 || slot >= _fleetShips.Count) return;
 		var half = _fleetShips[slot] / 2f;
 		_fleetShips[slot] = half;
-		_fleetNodes[slot].UpdateFleet(half, false);
+		_fleetNodes[slot].UpdateFleet(half);
 		AddFleetSlot(half);
 	}
 
@@ -129,7 +113,7 @@ public partial class SystemNode : FogAwareNode
 	{
 		if (_fleetShips.Count == 0) return;
 		_fleetShips[0] = Mathf.Max(0f, _fleetShips[0] - amount);
-		_fleetNodes[0].UpdateFleet(_fleetShips[0], _selected);
+		_fleetNodes[0].UpdateFleet(_fleetShips[0]);
 	}
 
 	private void RefreshProductionRate()
@@ -211,9 +195,8 @@ public partial class SystemNode : FogAwareNode
 
 	public void SetSelected(bool selected)
 	{
-		_selected = selected;
 		for (var i = 0; i < _fleetNodes.Count; i++)
-			_fleetNodes[i].UpdateFleet(_fleetShips[i], _selected);
+			_fleetNodes[i].UpdateFleet(_fleetShips[i]);
 	}
 
 	public void Initialize(IReadOnlyList<Planet> planets, SystemOwner owner, float initialShips = 0f, AiPlayerData? aiPlayer = null, Color? aiOwnerColor = null)
@@ -254,10 +237,6 @@ public partial class SystemNode : FogAwareNode
 		_planetFill = cfg.PlanetFill.ToColor();
 		_planetOutline = cfg.PlanetOutline.ToColor();
 		_planetOutlineWidth = cfg.PlanetOutlineWidth;
-		_playerFleetFill = cfg.FleetFill.ToColor();
-		_playerFleetOutline = cfg.FleetOutline.ToColor();
-		_neutralFleetFill = cfg.NeutralFleetFill.ToColor();
-		_neutralFleetOutline = cfg.NeutralFleetOutline.ToColor();
 		var upgradeCfg = ConfigLoader.Load<UpgradeConfig>("res://config/upgrade.json");
 		_forgeProductionBonus = upgradeCfg.ForgeProductionBonus;
 		_fortifyDefenseBonusMultiplier = upgradeCfg.FortifyDefenseBonusMultiplier;
@@ -281,13 +260,13 @@ public partial class SystemNode : FogAwareNode
 			AddFleetSlot(0f);
 
 		_fleetShips[0] += ProductionRate * (float)delta;
-		_fleetNodes[0].UpdateFleet(_fleetShips[0], _selected);
+		_fleetNodes[0].UpdateFleet(_fleetShips[0]);
 	}
 
 	private void AddFleetSlot(float ships)
 	{
 		var node = CreateFleetNode(_ownerPlayer);
-		node.UpdateFleet(ships, false);
+		node.UpdateFleet(ships);
 		_fleetShips.Add(ships);
 		_fleetNodes.Add(node);
 		RepositionFleetNodes();
@@ -299,7 +278,6 @@ public partial class SystemNode : FogAwareNode
 			node.QueueFree();
 		_fleetNodes.Clear();
 		_fleetShips.Clear();
-		_selected = false;
 	}
 
 	private void RepositionFleetNodes()
@@ -321,7 +299,7 @@ public partial class SystemNode : FogAwareNode
 		{
 			var node = GD.Load<PackedScene>(PlayerFleetScenePath).Instantiate<PlayerFleetNode>();
 			AddChild(node);
-			node.Initialize(_systemRadius, _fleetCircleGap, _playerFleetFill, _playerFleetOutline);
+			node.Initialize(_systemRadius, _fleetCircleGap);
 			return node;
 		}
 
@@ -335,7 +313,7 @@ public partial class SystemNode : FogAwareNode
 
 		var neutral = GD.Load<PackedScene>(NeutralFleetScenePath).Instantiate<NeutralFleetNode>();
 		AddChild(neutral);
-		neutral.Initialize(_systemRadius, _fleetCircleGap, _neutralFleetFill, _neutralFleetOutline);
+		neutral.Initialize(_systemRadius, _fleetCircleGap);
 		return neutral;
 	}
 }

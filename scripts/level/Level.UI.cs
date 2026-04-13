@@ -21,6 +21,13 @@ public partial class Level
 				ga, gd, () => DoUpgrade(systemIndex, SystemUpgrade.Forge),
 				splitDisabled, () => OnSplitButtonPressed(systemIndex, slot));
 		}
+		else if (_systems[systemIndex].IsAiOwned)
+		{
+			_systemActionMenu.ShowForAiSystem(
+				_systems[systemIndex].GlobalPosition,
+				() => ShowFleetInfo(systemIndex),
+				() => ShowAiSystemInfo(systemIndex));
+		}
 		else
 		{
 			_systemActionMenu.ShowInfoOnly(_systems[systemIndex].GlobalPosition, () => ShowFleetInfo(systemIndex));
@@ -32,12 +39,14 @@ public partial class Level
 		if (_systems[systemIndex].IsPlayerOwned)
 		{
 			ComputeUpgradeStates(systemIndex, out var fa, out var fd, out var ga, out var gd);
+			var splitDisabled = !_systems[systemIndex].HasFleet || _systems[systemIndex].GetFleetShips(0) < 2f;
 			_systemActionMenu.ShowForPlayerSystem(
 				_systems[systemIndex].GlobalPosition,
 				() => ShowSystemInfo(systemIndex),
 				_rerouteTargets.ContainsKey(systemIndex), () => OnRerouteButtonPressed(systemIndex),
 				fa, fd, () => DoUpgrade(systemIndex, SystemUpgrade.Fortify),
-				ga, gd, () => DoUpgrade(systemIndex, SystemUpgrade.Forge));
+				ga, gd, () => DoUpgrade(systemIndex, SystemUpgrade.Forge),
+				splitDisabled, () => OnSplitButtonPressed(systemIndex, 0));
 		}
 		else
 		{
@@ -47,7 +56,10 @@ public partial class Level
 
 	private void SelectAiSystem(int systemIndex)
 	{
-		_systemActionMenu.ShowInfoOnly(_systems[systemIndex].GlobalPosition, () => ShowAiSystemInfo(systemIndex));
+		_systemActionMenu.ShowForAiSystem(
+			_systems[systemIndex].GlobalPosition,
+			() => ShowSystemInfo(systemIndex),
+			() => ShowAiSystemInfo(systemIndex));
 	}
 
 	private void ComputeUpgradeStates(
@@ -89,14 +101,6 @@ public partial class Level
 		var title = Pick(_loreConfig.System.Titles, seed);
 		var description = Pick(_loreConfig.System.Descriptions, seed);
 		_aiSystemPanel.Hide();
-		_selectionPanel.ShowAt(title, description, GetViewport().GetVisibleRect().Size);
-	}
-
-	private void ShowPlanetInfo(int systemIndex, int planetIndex)
-	{
-		var seed = _planetLoreSeeds[systemIndex][planetIndex];
-		var title = Pick(_loreConfig.Planet.Titles, seed);
-		var description = Pick(_loreConfig.Planet.Descriptions, seed);
 		_selectionPanel.ShowAt(title, description, GetViewport().GetVisibleRect().Size);
 	}
 

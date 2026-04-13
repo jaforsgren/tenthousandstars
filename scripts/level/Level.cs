@@ -59,7 +59,6 @@ public partial class Level : Node2D
 	private readonly List<SystemNode> _systems = [];
 	private readonly List<int> _systemLoreSeeds = [];
 	private readonly List<int> _fleetLoreSeeds = [];
-	private readonly List<int[]> _planetLoreSeeds = [];
 
 	private HashSet<(int, int)> _routeSet = [];
 	private Dictionary<int, List<int>> _adjacency = [];
@@ -309,17 +308,11 @@ public partial class Level : Node2D
 
 		_systemLoreSeeds.Clear();
 		_fleetLoreSeeds.Clear();
-		_planetLoreSeeds.Clear();
 
 		foreach (var systemData in data.Systems)
 		{
 			_systemLoreSeeds.Add(loreRng.Next());
 			_fleetLoreSeeds.Add(loreRng.Next());
-
-			var planetSeeds = new int[systemData.Planets.Count];
-			for (var j = 0; j < planetSeeds.Length; j++)
-				planetSeeds[j] = loreRng.Next();
-			_planetLoreSeeds.Add(planetSeeds);
 		}
 	}
 

@@ -12,16 +12,18 @@ public partial class AiFleetNode : FleetNodeBase
 		_factionLabel = GetNode<Label>("%FactionLabel");
 	}
 
+	private static readonly Color AiFill = new(0.5f, 0.5f, 0.5f, 0.9f);
+
 	public void Initialize(float systemRadius, float gap, Color dispositionColor, AiPlayerData aiPlayer)
 	{
-		BaseInitialize(systemRadius, gap, dispositionColor with { A = 0.3f }, dispositionColor);
+		BaseInitialize(systemRadius, gap, AiFill);
 		_factionLabel.Text = aiPlayer.FactionName;
 		_factionLabel.AddThemeColorOverride("font_color", dispositionColor);
 	}
 
-	public override void UpdateFleet(float ships, bool selected)
+	public override void UpdateFleet(float ships)
 	{
-		base.UpdateFleet(ships, selected);
+		base.UpdateFleet(ships);
 		_factionLabel.Visible = ships > 0;
 	}
 }

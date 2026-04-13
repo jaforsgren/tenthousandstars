@@ -13,6 +13,7 @@ public partial class UpgradeButtonNode : Control
 		_button = GetNode<Button>("%UpgradeButton");
 		_button.Pressed += () => _onPressed?.Invoke();
 		_button.Position = new Vector2(-UILayout.ButtonSize / 2f, -UILayout.ButtonSize / 2f);
+		UILayout.ApplyGreyStyle(_button);
 		Visible = false;
 	}
 

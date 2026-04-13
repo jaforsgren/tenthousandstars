@@ -12,7 +12,7 @@ public partial class SystemActionMenu : Control
 {
 	private const float ShowDuration = 0.18f;
 	private const float SlotStagger = 0.03f;
-	private const int SlotCount = 5;
+	private const int SlotCount = 6;
 
 	private CameraController _camera = null!;
 	private float _systemRadius;
@@ -23,6 +23,7 @@ public partial class SystemActionMenu : Control
 
 	private AnimationPlayer _animPlayer = null!;
 	private InfoButton _infoSlot = null!;
+	private InfoButton _opponentInfoSlot = null!;
 	private RerouteButtonNode _rerouteSlot = null!;
 	private UpgradeButtonNode _fortifySlot = null!;
 	private UpgradeButtonNode _forgeSlot = null!;
@@ -47,7 +48,7 @@ public partial class SystemActionMenu : Control
 	[Export] public float PreviewArcEndAngleDeg = 360f;
 
 	private static readonly string[] SlotNodeNames =
-		["InfoButton", "RerouteButtonNode", "FortifyButtonNode", "ForgeButtonNode", "SplitButtonNode"];
+		["InfoButton", "OpponentInfoButton", "RerouteButtonNode", "FortifyButtonNode", "ForgeButtonNode", "SplitButtonNode"];
 
 	private Control[]? _editorPreviewSlots;
 	private float _editorPreviewSystemEdge;
@@ -99,6 +100,7 @@ public partial class SystemActionMenu : Control
 	{
 		_animPlayer = GetNode<AnimationPlayer>("AnimationPlayer");
 		_infoSlot = GetNode<InfoButton>("InfoButton");
+		_opponentInfoSlot = GetNode<InfoButton>("OpponentInfoButton");
 		_rerouteSlot = GetNode<RerouteButtonNode>("RerouteButtonNode");
 		_fortifySlot = GetNode<UpgradeButtonNode>("FortifyButtonNode");
 		_forgeSlot = GetNode<UpgradeButtonNode>("ForgeButtonNode");
@@ -138,10 +140,6 @@ public partial class SystemActionMenu : Control
 		// Below MinDisplayZoom the whole menu scales down so buttons converge toward
 		// the system border. Above it they stay at full button size.
 		var menuScale = Mathf.Min(1f, _currentZoom / _minDisplayZoom);
-		DebugOverlay.Log("menuScale: " + menuScale); 
-		DebugOverlay.Log("_currentZoom: " + _currentZoom); 
-		DebugOverlay.Log("_minDisplayZoom: " + _minDisplayZoom); 
-		DebugOverlay.Log("_currentZoom / _minDisplayZoom: " + (_currentZoom / _minDisplayZoom));
 		Scale = Vector2.One * menuScale;
 		Position = GetViewport().GetCanvasTransform() * _trackedWorldPos;
 
@@ -158,11 +156,12 @@ public partial class SystemActionMenu : Control
 
 	private void UpdateSlotPositions(float arcLocalDist)
 	{
-		_infoSlot.Position   = _slotDirections[0] * arcLocalDist;
-		_rerouteSlot.Position = _slotDirections[1] * arcLocalDist;
-		_fortifySlot.Position = _slotDirections[2] * arcLocalDist;
-		_forgeSlot.Position  = _slotDirections[3] * arcLocalDist;
-		_splitSlot.Position  = _slotDirections[4] * arcLocalDist;
+		_infoSlot.Position         = _slotDirections[0] * arcLocalDist;
+		_opponentInfoSlot.Position = _slotDirections[1] * arcLocalDist;
+		_rerouteSlot.Position      = _slotDirections[2] * arcLocalDist;
+		_fortifySlot.Position      = _slotDirections[3] * arcLocalDist;
+		_forgeSlot.Position        = _slotDirections[4] * arcLocalDist;
+		_splitSlot.Position        = _slotDirections[5] * arcLocalDist;
 	}
 
 	public override void _Draw()
@@ -179,11 +178,12 @@ public partial class SystemActionMenu : Control
 		if (!_isActive && !_isHiding) return;
 		// System edge in local coords (pre-scale) so it maps to the correct screen radius.
 		var systemEdgeLocal = _systemRadius * _currentZoom / Scale.X;
-		DrawConnectorLine(_infoSlot,    systemEdgeLocal);
-		DrawConnectorLine(_rerouteSlot,  systemEdgeLocal);
-		DrawConnectorLine(_fortifySlot,  systemEdgeLocal);
-		DrawConnectorLine(_forgeSlot,   systemEdgeLocal);
-		DrawConnectorLine(_splitSlot,   systemEdgeLocal);
+		DrawConnectorLine(_infoSlot,         systemEdgeLocal);
+		DrawConnectorLine(_opponentInfoSlot, systemEdgeLocal);
+		DrawConnectorLine(_rerouteSlot,      systemEdgeLocal);
+		DrawConnectorLine(_fortifySlot,      systemEdgeLocal);
+		DrawConnectorLine(_forgeSlot,        systemEdgeLocal);
+		DrawConnectorLine(_splitSlot,        systemEdgeLocal);
 	}
 
 	private void DrawConnectorLine(Control slot, float systemEdgeLocal)
@@ -203,6 +203,7 @@ public partial class SystemActionMenu : Control
 	{
 		_trackedWorldPos = worldPos;
 		_infoSlot.Configure(onInfo);
+		_opponentInfoSlot.Visible = false;
 		_rerouteSlot.Configure(hasReroute, onReroute);
 		_fortifySlot.Configure(fortifyActive, fortifyDisabled, onFortify);
 		_forgeSlot.Configure(forgeActive, forgeDisabled, onForge);
@@ -215,13 +216,27 @@ public partial class SystemActionMenu : Control
 		Action onInfo,
 		bool hasReroute, Action onReroute,
 		bool fortifyActive, bool fortifyDisabled, Action onFortify,
-		bool forgeActive, bool forgeDisabled, Action onForge)
+		bool forgeActive, bool forgeDisabled, Action onForge,
+		bool splitDisabled, Action onSplit)
 	{
 		_trackedWorldPos = worldPos;
 		_infoSlot.Configure(onInfo);
+		_opponentInfoSlot.Visible = false;
 		_rerouteSlot.Configure(hasReroute, onReroute);
 		_fortifySlot.Configure(fortifyActive, fortifyDisabled, onFortify);
 		_forgeSlot.Configure(forgeActive, forgeDisabled, onForge);
+		_splitSlot.Configure(splitDisabled, onSplit);
+		PlayShowAnimation();
+	}
+
+	public void ShowForAiSystem(Vector2 worldPos, Action onSystemInfo, Action onFactionInfo)
+	{
+		_trackedWorldPos = worldPos;
+		_infoSlot.Configure(onSystemInfo);
+		_opponentInfoSlot.Configure(onFactionInfo);
+		_rerouteSlot.Visible = false;
+		_fortifySlot.Visible = false;
+		_forgeSlot.Visible = false;
 		_splitSlot.Visible = false;
 		PlayShowAnimation();
 	}
@@ -230,6 +245,7 @@ public partial class SystemActionMenu : Control
 	{
 		_trackedWorldPos = worldPos;
 		_infoSlot.Configure(onInfo);
+		_opponentInfoSlot.Visible = false;
 		_rerouteSlot.Visible = false;
 		_fortifySlot.Visible = false;
 		_forgeSlot.Visible = false;
@@ -268,7 +284,7 @@ public partial class SystemActionMenu : Control
 		_isHiding = false;
 		_isActive = true;
 		Visible = true;
-		foreach (var slot in new Control[] { _infoSlot, _rerouteSlot, _fortifySlot, _forgeSlot, _splitSlot })
+		foreach (var slot in new Control[] { _infoSlot, _opponentInfoSlot, _rerouteSlot, _fortifySlot, _forgeSlot, _splitSlot })
 			slot.Scale = Vector2.Zero;
 		_animPlayer.Play("show");
 	}
@@ -278,7 +294,7 @@ public partial class SystemActionMenu : Control
 		var totalDuration = ShowDuration + (SlotCount - 1) * SlotStagger;
 		var anim = new Animation { Length = totalDuration };
 
-		var slots = new Control[] { _infoSlot, _rerouteSlot, _fortifySlot, _forgeSlot, _splitSlot };
+		var slots = new Control[] { _infoSlot, _opponentInfoSlot, _rerouteSlot, _fortifySlot, _forgeSlot, _splitSlot };
 		for (var i = 0; i < SlotCount; i++)
 		{
 			var delay = i * SlotStagger;
@@ -288,6 +304,10 @@ public partial class SystemActionMenu : Control
 
 		var lib = new AnimationLibrary();
 		lib.AddAnimation("show", anim);
+		// AddAnimationLibrary returns an error (and does not replace) if the key already
+		// exists — the scene ships with an empty default library, so remove it first.
+		if (_animPlayer.HasAnimationLibrary(""))
+			_animPlayer.RemoveAnimationLibrary("");
 		_animPlayer.AddAnimationLibrary("", lib);
 		_animPlayer.AnimationFinished += OnAnimationFinished;
 	}

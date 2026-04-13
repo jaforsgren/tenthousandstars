@@ -99,13 +99,6 @@ public partial class Level
 				return;
 			}
 
-			var planetIndex = _systems[i].PlanetIndexAt(worldPos);
-			if (planetIndex.HasValue)
-			{
-				ShowPlanetInfo(i, planetIndex.Value);
-				return;
-			}
-
 			if (_systems[i].ContainsSystemAt(worldPos))
 			{
 				HandleSystemClick(i);

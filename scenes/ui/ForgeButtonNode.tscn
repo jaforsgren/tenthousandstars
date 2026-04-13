@@ -1,9 +1,7 @@
 [gd_scene format=3 uid="uid://bmjk6ww1t5etk"]
 
 [ext_resource type="Script" uid="uid://dd26tcheku2bg" path="res://scripts/ui/UpgradeButtonNode.cs" id="1_ub"]
-
-[sub_resource type="Theme" id="Theme_fi1if"]
-default_font_size = 30
+[ext_resource type="Theme" uid="uid://6r4gcsr0tf77" path="res://scenes/ui/UiTheme.tres" id="2_theme"]
 
 [node name="ForgeButtonNode" type="Control" unique_id=412164208]
 layout_mode = 3
@@ -16,6 +14,7 @@ custom_minimum_size = Vector2(48, 48)
 layout_mode = 0
 offset_right = 48.0
 offset_bottom = 48.0
-theme = SubResource("Theme_fi1if")
+theme = ExtResource("2_theme")
+theme_override_font_sizes/font_size = 30
 toggle_mode = true
 text = "⚒︎"

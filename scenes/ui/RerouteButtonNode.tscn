@@ -1,6 +1,7 @@
 [gd_scene format=3 uid="uid://cxmdt4qr7pf3a"]
 
 [ext_resource type="Script" uid="uid://cuasa4yboowrn" path="res://scripts/ui/RerouteButtonNode.cs" id="1_rb"]
+[ext_resource type="Theme" uid="uid://6r4gcsr0tf77" path="res://scenes/ui/UiTheme.tres" id="2_theme"]
 
 [node name="RerouteButtonNode" type="Control" unique_id=455735488]
 layout_mode = 3
@@ -13,5 +14,7 @@ custom_minimum_size = Vector2(48, 48)
 layout_mode = 0
 offset_right = 48.0
 offset_bottom = 48.0
+theme = ExtResource("2_theme")
+theme_override_font_sizes/font_size = 20
 toggle_mode = true
 text = "⇢"

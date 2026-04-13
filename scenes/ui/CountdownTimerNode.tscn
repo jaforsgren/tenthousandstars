@@ -1,15 +1,7 @@
 [gd_scene format=3 uid="uid://cntdwntmr1234"]
 
 [ext_resource type="Script" uid="uid://cs4gown0xvkt8" path="res://scripts/ui/CountdownTimerNode.cs" id="1_script"]
-
-[sub_resource type="Theme" id="Theme_vfiap"]
-
-[sub_resource type="LabelSettings" id="LabelSettings_title"]
-font_size = 9
-font_color = Color(0.9969099, 0.038203012, 1.540184e-06, 1)
-
-[sub_resource type="LabelSettings" id="LabelSettings_time"]
-font_size = 15
+[ext_resource type="LabelSettings" uid="uid://d3o3fa7cpfaii" path="res://scenes/ui/LabelTitle.tres" id="2_lbltitle"]
 
 [node name="CountdownTimerNode" type="Control" unique_id=1916531486]
 custom_minimum_size = Vector2(80, 36)
@@ -21,18 +13,17 @@ script = ExtResource("1_script")
 layout_mode = 0
 offset_right = 80.0
 offset_bottom = 36.0
-theme = SubResource("Theme_vfiap")
 
 [node name="LabelTitle" type="Label" parent="VBoxContainer" unique_id=851314175]
 unique_name_in_owner = true
 layout_mode = 2
 text = "TIME LEFT"
-label_settings = SubResource("LabelSettings_title")
+label_settings = ExtResource("2_lbltitle")
 horizontal_alignment = 2
 
 [node name="LabelTime" type="Label" parent="VBoxContainer" unique_id=1427996711]
 unique_name_in_owner = true
 layout_mode = 2
+theme_override_font_sizes/font_size = 15
 text = "02:30"
-label_settings = SubResource("LabelSettings_time")
 horizontal_alignment = 2

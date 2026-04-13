@@ -1,19 +1,9 @@
 [gd_scene format=3 uid="uid://da5l120lcjlg"]
 
 [ext_resource type="Script" uid="uid://bb7k0mp471isf" path="res://scripts/ui/OutroPanel.cs" id="1_outropanel"]
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_panel"]
-bg_color = Color(0.7729517, 0.7729508, 0.77295107, 0.92156863)
-
-[sub_resource type="LabelSettings" id="LabelSettings_title"]
-font_color = Color(0.8244638, 0.27462858, 0.17559487, 1)
-
-[sub_resource type="Theme" id="Theme_gasrp"]
-
-[sub_resource type="LabelSettings" id="LabelSettings_summary"]
-line_spacing = 6.0
-font_size = 11
-font_color = Color(0, 0, 0, 1)
+[ext_resource type="Theme" uid="uid://6r4gcsr0tf77" path="res://scenes/ui/UiTheme.tres" id="2_theme"]
+[ext_resource type="LabelSettings" uid="uid://d3o3fa7cpfaii" path="res://scenes/ui/LabelTitle.tres" id="3_lbltitle"]
+[ext_resource type="LabelSettings" uid="uid://dkumsv7cpfaii" path="res://scenes/ui/LabelBody.tres" id="4_lblbody"]
 
 [node name="OutroPanel" type="Control" unique_id=1715674476]
 layout_mode = 3
@@ -22,6 +12,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+theme = ExtResource("2_theme")
 script = ExtResource("1_outropanel")
 PreviewInEditor = true
 
@@ -41,7 +32,6 @@ offset_left = 24.0
 offset_top = 80.0
 offset_right = 456.0
 offset_bottom = 640.0
-theme_override_styles/panel = SubResource("StyleBoxFlat_panel")
 
 [node name="ContentLayout" type="VBoxContainer" parent="ContentBox" unique_id=2065409187]
 layout_mode = 2
@@ -50,7 +40,7 @@ layout_mode = 2
 unique_name_in_owner = true
 layout_mode = 2
 text = "From the Ashes"
-label_settings = SubResource("LabelSettings_title")
+label_settings = ExtResource("3_lbltitle")
 horizontal_alignment = 1
 
 [node name="SummaryText" type="Label" parent="ContentBox/ContentLayout" unique_id=1961260005]
@@ -58,7 +48,6 @@ unique_name_in_owner = true
 z_index = 99
 layout_mode = 2
 size_flags_vertical = 3
-theme = SubResource("Theme_gasrp")
 text = "Commander,
 
 They said The Last Command was finished. They were wrong.
@@ -66,7 +55,7 @@ They said The Last Command was finished. They were wrong.
 After 2 of 3 engagements, we stand. The Enemy retreats.
 
 We did not just survive. We prevailed."
-label_settings = SubResource("LabelSettings_summary")
+label_settings = ExtResource("4_lblbody")
 autowrap_mode = 3
 
 [node name="ButtonLayout" type="VBoxContainer" parent="ContentBox/ContentLayout" unique_id=2079205866]

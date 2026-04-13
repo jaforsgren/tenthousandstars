@@ -1,14 +1,14 @@
-[gd_scene format=3 uid="uid://dq2mkcxbvhp7t"]
+[gd_scene format=3 uid="uid://oppinfobtn001"]
 
 [ext_resource type="Script" uid="uid://bg4m8ylpdv2rn" path="res://scripts/ui/InfoButton.cs" id="1_infbtn"]
 [ext_resource type="Theme" uid="uid://6r4gcsr0tf77" path="res://scenes/ui/UiTheme.tres" id="2_theme"]
 
-[node name="InfoButton" type="Control" unique_id=785341209]
+[node name="OpponentInfoButton" type="Control" unique_id=785341300]
 layout_mode = 3
 anchors_preset = 0
 script = ExtResource("1_infbtn")
 
-[node name="InfoButton" type="Button" parent="." unique_id=785341210]
+[node name="InfoButton" type="Button" parent="." unique_id=785341301]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(48, 48)
 layout_mode = 0
@@ -16,5 +16,4 @@ offset_right = 48.0
 offset_bottom = 48.0
 theme = ExtResource("2_theme")
 theme_override_font_sizes/font_size = 20
-theme_override_constants/outline_size = 2
-text = "﹗"
+text = "⊕"

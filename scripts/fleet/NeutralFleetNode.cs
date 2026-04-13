@@ -4,8 +4,10 @@ namespace Tts;
 
 public partial class NeutralFleetNode : FleetNodeBase
 {
-	public void Initialize(float systemRadius, float gap, Color fill, Color outline)
+	private static readonly Color NeutralFill = new(0.5f, 0.5f, 0.5f, 0.9f);
+
+	public void Initialize(float systemRadius, float gap)
 	{
-		BaseInitialize(systemRadius, gap, fill, outline);
+		BaseInitialize(systemRadius, gap, NeutralFill);
 	}
 }

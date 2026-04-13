@@ -1,6 +1,6 @@
 {
 	"SystemRadius": 50.0,
-	"FleetCircleGap": 8.0,
+	"FleetCircleGap": 18.0,
 	"BaseProduction": 0.1,
 	"LabelWidth": 36.0,
 	"LabelHeight": 18.0,

@@ -1,16 +1,9 @@
 [gd_scene format=3 uid="uid://bfc704rs71xe2"]
 
 [ext_resource type="Script" uid="uid://bfvdp74xmdry3" path="res://scripts/ui/NotificationPanel.cs" id="1_notp"]
-[ext_resource type="StyleBox" uid="uid://c2o0epuw7wqij" path="res://scenes/InfoPanelStyle.tres" id="2_style"]
-
-[sub_resource type="LabelSettings" id="LabelSettings_title"]
-font_size = 13
-font_color = Color(1, 0.18431373, 0, 1)
-
-[sub_resource type="LabelSettings" id="LabelSettings_desc"]
-line_spacing = 0.0
-font_size = 10
-font_color = Color(0, 0, 0, 1)
+[ext_resource type="Theme" uid="uid://6r4gcsr0tf77" path="res://scenes/ui/UiTheme.tres" id="2_theme"]
+[ext_resource type="LabelSettings" uid="uid://d3o3fa7cpfaii" path="res://scenes/ui/LabelTitle.tres" id="3_lbltitle"]
+[ext_resource type="LabelSettings" uid="uid://dkumsv7cpfaii" path="res://scenes/ui/LabelBody.tres" id="4_lblbody"]
 
 [node name="NotificationPanel" type="PanelContainer" unique_id=1186808605]
 z_index = 99
@@ -18,7 +11,7 @@ custom_minimum_size = Vector2(240, 0)
 offset_top = 194.0
 offset_right = 240.0
 offset_bottom = 294.0
-theme_override_styles/panel = ExtResource("2_style")
+theme = ExtResource("2_theme")
 script = ExtResource("1_notp")
 PreviewInEditor = true
 
@@ -31,7 +24,7 @@ layout_mode = 0
 offset_right = 220.0
 offset_bottom = 20.0
 text = "Mission Brief"
-label_settings = SubResource("LabelSettings_title")
+label_settings = ExtResource("3_lbltitle")
 
 [node name="Description" type="Label" parent="Content" unique_id=1037142274]
 unique_name_in_owner = true
@@ -40,5 +33,5 @@ offset_top = 24.0
 offset_right = 220.0
 offset_bottom = 80.0
 text = "Eliminate all enemy factions before they consolidate the outer systems."
-label_settings = SubResource("LabelSettings_desc")
+label_settings = ExtResource("4_lblbody")
 autowrap_mode = 3

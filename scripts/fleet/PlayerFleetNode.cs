@@ -4,8 +4,10 @@ namespace Tts;
 
 public partial class PlayerFleetNode : FleetNodeBase
 {
-	public void Initialize(float systemRadius, float gap, Color fill, Color outline)
+	private static readonly Color PlayerFill = new(0.9f, 0.28f, 0.1f, 0.9f);
+
+	public void Initialize(float systemRadius, float gap)
 	{
-		BaseInitialize(systemRadius, gap, fill, outline);
+		BaseInitialize(systemRadius, gap, PlayerFill);
 	}
 }

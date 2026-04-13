@@ -7,11 +7,11 @@ public abstract partial class FleetNodeBase : Node2D
 	protected float _width;
 	protected float _height;
 	protected float _ships;
-	protected bool _selected;
 	protected Button _button = null!;
 
-	private StyleBoxFlat _normalStyle = null!;
-	private Color _outline;
+	private static readonly Color LineColor = new(1f, 1f, 1f, 0.35f);
+	private const float LineWidth = 1.5f;
+	private const int CornerRadius = 4;
 
 	public override void _Ready()
 	{
@@ -27,26 +27,39 @@ public abstract partial class FleetNodeBase : Node2D
 		return Mathf.Abs(local.X) <= _width / 2f && Mathf.Abs(local.Y) <= _height / 2f;
 	}
 
-	protected void BaseInitialize(float systemRadius, float gap, Color fill, Color outline)
+	protected void BaseInitialize(float systemRadius, float gap, Color fill)
 	{
-		_outline = outline;
 		Position = new Vector2(0f, systemRadius + gap + _height / 2f);
 
-		_normalStyle = new StyleBoxFlat { BgColor = fill, BorderColor = outline };
-		_button.AddThemeStyleboxOverride("normal", _normalStyle);
-		_button.AddThemeStyleboxOverride("hover", _normalStyle);
-		_button.AddThemeStyleboxOverride("pressed", _normalStyle);
-		_button.AddThemeColorOverride("font_color", Colors.White);
+		var style = new StyleBoxFlat
+		{
+			BgColor = fill,
+			CornerRadiusTopLeft = CornerRadius,
+			CornerRadiusTopRight = CornerRadius,
+			CornerRadiusBottomLeft = CornerRadius,
+			CornerRadiusBottomRight = CornerRadius,
+			CornerDetail = 4
+		};
+		_button.AddThemeStyleboxOverride("normal", style);
+		_button.AddThemeStyleboxOverride("hover", style);
+		_button.AddThemeStyleboxOverride("pressed", style);
+		_button.AddThemeColorOverride("font_color", Colors.Black);
+
+		var line = new Line2D
+		{
+			DefaultColor = LineColor,
+			Width = LineWidth
+		};
+		line.AddPoint(new Vector2(0f, -_height / 2f));
+		line.AddPoint(new Vector2(0f, -(gap + _height / 2f)));
+		AddChild(line);
 	}
 
-	public virtual void UpdateFleet(float ships, bool selected)
+	public virtual void UpdateFleet(float ships)
 	{
 		_ships = ships;
-		_selected = selected;
-		var hasFleet = ships > 0;
-		Visible = hasFleet;
-		if (hasFleet)
+		Visible = ships > 0;
+		if (ships > 0)
 			_button.Text = Mathf.FloorToInt(ships).ToString();
-		_normalStyle.BorderColor = selected ? Colors.White : _outline;
 	}
 }
