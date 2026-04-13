@@ -138,7 +138,10 @@ public partial class SystemActionMenu : Control
 		// Below MinDisplayZoom the whole menu scales down so buttons converge toward
 		// the system border. Above it they stay at full button size.
 		var menuScale = Mathf.Min(1f, _currentZoom / _minDisplayZoom);
-		GD.Print("menuScale", menuScale, _currentZoom, _minDisplayZoom); 
+		DebugOverlay.Log("menuScale: " + menuScale); 
+		DebugOverlay.Log("_currentZoom: " + _currentZoom); 
+		DebugOverlay.Log("_minDisplayZoom: " + _minDisplayZoom); 
+		DebugOverlay.Log("_currentZoom / _minDisplayZoom: " + (_currentZoom / _minDisplayZoom));
 		Scale = Vector2.One * menuScale;
 		Position = GetViewport().GetCanvasTransform() * _trackedWorldPos;
 

@@ -191,14 +191,7 @@ public partial class Level
 			var fleet = _systems[fromIndex].TakeFleet(_drag.FleetSlot);
 
 			PostPlayerTransitBark(toIndex);
-
-			var fromEdge = EdgeToward(_systems[fromIndex].Position, _systems[toIndex].Position, _systemRadius);
-			var toEdge = EdgeToward(_systems[toIndex].Position, _systems[fromIndex].Position, _systemRadius);
-
-			var transit = _transitFleetScene.Instantiate<TransitFleetNode>();
-			AddChild(transit);
-			transit.Launch(fromEdge, toEdge, _ghostFleetOutline, _transitDurationSeconds,
-				() => ResolvePlayerTransitArrival(toIndex, fleet));
+			LaunchPlayerTransit(fromIndex, toIndex, fleet);
 
 			resolved = true;
 			break;

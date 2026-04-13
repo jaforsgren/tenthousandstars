@@ -1,6 +1,6 @@
 {
 	"MinZoom": 0.3,
-	"MaxZoom": 10.0,
+	"MaxZoom": 2.0,
 	"ZoomStep": 0.1,
 	"StartZoom": 1.5,
 	"FollowZoom": 2.0,

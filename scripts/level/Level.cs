@@ -8,6 +8,21 @@ namespace Tts;
 [Tool]
 public partial class Level : Node2D
 {
+	// Tracks a fleet in transit for route-combat detection.
+	private sealed class ActiveTransit
+	{
+		public required int FromIndex;
+		public required int ToIndex;
+		public required SystemOwner Owner;
+		public required float Fleet;
+		public required double LaunchTimeSec;
+		public required float TotalDurationSec;
+		public required TransitFleetNode Node;
+		public required Vector2 ToWorldPos;
+		// Given a surviving fleet count, returns the action to invoke on arrival.
+		public required Func<float, Action> ArrivalCallback;
+	}
+
 	// Groups the six variables that describe one in-flight drag gesture.
 	private struct DragState
 	{
@@ -93,11 +108,13 @@ public partial class Level : Node2D
 	private UpgradeConfig _upgradeCfg = null!;
 	private readonly Dictionary<int, int> _rerouteTargets = [];
 	private readonly Dictionary<int, RerouteArrowNode> _rerouteArrows = [];
+	private readonly List<ActiveTransit> _activeTransits = [];
 	private bool _isPickingRerouteTarget;
 	private int? _rerouteSourceIndex;
 	private PackedScene _rerouteArrowScene = null!;
 	private const float RerouteMinFleet = 1.0f;
 	private int _selectedFleetSlot = -1;
+	private DebugOverlay _debugOverlay = null!;
 
 	public override void _Ready()
 	{
@@ -194,10 +211,18 @@ public partial class Level : Node2D
 		if (_activeCondition.TimeoutSeconds.HasValue)
 			SpawnCountdownTimer(_activeCondition.TimeoutSeconds.Value);
 
+		SpawnDebugOverlay();
+
 		if (_pendingInterlude != null)
 			SpawnInterludePanel(_pendingInterlude.Text, onDismiss: ShowMissionBrief);
 		else
 			ShowMissionBrief();
+	}
+
+	private void SpawnDebugOverlay()
+	{
+		_debugOverlay = new DebugOverlay();
+		AddChild(_debugOverlay);
 	}
 
 	private int FindObjectiveSystemIndex(int targetHops)
@@ -601,6 +626,8 @@ public partial class Level : Node2D
 		_rerouteSourceIndex = null;
 		_rerouteArrowScene = null!;
 		_upgradeCfg = null!;
+		_debugOverlay = null!;
+		_activeTransits.Clear();
 	}
 
 	private void SpawnRoutes(LevelData data)

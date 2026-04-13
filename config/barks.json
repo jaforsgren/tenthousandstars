@@ -39,7 +39,17 @@
 	{ "Tags": ["mission_lost"],    "When": null,                                         "Npc": "Tactical",      "Message": "Fall back. Reassess. We try again." },
 	{ "Tags": ["enemy_winning"],   "When": { "EnemyIsWinning": true },                  "Npc": "Commander",     "Message": "They are gaining ground. Hold the line." },
 	{ "Tags": ["enemy_winning"],   "When": { "EnemyIsWinning": true },                  "Npc": "Wing Commander","Message": "We are taking heavy losses. We need to push back." },
-	{ "Tags": ["player_leading"],  "When": { "PlayerStrongerThanEnemy": true },         "Npc": "Wing Commander","Message": "We have the advantage. Push it." },
-	{ "Tags": ["player_leading"],  "When": { "PlayerStrongerThanEnemy": true },         "Npc": "Tactical",      "Message": "Enemy strength is declining. Maintain pressure." }
+	{ "Tags": ["player_leading"],      "When": { "PlayerStrongerThanEnemy": true },     "Npc": "Wing Commander","Message": "We have the advantage. Push it." },
+	{ "Tags": ["player_leading"],      "When": { "PlayerStrongerThanEnemy": true },     "Npc": "Tactical",      "Message": "Enemy strength is declining. Maintain pressure." },
+
+	{ "Tags": ["route_combat_win"],    "When": null, "Npc": "Wing Commander",  "Message": "Enemy fleet intercepted en route. They never reached the system." },
+	{ "Tags": ["route_combat_win"],    "When": null, "Npc": "Tactical",        "Message": "Hostile transit destroyed. Our fleet continues on course." },
+	{ "Tags": ["route_combat_win"],    "When": null, "Npc": "Fleet Commander", "Message": "Mid-route engagement. We cut them off." },
+	{ "Tags": ["route_combat_win"],    "When": null, "Npc": "Pilot",           "Message": "Got them in open space. Fleet pressing forward." },
+
+	{ "Tags": ["route_combat_lose"],   "When": null, "Npc": "Wing Commander",  "Message": "Our transit group was intercepted. They're gone." },
+	{ "Tags": ["route_combat_lose"],   "When": null, "Npc": "Tactical",        "Message": "Fleet destroyed in transit. Enemy is still moving." },
+	{ "Tags": ["route_combat_lose"],   "When": null, "Npc": "Wing Commander",  "Message": "We lost them mid-route. They never made it." },
+	{ "Tags": ["route_combat_lose"],   "When": null, "Npc": "Pilot",           "Message": "Ambushed between systems. No survivors." }
   ]
 }

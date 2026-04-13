@@ -1,9 +1,40 @@
+using System;
 using Godot;
 
 namespace Tts;
 
 public partial class Level
 {
+	private void LaunchPlayerTransit(int fromIndex, int toIndex, float fleet)
+	{
+		var fromEdge = EdgeToward(_systems[fromIndex].Position, _systems[toIndex].Position, _systemRadius);
+		var toEdge = EdgeToward(_systems[toIndex].Position, _systems[fromIndex].Position, _systemRadius);
+
+		var transit = _transitFleetScene.Instantiate<TransitFleetNode>();
+		AddChild(transit);
+
+		Func<float, Action> arrivalCallback = f => () =>
+		{
+			_activeTransits.RemoveAll(t => t.Node == transit);
+			ResolvePlayerTransitArrival(toIndex, f);
+		};
+
+		transit.Launch(fromEdge, toEdge, _ghostFleetOutline, _transitDurationSeconds, arrivalCallback(fleet));
+
+		RegisterTransit(new ActiveTransit
+		{
+			FromIndex = fromIndex,
+			ToIndex = toIndex,
+			Owner = SystemOwner.Player,
+			Fleet = fleet,
+			LaunchTimeSec = Time.GetTicksMsec() / 1000.0,
+			TotalDurationSec = _transitDurationSeconds,
+			Node = transit,
+			ToWorldPos = toEdge,
+			ArrivalCallback = arrivalCallback
+		});
+	}
+
 	private void ResolvePlayerTransitArrival(int toIndex, float fleet)
 	{
 		var target = _systems[toIndex];
@@ -49,8 +80,27 @@ public partial class Level
 
 		var transit = _transitFleetScene.Instantiate<TransitFleetNode>();
 		AddChild(transit);
-		transit.Launch(fromEdge, toEdge, dotColor, _transitDurationSeconds,
-			() => ResolveAiTransitArrival(toIndex, fleet, aiPlayer.Owner, aiPlayer, dotColor));
+
+		Func<float, Action> arrivalCallback = f => () =>
+		{
+			_activeTransits.RemoveAll(t => t.Node == transit);
+			ResolveAiTransitArrival(toIndex, f, aiPlayer.Owner, aiPlayer, dotColor);
+		};
+
+		transit.Launch(fromEdge, toEdge, dotColor, _transitDurationSeconds, arrivalCallback(fleet));
+
+		RegisterTransit(new ActiveTransit
+		{
+			FromIndex = fromIndex,
+			ToIndex = toIndex,
+			Owner = aiPlayer.Owner,
+			Fleet = fleet,
+			LaunchTimeSec = Time.GetTicksMsec() / 1000.0,
+			TotalDurationSec = _transitDurationSeconds,
+			Node = transit,
+			ToWorldPos = toEdge,
+			ArrivalCallback = arrivalCallback
+		});
 	}
 
 	private void ResolveAiTransitArrival(int toIndex, float fleet, SystemOwner senderOwner, AiPlayerData aiPlayer, Color aiOwnerColor)
@@ -81,22 +131,104 @@ public partial class Level
 		OnAiActionTaken();
 	}
 
+	private void RegisterTransit(ActiveTransit newTransit)
+	{
+		var opponent = _activeTransits.Find(t =>
+			t.FromIndex == newTransit.ToIndex &&
+			t.ToIndex == newTransit.FromIndex &&
+			t.Owner != newTransit.Owner);
+
+		if (opponent != null)
+		{
+			var now = Time.GetTicksMsec() / 1000.0;
+			var remainA = (float)(opponent.TotalDurationSec - (now - opponent.LaunchTimeSec));
+			var remainB = newTransit.TotalDurationSec;
+			// Two fleets on opposing trajectories at same speed: meeting time = harmonic product
+			var meetingDelay = remainA * remainB / (remainA + remainB);
+			GetTree().CreateTimer(meetingDelay).Timeout += () => ResolveRouteCombat(opponent, newTransit);
+		}
+
+		_activeTransits.Add(newTransit);
+	}
+
+	private void ResolveRouteCombat(ActiveTransit a, ActiveTransit b)
+	{
+		if (!IsInstanceValid(a.Node) || !IsInstanceValid(b.Node))
+			return;
+
+		var meetingPos = a.Node.Position;
+
+		// No defender bonus mid-route: pure simultaneous exchange
+		var result = CombatResolver.Resolve(a.Fleet, b.Fleet, 1f);
+
+		var winner = result.AttackerWins ? a : b;
+		var loser = result.AttackerWins ? b : a;
+		var survivingFleet = result.AttackerWins ? result.AttackerRemainder : result.DefenderRemainder;
+
+		_activeTransits.RemoveAll(t => t.Node == a.Node || t.Node == b.Node);
+		loser.Node.CancelInFlight();
+
+		SpawnCombatEffectAt(meetingPos);
+
+		if (a.Owner == SystemOwner.Player || b.Owner == SystemOwner.Player)
+		{
+			var playerWon = winner.Owner == SystemOwner.Player;
+			PostBark(_barkConfig?.Get(playerWon ? "route_combat_win" : "route_combat_lose"));
+		}
+
+		if (survivingFleet > 0)
+		{
+			var now = Time.GetTicksMsec() / 1000.0;
+			var winnerRemaining = (float)(winner.TotalDurationSec - (now - winner.LaunchTimeSec));
+
+			if (winnerRemaining > 0)
+			{
+				var newArrival = winner.ArrivalCallback(survivingFleet);
+				winner.Node.InterruptAndRelaunch(meetingPos, winner.ToWorldPos, winnerRemaining, newArrival);
+
+				RegisterTransit(new ActiveTransit
+				{
+					FromIndex = winner.FromIndex,
+					ToIndex = winner.ToIndex,
+					Owner = winner.Owner,
+					Fleet = survivingFleet,
+					LaunchTimeSec = now,
+					TotalDurationSec = winnerRemaining,
+					Node = winner.Node,
+					ToWorldPos = winner.ToWorldPos,
+					ArrivalCallback = winner.ArrivalCallback
+				});
+			}
+			else
+			{
+				winner.Node.CancelInFlight();
+			}
+		}
+		else
+		{
+			winner.Node.CancelInFlight();
+		}
+	}
+
 	private void SpawnCombatEffect(int systemIndex, bool attackerWon)
 	{
-		var pos = _systems[systemIndex].Position;
-
-		var impact = _combatEffectScene.Instantiate<CombatEffectNode>();
-		AddChild(impact);
-		impact.Position = pos;
-		impact.PlayImpact();
+		SpawnCombatEffectAt(_systems[systemIndex].Position);
 
 		if (!attackerWon)
 			return;
 
 		var capture = _combatEffectScene.Instantiate<CombatEffectNode>();
 		AddChild(capture);
-		capture.Position = pos;
+		capture.Position = _systems[systemIndex].Position;
 		capture.PlayCapture();
+	}
+
+	private void SpawnCombatEffectAt(Vector2 pos)
+	{
+		var impact = _combatEffectScene.Instantiate<CombatEffectNode>();
+		AddChild(impact);
+		impact.Position = pos;
+		impact.PlayImpact();
 	}
 
 	private void PostPlayerTransitBark(int toIndex)
