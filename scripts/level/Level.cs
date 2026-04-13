@@ -765,8 +765,28 @@ public partial class Level : Node2D
 			var si = sourceIndex;
 			var ti = targetIndex;
 			var f = fleet;
-			transit.Launch(fromEdge, toEdge, _ghostFleetOutline, _transitDurationSeconds,
-				() => ResolvePlayerTransitArrival(ti, f));
+
+			Func<float, Action> arrivalCallback = fleetCount => () =>
+			{
+				_activeTransits.RemoveAll(t => t.Node == transit);
+				ResolvePlayerTransitArrival(ti, fleetCount);
+			};
+
+			transit.Launch(fromEdge, toEdge, _ghostFleetOutline, _transitDurationSeconds, arrivalCallback(f));
+
+			RegisterTransit(new ActiveTransit
+			{
+				FromIndex = si,
+				ToIndex = ti,
+				Owner = SystemOwner.Player,
+				Fleet = f,
+				LaunchTimeSec = Time.GetTicksMsec() / 1000.0,
+				TotalDurationSec = _transitDurationSeconds,
+				Node = transit,
+				ToWorldPos = toEdge,
+				ArrivalCallback = arrivalCallback
+			});
+
 			fogUpdateNeeded = true;
 		}
 

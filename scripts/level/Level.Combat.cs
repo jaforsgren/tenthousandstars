@@ -142,9 +142,8 @@ public partial class Level
 		{
 			var now = Time.GetTicksMsec() / 1000.0;
 			var remainA = (float)(opponent.TotalDurationSec - (now - opponent.LaunchTimeSec));
-			var remainB = newTransit.TotalDurationSec;
-			// Two fleets on opposing trajectories at same speed: meeting time = harmonic product
-			var meetingDelay = remainA * remainB / (remainA + remainB);
+			// Both fleets travel the same route at equal speed; meeting time = remainA * D_B / (D_A + D_B)
+			var meetingDelay = remainA * newTransit.TotalDurationSec / (opponent.TotalDurationSec + newTransit.TotalDurationSec);
 			GetTree().CreateTimer(meetingDelay).Timeout += () => ResolveRouteCombat(opponent, newTransit);
 		}
 
