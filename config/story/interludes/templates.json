@@ -2,55 +2,89 @@
   "BaseYear": 2847,
   "DateFormat": "Sequence {MissionIndex}-{Year}",
   "SectorNames": [
-    "Kepler", "Vega", "Proxima", "Arcturus", "Deneb",
-    "Aldebaran", "Rigel", "Castor", "Pollux", "Sirius",
-    "Altair", "Fomalhaut", "Spica", "Antares", "Canopus"
+    "Aigaron",
+    "Belthae",
+    "Kyranthos",
+    "Thaloria",
+    "Dorephon",
+    "Myrenos",
+    "Erythae",
+    "Kalydon Reach",
+    "Pheros Gate",
+    "Zanthis Veil",
+    "Ormenos Deep",
+    "Lykarion",
+    "Aigene Expanse",
+    "Theron Belt",
+    "Melanthos Verge",
+    "Nerathos Wake",
+    "Talmenon Drift",
+    "Vorethan Span",
+    "Sandros Reach",
+    "Ikaron Vale",
+    "Drakonis Gulf",
+    "Helene Verge",
+    "Praxene Corridor",
+    "Kyphene Shallows",
+    "Orynth Vale",
+    "Selkaron Reach",
+    "Thyron Gate",
+    "Arkenos Expanse",
+    "Dalmora Fringe",
+    "Ephrene Depths",
+    "Korvane Passage",
+    "Mythran Verge",
+    "Nakoran Reach",
+    "Orphene Veil",
+    "Pelyran Span",
+    "Rhythean Belt",
+    "Tarkane Expanse"
   ],
   "Templates": [
     {
       "Id": "fall_opening",
       "Tags": ["start", "falling_empire"],
-      "Text": "{PlayerFaction} — Internal Memo\n{Date}\n\nThe situation has deteriorated faster than we anticipated. {EnemyFaction} moves through our outer systems with impunity.\n\nThis engagement at {SectorName} is not optional. We go to {MissionObjective}.\n\nWe do not know what they have in store for us. We put our faith in our commanders."
+      "Text": "{PlayerFaction} — Internal Record\n{Date}\n\nThere was a time—not long past—when our borders held firm, and the outer systems answered our call without hesitation. That time has begun to pass from us.\n\nNow the reports come in fragments. Stations gone silent. Patrols that do not return. And always the same name carried back by those few who escape—{EnemyFaction}.\n\nThey move as they please through the outer dark, and none have yet stood long enough to bar their path.\n\nSo the burden falls to us at {SectorName}.\n\nWe are commanded to {MissionObjective}. Not because we are ready. Not because the moment favors us. But because there is no one else left to stand in that place.\n\nRemember this as we go: empires do not fall in a single blow. They are unmade in moments such as this."
     },
     {
       "Id": "fall_mid",
       "Tags": ["mid", "falling_empire"],
-      "Text": "{PlayerFaction} — Encrypted Channel\n{Date}\n\nWe are still standing. That alone is a victory.\n\n{EnemyFaction} has taken much from us, but they have not taken {SectorName}. Not yet.\n\nNew orders: {MissionObjective}. Our commanders have not failed us. They will not start now."
+      "Text": "{PlayerFaction} — Sealed Transmission\n{Date}\n\nWe have given ground. Much of it. Systems that stood for generations now lie quiet, their names spoken only in reports of loss.\n\nAnd yet—we endure.\n\nAt {SectorName}, the line has not broken. It bends. It strains. But it still holds, and in that there is something like defiance.\n\n{EnemyFaction} believes time is their ally. That if they press long enough, all things will give way.\n\nPerhaps they are right.\n\nBut not here. Not yet.\n\nOrders are issued: {MissionObjective}. Hold fast where you can. Strike where you must. Let them pay for every step they take."
     },
     {
       "Id": "fall_final",
       "Tags": ["end", "falling_empire"],
-      "Text": "{PlayerFaction} — Command Directive\n{Date}\n\nThis is the last transmission before the push.\n\n{EnemyFaction} believes us broken. They are wrong. Everything we have lost has only narrowed our focus.\n\nThe order is simple: {MissionObjective}. Nothing else matters."
+      "Text": "{PlayerFaction} — Final Command\n{Date}\n\nThis will be the last transmission before we commit all that remains.\n\nLook behind you, if you must, and remember what has been lost—the worlds, the fleets, the voices that no longer answer. Then set it aside.\n\nThere is only {SectorName} now.\n\n{EnemyFaction} comes certain of our breaking. They have seen us retreat. They have seen us bleed. They believe they understand the end of this story.\n\nLet them.\n\nThe order stands: {MissionObjective}.\n\nIf we are to fall, then let it be here—standing, not fleeing—and let them remember the cost."
     },
     {
       "Id": "rise_opening",
       "Tags": ["start", "rising_power"],
-      "Text": "{PlayerFaction} — Command Dispatch\n{Date}\n\nWe began with nothing. We have clawed our way to this.\n\n{EnemyFaction} does not yet take us seriously. That is their mistake. The {SectorName} sector is next.\n\nMission: {MissionObjective}. Prove to them — and to ourselves — what we are capable of."
+      "Text": "{PlayerFaction} — Command Dispatch\n{Date}\n\nThere are those who remember when we were not counted. When our fleets were few, and our claims dismissed as fleeting things that would soon pass.\n\nWe remember it as well.\n\nStep by step, system by system, we carved a place for ourselves where none was given. We learned. We endured. We grew.\n\nNow {EnemyFaction} looks upon us and sees only what we were.\n\nThat error brings us to {SectorName}.\n\nOur task is clear: {MissionObjective}.\n\nLet this be the moment when memory and reality part ways—and they are forced to see us as we are."
     },
     {
       "Id": "rise_mid",
       "Tags": ["mid", "rising_power"],
-      "Text": "{PlayerFaction} — Strategic Update\n{Date}\n\nThey know our name now. {EnemyFaction} has begun to respond in force.\n\nGood. Let them come. We have earned every system in {SectorName} and we will not surrender them.\n\nNext objective: {MissionObjective}. We press forward."
+      "Text": "{PlayerFaction} — Strategic Record\n{Date}\n\nThe silence that once followed our name is gone. Now there are answers—fleets dispatched, lines drawn, resistance where before there was none.\n\n{EnemyFaction} has begun to reckon with us.\n\nGood.\n\nAt {SectorName}, we hold what we have taken, not by favor, but by right earned in struggle. Every station, every route, paid for in effort and in loss.\n\nThey would take it back.\n\nLet them try.\n\nOrders follow: {MissionObjective}. We do not yield what we have claimed. We build upon it."
     },
     {
       "Id": "rise_final",
       "Tags": ["end", "rising_power"],
-      "Text": "{PlayerFaction} — Command Authority\n{Date}\n\nThe galaxy watches. {EnemyFaction} is on the back foot and they know it.\n\n{SectorName} will be the final test. After this — there is no question of who holds power.\n\nAll forces: {MissionObjective}. Make it count."
+      "Text": "{PlayerFaction} — High Command\n{Date}\n\nThere comes a moment in every ascent when doubt falls away—not because it is answered, but because there is no room left for it.\n\nThis is that moment.\n\n{EnemyFaction} falters now, whether they will name it or not. Their movements grow uncertain. Their strength, once unquestioned, shows its limits.\n\nBefore us lies {SectorName}, the last test that remains.\n\nThe command is given: {MissionObjective}.\n\nAfter this, there will be no returning to what was. Only the question of what comes next—and who will decide it."
     },
     {
       "Id": "conquest_opening",
       "Tags": ["start", "conquest"],
-      "Text": "{PlayerFaction} — Operational Order\n{Date}\n\nThis is not a war of survival. This is a war of ambition.\n\n{EnemyFaction} holds {SectorName}. They will not hold it for long.\n\nOrder of the day: {MissionObjective}. We do not negotiate. We do not retreat. We take."
+      "Text": "{PlayerFaction} — War Order\n{Date}\n\nLet there be no confusion in this: we did not come to this war out of desperation. We came because we chose to.\n\nThere are those who hold what we desire. {EnemyFaction} among them, entrenched now within {SectorName}, certain in their claim.\n\nBut all claims are only as strong as the will that defends them.\n\nWe intend to test that will.\n\nThe order is set: {MissionObjective}.\n\nWe advance not to bargain, but to take—and to make what we take our own."
     },
     {
       "Id": "conquest_mid",
       "Tags": ["mid", "conquest"],
-      "Text": "{PlayerFaction} — Field Directive\n{Date}\n\nThe {SectorName} campaign proceeds as planned. {EnemyFaction} shows desperation.\n\nDesperate enemies make mistakes. We will be there when they do.\n\nNew directive: {MissionObjective}. No delays. No excuses."
+      "Text": "{PlayerFaction} — Field Command\n{Date}\n\nThe campaign grinds on, as such campaigns always do—not in a single stroke, but in a long wearing down of strength and certainty.\n\nAt {SectorName}, {EnemyFaction} resists with all that remains to them. Their lines hold—for now.\n\nBut there are signs.\n\nGaps where none were before. Delays in response. Movements that speak not of confidence, but of strain.\n\nAll things break, given time and pressure.\n\nWe are that pressure.\n\nContinue the advance. {MissionObjective}. Let no weakness pass untested."
     },
     {
       "Id": "conquest_final",
       "Tags": ["end", "conquest"],
-      "Text": "{PlayerFaction} — Final Directive\n{Date}\n\nOne last push. {EnemyFaction} has nowhere left to run.\n\n{SectorName} will be remembered as where we ended this.\n\nAll commands: {MissionObjective}. Leave nothing standing."
+      "Text": "{PlayerFaction} — Final War Directive\n{Date}\n\nSo it comes to its end.\n\nNot with a single clash, but with the slow closing of every path, until nothing remains but the final stand.\n\n{EnemyFaction} has been driven back to the last bounds of {SectorName}. There is no retreat left to them now, no hidden reserve that can turn what follows.\n\nThey will stand, because they must.\n\nAnd we will come, because we have chosen this from the beginning.\n\nAll forces are given the same command: {MissionObjective}.\n\nWhen this is done, let it be said that here—at the edge of what they could no longer hold—we ended it."
     }
   ]
 }
