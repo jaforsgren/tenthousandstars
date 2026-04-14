@@ -22,7 +22,7 @@ public class NarrativeController
     private static void Log(string msg)
     {
         if (Type.GetType("Godot.Engine, Godot") != null)
-            GD.Print(msg); 
+            GD.Print(msg);
         else
             Console.WriteLine(msg);
     }
@@ -31,10 +31,6 @@ public class NarrativeController
     {
         var archetypeFiles = new[] { "falling_empire", "rising_power", "conquest" };
         var archetypes = new List<ArchetypeConfig>(archetypeFiles.Length);
-
-        
-        // here i need to add mode stuff.. 
-        // TODO: make a configload.loadFolder meothod
         foreach (var file in archetypeFiles)
             archetypes.Add(ConfigLoader.Load<ArchetypeConfig>($"res://config/story/archetypes/{file}.json"));
 
@@ -43,33 +39,32 @@ public class NarrativeController
         foreach (var file in chapterFiles)
             chapters.Add(ConfigLoader.Load<ChapterDefConfig>($"res://config/story/chapters/{file}.json"));
 
-        var conditionSet = ConfigLoader.Load<NarrativeConditionSet>("res://config/story/missions/conditions.json");
-        var briefingConfig = ConfigLoader.Load<BriefingConfig>("res://config/story/briefings/templates.json");
+        var conditionSet = ConfigLoader.Load<NarrativeConditionSet>("res://config/story/conditions.json");
+        var briefingConfig = ConfigLoader.Load<BriefingConfig>("res://config/story/briefings.json");
         var barkConfig = ConfigLoader.Load<BarkConfig>("res://config/barks.json");
-        var interludeConfig = ConfigLoader.Load<InterludeConfig>("res://config/story/interludes/templates.json");
-        var outroConfig = ResolveOutroConfig(
-            ConfigLoader.Load<OutroConfigSource>("res://config/story/outro/templates.json"));
+        var storyTextConfig = ResolveStoryTextConfig(
+            ConfigLoader.Load<StoryTextConfigSource>("res://config/story/texts.json"));
         var aiNamingConfig = ConfigLoader.Load<AiNamingConfig>("res://config/ai_naming.json");
-
         var scenarioConfig = ConfigLoader.Load<ScenarioConfig>("res://config/scenarios.json");
-        var db = new NarrativeDatabase(archetypes, chapters, conditionSet.Conditions, briefingConfig, barkConfig, interludeConfig, outroConfig, scenarioConfig);
+
+        var db = new NarrativeDatabase(archetypes, chapters, conditionSet.Conditions, briefingConfig, barkConfig, storyTextConfig, scenarioConfig);
         var service = new NarrativeService(db, new ChapterGenerator(), new MissionGenerator(db), new BriefingGenerator(db, rng), aiNamingConfig, rng);
         var barkSystem = new NarrativeBarkSystem(db, rng);
-        var outroGenerator = new OutroGenerator(outroConfig, db, rng);
+        var outroGenerator = new OutroGenerator(storyTextConfig, db, rng);
 
         return new NarrativeController(service, barkSystem, outroGenerator);
     }
 
-    private static OutroConfig ResolveOutroConfig(OutroConfigSource source)
+    private static StoryTextConfig ResolveStoryTextConfig(StoryTextConfigSource source)
     {
-        var templates = new OutroTemplate[source.Templates.Length];
+        var templates = new StoryTextTemplate[source.Templates.Length];
         for (var i = 0; i < source.Templates.Length; i++)
         {
             var t = source.Templates[i];
             var text = ConfigLoader.LoadText($"res://{t.TextFile}");
-            templates[i] = new OutroTemplate(t.Id, t.Tags, t.Title, text);
+            templates[i] = new StoryTextTemplate(t.Id, t.Tags, t.Title, text);
         }
-        return new OutroConfig(templates);
+        return new StoryTextConfig(source.BaseYear, source.DateFormat, source.SectorNames, templates);
     }
 
     public bool IsCampaignComplete => _service.IsCampaignComplete;
@@ -99,11 +94,11 @@ public class NarrativeController
         Log($"[Narrative] Mission complete — won: {won}, chapter: {_service.CurrentState.CurrentChapterIndex}/{_service.CurrentState.TotalChapters}");
     }
 
-    public (string Title, string Text) GenerateOutro()
+    public StoryText GenerateOutro()
     {
-        var (title, text) = _outroGenerator.Generate(_service.CurrentState);
-        Log($"[Narrative] Outro: {title}");
-        return (title, text);
+        var storyText = _outroGenerator.Generate(_service.CurrentState);
+        Log($"[Narrative] Outro: {storyText.Title}");
+        return storyText;
     }
 
     public ScenarioDefinition[] SelectEligibleScenarios()

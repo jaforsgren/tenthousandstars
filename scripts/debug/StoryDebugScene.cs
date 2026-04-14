@@ -14,8 +14,7 @@ public partial class StoryDebugScene : Control
 	private Button _previewOutroButton = null!;
 	private RichTextLabel _outputText = null!;
 
-	private string _outroTitle = "";
-	private string _outroText = "";
+	private StoryText? _outro;
 
 	private static readonly string[] ArchetypeIds = ["falling_empire", "rising_power", "conquest"];
 	private static readonly string[] ArchetypeLabels = ["Falling Empire", "Rising Power", "Conquest"];
@@ -43,8 +42,7 @@ public partial class StoryDebugScene : Control
 
 	private void OnGeneratePressed()
 	{
-		_outroTitle = "";
-		_outroText = "";
+		_outro = null;
 		_previewOutroButton.Disabled = true;
 
 		foreach (Node child in _interludePreviewButtons.GetChildren())
@@ -100,12 +98,14 @@ public partial class StoryDebugScene : Control
 			// ── Interlude ──
 			if (ctx.Interlude != null)
 			{
-				var capturedText = ctx.Interlude.Text;
+				var capturedInterlude = ctx.Interlude;
 				var capturedLabel = $"Interlude {i + 1}";
-				AddPreviewButton(capturedLabel, () => ShowInterludePreview(capturedText));
+				AddPreviewButton(capturedLabel, () => ShowNarrativePreview(capturedInterlude));
 
 				AppendSubheader(sb, "INTERLUDE");
-				AppendIndented(sb, ctx.Interlude.Text);
+				if (!string.IsNullOrEmpty(ctx.Interlude.Title))
+					sb.AppendLine($"  [b]{ctx.Interlude.Title}[/b]");
+				AppendIndented(sb, ctx.Interlude.Body);
 				sb.AppendLine();
 			}
 
@@ -172,14 +172,12 @@ public partial class StoryDebugScene : Control
 		// ── Outro ──
 		if (controller.IsCampaignComplete)
 		{
-			var (title, text) = controller.GenerateOutro();
-			_outroTitle = title;
-			_outroText = text;
+			_outro = controller.GenerateOutro();
 			_previewOutroButton.Disabled = false;
 
 			AppendHeader(sb, "OUTRO");
-			sb.AppendLine($"  [b]{title}[/b]");
-			AppendIndented(sb, text);
+			sb.AppendLine($"  [b]{_outro.Title}[/b]");
+			AppendIndented(sb, _outro.Body);
 			sb.AppendLine();
 
 			var finalState = controller.CurrentState;
@@ -218,22 +216,23 @@ public partial class StoryDebugScene : Control
 		_interludePreviewButtons.AddChild(btn);
 	}
 
-	private void ShowInterludePreview(string text)
+	private void ShowNarrativePreview(StoryText storyText)
 	{
 		var layer = new CanvasLayer { Layer = 20 };
 		AddChild(layer);
-		var panel = GD.Load<PackedScene>("res://scenes/ui/InterludePanel.tscn").Instantiate<InterludePanel>();
+		var panel = GD.Load<PackedScene>("res://scenes/ui/NarrativePanel.tscn").Instantiate<NarrativePanel>();
 		layer.AddChild(panel);
-		panel.Show(text, GetViewport().GetVisibleRect().Size, () => layer.QueueFree());
+		panel.ShowDismissable(storyText.Title, storyText.Body, GetViewport().GetVisibleRect().Size, () => layer.QueueFree());
 	}
 
 	private void ShowOutroPreview()
 	{
+		if (_outro == null) return;
 		var layer = new CanvasLayer { Layer = 20 };
 		AddChild(layer);
-		var panel = GD.Load<PackedScene>("res://scenes/ui/OutroPanel.tscn").Instantiate<OutroPanel>();
+		var panel = GD.Load<PackedScene>("res://scenes/ui/NarrativePanel.tscn").Instantiate<NarrativePanel>();
 		layer.AddChild(panel);
-		panel.Show(_outroTitle, _outroText, GetViewport().GetVisibleRect().Size);
+		panel.ShowWithActions(_outro.Title, _outro.Body, GetViewport().GetVisibleRect().Size);
 		panel.NewCampaignPressed += () => layer.QueueFree();
 		panel.RandomMissionsPressed += () => layer.QueueFree();
 		panel.QuitPressed += () => layer.QueueFree();

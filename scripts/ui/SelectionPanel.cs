@@ -9,6 +9,8 @@ public partial class SelectionPanel : PanelContainer
 	private const float PanelWidth = 200f;
 	private const float TopPadding = 100f;
 
+	private ScrollContainer _scrollArea = null!;
+	private VBoxContainer _content = null!;
 	private Label _titleLabel = null!;
 	private Label _descriptionLabel = null!;
 	private VBoxContainer _scenarioSection = null!;
@@ -37,12 +39,14 @@ public partial class SelectionPanel : PanelContainer
 	{
 		CustomMinimumSize = new Vector2(PanelWidth, 0f);
 
+		_scrollArea = GetNode<ScrollContainer>("ScrollArea");
+		_content = GetNode<VBoxContainer>("ScrollArea/Content");
 		_titleLabel = GetNode<Label>("%Title");
 		_descriptionLabel = GetNode<Label>("%Description");
-		_scenarioSection = GetNode<VBoxContainer>("Content/ScenarioSection");
-		_scenarioIntroLabel = GetNode<Label>("Content/ScenarioSection/ScenarioIntro");
-		_enterButton = GetNode<Button>("Content/ScenarioSection/EnterButton");
-		_ignoreButton = GetNode<Button>("Content/ScenarioSection/IgnoreButton");
+		_scenarioSection = GetNode<VBoxContainer>("ScrollArea/Content/ScenarioSection");
+		_scenarioIntroLabel = GetNode<Label>("ScrollArea/Content/ScenarioSection/ScenarioIntro");
+		_enterButton = GetNode<Button>("ScrollArea/Content/ScenarioSection/EnterButton");
+		_ignoreButton = GetNode<Button>("ScrollArea/Content/ScenarioSection/IgnoreButton");
 
 		_enterButton.Pressed += () => _onEnterAction?.Invoke();
 		_ignoreButton.Pressed += () => _onIgnoreAction?.Invoke();
@@ -65,6 +69,7 @@ public partial class SelectionPanel : PanelContainer
 		_onIgnoreAction = null;
 		Visible = true;
 		Position = new Vector2((viewportSize.X - PanelWidth) / 2f, TopPadding);
+		Callable.From(() => ClampScrollHeight(viewportSize)).CallDeferred();
 	}
 
 	public void ShowWithScenario(
@@ -83,6 +88,13 @@ public partial class SelectionPanel : PanelContainer
 		_scenarioSection.Visible = true;
 		Visible = true;
 		Position = new Vector2((viewportSize.X - PanelWidth) / 2f, TopPadding);
+		Callable.From(() => ClampScrollHeight(viewportSize)).CallDeferred();
+	}
+
+	private void ClampScrollHeight(Vector2 viewportSize)
+	{
+		var maxHeight = viewportSize.Y - TopPadding - 40f;
+		_scrollArea.CustomMinimumSize = new Vector2(0, Mathf.Min(_content.Size.Y, maxHeight));
 	}
 
 	private void ApplyEditorPreview()

@@ -100,7 +100,7 @@ public partial class Level : Node2D
 	private SystemActionMenu _systemActionMenu = null!;
 	private AiController _aiController = null!;
 	private NarrativeController? _narrativeController;
-	private InterludeContent? _pendingInterlude;
+	private StoryText? _pendingInterlude;
 	private GameMode? _gameModeOverride;
 	private double _lastSystemClickTime = double.MinValue;
 	private int _lastClickedSystemIndex = -1;
@@ -223,7 +223,7 @@ public partial class Level : Node2D
 		SpawnSpeedControlPanel();
 
 		if (_pendingInterlude != null)
-			SpawnInterludePanel(_pendingInterlude.Text, onDismiss: ShowMissionBrief);
+			SpawnNarrativePanel(_pendingInterlude, onDismiss: ShowMissionBrief);
 		else
 			ShowMissionBrief();
 	}
@@ -453,12 +453,12 @@ public partial class Level : Node2D
 
 	private void SpawnOutroPanel()
 	{
-		var (title, text) = _narrativeController!.GenerateOutro();
+		var storyText = _narrativeController!.GenerateOutro();
 		var layer = new CanvasLayer { Layer = 14 };
 		AddChild(layer);
-		var panel = GD.Load<PackedScene>("res://scenes/ui/OutroPanel.tscn").Instantiate<OutroPanel>();
+		var panel = GD.Load<PackedScene>("res://scenes/ui/NarrativePanel.tscn").Instantiate<NarrativePanel>();
 		layer.AddChild(panel);
-		panel.Show(title, text, GetViewport().GetVisibleRect().Size);
+		panel.ShowWithActions(storyText.Title, storyText.Body, GetViewport().GetVisibleRect().Size);
 		panel.NewCampaignPressed += OnNewCampaignPressed;
 		panel.RandomMissionsPressed += OnRandomMissionsPressed;
 		panel.QuitPressed += () => GetTree().Quit();
@@ -478,13 +478,13 @@ public partial class Level : Node2D
 		RegenerateLevel();
 	}
 
-	private void SpawnInterludePanel(string text, Action onDismiss)
+	private void SpawnNarrativePanel(StoryText storyText, Action onDismiss)
 	{
 		var layer = new CanvasLayer { Layer = 13 };
 		AddChild(layer);
-		var panel = GD.Load<PackedScene>("res://scenes/ui/InterludePanel.tscn").Instantiate<InterludePanel>();
+		var panel = GD.Load<PackedScene>("res://scenes/ui/NarrativePanel.tscn").Instantiate<NarrativePanel>();
 		layer.AddChild(panel);
-		panel.Show(text, GetViewport().GetVisibleRect().Size, onDismiss);
+		panel.ShowDismissable(storyText.Title, storyText.Body, GetViewport().GetVisibleRect().Size, onDismiss);
 	}
 
 	private void SpawnChatWindow()

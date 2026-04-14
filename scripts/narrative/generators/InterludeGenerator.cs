@@ -5,25 +5,26 @@ namespace Tts;
 
 public class InterludeGenerator : TagMatchingBase, IInterludeGenerator
 {
-	private readonly InterludeConfig _config;
+	private readonly StoryTextConfig _config;
 	private readonly Random _rng;
 	private readonly HashSet<string> _shownIds = [];
 	private string[] _activeTags;
 
-	public InterludeGenerator(InterludeConfig config, Random rng, string archetypeId)
+	public InterludeGenerator(StoryTextConfig config, Random rng, string archetypeId)
 	{
 		_config = config;
 		_rng = rng;
-		_activeTags = ["start", archetypeId];
+		_activeTags = ["begin", archetypeId];
 	}
 
-	public InterludeContent? TryGenerate(MissionContext ctx)
+	public StoryText? TryGenerate(MissionContext ctx)
 	{
-		var candidates = new List<InterludeTemplate>();
+		var candidates = new List<StoryTextTemplate>();
 		foreach (var template in _config.Templates)
 		{
 			if (_shownIds.Contains(template.Id)) continue;
 			if (!HasAnyTag(template.Tags, _activeTags)) continue;
+			if (!IsInterludeTemplate(template.Tags)) continue;
 			candidates.Add(template);
 		}
 
@@ -33,7 +34,14 @@ public class InterludeGenerator : TagMatchingBase, IInterludeGenerator
 		_shownIds.Add(chosen.Id);
 		_activeTags = chosen.Tags;
 
-		return new InterludeContent(ApplyTokens(chosen.Text, ctx));
+		return new StoryText(chosen.Title, ApplyTokens(chosen.Text, ctx));
+	}
+
+	private static bool IsInterludeTemplate(string[] tags)
+	{
+		foreach (var tag in tags)
+			if (tag is "begin" or "mid" or "end") return true;
+		return false;
 	}
 
 	private string ApplyTokens(string text, MissionContext ctx)

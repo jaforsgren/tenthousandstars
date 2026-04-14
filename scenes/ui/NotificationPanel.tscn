@@ -1,6 +1,7 @@
 [gd_scene format=3 uid="uid://bfc704rs71xe2"]
 
 [ext_resource type="Script" uid="uid://bfvdp74xmdry3" path="res://scripts/ui/NotificationPanel.cs" id="1_notp"]
+[ext_resource type="StyleBox" uid="uid://4lpdkaxmvadr" path="res://white_style_box_flat.tres" id="2_6q077"]
 [ext_resource type="Theme" uid="uid://6r4gcsr0tf77" path="res://scenes/ui/UiTheme.tres" id="2_theme"]
 [ext_resource type="LabelSettings" uid="uid://d3o3fa7cpfaii" path="res://scenes/ui/LabelTitle.tres" id="3_lbltitle"]
 [ext_resource type="LabelSettings" uid="uid://dkumsv7cpfaii" path="res://scenes/ui/LabelBody.tres" id="4_lblbody"]
@@ -12,8 +13,10 @@ offset_top = 194.0
 offset_right = 240.0
 offset_bottom = 294.0
 theme = ExtResource("2_theme")
+theme_override_styles/panel = ExtResource("2_6q077")
 script = ExtResource("1_notp")
 PreviewInEditor = true
+theme_override_styles/panel = ExtResource("2_6q077")
 
 [node name="Content" type="Control" parent="." unique_id=1186808606]
 layout_mode = 2

@@ -53,7 +53,9 @@ public static class NarrativeCli
             if (ctx.Interlude != null)
             {
                 sb.AppendLine("INTERLUDE:");
-                sb.AppendLine(ctx.Interlude.Text);
+                if (!string.IsNullOrEmpty(ctx.Interlude.Title))
+                    sb.AppendLine(ctx.Interlude.Title);
+                sb.AppendLine(ctx.Interlude.Body);
                 sb.AppendLine();
             }
 
@@ -78,10 +80,10 @@ public static class NarrativeCli
 
         if (controller.IsCampaignComplete)
         {
-            var (title, text) = controller.GenerateOutro();
+            var outro = controller.GenerateOutro();
             sb.AppendLine("OUTRO:");
-            sb.AppendLine(title);
-            sb.AppendLine(text);
+            sb.AppendLine(outro.Title);
+            sb.AppendLine(outro.Body);
         }
 
         Console.WriteLine(sb.ToString());

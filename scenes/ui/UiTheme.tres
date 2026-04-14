@@ -1,5 +1,7 @@
 [gd_resource type="Theme" format=3 uid="uid://6r4gcsr0tf77"]
 
+[ext_resource type="StyleBox" uid="uid://4lpdkaxmvadr" path="res://white_style_box_flat.tres" id="1_dfk0a"]
+
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_btn_disabled"]
 content_margin_left = 8.0
 content_margin_top = 8.0
@@ -50,23 +52,6 @@ corner_radius_bottom_right = 4
 corner_radius_bottom_left = 4
 corner_detail = 4
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_panel"]
-content_margin_left = 8.0
-content_margin_top = 8.0
-content_margin_right = 8.0
-content_margin_bottom = 8.0
-bg_color = Color(1, 1, 1, 0.92)
-border_width_left = 1
-border_width_top = 1
-border_width_right = 1
-border_width_bottom = 1
-border_color = Color(0.82, 0.82, 0.82, 1)
-corner_radius_top_left = 4
-corner_radius_top_right = 4
-corner_radius_bottom_right = 4
-corner_radius_bottom_left = 4
-corner_detail = 4
-
 [resource]
 Button/colors/font_color = Color(0, 0, 0, 1)
 Button/colors/font_disabled_color = Color(0, 0, 0, 0.4)
@@ -80,5 +65,5 @@ Button/styles/hover_pressed = SubResource("StyleBoxFlat_btn_pressed")
 Button/styles/normal = SubResource("StyleBoxFlat_btn_normal")
 Button/styles/pressed = SubResource("StyleBoxFlat_btn_pressed")
 Label/colors/font_color = Color(0, 0, 0, 1)
-Panel/styles/panel = SubResource("StyleBoxFlat_panel")
-PanelContainer/styles/panel = SubResource("StyleBoxFlat_panel")
+Panel/styles/panel = ExtResource("1_dfk0a")
+PanelContainer/styles/panel = ExtResource("1_dfk0a")

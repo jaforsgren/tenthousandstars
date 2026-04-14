@@ -54,7 +54,7 @@ public class NarrativeService : INarrativeService
         _player = AiNaming.GenerateCharacter(_aiNamingCfg, _archetype.PlayerDisposition, _rng);
         _enemy = AiNaming.GenerateCharacter(_aiNamingCfg, (AiDisposition)_rng.Next(Enum.GetValues<AiDisposition>().Length), _rng);
 
-        _interludeGenerator = new InterludeGenerator(_db.Interludes, _rng, _archetype.Id);
+        _interludeGenerator = new InterludeGenerator(_db.StoryTexts, _rng, _archetype.Id);
         CurrentState = BuildState();
     }
 

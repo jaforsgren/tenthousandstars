@@ -1,0 +1,33 @@
+{
+  "BaseYear": 2847,
+  "DateFormat": "Sequence {MissionIndex}-{Year}",
+  "SectorNames": [
+    "Aigaron", "Belthae", "Kyranthos", "Thaloria", "Dorephon",
+    "Myrenos", "Erythae", "Kalydon Reach", "Pheros Gate", "Zanthis Veil",
+    "Ormenos Deep", "Lykarion", "Aigene Expanse", "Theron Belt", "Melanthos Verge",
+    "Nerathos Wake", "Talmenon Drift", "Vorethan Span", "Sandros Reach", "Ikaron Vale",
+    "Drakonis Gulf", "Helene Verge", "Praxene Corridor", "Kyphene Shallows", "Orynth Vale",
+    "Selkaron Reach", "Thyron Gate", "Arkenos Expanse", "Dalmora Fringe", "Ephrene Depths",
+    "Korvane Passage", "Mythran Verge", "Nakoran Reach", "Orphene Veil", "Pelyran Span",
+    "Rhythean Belt", "Tarkane Expanse"
+  ],
+  "Templates": [
+    { "Id": "fall_begin",     "Tags": ["begin", "falling_empire"], "Title": null,              "TextFile": "config/story/interludes/fall_opening.md" },
+    { "Id": "fall_mid",       "Tags": ["mid",   "falling_empire"], "Title": null,              "TextFile": "config/story/interludes/fall_mid.md" },
+    { "Id": "fall_end",       "Tags": ["end",   "falling_empire"], "Title": null,              "TextFile": "config/story/interludes/fall_final.md" },
+    { "Id": "rise_begin",     "Tags": ["begin", "rising_power"],   "Title": null,              "TextFile": "config/story/interludes/rise_opening.md" },
+    { "Id": "rise_mid",       "Tags": ["mid",   "rising_power"],   "Title": null,              "TextFile": "config/story/interludes/rise_mid.md" },
+    { "Id": "rise_end",       "Tags": ["end",   "rising_power"],   "Title": null,              "TextFile": "config/story/interludes/rise_final.md" },
+    { "Id": "conquest_begin", "Tags": ["begin", "conquest"],       "Title": null,              "TextFile": "config/story/interludes/conquest_opening.md" },
+    { "Id": "conquest_mid",   "Tags": ["mid",   "conquest"],       "Title": null,              "TextFile": "config/story/interludes/conquest_mid.md" },
+    { "Id": "conquest_end",   "Tags": ["end",   "conquest"],       "Title": null,              "TextFile": "config/story/interludes/conquest_final.md" },
+    { "Id": "fall_win",       "Tags": ["win",  "falling_empire"],  "Title": "From the Ashes",  "TextFile": "config/story/outro/fall_win.md" },
+    { "Id": "fall_loss",      "Tags": ["loss", "falling_empire"],  "Title": "A Costly Retreat","TextFile": "config/story/outro/fall_loss.md" },
+    { "Id": "rise_win",       "Tags": ["win",  "rising_power"],    "Title": "A New Power",     "TextFile": "config/story/outro/rise_win.md" },
+    { "Id": "rise_loss",      "Tags": ["loss", "rising_power"],    "Title": "Ambition Checked","TextFile": "config/story/outro/rise_loss.md" },
+    { "Id": "conq_win",       "Tags": ["win",  "conquest"],        "Title": "Total Dominion",  "TextFile": "config/story/outro/conq_win.md" },
+    { "Id": "conq_loss",      "Tags": ["loss", "conquest"],        "Title": "Conquest Denied", "TextFile": "config/story/outro/conq_loss.md" },
+    { "Id": "generic_win",    "Tags": ["win"],                     "Title": "Campaign Complete","TextFile": "config/story/outro/generic_win.md" },
+    { "Id": "generic_loss",   "Tags": ["loss"],                    "Title": "Campaign Ended",  "TextFile": "config/story/outro/generic_loss.md" }
+  ]
+}
