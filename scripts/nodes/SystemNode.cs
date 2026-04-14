@@ -33,6 +33,7 @@ public partial class SystemNode : FogAwareNode
 	private const string ForgeBadgePath = "res://scenes/system/ForgeUpgradeBadge.tscn";
 	private const string FortifyBadgePath = "res://scenes/system/FortifyUpgradeBadge.tscn";
 	private const string ScenarioBadgePath = "res://scenes/system/ScenarioBadgeNode.tscn";
+	private const string ProductionArcScenePath = "res://scenes/system/ProductionArcNode.tscn";
 	private const string PlayerFleetScenePath = "res://scenes/fleet/PlayerFleetNode.tscn";
 	private const string NeutralFleetScenePath = "res://scenes/fleet/NeutralFleetNode.tscn";
 	private const string AiFleetScenePath = "res://scenes/fleet/AiFleetNode.tscn";
@@ -55,6 +56,8 @@ public partial class SystemNode : FogAwareNode
 	private SystemOwner _targetOwner = SystemOwner.None;
 	private float _cachedProductionRate;
 	private ScenarioBadgeNode? _scenarioBadge;
+	private ProductionArcNode? _productionArc;
+	private float _lastShipsForArc;
 
 	public float ProductionRate => _cachedProductionRate;
 	public float DefenseBonusMultiplier => _upgrade == SystemUpgrade.Fortify ? _fortifyDefenseBonusMultiplier : 0f;
@@ -152,14 +155,22 @@ public partial class SystemNode : FogAwareNode
 		ApplyUpgrade(SystemUpgrade.None);
 		ClearAllFleets();
 		AddFleetSlot(ships);
+
+		_productionArc?.QueueFree();
+		_productionArc = null;
+		if (newOwner == SystemOwner.Player)
+			SpawnProductionArc(ships);
+
 		QueueRedraw();
 	}
 
 	public void SustainDefense(float remainingShips)
 	{
 		// Collapse all fleet slots into one after taking losses
+		var clamped = Mathf.Max(0f, remainingShips);
 		ClearAllFleets();
-		AddFleetSlot(Mathf.Max(0f, remainingShips));
+		AddFleetSlot(clamped);
+		_lastShipsForArc = clamped;
 	}
 
 	public void MarkAsObjective()
@@ -236,7 +247,11 @@ public partial class SystemNode : FogAwareNode
 		}
 
 		if (!Engine.IsEditorHint())
+		{
 			AddFleetSlot(initialShips);
+			if (owner == SystemOwner.Player)
+				SpawnProductionArc(initialShips);
+		}
 
 		if (_ownerPlayer.IsAi())
 			QueueRedraw();
@@ -278,6 +293,15 @@ public partial class SystemNode : FogAwareNode
 
 		_fleetShips[0] += ProductionRate * (float)delta;
 		_fleetNodes[0].UpdateFleet(_fleetShips[0]);
+
+		if (_productionArc != null)
+		{
+			var ships = _fleetShips[0];
+			if (Mathf.FloorToInt(ships) > Mathf.FloorToInt(_lastShipsForArc))
+				_productionArc.PlayProduced();
+			_lastShipsForArc = ships;
+			_productionArc.SetProgress(ships - Mathf.Floor(ships));
+		}
 	}
 
 	private void AddFleetSlot(float ships)
@@ -332,5 +356,14 @@ public partial class SystemNode : FogAwareNode
 		AddChild(neutral);
 		neutral.Initialize(_systemRadius, _fleetCircleGap);
 		return neutral;
+	}
+
+	private void SpawnProductionArc(float currentShips)
+	{
+		_productionArc = GD.Load<PackedScene>(ProductionArcScenePath).Instantiate<ProductionArcNode>();
+		AddChild(_productionArc);
+		_productionArc.Initialize(_systemRadius);
+		_lastShipsForArc = currentShips;
+		_productionArc.SetProgress(currentShips - Mathf.Floor(currentShips));
 	}
 }

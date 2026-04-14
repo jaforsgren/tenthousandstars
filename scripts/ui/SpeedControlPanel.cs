@@ -2,6 +2,13 @@ using Godot;
 
 namespace Tts;
 
+enum SpeedChange
+{
+	SUBTRACT,
+	ADD,
+	RESET
+}
+
 public partial class SpeedControlPanel : PanelContainer
 {
 	private Label _speedLabel = null!;
@@ -15,13 +22,13 @@ public partial class SpeedControlPanel : PanelContainer
 		_speedLabel = GetNode<Label>("%SpeedLabel");
 		_playPauseButton = GetNode<Button>("%PlayPauseButton");
 		_halfSpeedButton = GetNode<Button>("%HalfSpeedButton");
-		_normalSpeedButton = GetNode<Button>("%NormalSpeedButton");
+		//_normalSpeedButton = GetNode<Button>("%NormalSpeedButton");
 		_fastSpeedButton = GetNode<Button>("%FastSpeedButton");
 
 		_playPauseButton.Pressed += OnPlayPausePressed;
-		_halfSpeedButton.Pressed += () => OnSpeedPressed(0.5f);
-		_normalSpeedButton.Pressed += () => OnSpeedPressed(1.0f);
-		_fastSpeedButton.Pressed += () => OnSpeedPressed(4.0f);
+		_halfSpeedButton.Pressed += () => OnSpeedPressed(SpeedChange.SUBTRACT);
+		//_normalSpeedButton.Pressed += () => OnSpeedPressed(SpeedChange.RESET);
+		_fastSpeedButton.Pressed += () => OnSpeedPressed(SpeedChange.ADD);
 
 		RefreshIndicator();
 	}
@@ -32,9 +39,29 @@ public partial class SpeedControlPanel : PanelContainer
 		RefreshIndicator();
 	}
 
-	private void OnSpeedPressed(float speed)
+	private void OnSpeedPressed(SpeedChange change)
 	{
-		GameSpeed.SetSpeed(speed);
+		
+		if (change == SpeedChange.SUBTRACT && GameSpeed.Speed == 4f )
+		{
+			GameSpeed.SetSpeed(1f);
+		}
+		
+		if (change == SpeedChange.SUBTRACT && GameSpeed.Speed == 1f )
+		{
+			GameSpeed.SetSpeed(0.5f);
+		}
+		
+		if (change == SpeedChange.ADD && GameSpeed.Speed == 1f )
+		{
+			GameSpeed.SetSpeed(4.0f);
+		}
+		
+		if (change == SpeedChange.ADD && GameSpeed.Speed == 0.5f )
+		{
+			GameSpeed.SetSpeed(1.0f);
+		}
+		
 		if (GameSpeed.IsPlayerPaused)
 			GameSpeed.SetPlayerPaused(false);
 		RefreshIndicator();
@@ -45,11 +72,11 @@ public partial class SpeedControlPanel : PanelContainer
 		if (GameSpeed.IsPlayerPaused)
 		{
 			_playPauseButton.Text = "▶";
-			_speedLabel.Text = "⏸";
+			_speedLabel.Text = "||";
 		}
 		else
 		{
-			_playPauseButton.Text = "⏸";
+			_playPauseButton.Text = "||";
 			_speedLabel.Text = GameSpeed.Speed switch
 			{
 				0.5f => "½×",

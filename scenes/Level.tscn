@@ -49,8 +49,9 @@ _selectedFleetSlot = -1
 [node name="Stars01V1" type="Sprite2D" parent="." unique_id=2051090164]
 visible = false
 modulate = Color(1, 1, 1, 0.39215687)
-z_index = -1
+z_index = -2
+y_sort_enabled = true
 texture_repeat = 2
-position = Vector2(805, 1392)
+position = Vector2(8.999985, 1517)
 scale = Vector2(0.397, 0.4)
 texture = ExtResource("5_qifjx")

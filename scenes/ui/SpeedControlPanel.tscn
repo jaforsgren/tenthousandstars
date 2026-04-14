@@ -1,20 +1,24 @@
 [gd_scene format=3 uid="uid://c5snd4x7yqbr2"]
 
+[ext_resource type="Theme" uid="uid://bfcgvw2kdiuhc" path="res://transparent_theme.tres" id="1_ei5tw"]
 [ext_resource type="Script" uid="uid://j4op55in4ik4" path="res://scripts/ui/SpeedControlPanel.cs" id="1_script"]
-[ext_resource type="Theme" uid="uid://6r4gcsr0tf77" path="res://scenes/ui/UiTheme.tres" id="2_theme"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_ei5tw"]
+
+[sub_resource type="Theme" id="Theme_ei5tw"]
 
 [sub_resource type="ButtonGroup" id="ButtonGroup_speed"]
 
 [node name="SpeedControlPanel" type="PanelContainer" unique_id=2045214510]
-anchors_preset = 1
-anchor_left = 1.0
-anchor_right = 1.0
-offset_left = -177.0
-offset_bottom = 55.0
+offset_left = 10.0
+offset_top = 10.0
+offset_right = 151.0
+offset_bottom = 65.0
 grow_horizontal = 0
+scale = Vector2(0.75, 0.75)
 size_flags_horizontal = 0
-size_flags_vertical = 0
-theme = ExtResource("2_theme")
+size_flags_vertical = 4
+theme = ExtResource("1_ei5tw")
 script = ExtResource("1_script")
 
 [node name="HBoxContainer" type="HBoxContainer" parent="." unique_id=1111862614]
@@ -23,40 +27,36 @@ theme_override_constants/separation = 3
 
 [node name="SpeedLabel" type="Label" parent="HBoxContainer" unique_id=2069310471]
 unique_name_in_owner = true
+custom_minimum_size = Vector2(25, 0)
 layout_mode = 2
 theme_override_font_sizes/font_size = 11
 text = "1×"
+label_settings = SubResource("LabelSettings_ei5tw")
 vertical_alignment = 1
 
 [node name="PlayPauseButton" type="Button" parent="HBoxContainer" unique_id=1649076975]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(30, 26)
+custom_minimum_size = Vector2(20, 10)
 layout_mode = 2
+theme = SubResource("Theme_ei5tw")
 text = "⏸"
 
 [node name="VSeparator" type="VSeparator" parent="HBoxContainer" unique_id=2052742218]
+visible = false
+custom_minimum_size = Vector2(10, 0)
 layout_mode = 2
 
 [node name="HalfSpeedButton" type="Button" parent="HBoxContainer" unique_id=1406040404]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(30, 26)
+custom_minimum_size = Vector2(15, 10)
 layout_mode = 2
 toggle_mode = true
 button_group = SubResource("ButtonGroup_speed")
 text = "⇠"
 
-[node name="NormalSpeedButton" type="Button" parent="HBoxContainer" unique_id=1684635154]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(30, 26)
-layout_mode = 2
-toggle_mode = true
-button_pressed = true
-button_group = SubResource("ButtonGroup_speed")
-text = "1×"
-
 [node name="FastSpeedButton" type="Button" parent="HBoxContainer" unique_id=1371095737]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(30, 26)
+custom_minimum_size = Vector2(15, 10)
 layout_mode = 2
 toggle_mode = true
 button_group = SubResource("ButtonGroup_speed")
