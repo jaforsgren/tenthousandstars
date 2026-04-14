@@ -32,6 +32,7 @@ public partial class SystemNode : FogAwareNode
 
 	private const string ForgeBadgePath = "res://scenes/system/ForgeUpgradeBadge.tscn";
 	private const string FortifyBadgePath = "res://scenes/system/FortifyUpgradeBadge.tscn";
+	private const string ScenarioBadgePath = "res://scenes/system/ScenarioBadgeNode.tscn";
 	private const string PlayerFleetScenePath = "res://scenes/fleet/PlayerFleetNode.tscn";
 	private const string NeutralFleetScenePath = "res://scenes/fleet/NeutralFleetNode.tscn";
 	private const string AiFleetScenePath = "res://scenes/fleet/AiFleetNode.tscn";
@@ -53,6 +54,7 @@ public partial class SystemNode : FogAwareNode
 	private bool _isDefend;
 	private SystemOwner _targetOwner = SystemOwner.None;
 	private float _cachedProductionRate;
+	private ScenarioBadgeNode? _scenarioBadge;
 
 	public float ProductionRate => _cachedProductionRate;
 	public float DefenseBonusMultiplier => _upgrade == SystemUpgrade.Fortify ? _fortifyDefenseBonusMultiplier : 0f;
@@ -176,6 +178,21 @@ public partial class SystemNode : FogAwareNode
 	{
 		_targetOwner = owner;
 		QueueRedraw();
+	}
+
+	public void SetScenarioBadge(bool show)
+	{
+		if (show && _scenarioBadge == null)
+		{
+			_scenarioBadge = GD.Load<PackedScene>(ScenarioBadgePath).Instantiate<ScenarioBadgeNode>();
+			AddChild(_scenarioBadge);
+			_scenarioBadge.Initialize(_systemRadius, _fleetCircleGap);
+		}
+		else if (!show && _scenarioBadge != null)
+		{
+			_scenarioBadge.QueueFree();
+			_scenarioBadge = null;
+		}
 	}
 
 	public override void _Draw()

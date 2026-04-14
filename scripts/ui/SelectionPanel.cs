@@ -1,3 +1,4 @@
+using System;
 using Godot;
 
 namespace Tts;
@@ -10,6 +11,13 @@ public partial class SelectionPanel : PanelContainer
 
 	private Label _titleLabel = null!;
 	private Label _descriptionLabel = null!;
+	private VBoxContainer _scenarioSection = null!;
+	private Label _scenarioIntroLabel = null!;
+	private Button _enterButton = null!;
+	private Button _ignoreButton = null!;
+
+	private Action? _onEnterAction;
+	private Action? _onIgnoreAction;
 
 	private bool _previewInEditor;
 
@@ -31,6 +39,13 @@ public partial class SelectionPanel : PanelContainer
 
 		_titleLabel = GetNode<Label>("%Title");
 		_descriptionLabel = GetNode<Label>("%Description");
+		_scenarioSection = GetNode<VBoxContainer>("Content/ScenarioSection");
+		_scenarioIntroLabel = GetNode<Label>("Content/ScenarioSection/ScenarioIntro");
+		_enterButton = GetNode<Button>("Content/ScenarioSection/EnterButton");
+		_ignoreButton = GetNode<Button>("Content/ScenarioSection/IgnoreButton");
+
+		_enterButton.Pressed += () => _onEnterAction?.Invoke();
+		_ignoreButton.Pressed += () => _onIgnoreAction?.Invoke();
 
 		if (Engine.IsEditorHint())
 		{
@@ -45,6 +60,27 @@ public partial class SelectionPanel : PanelContainer
 	{
 		_titleLabel.Text = title;
 		_descriptionLabel.Text = description;
+		_scenarioSection.Visible = false;
+		_onEnterAction = null;
+		_onIgnoreAction = null;
+		Visible = true;
+		Position = new Vector2((viewportSize.X - PanelWidth) / 2f, TopPadding);
+	}
+
+	public void ShowWithScenario(
+		string title,
+		string description,
+		string scenarioIntro,
+		Action onEnter,
+		Action onIgnore,
+		Vector2 viewportSize)
+	{
+		_titleLabel.Text = title;
+		_descriptionLabel.Text = description;
+		_scenarioIntroLabel.Text = scenarioIntro;
+		_onEnterAction = onEnter;
+		_onIgnoreAction = onIgnore;
+		_scenarioSection.Visible = true;
 		Visible = true;
 		Position = new Vector2((viewportSize.X - PanelWidth) / 2f, TopPadding);
 	}

@@ -12,6 +12,7 @@ public class NarrativeDatabase
 	public BarkConfig Barks { get; }
 	public InterludeConfig Interludes { get; }
 	public OutroConfig Outro { get; }
+	public ScenarioConfig Scenarios { get; }
 
 	public NarrativeDatabase(
 		IReadOnlyList<ArchetypeConfig> archetypes,
@@ -20,7 +21,8 @@ public class NarrativeDatabase
 		BriefingConfig briefingTemplates,
 		BarkConfig barks,
 		InterludeConfig interludes,
-		OutroConfig outro)
+		OutroConfig outro,
+		ScenarioConfig scenarios)
 	{
 		Archetypes = archetypes;
 		Chapters = chapters;
@@ -29,6 +31,7 @@ public class NarrativeDatabase
 		Barks = barks;
 		Interludes = interludes;
 		Outro = outro;
+		Scenarios = scenarios;
 	}
 
 	public ArchetypeConfig GetArchetype(string id)

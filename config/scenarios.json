@@ -1,0 +1,133 @@
+{
+  "Scenarios": [
+    {
+      "Id": "the_relay_chain",
+      "Title": "The Relay Chain",
+      "IntroText": "Dormant comm arrays pulse with residual signal. Something — or someone — is still broadcasting from deep in this system.",
+      "Stages": [
+        {
+          "DependsOn": null,
+          "Text": "The Relay Chain\n\nYour sensor operators flag the anomaly at 0300 watch: a coherent signal pattern, repeating on a pre-war frequency. Not random static. Not a ghost echo.\n\nThe arrays are old — older than the last campaign. Buried in the rock of this system's primary moon. Whoever built them expected to be heard by someone who knew to listen.\n\nYou have your signals officer pull the full spectral analysis. The pattern encodes coordinates. Not to any system on your charts. But the format is unmistakable: a rendezvous protocol. Someone planned to meet here.\n\nYour tactical officer advises caution. Activating the network will announce your position. Whoever left this signal may have also left watchers.\n\nYour signals officer disagrees. Dormant arrays like these are worth more than gold in this war. A functioning comm network could give you real-time intelligence on enemy movements across three sectors.\n\nThe arrays are intact. The activation sequence is pre-loaded. One command is all it takes.\n\nThe decision is yours.",
+          "Choices": [
+            { "Label": "Reactivate the arrays", "Outcome": "relay_active" },
+            { "Label": "Destroy the arrays", "Outcome": "relay_destroyed" }
+          ]
+        },
+        {
+          "DependsOn": "relay_active",
+          "Text": "The Relay Chain\n\nThe arrays come online one by one. Ancient hardware cycling through startup sequences designed decades before your commanders were born.\n\nFor six minutes, nothing. Then the signal changes.\n\nCoordinates resolve. A system three jumps coreward. The message is brief, clinical: PACKAGE INTACT. AWAIT RECOVERY.\n\nYour signals officer runs identification checks. The authentication codes are from the old fleet — the Seventh Armada. Declared lost with all hands fourteen years ago.\n\nSomething survived. Or someone left it to be found.\n\nThe relay network is now live. Your signals officer reports that the network extends further than the original survey suggested — at least four more nodes, dormant, waiting for the carrier wave you just sent. She can try to trace where the signal originated from.",
+          "Choices": [
+            { "Label": "Trace the signal source", "Outcome": "relay_traced" },
+            { "Label": "Log the coordinates and move on", "Outcome": "relay_logged" }
+          ]
+        },
+        {
+          "DependsOn": "relay_traced",
+          "Text": "The Relay Chain\n\nThe trace takes four hours. Your signals officer does not sleep.\n\nThe signal originates from a deep-field research station — one that does not appear on any current chart. The station was decommissioned eight years ago, officially. The authentication codes say otherwise.\n\nThere is a second message buried in the carrier wave. Encoded. It takes another two hours to break.\n\nWhen your signals officer hands you the transcript, she does not say anything. She just watches your face.\n\nThe message reads: SEVENTH ARMADA COMMAND NODE INTACT. CORE DATA PRESERVED. DO NOT TRANSMIT LOCATION. COME IN PERSON.\n\nThe coordinates are precise. The station is sixteen days out at current speed.\n\nSomething is waiting for you.",
+          "Choices": []
+        },
+        {
+          "DependsOn": "relay_logged",
+          "Text": "The Relay Chain\n\nThe coordinates are logged and flagged for fleet command. Your signals officer maps the active relay network and seals the access tunnels behind you.\n\nFleet command acknowledges receipt. No further action logged.\n\nThree days later, long-range passive sensors pick up a faint acknowledgement ping from somewhere coreward — as if whatever is waiting at those coordinates received confirmation that someone finally heard the message.\n\nYour signals officer notes it in the log. Neither of you say anything else about it.",
+          "Choices": []
+        },
+        {
+          "DependsOn": "relay_destroyed",
+          "Text": "The Relay Chain\n\nThe demolition teams finish in under an hour. Shaped charges in the access shafts. Clean detonations. The arrays collapse inward and go dark.\n\nYour tactical officer marks the system clear.\n\nYour signals officer submits a formal objection to the ship's log. She does not say anything else. She does not need to.\n\nThree days later, long-range sensors pick up a faint burst transmission on the same pre-war frequency — originating from a different source, further coreward. The signal repeats twice, then stops.\n\nWhoever was listening for the relay response has now stopped listening.\n\nYou will not know what they had to say.",
+          "Choices": []
+        }
+      ],
+      "Criteria": {
+        "MinMissionsPlayed": 0,
+        "MinMissionsWon": null,
+        "MinMissionsLost": null
+      }
+    },
+    {
+      "Id": "survivor_enclave",
+      "Title": "Survivor Enclave",
+      "IntroText": "Long-range bio-sensors register human life signs clustered in the system's debris field. Civilians. Still alive.",
+      "Stages": [
+        {
+          "DependsOn": null,
+          "Text": "Survivor Enclave\n\nThey have been here a long time.\n\nThe debris field is mostly slag from the engagement eighteen months ago — shattered hulls, dead drives, scrap that the salvagers passed over. But tucked into the wreckage is a converted ore processor, running on fumes and luck. Inside: 340 people.\n\nYour boarding officer's report is spare and honest. They are surviving, barely. Food synthesizers at 40% capacity. Water reclamation compromised. Medical supplies depleted three months ago. Two children born in the field. Four people died last week.\n\nThey have a spokesperson — a former logistics coordinator named Dasha. She transmits on the frequency your boarding team gave her.\n\n'We heard your drives on approach. We thought you were scavengers coming to strip the hull. We almost vented the airlocks.'\n\nShe pauses.\n\n'We stopped when we saw your markings. We have been waiting a long time for someone with your markings.'\n\nExtraction will cost you time. The ore processor cannot move under its own power. You will need to send transports. That means slowing your advance, splitting your logistics chain, exposing a convoy to interdiction.\n\nLeaving them means leaving them. The odds of another rescue passing through are close to zero.\n\nDasha is waiting on the channel.",
+          "Choices": [
+            { "Label": "Send the transports", "Outcome": "extracted" },
+            { "Label": "Leave them. The war comes first.", "Outcome": "abandoned" }
+          ]
+        },
+        {
+          "DependsOn": "extracted",
+          "Text": "Survivor Enclave\n\nDasha transmits one final message as your transports dock with the ore processor.\n\n'We kept records. Everything we saw during the engagement. Fleet movements. Targeting solutions. Salvage inventories. We kept records because someone had to.'\n\nShe transfers 1.4 terabytes of data before your people are even aboard. Eighteen months of observation from the debris field. Traffic patterns. Enemy patrol routes. Logistical resupply chains.\n\nYour intelligence officer will spend a week going through it.\n\nThe 340 are quartered in your rear depot system. They eat real food for the first time in months. Three of them, unprompted, request transfer to active duty.\n\nDasha does not. She asks for access to a cartography terminal and continues working.\n\nYou stop by her station the following morning. She has overlaid the engagement data onto your current campaign charts. She has circled three systems.\n\n'These are where the supply lines actually run,' she says. 'Not where your charts say they run. Where they actually run. I watched them for eighteen months.'\n\nYou ask her how she wants to be credited in the intelligence report.",
+          "Choices": [
+            { "Label": "Credit her by name", "Outcome": "credited" },
+            { "Label": "File it as fleet intelligence, source classified", "Outcome": "classified" }
+          ]
+        },
+        {
+          "DependsOn": "credited",
+          "Text": "Survivor Enclave\n\nDasha's name appears in the header of Intelligence Bulletin 7-14. Source: Dasha Verak, civilian observer, formerly of the 3rd Logistics Wing.\n\nShe reads it once and does not comment.\n\nThree weeks later, two other survivors from the debris field submit formal requests to be listed as named contributors to the bulletin series. They have been keeping their own records. Different data. Complementary.\n\nYour intelligence officer begins calling them the Debris Field Group. It is not an official designation.\n\nIt sticks.",
+          "Choices": []
+        },
+        {
+          "DependsOn": "classified",
+          "Text": "Survivor Enclave\n\nThe bulletin goes out with a standard source classification. Dasha does not ask about it.\n\nShe is still at the cartography terminal when you pass her station a week later. The three circled systems have been updated. She has found a fourth.\n\n'I figured source classification meant you'd rather not explain where the data came from,' she says without looking up. 'That's fine. The data is still good.'\n\nYou tell her she is right on both counts.\n\nShe nods and keeps working.",
+          "Choices": []
+        },
+        {
+          "DependsOn": "abandoned",
+          "Text": "Survivor Enclave\n\nYou close the channel.\n\nDasha does not transmit again. There is a long silence on the frequency, and then nothing.\n\nYour tactical officer marks the debris field as non-strategic. Your fleet departs on schedule.\n\nThe ore processor is still there when you check the long-range charts three weeks later. Same orbit. Same power signature. Running on fumes and luck.\n\nYour signals officer submits a flag to fleet command: civilian survivors at grid reference seven-niner. Possible extraction candidate. She does not mention that you were already there.\n\nFleet command acknowledges receipt. No further action logged.\n\nYou do not check the charts again.",
+          "Choices": []
+        }
+      ],
+      "Criteria": {
+        "MinMissionsPlayed": 1,
+        "MinMissionsWon": 1,
+        "MinMissionsLost": null
+      }
+    },
+    {
+      "Id": "the_ghost_fleet",
+      "Title": "The Ghost Fleet",
+      "IntroText": "IFF transponders still cycling in the wreckage. These are your ships. Your people.",
+      "Stages": [
+        {
+          "DependsOn": null,
+          "Text": "The Ghost Fleet\n\nThe engagement was three months ago and the hulks are still here.\n\nYour comms officer patches in the IFF logs. Thirty-one ships. You recognise the designations. The Veylin. The Oras Deep. The Phalanx Run. You remember authorising their approach vectors. You remember the moment the tactical display went red.\n\nThree of them drifted into close orbit around the system's gas giant. Tidal forces have kept them relatively intact.\n\nYour salvage crews can reach them. The drives are probably salvageable. Some of the weapons packages too. Armour plating. Hull sections. The kind of materiel that takes three months and two procurement cycles to replace.\n\nBut the crews are still aboard. What is left of them.\n\nYour senior NCO — a veteran named Calix — requests permission to speak.\n\n'They deserve retrieval, Commander. All of them. I know what the numbers say. I know what the schedule says. But if it were me out there — if it were any of us —' He stops. 'We pull them out. We do right by them. Whatever it costs.'\n\nYour logistics officer says nothing. But she pulls up the schedule anyway and starts looking for time that isn't there.",
+          "Choices": [
+            { "Label": "Retrieve the crews first.", "Outcome": "recovered" },
+            { "Label": "Salvage first. We need the materiel.", "Outcome": "salvaged" }
+          ]
+        },
+        {
+          "DependsOn": "recovered",
+          "Text": "The Ghost Fleet\n\nThe retrieval takes eleven hours.\n\nCalix personally leads the boarding teams. He does not ask for volunteers. He tells his people what needs doing and they do it. That is the kind of NCO he is.\n\nThe recovered crews are given a proper accounting. Names logged. Records updated. Next of kin notified through the chain. It is not nothing.\n\nThe hulks are stripped afterward. The Veylin's drives go into your reserve pool. The armour plating from the Phalanx Run will reinforce your perimeter stations. Nothing is wasted.\n\nCalix submits a short-form after-action report. In the remarks field, he writes: 'Crew recovered. Accounted for. No one left behind.'\n\nHe pauses at your station before returning to his post.",
+          "Choices": [
+            { "Label": "Countersign it", "Outcome": "countersigned" },
+            { "Label": "Add a commendation for Calix", "Outcome": "commended" }
+          ]
+        },
+        {
+          "DependsOn": "countersigned",
+          "Text": "The Ghost Fleet\n\nYou countersign the report. No additions. No annotations.\n\nCalix nods once and leaves.\n\nThe after-action is filed with fleet records. Standard format. Thirty-one ships. Crew recovered. Materiel salvaged. Mission complete.\n\nIt will sit in the archive with ten thousand others just like it. But it will be there. Accurate. Complete.\n\nCalix knows where to find it.",
+          "Choices": []
+        },
+        {
+          "DependsOn": "commended",
+          "Text": "The Ghost Fleet\n\nYou add two lines to the report before countersigning. Senior NCO Calix — exceptional conduct during crew retrieval operation. Recommended for formal commendation.\n\nCalix reads it before you hand it back. He does not say anything for a long moment.\n\n'It wasn't just me,' he says finally.\n\nYou tell him to put the full boarding team in the addendum.\n\nHe does. All fourteen names. His is last.",
+          "Choices": []
+        },
+        {
+          "DependsOn": "salvaged",
+          "Text": "The Ghost Fleet\n\nThe salvage teams go in first. They are efficient. They have to be.\n\nThe drives come out of the Veylin in four hours. The weapons packages from the Oras Deep take six. The armour sections from the Phalanx Run are cut free and loaded by end of watch. Your logistics officer updates the materiel inventory. The numbers improve.\n\nThe crew retrieval happens afterward, in the time that is left.\n\nCalix does his job. He does not say anything to you. He does not need to.\n\nThe after-action report is filed correctly. Materiel recovered, listed first. Crew recovered, listed second. All numbers accurate.\n\nYou sign it. You do not read it twice.",
+          "Choices": []
+        }
+      ],
+      "Criteria": {
+        "MinMissionsPlayed": 1,
+        "MinMissionsWon": null,
+        "MinMissionsLost": 1
+      }
+    }
+  ]
+}

@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 
 namespace Tts;
 
@@ -75,10 +76,29 @@ public class NarrativeService : INarrativeService
         var briefing = _briefingGenerator.GenerateBriefing(condition, chapter, CurrentState);
 
         // Interlude requires a partially-built MissionContext for token substitution, so build without interlude first
-        var contextWithoutInterlude = new MissionContext(condition, briefing, chapter, CurrentState, Interlude: null);
+        var contextWithoutInterlude = new MissionContext(condition, briefing, chapter, CurrentState, Interlude: null, Scenarios: []);
         var interlude = _interludeGenerator.TryGenerate(contextWithoutInterlude);
+        var scenarios = SelectEligibleScenarios(CurrentState);
 
-        return contextWithoutInterlude with { Interlude = interlude };
+        return contextWithoutInterlude with { Interlude = interlude, Scenarios = scenarios };
+    }
+
+    public ScenarioDefinition[] SelectEligibleScenarios(StoryState state)
+    {
+        var played = state.MissionsCompleted;
+        var won = state.MissionsWon;
+        var lost = played - won;
+        return _db.Scenarios.Scenarios
+            .Where(s => IsCriteriaMet(s.Criteria, played, won, lost))
+            .ToArray();
+    }
+
+    private static bool IsCriteriaMet(ScenarioCriteria c, int played, int won, int lost)
+    {
+        if (played < c.MinMissionsPlayed) return false;
+        if (c.MinMissionsWon.HasValue && won < c.MinMissionsWon.Value) return false;
+        if (c.MinMissionsLost.HasValue && lost < c.MinMissionsLost.Value) return false;
+        return true;
     }
 
     public void OnMissionComplete(MissionResult result)

@@ -51,7 +51,8 @@ public class NarrativeController
             ConfigLoader.Load<OutroConfigSource>("res://config/story/outro/templates.json"));
         var aiNamingConfig = ConfigLoader.Load<AiNamingConfig>("res://config/ai_naming.json");
 
-        var db = new NarrativeDatabase(archetypes, chapters, conditionSet.Conditions, briefingConfig, barkConfig, interludeConfig, outroConfig);
+        var scenarioConfig = ConfigLoader.Load<ScenarioConfig>("res://config/scenarios.json");
+        var db = new NarrativeDatabase(archetypes, chapters, conditionSet.Conditions, briefingConfig, barkConfig, interludeConfig, outroConfig, scenarioConfig);
         var service = new NarrativeService(db, new ChapterGenerator(), new MissionGenerator(db), new BriefingGenerator(db, rng), aiNamingConfig, rng);
         var barkSystem = new NarrativeBarkSystem(db, rng);
         var outroGenerator = new OutroGenerator(outroConfig, db, rng);
@@ -103,6 +104,19 @@ public class NarrativeController
         var (title, text) = _outroGenerator.Generate(_service.CurrentState);
         Log($"[Narrative] Outro: {title}");
         return (title, text);
+    }
+
+    public ScenarioDefinition[] SelectEligibleScenarios()
+        => _service.SelectEligibleScenarios(_service.CurrentState);
+
+    public ScenarioDefinition[] SelectEligibleScenarios(int missionsPlayed, int missionsWon)
+    {
+        var fakeState = _service.CurrentState with
+        {
+            MissionsCompleted = missionsPlayed,
+            MissionsWon = missionsWon
+        };
+        return _service.SelectEligibleScenarios(fakeState);
     }
 
     public string? TryGetBark(BarkTrigger trigger)

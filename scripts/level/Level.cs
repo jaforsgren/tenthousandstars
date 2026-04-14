@@ -115,6 +115,9 @@ public partial class Level : Node2D
 	private int _selectedFleetSlot = -1;
 	private SpeedControlPanel _speedControlPanel = null!;
 	private DebugOverlay _debugOverlay = null!;
+	private ScenarioController _scenarioController = null!;
+	private ScenarioPanel _scenarioPanel = null!;
+	private ScenarioDefinition[] _pendingScenarios = [];
 
 	public override void _Ready()
 	{
@@ -181,11 +184,13 @@ public partial class Level : Node2D
 			_activeCondition = missionContext.Condition.ToEndCondition();
 			_resolvedMissionDescription = missionContext.Briefing;
 			_pendingInterlude = missionContext.Interlude;
+			_pendingScenarios = missionContext.Scenarios;
 		}
 		else
 		{
 			_activeCondition = _endStateCfg.Conditions[_rng.Next(_endStateCfg.Conditions.Length)];
 			_resolvedMissionDescription = null;
+			_pendingScenarios = LoadRandomModeScenarios();
 		}
 
 		if (_activeCondition.TargetSystemHops.HasValue)
@@ -201,8 +206,10 @@ public partial class Level : Node2D
 
 		UpdateFogOfWar();
 		AssignLoreSeeds(data);
+		AssignScenarios();
 		SpawnFadeOverlay();
 		SpawnSelectionPanel();
+		SpawnScenarioPanel();
 		SpawnAiSystemPanel();
 		SpawnNotificationPanel();
 		SpawnSystemActionMenu();
@@ -237,11 +244,10 @@ public partial class Level : Node2D
 		var viewportSize = GetViewport().GetVisibleRect().Size;
 		// Panel is 2×8px padding + label + 4×30px buttons + 4×3px gaps + separator ≈ 190px wide, 42px tall
 		const float estimatedWidth = 190f;
-		const float estimatedHeight = 42f;
-		const float bottomPad = 8f;
+		const float topPad = 8f;
 		_speedControlPanel.Position = new Vector2(
 			(viewportSize.X - estimatedWidth) / 2f,
-			viewportSize.Y - estimatedHeight - bottomPad
+			topPad
 		);
 	}
 
@@ -351,12 +357,37 @@ public partial class Level : Node2D
 		layer.AddChild(_fadeOverlay);
 	}
 
+	private void AssignScenarios()
+	{
+		_scenarioController = new ScenarioController();
+		_scenarioController.AssignScenarios(_systems, _pendingScenarios, _rng);
+
+		for (var i = 0; i < _systems.Count; i++)
+			_systems[i].SetScenarioBadge(_scenarioController.HasScenario(i));
+	}
+
+	private static ScenarioDefinition[] LoadRandomModeScenarios()
+	{
+		var cfg = ConfigLoader.Load<ScenarioConfig>("res://config/scenarios.json");
+		return System.Array.FindAll(cfg.Scenarios, s => s.Criteria.MinMissionsPlayed == 0
+			&& s.Criteria.MinMissionsWon == null
+			&& s.Criteria.MinMissionsLost == null);
+	}
+
 	private void SpawnSelectionPanel()
 	{
 		var layer = new CanvasLayer { Layer = 10 };
 		AddChild(layer);
 		_selectionPanel = GD.Load<PackedScene>("res://scenes/ui/SelectionPanel.tscn").Instantiate<SelectionPanel>();
 		layer.AddChild(_selectionPanel);
+	}
+
+	private void SpawnScenarioPanel()
+	{
+		var layer = new CanvasLayer { Layer = 13 };
+		AddChild(layer);
+		_scenarioPanel = GD.Load<PackedScene>("res://scenes/ui/ScenarioPanel.tscn").Instantiate<ScenarioPanel>();
+		layer.AddChild(_scenarioPanel);
 	}
 
 	private void SpawnAiSystemPanel()
@@ -643,6 +674,9 @@ public partial class Level : Node2D
 		_upgradeCfg = null!;
 		_debugOverlay = null!;
 		_speedControlPanel = null!;
+		_scenarioController = null!;
+		_scenarioPanel = null!;
+		_pendingScenarios = [];
 		_activeTransits.Clear();
 	}
 

@@ -101,7 +101,37 @@ public partial class Level
 		var title = Pick(_loreConfig.System.Titles, seed);
 		var description = Pick(_loreConfig.System.Descriptions, seed);
 		_aiSystemPanel.Hide();
-		_selectionPanel.ShowAt(title, description, GetViewport().GetVisibleRect().Size);
+
+		var scenario = _scenarioController.GetScenario(systemIndex);
+		if (scenario != null)
+		{
+			_selectionPanel.ShowWithScenario(
+				title, description, scenario.IntroText,
+				onEnter: () => OpenScenario(systemIndex, scenario),
+				onIgnore: () => DismissScenario(systemIndex),
+				GetViewport().GetVisibleRect().Size);
+		}
+		else
+		{
+			_selectionPanel.ShowAt(title, description, GetViewport().GetVisibleRect().Size);
+		}
+	}
+
+	private void OpenScenario(int systemIndex, ScenarioDefinition scenario)
+	{
+		_selectionPanel.Hide();
+		_systemActionMenu.HideAll();
+		_scenarioPanel.Show(scenario, GetViewport().GetVisibleRect().Size, onClose: () =>
+		{
+			DismissScenario(systemIndex);
+		});
+	}
+
+	private void DismissScenario(int systemIndex)
+	{
+		_scenarioController.DismissScenario(systemIndex);
+		_systems[systemIndex].SetScenarioBadge(false);
+		_selectionPanel.Hide();
 	}
 
 	private void DoUpgrade(int systemIndex, SystemUpgrade upgrade)

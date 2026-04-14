@@ -1,0 +1,66 @@
+[gd_scene format=3 uid="uid://bv3pq7n8r2sx4"]
+
+[ext_resource type="Script" uid="uid://ck6mw4j9t1fy5" path="res://scripts/ui/ScenarioPanel.cs" id="1_scrp"]
+[ext_resource type="Theme" uid="uid://6r4gcsr0tf77" path="res://scenes/ui/UiTheme.tres" id="2_theme"]
+[ext_resource type="LabelSettings" uid="uid://d3o3fa7cpfaii" path="res://scenes/ui/LabelTitle.tres" id="3_lbltitle"]
+[ext_resource type="LabelSettings" uid="uid://dkumsv7cpfaii" path="res://scenes/ui/LabelBody.tres" id="4_lblbody"]
+
+[node name="ScenarioPanel" type="Control" unique_id=901000001]
+z_index = 99
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource("2_theme")
+script = ExtResource("1_scrp")
+
+[node name="Background" type="ColorRect" parent="." unique_id=901000002]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 0.8)
+
+[node name="PanelBox" type="PanelContainer" parent="." unique_id=901000003]
+layout_mode = 0
+offset_left = 20.0
+offset_top = 50.0
+offset_right = 460.0
+offset_bottom = 670.0
+
+[node name="Layout" type="VBoxContainer" parent="PanelBox" unique_id=901000004]
+layout_mode = 2
+
+[node name="Title" type="Label" parent="PanelBox/Layout" unique_id=901000005]
+layout_mode = 2
+text = "Scenario Title"
+label_settings = ExtResource("3_lbltitle")
+
+[node name="TitleSep" type="HSeparator" parent="PanelBox/Layout" unique_id=901000006]
+layout_mode = 2
+
+[node name="ScrollArea" type="ScrollContainer" parent="PanelBox/Layout" unique_id=901000007]
+custom_minimum_size = Vector2(0, 440)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="StageText" type="Label" parent="PanelBox/Layout/ScrollArea" unique_id=901000008]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Stage text goes here."
+label_settings = ExtResource("4_lblbody")
+autowrap_mode = 3
+justification_flags = 171
+
+[node name="ChoiceSep" type="HSeparator" parent="PanelBox/Layout" unique_id=901000009]
+layout_mode = 2
+
+[node name="Choices" type="HBoxContainer" parent="PanelBox/Layout" unique_id=901000010]
+layout_mode = 2
+size_flags_horizontal = 3
+alignment = 1

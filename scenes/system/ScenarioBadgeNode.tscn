@@ -1,0 +1,16 @@
+[gd_scene format=3 uid="uid://dt5pas8urj3dm"]
+
+[ext_resource type="Script" uid="uid://c3t5r6y7u8i9o2" path="res://scripts/nodes/ScenarioBadgeNode.cs" id="1_sbadge"]
+
+[node name="ScenarioBadgeNode" type="Node2D" unique_id=802000001]
+script = ExtResource("1_sbadge")
+
+[node name="Badge" type="Button" parent="." unique_id=802000002]
+layout_mode = 0
+offset_left = -12.0
+offset_top = -9.0
+offset_right = 12.0
+offset_bottom = 9.0
+custom_minimum_size = Vector2(24, 18)
+mouse_filter = 2
+text = "!"

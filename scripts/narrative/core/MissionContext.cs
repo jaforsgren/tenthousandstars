@@ -5,4 +5,5 @@ public record MissionContext(
     string Briefing,
     ChapterContext Chapter,
     StoryState State,
-    InterludeContent? Interlude);
+    InterludeContent? Interlude,
+    ScenarioDefinition[] Scenarios);

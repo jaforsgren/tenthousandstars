@@ -8,4 +8,5 @@ public interface INarrativeService
     void UpdateEnemy(Character enemy);
     MissionContext GetNextMission();
     void OnMissionComplete(MissionResult result);
+    ScenarioDefinition[] SelectEligibleScenarios(StoryState state);
 }

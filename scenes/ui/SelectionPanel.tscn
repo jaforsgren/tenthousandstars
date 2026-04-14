@@ -32,3 +32,26 @@ layout_mode = 2
 text = "Description text goes here."
 label_settings = ExtResource("4_lblbody")
 autowrap_mode = 3
+
+[node name="ScenarioSection" type="VBoxContainer" parent="Content" unique_id=1298544600]
+visible = false
+layout_mode = 2
+
+[node name="ScenarioSep" type="HSeparator" parent="Content/ScenarioSection" unique_id=1298544601]
+layout_mode = 2
+
+[node name="ScenarioIntro" type="Label" parent="Content/ScenarioSection" unique_id=1298544602]
+layout_mode = 2
+text = "Scenario intro text."
+label_settings = ExtResource("4_lblbody")
+autowrap_mode = 3
+
+[node name="EnterButton" type="Button" parent="Content/ScenarioSection" unique_id=1298544603]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Investigate"
+
+[node name="IgnoreButton" type="Button" parent="Content/ScenarioSection" unique_id=1298544604]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Ignore"
