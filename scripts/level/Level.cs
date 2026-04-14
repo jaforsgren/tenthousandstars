@@ -113,6 +113,7 @@ public partial class Level : Node2D
 	private PackedScene _rerouteArrowScene = null!;
 	private const float RerouteMinFleet = 1.0f;
 	private int _selectedFleetSlot = -1;
+	private SpeedControlPanel _speedControlPanel = null!;
 	private DebugOverlay _debugOverlay = null!;
 
 	public override void _Ready()
@@ -150,6 +151,7 @@ public partial class Level : Node2D
 
 	private void GenerateRuntime()
 	{
+		GameSpeed.Reset();
 		var genCfg = ConfigLoader.Load<LevelGeneratorConfig>("res://config/level_generator.json");
 		var aiCfg = ConfigLoader.Load<AiConfig>("res://config/ai.json");
 		var aiNamingCfg = ConfigLoader.Load<AiNamingConfig>("res://config/ai_naming.json");
@@ -211,6 +213,7 @@ public partial class Level : Node2D
 			SpawnCountdownTimer(_activeCondition.TimeoutSeconds.Value);
 
 		SpawnDebugOverlay();
+		SpawnSpeedControlPanel();
 
 		if (_pendingInterlude != null)
 			SpawnInterludePanel(_pendingInterlude.Text, onDismiss: ShowMissionBrief);
@@ -222,6 +225,24 @@ public partial class Level : Node2D
 	{
 		_debugOverlay = new DebugOverlay();
 		AddChild(_debugOverlay);
+	}
+
+	private void SpawnSpeedControlPanel()
+	{
+		var layer = new CanvasLayer { Layer = 10 };
+		AddChild(layer);
+		_speedControlPanel = GD.Load<PackedScene>("res://scenes/ui/SpeedControlPanel.tscn").Instantiate<SpeedControlPanel>();
+		layer.AddChild(_speedControlPanel);
+
+		var viewportSize = GetViewport().GetVisibleRect().Size;
+		// Panel is 2×8px padding + label + 4×30px buttons + 4×3px gaps + separator ≈ 190px wide, 42px tall
+		const float estimatedWidth = 190f;
+		const float estimatedHeight = 42f;
+		const float bottomPad = 8f;
+		_speedControlPanel.Position = new Vector2(
+			(viewportSize.X - estimatedWidth) / 2f,
+			viewportSize.Y - estimatedHeight - bottomPad
+		);
 	}
 
 	private int FindObjectiveSystemIndex(int targetHops)
@@ -450,12 +471,13 @@ public partial class Level : Node2D
 
 	private void ShowMissionBrief()
 	{
+		GameSpeed.PushUiPause();
 		_notificationPanel.Show(
 			"Mission",
 			_resolvedMissionDescription ?? _activeCondition!.Description,
 			_endStateCfg.MissionBriefSeconds,
 			GetViewport().GetVisibleRect().Size,
-			onDismiss: () => { }
+			onDismiss: GameSpeed.PopUiPause
 		);
 	}
 
@@ -620,6 +642,7 @@ public partial class Level : Node2D
 		_rerouteArrowScene = null!;
 		_upgradeCfg = null!;
 		_debugOverlay = null!;
+		_speedControlPanel = null!;
 		_activeTransits.Clear();
 	}
 

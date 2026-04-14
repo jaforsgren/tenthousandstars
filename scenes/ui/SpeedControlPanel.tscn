@@ -1,0 +1,51 @@
+[gd_scene format=3 uid="uid://c5snd4x7yqbr2"]
+
+[ext_resource type="Script" path="res://scripts/ui/SpeedControlPanel.cs" id="1_script"]
+[ext_resource type="Theme" uid="uid://6r4gcsr0tf77" path="res://scenes/ui/UiTheme.tres" id="2_theme"]
+
+[sub_resource type="ButtonGroup" id="ButtonGroup_speed"]
+
+[node name="SpeedControlPanel" type="PanelContainer"]
+theme = ExtResource("2_theme")
+script = ExtResource("1_script")
+
+[node name="HBoxContainer" type="HBoxContainer" parent="."]
+layout_mode = 2
+theme_override_constants/separation = 3
+
+[node name="SpeedLabel" type="Label" parent="HBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+vertical_alignment = 1
+theme_override_font_sizes/font_size = 11
+text = "1×"
+
+[node name="PlayPauseButton" type="Button" parent="HBoxContainer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(30, 26)
+text = "⏸"
+
+[node name="VSeparator" type="VSeparator" parent="HBoxContainer"]
+layout_mode = 2
+
+[node name="HalfSpeedButton" type="Button" parent="HBoxContainer"]
+unique_name_in_owner = true
+toggle_mode = true
+button_group = SubResource("ButtonGroup_speed")
+custom_minimum_size = Vector2(30, 26)
+text = "⏪"
+
+[node name="NormalSpeedButton" type="Button" parent="HBoxContainer"]
+unique_name_in_owner = true
+toggle_mode = true
+button_group = SubResource("ButtonGroup_speed")
+button_pressed = true
+custom_minimum_size = Vector2(30, 26)
+text = "1×"
+
+[node name="FastSpeedButton" type="Button" parent="HBoxContainer"]
+unique_name_in_owner = true
+toggle_mode = true
+button_group = SubResource("ButtonGroup_speed")
+custom_minimum_size = Vector2(30, 26)
+text = "⏩"

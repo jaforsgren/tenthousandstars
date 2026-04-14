@@ -257,6 +257,11 @@ public partial class SystemActionMenu : Control
 	{
 		if (!_isActive) return;
 		_isActive = false;
+		if (Engine.TimeScale == 0.0)
+		{
+			Visible = false;
+			return;
+		}
 		_isHiding = true;
 		_animPlayer.PlayBackwards("show");
 	}
@@ -284,7 +289,14 @@ public partial class SystemActionMenu : Control
 		_isHiding = false;
 		_isActive = true;
 		Visible = true;
-		foreach (var slot in new Control[] { _infoSlot, _opponentInfoSlot, _rerouteSlot, _fortifySlot, _forgeSlot, _splitSlot })
+		var slots = new Control[] { _infoSlot, _opponentInfoSlot, _rerouteSlot, _fortifySlot, _forgeSlot, _splitSlot };
+		if (Engine.TimeScale == 0.0)
+		{
+			foreach (var slot in slots)
+				slot.Scale = Vector2.One;
+			return;
+		}
+		foreach (var slot in slots)
 			slot.Scale = Vector2.Zero;
 		_animPlayer.Play("show");
 	}

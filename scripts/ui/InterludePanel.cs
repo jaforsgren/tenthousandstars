@@ -47,6 +47,7 @@ public partial class InterludePanel : Control
         _active = true;
         Size = viewportSize;
         Visible = true;
+        GameSpeed.PushUiPause();
     }
 
     public override void _Input(InputEvent @event)
@@ -64,6 +65,7 @@ public partial class InterludePanel : Control
         if (!_active) return;
         _active = false;
         Visible = false;
+        GameSpeed.PopUiPause();
         var callback = _onDismiss;
         _onDismiss = null;
         callback?.Invoke();
