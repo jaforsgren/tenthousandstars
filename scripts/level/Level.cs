@@ -8,22 +8,6 @@ namespace Tts;
 [Tool]
 public partial class Level : Node2D
 {
-	// Tracks a fleet in transit for route-combat detection.
-	private sealed class ActiveTransit
-	{
-		public required int FromIndex;
-		public required int ToIndex;
-		public required SystemOwner Owner;
-		public required float Fleet;
-		public required double LaunchTimeSec;
-		public required float TotalDurationSec;
-		public required TransitFleetNode Node;
-		public required Vector2 ToWorldPos;
-		// Given a surviving fleet count, returns the action to invoke on arrival.
-		public required Func<float, Action> ArrivalCallback;
-	}
-
-	// Groups the six variables that describe one in-flight drag gesture.
 	private struct DragState
 	{
 		public bool IsActive;
@@ -39,6 +23,7 @@ public partial class Level : Node2D
 	private const int UnsetSeed = 0;
 	private const float DragThreshold = 8f;
 	private const float DoubleClickThresholdSeconds = 0.35f;
+	private const float RerouteMinFleet = 1.0f;
 
 	[Export]
 	public int PreviewSeed { get; set; } = UnsetSeed;
@@ -80,44 +65,30 @@ public partial class Level : Node2D
 	private bool _fogEnabled;
 	private float _fogClearSeconds;
 	private float _fadeOutSeconds;
-	private ColorRect _fadeOverlay = null!;
 	private LoreConfig _loreConfig = null!;
-	private SelectionPanel _selectionPanel = null!;
-	private AiSystemPanel _aiSystemPanel = null!;
 	private IReadOnlyList<AiPlayerData> _aiPlayers = [];
-	private NotificationPanel _notificationPanel = null!;
-	private EndStateConfig _endStateCfg = null!;
-	private EndCondition? _activeCondition;
-	private bool _endConditionReached;
-	private int _objectiveSystemIndex = -1;
-	private SystemOwner _targetPlayerOwner = SystemOwner.None;
-	private int _defendSystemIndex = -1;
-	private CountdownTimerNode _countdownTimer = null!;
-	private string? _resolvedMissionDescription;
-	private ChatWindowNode? _chatWindow;
 	private BarkConfig? _barkConfig;
 	private CameraController _camera = null!;
-	private SystemActionMenu _systemActionMenu = null!;
 	private AiController _aiController = null!;
-	private NarrativeController? _narrativeController;
-	private StoryText? _pendingInterlude;
-	private GameMode? _gameModeOverride;
+	private GameController _gameController = null!;
+	private LevelUi _levelUi = null!;
 	private double _lastSystemClickTime = double.MinValue;
 	private int _lastClickedSystemIndex = -1;
 	private UpgradeConfig _upgradeCfg = null!;
 	private readonly Dictionary<int, int> _rerouteTargets = [];
 	private readonly Dictionary<int, RerouteArrowNode> _rerouteArrows = [];
-	private readonly List<ActiveTransit> _activeTransits = [];
 	private bool _isPickingRerouteTarget;
 	private int? _rerouteSourceIndex;
 	private PackedScene _rerouteArrowScene = null!;
-	private const float RerouteMinFleet = 1.0f;
 	private int _selectedFleetSlot = -1;
 	private SpeedControlPanel _speedControlPanel = null!;
+	private CountdownTimerNode _countdownTimer = null!;
 	private DebugOverlay _debugOverlay = null!;
 	private ScenarioController _scenarioController = null!;
-	private ScenarioPanel _scenarioPanel = null!;
-	private ScenarioDefinition[] _pendingScenarios = [];
+	private readonly TransitSystem _transitSystem = new();
+	private FogSystem? _fogSystem;
+	private bool _endConditionReached;
+	private int _objectiveSystemIndex = -1;
 
 	public override void _Ready()
 	{
@@ -133,7 +104,8 @@ public partial class Level : Node2D
 	{
 		if (Engine.IsEditorHint() || _endConditionReached)
 			return;
-		ProcessReroutes();
+		if (_rerouteTargets.Count > 0)
+			ProcessReroutes();
 	}
 
 	public override void _Draw()
@@ -145,7 +117,7 @@ public partial class Level : Node2D
 
 	private void GeneratePreview()
 	{
-		Clear();
+		ClearForPreview();
 		var levelCfg = ConfigLoader.Load<LevelConfig>("res://config/level.json");
 		var genCfg = ConfigLoader.Load<LevelGeneratorConfig>("res://config/level_generator.json");
 		var aiCfg = ConfigLoader.Load<AiConfig>("res://config/ai.json");
@@ -165,113 +137,72 @@ public partial class Level : Node2D
 		var data = LevelGenerator.Generate(_rng, genCfg, aiCfg, aiNamingCfg);
 		Build(data);
 		_aiPlayers = data.AiPlayers;
-		_endStateCfg = ConfigLoader.Load<EndStateConfig>("res://config/end_states.json");
 
-		if (_narrativeController == null)
+		var endStateCfg = ConfigLoader.Load<EndStateConfig>("res://config/end_states.json");
+
+		if (GameSession.NarrativeController == null)
 		{
-			var gameMode = _gameModeOverride ?? ConfigLoader.Load<GameModeConfig>("res://config/game_mode.json").Mode;
+			var gameMode = GameSession.GameModeOverride ?? ConfigLoader.Load<GameModeConfig>("res://config/game_mode.json").Mode;
 			if (gameMode == GameMode.Story)
 			{
-				_narrativeController = NarrativeController.Create(_rng);
-				_narrativeController.StartCampaign();
+				var nc = NarrativeController.Create(_rng);
+				nc.StartCampaign();
+				GameSession.NarrativeController = nc;
 			}
 		}
 
-		if (_narrativeController != null && !_narrativeController.IsCampaignComplete)
+		EndCondition? activeCondition;
+		string? missionDescription;
+		StoryText? pendingInterlude;
+		ScenarioDefinition[] pendingScenarios;
+
+		var narrative = GameSession.NarrativeController;
+		if (narrative != null && !narrative.IsCampaignComplete)
 		{
 			var primaryAi = _aiPlayers.Count > 0 ? _aiPlayers[_rng.Next(_aiPlayers.Count)] : null;
 			if (primaryAi != null)
-				_narrativeController.UpdateEnemy(primaryAi);
-			var missionContext = _narrativeController.GetNextMission();
-			_activeCondition = missionContext.Condition.ToEndCondition();
-			_resolvedMissionDescription = missionContext.Briefing;
-			_pendingInterlude = missionContext.Interlude;
-			_pendingScenarios = missionContext.Scenarios;
+				narrative.UpdateEnemy(primaryAi);
+			var missionContext = narrative.GetNextMission();
+			activeCondition = missionContext.Condition.ToEndCondition();
+			missionDescription = missionContext.Briefing;
+			pendingInterlude = missionContext.Interlude;
+			pendingScenarios = missionContext.Scenarios;
 		}
 		else
 		{
-			_activeCondition = _endStateCfg.Conditions[_rng.Next(_endStateCfg.Conditions.Length)];
-			_resolvedMissionDescription = null;
-			_pendingScenarios = LoadRandomModeScenarios();
+			activeCondition = endStateCfg.Conditions[_rng.Next(endStateCfg.Conditions.Length)];
+			missionDescription = null;
+			pendingInterlude = null;
+			pendingScenarios = LoadRandomModeScenarios();
 		}
 
-		if (_activeCondition.TargetSystemHops.HasValue)
-			_objectiveSystemIndex = FindObjectiveSystemIndex(_activeCondition.TargetSystemHops.Value);
-		if (_objectiveSystemIndex >= 0)
-			_systems[_objectiveSystemIndex].MarkAsObjective();
-
-		if (_activeCondition.EliminateTargetPlayer == true && _aiPlayers.Count > 0)
-			ResolveTargetPlayer();
-
-		if (_activeCondition.DefendObjectiveSystem == true)
-			ResolveDefendSystem();
-
-		UpdateFogOfWar();
 		AssignLoreSeeds(data);
-		AssignScenarios();
-		SpawnFadeOverlay();
-		SpawnSelectionPanel();
-		SpawnScenarioPanel();
-		SpawnAiSystemPanel();
-		SpawnNotificationPanel();
-		SpawnSystemActionMenu();
+		AssignScenarios(pendingScenarios);
 		SpawnAiController(data, aiCfg);
-		SpawnChatWindow();
 
-		if (_activeCondition.TimeoutSeconds.HasValue)
-		{
-			_countdownTimer.Show();
-			_countdownTimer.Initialize(_activeCondition.TimeoutSeconds.Value, OnCountdownExpired);
-		}
+		_levelUi = new LevelUi();
+		AddChild(_levelUi);
+		var actionCfg = ConfigLoader.Load<ActionMenuConfig>("res://config/action_menu.json");
+		_levelUi.Initialize(_camera, _systemRadius, actionCfg);
+
+		_gameController = new GameController();
+		AddChild(_gameController);
+		_gameController.GameEnded += () => _endConditionReached = true;
+		_gameController.Initialize(
+			activeCondition, endStateCfg, missionDescription, pendingInterlude,
+			_routeSet, _systems, _aiPlayers, _rng, _levelUi, _camera, _countdownTimer, _fadeOutSeconds);
+
+		_objectiveSystemIndex = _gameController.ObjectiveSystemIndex;
+		_fogSystem!.Update(_objectiveSystemIndex);
 
 		SpawnDebugOverlay();
-
-		if (_pendingInterlude != null)
-			SpawnNarrativePanel(_pendingInterlude, onDismiss: ShowMissionBrief);
-		else
-			ShowMissionBrief();
+		_gameController.StartMission();
 	}
 
 	private void SpawnDebugOverlay()
 	{
 		_debugOverlay = new DebugOverlay();
 		AddChild(_debugOverlay);
-	}
-
-	private int FindObjectiveSystemIndex(int targetHops)
-	{
-		var playerIndex = _systems.FindIndex(s => s.IsPlayerOwned);
-		if (playerIndex < 0) return -1;
-
-		var distances = GraphUtils.BfsHopDistances(playerIndex, _systems.Count, _routeSet);
-
-		var maxHops = 0;
-		var maxIndex = -1;
-		for (var i = 0; i < distances.Length; i++)
-		{
-			if (distances[i] <= maxHops) continue;
-			maxHops = distances[i];
-			maxIndex = i;
-		}
-
-		// Upper-bound shortcut: target exceeds graph diameter, return the farthest system
-		if (targetHops >= maxHops)
-			return maxIndex;
-
-		var bestIndex = -1;
-		var bestDelta = int.MaxValue;
-		for (var i = 0; i < distances.Length; i++)
-		{
-			if (i == playerIndex) continue;
-			var delta = Math.Abs(distances[i] - targetHops);
-			if (delta < bestDelta)
-			{
-				bestDelta = delta;
-				bestIndex = i;
-			}
-		}
-
-		return bestIndex;
 	}
 
 	private void BuildAdjacency(int systemCount)
@@ -313,6 +244,7 @@ public partial class Level : Node2D
 		SpawnRoutes(data);
 		SpawnSystems(data, aiCfg, sysCfg);
 		SpawnCamera(data, camCfg);
+		_fogSystem = new FogSystem(_systems, _routeNodes, _adjacency, _aiColors, _fogEnabled, _fogClearSeconds);
 	}
 
 	private void AssignLoreSeeds(LevelData data)
@@ -330,25 +262,10 @@ public partial class Level : Node2D
 		}
 	}
 
-	private void SpawnFadeOverlay()
-	{
-		var layer = new CanvasLayer { Layer = 9 };
-		AddChild(layer);
-		_fadeOverlay = new ColorRect
-		{
-			Color = Colors.Black,
-			Modulate = new Color(1f, 1f, 1f, 0f),
-			Size = GetViewport().GetVisibleRect().Size,
-			MouseFilter = Control.MouseFilterEnum.Ignore
-		};
-		layer.AddChild(_fadeOverlay);
-	}
-
-	private void AssignScenarios()
+	private void AssignScenarios(ScenarioDefinition[] scenarios)
 	{
 		_scenarioController = new ScenarioController();
-		_scenarioController.AssignScenarios(_systems, _pendingScenarios, _rng);
-
+		_scenarioController.AssignScenarios(_systems, scenarios, _rng);
 		for (var i = 0; i < _systems.Count; i++)
 			_systems[i].SetScenarioBadge(_scenarioController.HasScenario(i));
 	}
@@ -361,297 +278,32 @@ public partial class Level : Node2D
 			&& s.Criteria.MinMissionsLost == null);
 	}
 
-	private void SpawnSelectionPanel()
-	{
-		var layer = new CanvasLayer { Layer = 10 };
-		AddChild(layer);
-		_selectionPanel = GD.Load<PackedScene>("res://scenes/ui/SelectionPanel.tscn").Instantiate<SelectionPanel>();
-		layer.AddChild(_selectionPanel);
-	}
-
-	private void SpawnScenarioPanel()
-	{
-		var layer = new CanvasLayer { Layer = 13 };
-		AddChild(layer);
-		_scenarioPanel = GD.Load<PackedScene>("res://scenes/ui/ScenarioPanel.tscn").Instantiate<ScenarioPanel>();
-		layer.AddChild(_scenarioPanel);
-	}
-
-	private void SpawnAiSystemPanel()
-	{
-		var layer = new CanvasLayer { Layer = 10 };
-		AddChild(layer);
-		_aiSystemPanel = GD.Load<PackedScene>("res://scenes/ui/AiSystemPanel.tscn").Instantiate<AiSystemPanel>();
-		layer.AddChild(_aiSystemPanel);
-	}
-
-	private void SpawnNotificationPanel()
-	{
-		var layer = new CanvasLayer { Layer = 11 };
-		AddChild(layer);
-		_notificationPanel = GD.Load<PackedScene>("res://scenes/ui/NotificationPanel.tscn").Instantiate<NotificationPanel>();
-		layer.AddChild(_notificationPanel);
-	}
-
 	private void SpawnAiController(LevelData data, AiConfig aiCfg)
 	{
 		_aiController = new AiController();
 		AddChild(_aiController);
-		_aiController.Initialize(_systems, _routeSet, _defenderBonus, data.AiPlayers, aiCfg, _rng, OnAiActionTaken, LaunchAiTransit);
+		_aiController.ActionTaken += OnAiActionTaken;
+		_aiController.Initialize(_systems, _routeSet, _defenderBonus, data.AiPlayers, aiCfg, _rng, LaunchAiTransit);
 	}
 
 	private void OnAiActionTaken()
 	{
-		UpdateFogOfWar();
-		CheckEndCondition();
-		CheckDefeatCondition();
+		_fogSystem?.Update(_objectiveSystemIndex);
+		_gameController.EvaluateEndState();
 	}
 
-	private void SpawnSystemActionMenu()
-	{
-		var layer = new CanvasLayer { Layer = 12 };
-		AddChild(layer);
-		_systemActionMenu = GD.Load<PackedScene>("res://scenes/ui/SystemActionMenu.tscn").Instantiate<SystemActionMenu>();
-		layer.AddChild(_systemActionMenu);
-		var cfg = ConfigLoader.Load<ActionMenuConfig>("res://config/action_menu.json");
-		_systemActionMenu.Initialize(_camera, _systemRadius, cfg);
-	}
-
-	private void OnEndSequenceDismissed()
-	{
-		if (_narrativeController?.IsCampaignComplete == true)
-			SpawnOutroPanel();
-		else
-			RegenerateLevel();
-	}
-
-	private void SpawnOutroPanel()
-	{
-		var storyText = _narrativeController!.GenerateOutro();
-		var layer = new CanvasLayer { Layer = 14 };
-		AddChild(layer);
-		var panel = GD.Load<PackedScene>("res://scenes/ui/NarrativePanel.tscn").Instantiate<NarrativePanel>();
-		layer.AddChild(panel);
-		panel.ShowWithActions(storyText.Title, storyText.Body, GetViewport().GetVisibleRect().Size);
-		panel.NewCampaignPressed += OnNewCampaignPressed;
-		panel.RandomMissionsPressed += OnRandomMissionsPressed;
-		panel.QuitPressed += () => GetTree().Quit();
-	}
-
-	private void OnNewCampaignPressed()
-	{
-		_narrativeController = null;
-		_gameModeOverride = GameMode.Story;
-		RegenerateLevel();
-	}
-
-	private void OnRandomMissionsPressed()
-	{
-		_narrativeController = null;
-		_gameModeOverride = GameMode.Random;
-		RegenerateLevel();
-	}
-
-	private void SpawnNarrativePanel(StoryText storyText, Action onDismiss)
-	{
-		var layer = new CanvasLayer { Layer = 13 };
-		AddChild(layer);
-		var panel = GD.Load<PackedScene>("res://scenes/ui/NarrativePanel.tscn").Instantiate<NarrativePanel>();
-		layer.AddChild(panel);
-		panel.ShowDismissable(storyText.Title, storyText.Body, GetViewport().GetVisibleRect().Size, onDismiss);
-	}
-
-	private void SpawnChatWindow()
-	{
-		var layer = new CanvasLayer { Layer = 10 };
-		AddChild(layer);
-		_chatWindow = GD.Load<PackedScene>("res://scenes/ui/ChatWindowNode.tscn").Instantiate<ChatWindowNode>();
-		layer.AddChild(_chatWindow);
-		var viewportSize = GetViewport().GetVisibleRect().Size;
-		const float chatHeight = 54f;
-		const float sidePad = 8f;
-		const float bottomPad = 8f;
-		_chatWindow.Position = new Vector2(sidePad, viewportSize.Y - chatHeight - bottomPad);
-	}
-
-	private void ShowMissionBrief()
-	{
-		GameSpeed.PushUiPause();
-		_notificationPanel.Show(
-			"Mission",
-			_resolvedMissionDescription ?? _activeCondition!.Description,
-			_endStateCfg.MissionBriefSeconds,
-			GetViewport().GetVisibleRect().Size,
-			onDismiss: GameSpeed.PopUiPause
-		);
-	}
-
-	private void CheckEndCondition()
-	{
-		if (_endConditionReached || _activeCondition == null)
-			return;
-		if (!IsEndConditionMet(_activeCondition))
-			return;
-
-		_endConditionReached = true;
-		_selectionPanel.Hide();
-		_aiSystemPanel.Hide();
-		_systemActionMenu.HideAll();
-		ShowEndSequence("Mission Complete", _activeCondition.EndDescription, won: true);
-	}
-
-	private void CheckDefeatCondition()
-	{
-		if (_endConditionReached)
-			return;
-
-		if (_activeCondition?.DefendObjectiveSystem == true &&
-			_defendSystemIndex >= 0 &&
-			!_systems[_defendSystemIndex].IsPlayerOwned)
-		{
-			_endConditionReached = true;
-			_selectionPanel.Hide();
-			_aiSystemPanel.Hide();
-			_systemActionMenu.HideAll();
-			ShowEndSequence("Defeated", "The marked system has fallen. The mission is lost.", won: false);
-			return;
-		}
-
-		if (_systems.Any(s => s.IsPlayerOwned))
-			return;
-
-		_endConditionReached = true;
-		_selectionPanel.Hide();
-		_aiSystemPanel.Hide();
-		_systemActionMenu.HideAll();
-		var description = _endStateCfg.DefeatDescriptions[_rng.Next(_endStateCfg.DefeatDescriptions.Length)];
-		ShowEndSequence("Defeated", description, won: false);
-	}
-
-	private void ShowEndSequence(string title, string description, bool won)
-	{
-		_narrativeController?.OnMissionComplete(
-			won,
-			_systems.Count(s => s.IsPlayerOwned),
-			_systems.Count(s => s.IsAiOwned),
-			_systems.Count(s => s.IsAiOwned && s.HasFleet));
-		_fadeOverlay.MouseFilter = Control.MouseFilterEnum.Stop;
-		_camera.PanTo(ComputeMapCenter(), _endStateCfg.EndStateSeconds);
-		StartFadeOut(_fadeOutSeconds);
-		_notificationPanel.Show(
-			title,
-			description,
-			_endStateCfg.EndStateSeconds,
-			GetViewport().GetVisibleRect().Size,
-			onDismiss: OnEndSequenceDismissed,
-			allowEarlyDismiss: false
-		);
-	}
-
-	private void StartFadeOut(float durationSeconds)
-	{
-		var tween = CreateTween();
-		tween.TweenProperty(_fadeOverlay, "modulate", new Color(1f, 1f, 1f, 1f), durationSeconds)
-			.SetTrans(Tween.TransitionType.Linear);
-	}
-
-	private bool IsEndConditionMet(EndCondition condition)
-	{
-		if (condition.EnemiesLeft.HasValue)
-		{
-			var enemiesWithFleet = _systems.Count(s => !s.IsPlayerOwned && s.HasFleet);
-			if (enemiesWithFleet > condition.EnemiesLeft.Value)
-				return false;
-		}
-
-		if (condition.SystemsLeft.HasValue)
-		{
-			var nonPlayerSystems = _systems.Count(s => !s.IsPlayerOwned);
-			if (nonPlayerSystems > condition.SystemsLeft.Value)
-				return false;
-		}
-
-		if (condition.TargetSystemHops.HasValue)
-		{
-			if (_objectiveSystemIndex < 0 || !_systems[_objectiveSystemIndex].IsPlayerOwned)
-				return false;
-		}
-
-		if (condition.EliminateTargetPlayer == true)
-		{
-			if (_targetPlayerOwner == SystemOwner.None)
-				return false;
-			if (_systems.Any(s => s.OwnerPlayer == _targetPlayerOwner && s.HasFleet))
-				return false;
-		}
-
-		if (condition.DefendObjectiveSystem == true)
-		{
-			if (_defendSystemIndex < 0 || !_systems[_defendSystemIndex].IsPlayerOwned)
-				return false;
-		}
-
-		return true;
-	}
-
-	private void OnCountdownExpired()
-	{
-		if (_endConditionReached)
-			return;
-		_endConditionReached = true;
-		_selectionPanel.Hide();
-		_aiSystemPanel.Hide();
-		_systemActionMenu.HideAll();
-		ShowEndSequence("Time Expired", _activeCondition?.TimeoutMessage ?? "The mission clock has run out.", won: false);
-	}
-
-	private void RegenerateLevel()
-	{
-		Clear();
-		GenerateRuntime();
-	}
-
-	private void Clear()
+	// Editor-only: resets scene nodes before regenerating preview layout.
+	private void ClearForPreview()
 	{
 		foreach (var child in GetChildren())
 			if (child.Name != "PersistentUI")
 				child.QueueFree();
-		_countdownTimer.Reset();
 		_systems.Clear();
 		_routeSet.Clear();
 		_adjacency.Clear();
 		_routeNodes.Clear();
-		_drag = DragState.None;
-		_fadeOverlay = null!;
-		_selectionPanel = null!;
-		_aiSystemPanel = null!;
-		_aiPlayers = [];
-		_notificationPanel = null!;
-		_activeCondition = null;
-		_endConditionReached = false;
-		_objectiveSystemIndex = -1;
-		_targetPlayerOwner = SystemOwner.None;
-		_defendSystemIndex = -1;
-		_resolvedMissionDescription = null;
-		_pendingInterlude = null;
-		_chatWindow = null;
-		_camera = null!;
-		_systemActionMenu = null!;
-		_aiController = null!;
-		_lastSystemClickTime = double.MinValue;
-		_lastClickedSystemIndex = -1;
-		_selectedFleetSlot = -1;
-		_rerouteTargets.Clear();
-		_rerouteArrows.Clear();
-		_isPickingRerouteTarget = false;
-		_rerouteSourceIndex = null;
-		_rerouteArrowScene = null!;
-		_upgradeCfg = null!;
-		_debugOverlay = null!;
-		_scenarioController = null!;
-		_scenarioPanel = null!;
-		_pendingScenarios = [];
-		_activeTransits.Clear();
+		_transitSystem.Clear();
+		_fogSystem = null;
 	}
 
 	private void SpawnRoutes(LevelData data)
@@ -698,78 +350,6 @@ public partial class Level : Node2D
 		_camera.FocusOn(playerSystem?.Position ?? Vector2.Zero, camCfg.StartZoom);
 	}
 
-	private void ResolveTargetPlayer()
-	{
-		var target = _aiPlayers[_rng.Next(_aiPlayers.Count)];
-		_targetPlayerOwner = target.Owner;
-		foreach (var system in _systems)
-			system.SetTargetOwner(_targetPlayerOwner);
-		_resolvedMissionDescription = $"{target.FactionName} marked for elimination. Destroy them before time runs out.";
-	}
-
-	private void ResolveDefendSystem()
-	{
-		_defendSystemIndex = _systems.FindIndex(s => s.IsPlayerOwned);
-		if (_defendSystemIndex >= 0)
-			_systems[_defendSystemIndex].MarkAsDefend();
-	}
-
-	private void UpdateFogOfWar()
-	{
-		if (!_fogEnabled)
-		{
-			for (var i = 0; i < _systems.Count; i++)
-				_systems[i].SetFogState(FogState.Revealed, _fogClearSeconds);
-			foreach (var (from, to, routeNode) in _routeNodes)
-			{
-				routeNode.SetFogState(FogState.Revealed, _fogClearSeconds);
-				routeNode.SetOwnerColor(SharedOwnerColor(from, to));
-			}
-			return;
-		}
-
-		var scoutedByPlayer = new HashSet<int>();
-		for (var i = 0; i < _systems.Count; i++)
-		{
-			if (!_systems[i].IsPlayerOwned) continue;
-			foreach (var neighbor in _adjacency[i])
-				scoutedByPlayer.Add(neighbor);
-		}
-
-		for (var i = 0; i < _systems.Count; i++)
-		{
-			FogState state;
-			if (_systems[i].IsPlayerOwned)
-				state = FogState.Revealed;
-			else if (scoutedByPlayer.Contains(i))
-				state = FogState.Scouted;
-			else
-				state = FogState.Hidden;
-			var permanent = (FogState)Math.Max((int)state, (int)_systems[i].FogState);
-			_systems[i].SetFogState(permanent, _fogClearSeconds);
-		}
-
-		if (_objectiveSystemIndex >= 0 && _systems[_objectiveSystemIndex].FogState == FogState.Hidden)
-			_systems[_objectiveSystemIndex].SetFogState(FogState.Scouted, _fogClearSeconds);
-
-		foreach (var (from, to, routeNode) in _routeNodes)
-		{
-			var fromState = _systems[from].FogState;
-			var toState = _systems[to].FogState;
-
-			FogState routeState;
-			if (fromState == FogState.Hidden && toState == FogState.Hidden)
-				routeState = FogState.Hidden;
-			else if (fromState == FogState.Revealed || toState == FogState.Revealed)
-				routeState = FogState.Revealed;
-			else
-				routeState = FogState.Scouted;
-
-			routeNode.SetFogState(routeState, _fogClearSeconds);
-			routeNode.SetOwnerColor(SharedOwnerColor(from, to));
-		}
-	}
-
 	private void ProcessReroutes()
 	{
 		var fogUpdateNeeded = false;
@@ -786,36 +366,33 @@ public partial class Level : Node2D
 			var toEdge = EdgeToward(_systems[targetIndex].Position, source.Position, _systemRadius);
 			var transit = _transitFleetScene.Instantiate<TransitFleetNode>();
 			AddChild(transit);
-			var si = sourceIndex;
-			var ti = targetIndex;
-			var f = fleet;
 
-			Func<float, Action> arrivalCallback = fleetCount => () =>
+			var at = new ActiveTransit
 			{
-				_activeTransits.RemoveAll(t => t.Node == transit);
-				ResolvePlayerTransitArrival(ti, fleetCount);
-			};
-
-			transit.Launch(fromEdge, toEdge, _ghostFleetOutline, _transitDurationSeconds, arrivalCallback(f));
-
-			RegisterTransit(new ActiveTransit
-			{
-				FromIndex = si,
-				ToIndex = ti,
+				FromIndex = sourceIndex,
+				ToIndex = targetIndex,
 				Owner = SystemOwner.Player,
-				Fleet = f,
+				Fleet = fleet,
 				LaunchTimeSec = Time.GetTicksMsec() / 1000.0,
 				TotalDurationSec = _transitDurationSeconds,
 				Node = transit,
-				ToWorldPos = toEdge,
-				ArrivalCallback = arrivalCallback
-			});
+				ToWorldPos = toEdge
+			};
+
+			transit.Arrived += () =>
+			{
+				_transitSystem.Remove(at);
+				ResolvePlayerTransitArrival(at.ToIndex, at.Fleet);
+			};
+
+			transit.Launch(fromEdge, toEdge, _ghostFleetOutline, _transitDurationSeconds);
+			RegisterTransit(at);
 
 			fogUpdateNeeded = true;
 		}
 
 		if (fogUpdateNeeded)
-			UpdateFogOfWar();
+			_fogSystem?.Update(_objectiveSystemIndex);
 	}
 
 	private void SetRerouteTarget(int sourceIndex, int targetIndex)
@@ -845,15 +422,6 @@ public partial class Level : Node2D
 		return _routeSet.Contains(edge);
 	}
 
-	private Color? SharedOwnerColor(int fromIndex, int toIndex)
-	{
-		var fromOwner = _systems[fromIndex].OwnerPlayer;
-		var toOwner = _systems[toIndex].OwnerPlayer;
-		if (fromOwner == SystemOwner.None || fromOwner != toOwner)
-			return null;
-		return _aiColors.TryGetValue(fromOwner, out var color) ? color : null;
-	}
-
 	private Dictionary<SystemOwner, Color> BuildAiColors(IReadOnlyList<AiPlayerData> aiPlayers, AiConfig aiCfg)
 	{
 		var colors = new Dictionary<SystemOwner, Color>();
@@ -866,14 +434,6 @@ public partial class Level : Node2D
 			colors[player.Owner] = Color.FromHsv(h, s, v, baseColor.A);
 		}
 		return colors;
-	}
-
-	private Vector2 ComputeMapCenter()
-	{
-		var sum = Vector2.Zero;
-		foreach (var system in _systems)
-			sum += system.GlobalPosition;
-		return sum / _systems.Count;
 	}
 
 	private static Vector2 EdgeToward(Vector2 origin, Vector2 target, float radius)

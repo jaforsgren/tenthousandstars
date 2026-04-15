@@ -106,10 +106,10 @@ public partial class Level
 			}
 		}
 
-		_aiSystemPanel.Hide();
-		_selectionPanel.Hide();
+		_levelUi.AiSystemPanel.Hide();
+		_levelUi.SelectionPanel.Hide();
 		_camera.ExitFollowMode();
-		_systemActionMenu.HideAll();
+		_levelUi.SystemActionMenu.HideAll();
 	}
 
 	private void HandleSystemClick(int systemIndex)
@@ -133,14 +133,14 @@ public partial class Level
 		if (_rerouteTargets.ContainsKey(systemIndex))
 		{
 			ClearReroute(systemIndex);
-			_systemActionMenu.RefreshRerouteButton(hasActiveRoute: false, () => OnRerouteButtonPressed(systemIndex));
+			_levelUi.SystemActionMenu.RefreshRerouteButton(hasActiveRoute: false, () => OnRerouteButtonPressed(systemIndex));
 		}
 		else
 		{
 			_isPickingRerouteTarget = true;
 			_rerouteSourceIndex = systemIndex;
-			_systemActionMenu.HideAll();
-			_selectionPanel.Hide();
+			_levelUi.SystemActionMenu.HideAll();
+			_levelUi.SelectionPanel.Hide();
 		}
 	}
 
@@ -197,6 +197,6 @@ public partial class Level
 		QueueRedraw();
 
 		if (resolved)
-			UpdateFogOfWar();
+			_fogSystem?.Update(_objectiveSystemIndex);
 	}
 }

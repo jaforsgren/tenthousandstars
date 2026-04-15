@@ -1,4 +1,3 @@
-using System;
 using Godot;
 
 namespace Tts;
@@ -13,15 +12,7 @@ public partial class Level
 		var transit = _transitFleetScene.Instantiate<TransitFleetNode>();
 		AddChild(transit);
 
-		Func<float, Action> arrivalCallback = f => () =>
-		{
-			_activeTransits.RemoveAll(t => t.Node == transit);
-			ResolvePlayerTransitArrival(toIndex, f);
-		};
-
-		transit.Launch(fromEdge, toEdge, _ghostFleetOutline, _transitDurationSeconds, arrivalCallback(fleet));
-
-		RegisterTransit(new ActiveTransit
+		var at = new ActiveTransit
 		{
 			FromIndex = fromIndex,
 			ToIndex = toIndex,
@@ -30,9 +21,17 @@ public partial class Level
 			LaunchTimeSec = Time.GetTicksMsec() / 1000.0,
 			TotalDurationSec = _transitDurationSeconds,
 			Node = transit,
-			ToWorldPos = toEdge,
-			ArrivalCallback = arrivalCallback
-		});
+			ToWorldPos = toEdge
+		};
+
+		transit.Arrived += () =>
+		{
+			_transitSystem.Remove(at);
+			ResolvePlayerTransitArrival(at.ToIndex, at.Fleet);
+		};
+
+		transit.Launch(fromEdge, toEdge, _ghostFleetOutline, _transitDurationSeconds);
+		RegisterTransit(at);
 	}
 
 	private void ResolvePlayerTransitArrival(int toIndex, float fleet)
@@ -61,9 +60,8 @@ public partial class Level
 			}
 		}
 
-		UpdateFogOfWar();
-		CheckEndCondition();
-		CheckDefeatCondition();
+		_fogSystem?.Update(_objectiveSystemIndex);
+		_gameController.EvaluateEndState();
 	}
 
 	private void LaunchAiTransit(int fromIndex, int toIndex, float fleet, AiPlayerData aiPlayer)
@@ -81,15 +79,7 @@ public partial class Level
 		var transit = _transitFleetScene.Instantiate<TransitFleetNode>();
 		AddChild(transit);
 
-		Func<float, Action> arrivalCallback = f => () =>
-		{
-			_activeTransits.RemoveAll(t => t.Node == transit);
-			ResolveAiTransitArrival(toIndex, f, aiPlayer.Owner, aiPlayer, dotColor);
-		};
-
-		transit.Launch(fromEdge, toEdge, dotColor, _transitDurationSeconds, arrivalCallback(fleet));
-
-		RegisterTransit(new ActiveTransit
+		var at = new ActiveTransit
 		{
 			FromIndex = fromIndex,
 			ToIndex = toIndex,
@@ -98,12 +88,20 @@ public partial class Level
 			LaunchTimeSec = Time.GetTicksMsec() / 1000.0,
 			TotalDurationSec = _transitDurationSeconds,
 			Node = transit,
-			ToWorldPos = toEdge,
-			ArrivalCallback = arrivalCallback
-		});
+			ToWorldPos = toEdge
+		};
+
+		transit.Arrived += () =>
+		{
+			_transitSystem.Remove(at);
+			ResolveAiTransitArrival(at.ToIndex, at.Fleet, aiPlayer.Owner, aiPlayer, dotColor);
+		};
+
+		transit.Launch(fromEdge, toEdge, dotColor, _transitDurationSeconds);
+		RegisterTransit(at);
 	}
 
-	private void ResolveAiTransitArrival(int toIndex, float fleet, SystemOwner senderOwner, AiPlayerData aiPlayer, Color aiOwnerColor)
+	private void ResolveAiTransitArrival(int toIndex, float fleet, SystemOwner senderOwner, AiPlayerData aiPlayer, Godot.Color aiOwnerColor)
 	{
 		var target = _systems[toIndex];
 
@@ -133,21 +131,15 @@ public partial class Level
 
 	private void RegisterTransit(ActiveTransit newTransit)
 	{
-		var opponent = _activeTransits.Find(t =>
-			t.FromIndex == newTransit.ToIndex &&
-			t.ToIndex == newTransit.FromIndex &&
-			t.Owner != newTransit.Owner);
+		var opponent = _transitSystem.Add(newTransit);
+		if (opponent == null)
+			return;
 
-		if (opponent != null)
-		{
-			var now = Time.GetTicksMsec() / 1000.0;
-			var remainA = (float)(opponent.TotalDurationSec - (now - opponent.LaunchTimeSec));
-			// Both fleets travel the same route at equal speed; meeting time = remainA * D_B / (D_A + D_B)
-			var meetingDelay = remainA * newTransit.TotalDurationSec / (opponent.TotalDurationSec + newTransit.TotalDurationSec);
-			GetTree().CreateTimer(meetingDelay).Timeout += () => ResolveRouteCombat(opponent, newTransit);
-		}
-
-		_activeTransits.Add(newTransit);
+		var now = Time.GetTicksMsec() / 1000.0;
+		var remainA = (float)(opponent.TotalDurationSec - (now - opponent.LaunchTimeSec));
+		// Both fleets travel the same route at equal speed; meeting time = remainA * D_B / (D_A + D_B)
+		var meetingDelay = remainA * newTransit.TotalDurationSec / (opponent.TotalDurationSec + newTransit.TotalDurationSec);
+		GetTree().CreateTimer(meetingDelay).Timeout += () => ResolveRouteCombat(opponent, newTransit);
 	}
 
 	private void ResolveRouteCombat(ActiveTransit a, ActiveTransit b)
@@ -164,7 +156,7 @@ public partial class Level
 		var loser = result.AttackerWins ? b : a;
 		var survivingFleet = result.AttackerWins ? result.AttackerRemainder : result.DefenderRemainder;
 
-		_activeTransits.RemoveAll(t => t.Node == a.Node || t.Node == b.Node);
+		_transitSystem.RemoveByNodes(a.Node, b.Node);
 		loser.Node.CancelInFlight();
 
 		SpawnCombatEffectAt(meetingPos);
@@ -182,21 +174,11 @@ public partial class Level
 
 			if (winnerRemaining > 0)
 			{
-				var newArrival = winner.ArrivalCallback(survivingFleet);
-				winner.Node.InterruptAndRelaunch(meetingPos, winner.ToWorldPos, winnerRemaining, newArrival);
-
-				RegisterTransit(new ActiveTransit
-				{
-					FromIndex = winner.FromIndex,
-					ToIndex = winner.ToIndex,
-					Owner = winner.Owner,
-					Fleet = survivingFleet,
-					LaunchTimeSec = now,
-					TotalDurationSec = winnerRemaining,
-					Node = winner.Node,
-					ToWorldPos = winner.ToWorldPos,
-					ArrivalCallback = winner.ArrivalCallback
-				});
+				winner.Fleet = survivingFleet;
+				winner.LaunchTimeSec = now;
+				winner.TotalDurationSec = winnerRemaining;
+				winner.Node.InterruptAndRelaunch(meetingPos, winner.ToWorldPos, winnerRemaining);
+				RegisterTransit(winner);
 			}
 			else
 			{
@@ -222,7 +204,7 @@ public partial class Level
 		capture.PlayCapture();
 	}
 
-	private void SpawnCombatEffectAt(Vector2 pos)
+	private void SpawnCombatEffectAt(Godot.Vector2 pos)
 	{
 		var impact = _combatEffectScene.Instantiate<CombatEffectNode>();
 		AddChild(impact);
@@ -240,17 +222,17 @@ public partial class Level
 
 	private void PostBark(Bark[]? pool)
 	{
-		if (pool == null || pool.Length == 0 || _chatWindow == null)
+		if (pool == null || pool.Length == 0 || _levelUi.ChatWindow == null)
 			return;
 		var bark = pool[_rng.Next(pool.Length)];
-		_chatWindow.PostMessage(bark.Npc, bark.Message);
+		_levelUi.ChatWindow.PostMessage(bark.Npc, bark.Message);
 	}
 
 	private void PostAiBark(AiPlayerData aiPlayer)
 	{
-		if (_chatWindow == null || aiPlayer.Barks.Length == 0)
+		if (_levelUi.ChatWindow == null || aiPlayer.Barks.Length == 0)
 			return;
 		var message = aiPlayer.Barks[_rng.Next(aiPlayer.Barks.Length)];
-		_chatWindow.PostMessage(aiPlayer.FactionName, message);
+		_levelUi.ChatWindow.PostMessage(aiPlayer.FactionName, message);
 	}
 }

@@ -7,13 +7,15 @@ namespace Tts;
 
 public partial class AiController : Node
 {
+	[Signal]
+	public delegate void ActionTakenEventHandler();
+
 	private IReadOnlyList<SystemNode> _systems = null!;
 	private HashSet<(int, int)> _routeSet = null!;
 	private float _defenderBonus;
 	private IReadOnlyList<AiPlayerData> _players = null!;
 	private AiConfig _config = null!;
 	private Random _rng = null!;
-	private Action _onActionTaken = null!;
 	private Action<int, int, float, AiPlayerData> _launchTransit = null!;
 	private double _thinkTimer;
 	private Dictionary<int, List<int>> _adjacency = new();
@@ -27,7 +29,6 @@ public partial class AiController : Node
 		IReadOnlyList<AiPlayerData> players,
 		AiConfig config,
 		Random rng,
-		Action onActionTaken,
 		Action<int, int, float, AiPlayerData> launchTransit)
 	{
 		_systems = systems;
@@ -36,7 +37,6 @@ public partial class AiController : Node
 		_players = players;
 		_config = config;
 		_rng = rng;
-		_onActionTaken = onActionTaken;
 		_launchTransit = launchTransit;
 		_thinkTimer = config.ThinkIntervalSeconds;
 		BuildAdjacency();
@@ -68,7 +68,7 @@ public partial class AiController : Node
 				acted = true;
 		}
 
-		if (acted) _onActionTaken();
+		if (acted) EmitSignal(SignalName.ActionTaken);
 	}
 
 	private bool TryTakeAction(AiPlayerData player)

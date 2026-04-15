@@ -13,7 +13,7 @@ public partial class Level
 			ComputeUpgradeStates(systemIndex, out var fa, out var fd, out var ga, out var gd);
 			var slot = _selectedFleetSlot;
 			var splitDisabled = _systems[systemIndex].GetFleetShips(slot) < 2f;
-			_systemActionMenu.ShowForPlayerFleet(
+			_levelUi.SystemActionMenu.ShowForPlayerFleet(
 				_systems[systemIndex].GlobalPosition,
 				() => ShowFleetInfo(systemIndex),
 				_rerouteTargets.ContainsKey(systemIndex), () => OnRerouteButtonPressed(systemIndex),
@@ -23,14 +23,14 @@ public partial class Level
 		}
 		else if (_systems[systemIndex].IsAiOwned)
 		{
-			_systemActionMenu.ShowForAiSystem(
+			_levelUi.SystemActionMenu.ShowForAiSystem(
 				_systems[systemIndex].GlobalPosition,
 				() => ShowFleetInfo(systemIndex),
 				() => ShowAiSystemInfo(systemIndex));
 		}
 		else
 		{
-			_systemActionMenu.ShowInfoOnly(_systems[systemIndex].GlobalPosition, () => ShowFleetInfo(systemIndex));
+			_levelUi.SystemActionMenu.ShowInfoOnly(_systems[systemIndex].GlobalPosition, () => ShowFleetInfo(systemIndex));
 		}
 	}
 
@@ -40,7 +40,7 @@ public partial class Level
 		{
 			ComputeUpgradeStates(systemIndex, out var fa, out var fd, out var ga, out var gd);
 			var splitDisabled = !_systems[systemIndex].HasFleet || _systems[systemIndex].GetFleetShips(0) < 2f;
-			_systemActionMenu.ShowForPlayerSystem(
+			_levelUi.SystemActionMenu.ShowForPlayerSystem(
 				_systems[systemIndex].GlobalPosition,
 				() => ShowSystemInfo(systemIndex),
 				_rerouteTargets.ContainsKey(systemIndex), () => OnRerouteButtonPressed(systemIndex),
@@ -50,13 +50,13 @@ public partial class Level
 		}
 		else
 		{
-			_systemActionMenu.ShowInfoOnly(_systems[systemIndex].GlobalPosition, () => ShowSystemInfo(systemIndex));
+			_levelUi.SystemActionMenu.ShowInfoOnly(_systems[systemIndex].GlobalPosition, () => ShowSystemInfo(systemIndex));
 		}
 	}
 
 	private void SelectAiSystem(int systemIndex)
 	{
-		_systemActionMenu.ShowForAiSystem(
+		_levelUi.SystemActionMenu.ShowForAiSystem(
 			_systems[systemIndex].GlobalPosition,
 			() => ShowSystemInfo(systemIndex),
 			() => ShowAiSystemInfo(systemIndex));
@@ -81,8 +81,8 @@ public partial class Level
 		var aiPlayer = _aiPlayers.FirstOrDefault(p => p.Owner == owner);
 		if (aiPlayer == null) return;
 		_aiColors.TryGetValue(owner, out var color);
-		_selectionPanel.Hide();
-		_aiSystemPanel.ShowFor(aiPlayer, color, _systemLoreSeeds[systemIndex], GetViewport().GetVisibleRect().Size);
+		_levelUi.SelectionPanel.Hide();
+		_levelUi.AiSystemPanel.ShowFor(aiPlayer, color, _systemLoreSeeds[systemIndex], GetViewport().GetVisibleRect().Size);
 	}
 
 	private void ShowFleetInfo(int systemIndex)
@@ -91,8 +91,8 @@ public partial class Level
 		var seed = _fleetLoreSeeds[systemIndex];
 		var title = Pick(pool.Titles, seed);
 		var description = Pick(pool.Descriptions, seed);
-		_aiSystemPanel.Hide();
-		_selectionPanel.ShowAt($"Fleet — {title}", description, GetViewport().GetVisibleRect().Size);
+		_levelUi.AiSystemPanel.Hide();
+		_levelUi.SelectionPanel.ShowAt($"Fleet — {title}", description, GetViewport().GetVisibleRect().Size);
 	}
 
 	private void ShowSystemInfo(int systemIndex)
@@ -100,12 +100,12 @@ public partial class Level
 		var seed = _systemLoreSeeds[systemIndex];
 		var title = Pick(_loreConfig.System.Titles, seed);
 		var description = Pick(_loreConfig.System.Descriptions, seed);
-		_aiSystemPanel.Hide();
+		_levelUi.AiSystemPanel.Hide();
 
 		var scenario = _scenarioController.GetScenario(systemIndex);
 		if (scenario != null)
 		{
-			_selectionPanel.ShowWithScenario(
+			_levelUi.SelectionPanel.ShowWithScenario(
 				title, description, scenario.IntroText,
 				onEnter: () => OpenScenario(systemIndex, scenario),
 				onIgnore: () => DismissScenario(systemIndex),
@@ -113,15 +113,15 @@ public partial class Level
 		}
 		else
 		{
-			_selectionPanel.ShowAt(title, description, GetViewport().GetVisibleRect().Size);
+			_levelUi.SelectionPanel.ShowAt(title, description, GetViewport().GetVisibleRect().Size);
 		}
 	}
 
 	private void OpenScenario(int systemIndex, ScenarioDefinition scenario)
 	{
-		_selectionPanel.Hide();
-		_systemActionMenu.HideAll();
-		_scenarioPanel.Show(scenario, GetViewport().GetVisibleRect().Size, onClose: () =>
+		_levelUi.SelectionPanel.Hide();
+		_levelUi.SystemActionMenu.HideAll();
+		_levelUi.ScenarioPanel.Show(scenario, GetViewport().GetVisibleRect().Size, onClose: () =>
 		{
 			DismissScenario(systemIndex);
 		});
@@ -131,7 +131,7 @@ public partial class Level
 	{
 		_scenarioController.DismissScenario(systemIndex);
 		_systems[systemIndex].SetScenarioBadge(false);
-		_selectionPanel.Hide();
+		_levelUi.SelectionPanel.Hide();
 	}
 
 	private void DoUpgrade(int systemIndex, SystemUpgrade upgrade)
@@ -149,7 +149,7 @@ public partial class Level
 		PostBark(pool);
 
 		ComputeUpgradeStates(systemIndex, out var fa, out var fd, out var ga, out var gd);
-		_systemActionMenu.RefreshUpgradeButtons(
+		_levelUi.SystemActionMenu.RefreshUpgradeButtons(
 			fa, fd, () => DoUpgrade(systemIndex, SystemUpgrade.Fortify),
 			ga, gd, () => DoUpgrade(systemIndex, SystemUpgrade.Forge));
 	}
@@ -158,7 +158,7 @@ public partial class Level
 	{
 		_systems[systemIndex].SplitFleet(fleetSlot);
 		var splitDisabled = _systems[systemIndex].GetFleetShips(fleetSlot) < 2f;
-		_systemActionMenu.RefreshSplitButton(splitDisabled, () => OnSplitButtonPressed(systemIndex, fleetSlot));
+		_levelUi.SystemActionMenu.RefreshSplitButton(splitDisabled, () => OnSplitButtonPressed(systemIndex, fleetSlot));
 	}
 
 	private static string Pick(string[] pool, int seed) => pool[seed % pool.Length];

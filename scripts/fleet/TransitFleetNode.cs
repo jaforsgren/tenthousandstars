@@ -1,5 +1,4 @@
 using Godot;
-using System;
 
 namespace Tts;
 
@@ -7,23 +6,22 @@ namespace Tts;
 public partial class TransitFleetNode : Node2D
 {
 	private Vector2 _to;
-	private Action? _onArrive;
 	private Tween? _tween;
 
-	public void Launch(Vector2 from, Vector2 to, Color color, float durationSeconds, Action onArrive)
+	public event System.Action? Arrived;
+
+	public void Launch(Vector2 from, Vector2 to, Color color, float durationSeconds)
 	{
 		_to = to;
 		Modulate = color;
-		_onArrive = onArrive;
 		Position = from;
 		StartTween(durationSeconds);
 	}
 
-	public void InterruptAndRelaunch(Vector2 from, Vector2 to, float durationSeconds, Action onArrive)
+	public void InterruptAndRelaunch(Vector2 from, Vector2 to, float durationSeconds)
 	{
 		_tween?.Kill();
 		_to = to;
-		_onArrive = onArrive;
 		Position = from;
 		StartTween(durationSeconds);
 	}
@@ -31,7 +29,6 @@ public partial class TransitFleetNode : Node2D
 	public void CancelInFlight()
 	{
 		_tween?.Kill();
-		_onArrive = null;
 		QueueFree();
 	}
 
@@ -45,7 +42,7 @@ public partial class TransitFleetNode : Node2D
 
 	private void OnTransitComplete()
 	{
-		_onArrive?.Invoke();
+		Arrived?.Invoke();
 		QueueFree();
 	}
 }
