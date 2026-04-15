@@ -3,19 +3,49 @@
 [ext_resource type="Theme" uid="uid://bfcgvw2kdiuhc" path="res://transparent_theme.tres" id="1_ei5tw"]
 [ext_resource type="Script" uid="uid://j4op55in4ik4" path="res://scripts/ui/SpeedControlPanel.cs" id="1_script"]
 
-[sub_resource type="LabelSettings" id="LabelSettings_ei5tw"]
-
-[sub_resource type="Theme" id="Theme_ei5tw"]
+[sub_resource type="LabelSettings" id="LabelSettings_label"]
 
 [sub_resource type="ButtonGroup" id="ButtonGroup_speed"]
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_btn"]
+bg_color = Color(0.22, 0.22, 0.22, 0.78)
+corner_radius_top_left = 3
+corner_radius_top_right = 3
+corner_radius_bottom_right = 3
+corner_radius_bottom_left = 3
+content_margin_left = 5.0
+content_margin_top = 2.0
+content_margin_right = 5.0
+content_margin_bottom = 2.0
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_btn_hover"]
+bg_color = Color(0.38, 0.38, 0.38, 0.85)
+corner_radius_top_left = 3
+corner_radius_top_right = 3
+corner_radius_bottom_right = 3
+corner_radius_bottom_left = 3
+content_margin_left = 5.0
+content_margin_top = 2.0
+content_margin_right = 5.0
+content_margin_bottom = 2.0
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_btn_pressed"]
+bg_color = Color(0.12, 0.12, 0.12, 0.9)
+corner_radius_top_left = 3
+corner_radius_top_right = 3
+corner_radius_bottom_right = 3
+corner_radius_bottom_left = 3
+content_margin_left = 5.0
+content_margin_top = 2.0
+content_margin_right = 5.0
+content_margin_bottom = 2.0
+
 [node name="SpeedControlPanel" type="PanelContainer" unique_id=2045214510]
-offset_left = 10.0
-offset_top = 10.0
-offset_right = 151.0
-offset_bottom = 65.0
+anchor_left = 1.0
+anchor_right = 1.0
 grow_horizontal = 0
-scale = Vector2(0.75, 0.75)
+offset_right = -8.0
+offset_top = 8.0
 size_flags_horizontal = 0
 size_flags_vertical = 4
 theme = ExtResource("1_ei5tw")
@@ -30,15 +60,23 @@ unique_name_in_owner = true
 custom_minimum_size = Vector2(25, 0)
 layout_mode = 2
 theme_override_font_sizes/font_size = 11
+theme_override_colors/font_color = Color(1, 1, 1, 1)
 text = "1×"
-label_settings = SubResource("LabelSettings_ei5tw")
+label_settings = SubResource("LabelSettings_label")
 vertical_alignment = 1
 
 [node name="PlayPauseButton" type="Button" parent="HBoxContainer" unique_id=1649076975]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(20, 10)
+custom_minimum_size = Vector2(28, 22)
 layout_mode = 2
-theme = SubResource("Theme_ei5tw")
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_hover_color = Color(1, 1, 1, 1)
+theme_override_colors/font_pressed_color = Color(1, 1, 1, 1)
+theme_override_colors/font_focus_color = Color(1, 1, 1, 1)
+theme_override_styles/normal = SubResource("StyleBoxFlat_btn")
+theme_override_styles/hover = SubResource("StyleBoxFlat_btn_hover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_btn_pressed")
+theme_override_styles/focus = SubResource("StyleBoxFlat_btn")
 text = "⏸"
 
 [node name="VSeparator" type="VSeparator" parent="HBoxContainer" unique_id=2052742218]
@@ -48,16 +86,34 @@ layout_mode = 2
 
 [node name="HalfSpeedButton" type="Button" parent="HBoxContainer" unique_id=1406040404]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(15, 10)
+custom_minimum_size = Vector2(28, 22)
 layout_mode = 2
 toggle_mode = true
 button_group = SubResource("ButtonGroup_speed")
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_hover_color = Color(1, 1, 1, 1)
+theme_override_colors/font_pressed_color = Color(1, 1, 1, 1)
+theme_override_colors/font_focus_color = Color(1, 1, 1, 1)
+theme_override_styles/normal = SubResource("StyleBoxFlat_btn")
+theme_override_styles/hover = SubResource("StyleBoxFlat_btn_hover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_btn_pressed")
+theme_override_styles/hover_pressed = SubResource("StyleBoxFlat_btn_hover")
+theme_override_styles/focus = SubResource("StyleBoxFlat_btn")
 text = "⇠"
 
 [node name="FastSpeedButton" type="Button" parent="HBoxContainer" unique_id=1371095737]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(15, 10)
+custom_minimum_size = Vector2(28, 22)
 layout_mode = 2
 toggle_mode = true
 button_group = SubResource("ButtonGroup_speed")
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_hover_color = Color(1, 1, 1, 1)
+theme_override_colors/font_pressed_color = Color(1, 1, 1, 1)
+theme_override_colors/font_focus_color = Color(1, 1, 1, 1)
+theme_override_styles/normal = SubResource("StyleBoxFlat_btn")
+theme_override_styles/hover = SubResource("StyleBoxFlat_btn_hover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_btn_pressed")
+theme_override_styles/hover_pressed = SubResource("StyleBoxFlat_btn_hover")
+theme_override_styles/focus = SubResource("StyleBoxFlat_btn")
 text = "⇢"

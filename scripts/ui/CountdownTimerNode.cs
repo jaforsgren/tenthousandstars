@@ -23,6 +23,14 @@ public partial class CountdownTimerNode : Control
 		UpdateDisplay();
 	}
 
+	public void Reset()
+	{
+		_active = false;
+		_timeRemaining = 0f;
+		_onExpire = null;
+		Visible = false;
+	}
+
 	public override void _Process(double delta)
 	{
 		if (!_active)

@@ -5,6 +5,8 @@
 [ext_resource type="PackedScene" uid="uid://ccombateff01" path="res://scenes/effects/CombatEffectNode.tscn" id="3_qifjx"]
 [ext_resource type="PackedScene" uid="uid://dm4r7wfxbp3te" path="res://scenes/system/RerouteArrowNode.tscn" id="4_dke22"]
 [ext_resource type="Texture2D" uid="uid://bqg8m2xnho5vy" path="res://assets/images/stars01_v1.jpg" id="5_qifjx"]
+[ext_resource type="PackedScene" uid="uid://c5snd4x7yqbr2" path="res://scenes/ui/SpeedControlPanel.tscn" id="6_speed"]
+[ext_resource type="PackedScene" uid="uid://cntdwntmr1234" path="res://scenes/ui/CountdownTimerNode.tscn" id="7_timer"]
 
 [node name="Level" type="Node2D" unique_id=2067866758]
 script = ExtResource("1")
@@ -45,6 +47,16 @@ _splitButtonNode = null
 _isPickingRerouteTarget = false
 _rerouteArrowScene = ExtResource("4_dke22")
 _selectedFleetSlot = -1
+
+[node name="PersistentUI" type="CanvasLayer" parent="." unique_id=100100100]
+layer = 10
+
+[node name="SpeedControlPanel" parent="PersistentUI" instance=ExtResource("6_speed") unique_id=100100101]
+unique_name_in_owner = true
+
+[node name="CountdownTimerNode" parent="PersistentUI" instance=ExtResource("7_timer") unique_id=100100102]
+unique_name_in_owner = true
+visible = false
 
 [node name="Stars01V1" type="Sprite2D" parent="." unique_id=2051090164]
 visible = false

@@ -92,7 +92,7 @@ public partial class Level : Node2D
 	private int _objectiveSystemIndex = -1;
 	private SystemOwner _targetPlayerOwner = SystemOwner.None;
 	private int _defendSystemIndex = -1;
-	private CountdownTimerNode? _countdownTimer;
+	private CountdownTimerNode _countdownTimer = null!;
 	private string? _resolvedMissionDescription;
 	private ChatWindowNode? _chatWindow;
 	private BarkConfig? _barkConfig;
@@ -121,6 +121,8 @@ public partial class Level : Node2D
 
 	public override void _Ready()
 	{
+		_speedControlPanel = GetNode<SpeedControlPanel>("%SpeedControlPanel");
+		_countdownTimer = GetNode<CountdownTimerNode>("%CountdownTimerNode");
 		if (Engine.IsEditorHint())
 			GeneratePreview();
 		else
@@ -217,10 +219,12 @@ public partial class Level : Node2D
 		SpawnChatWindow();
 
 		if (_activeCondition.TimeoutSeconds.HasValue)
-			SpawnCountdownTimer(_activeCondition.TimeoutSeconds.Value);
+		{
+			_countdownTimer.Show();
+			_countdownTimer.Initialize(_activeCondition.TimeoutSeconds.Value, OnCountdownExpired);
+		}
 
 		SpawnDebugOverlay();
-		SpawnSpeedControlPanel();
 
 		if (_pendingInterlude != null)
 			SpawnNarrativePanel(_pendingInterlude, onDismiss: ShowMissionBrief);
@@ -232,23 +236,6 @@ public partial class Level : Node2D
 	{
 		_debugOverlay = new DebugOverlay();
 		AddChild(_debugOverlay);
-	}
-
-	private void SpawnSpeedControlPanel()
-	{
-		var layer = new CanvasLayer { Layer = 10 };
-		AddChild(layer);
-		_speedControlPanel = GD.Load<PackedScene>("res://scenes/ui/SpeedControlPanel.tscn").Instantiate<SpeedControlPanel>();
-		layer.AddChild(_speedControlPanel);
-
-		var viewportSize = GetViewport().GetVisibleRect().Size;
-		// Panel is 2×8px padding + label + 4×30px buttons + 4×3px gaps + separator ≈ 190px wide, 42px tall
-		const float estimatedWidth = 190f;
-		const float topPad = 8f;
-		_speedControlPanel.Position = new Vector2(
-			(viewportSize.X - estimatedWidth) / 2f,
-			topPad
-		);
 	}
 
 	private int FindObjectiveSystemIndex(int targetHops)
@@ -428,19 +415,6 @@ public partial class Level : Node2D
 		layer.AddChild(_systemActionMenu);
 		var cfg = ConfigLoader.Load<ActionMenuConfig>("res://config/action_menu.json");
 		_systemActionMenu.Initialize(_camera, _systemRadius, cfg);
-	}
-
-	private void SpawnCountdownTimer(float seconds)
-	{
-		var layer = new CanvasLayer { Layer = 10 };
-		AddChild(layer);
-		_countdownTimer = GD.Load<PackedScene>("res://scenes/ui/CountdownTimerNode.tscn").Instantiate<CountdownTimerNode>();
-		layer.AddChild(_countdownTimer);
-		var viewportSize = GetViewport().GetVisibleRect().Size;
-		const float timerWidth = 90f;
-		const float timerPad = 8f;
-		_countdownTimer.Position = new Vector2(viewportSize.X - timerWidth - timerPad, timerPad);
-		_countdownTimer.Initialize(seconds, OnCountdownExpired);
 	}
 
 	private void OnEndSequenceDismissed()
@@ -640,7 +614,9 @@ public partial class Level : Node2D
 	private void Clear()
 	{
 		foreach (var child in GetChildren())
-			child.QueueFree();
+			if (child.Name != "PersistentUI")
+				child.QueueFree();
+		_countdownTimer.Reset();
 		_systems.Clear();
 		_routeSet.Clear();
 		_adjacency.Clear();
@@ -656,7 +632,6 @@ public partial class Level : Node2D
 		_objectiveSystemIndex = -1;
 		_targetPlayerOwner = SystemOwner.None;
 		_defendSystemIndex = -1;
-		_countdownTimer = null;
 		_resolvedMissionDescription = null;
 		_pendingInterlude = null;
 		_chatWindow = null;
@@ -673,7 +648,6 @@ public partial class Level : Node2D
 		_rerouteArrowScene = null!;
 		_upgradeCfg = null!;
 		_debugOverlay = null!;
-		_speedControlPanel = null!;
 		_scenarioController = null!;
 		_scenarioPanel = null!;
 		_pendingScenarios = [];
