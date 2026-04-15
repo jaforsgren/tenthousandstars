@@ -1,69 +1,82 @@
 [gd_scene format=3 uid="uid://oh7xwg5sdut4"]
 
 [ext_resource type="Script" uid="uid://ct5eymu2l0jtw" path="res://scripts/level/Level.cs" id="1"]
-[ext_resource type="PackedScene" uid="uid://ctransitfl001" path="res://scenes/fleet/TransitFleetNode.tscn" id="2_kl8ac"]
-[ext_resource type="PackedScene" uid="uid://ccombateff01" path="res://scenes/effects/CombatEffectNode.tscn" id="3_qifjx"]
-[ext_resource type="PackedScene" uid="uid://dm4r7wfxbp3te" path="res://scenes/system/RerouteArrowNode.tscn" id="4_dke22"]
-[ext_resource type="Texture2D" uid="uid://bqg8m2xnho5vy" path="res://assets/images/stars01_v1.jpg" id="5_qifjx"]
 [ext_resource type="PackedScene" uid="uid://c5snd4x7yqbr2" path="res://scenes/ui/SpeedControlPanel.tscn" id="6_speed"]
 [ext_resource type="PackedScene" uid="uid://cntdwntmr1234" path="res://scenes/ui/CountdownTimerNode.tscn" id="7_timer"]
+[ext_resource type="Script" uid="uid://dnn2emct8nxra" path="res://scripts/nodes/SpaceBackgroundNode.cs" id="script_spacebg"]
+[ext_resource type="Shader" uid="uid://cv8wn7xycdhsw" path="res://shaders/space_background.gdshader" id="shader_spacebg"]
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_spacebg"]
+seed = 1
+frequency = 0.0126
+fractal_lacunarity = 1.0
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_spacebg"]
+width = 1024
+height = 1024
+generate_mipmaps = false
+noise = SubResource("FastNoiseLite_spacebg")
+seamless = true
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_spacebg"]
+shader = ExtResource("shader_spacebg")
+shader_parameter/stars_on = true
+shader_parameter/stars_flicker = true
+shader_parameter/timeScaleFactor = 0.018
+shader_parameter/noise_texture = SubResource("NoiseTexture2D_spacebg")
+shader_parameter/colour_muiltiplier = Color(1, 1, 1, 1)
+shader_parameter/colour_muiltiplier2 = Color(1, 1, 1, 1)
+shader_parameter/brightness = 1.6270000772825
+shader_parameter/clouds_resolution = 4.614000219165
+shader_parameter/clouds_intesity = 0.0780000078961
+shader_parameter/waveyness = 7.0000003325
+shader_parameter/fragmentation = 5.0000002375
+shader_parameter/distortion = 1.0000000475
+shader_parameter/clouds_alpha = 0.55600001337046
+shader_parameter/movement = 0.7499999904540701
+shader_parameter/blur = 1.09200005187
+shader_parameter/blur2 = 0.00800000038
+shader_parameter/bg_speed = 0.3
+shader_parameter/mid_speed = 1.0
+shader_parameter/fg_speed = 0.4
+shader_parameter/fromColor = Color(0.2, 0.2, 0.2, 1)
+shader_parameter/toColor = Color(0.13037175, 0.21188805, 0.26032653, 1)
+shader_parameter/colorChangeTimeScale = 0.050000002375
+shader_parameter/star_density = 0.98199998005314
+shader_parameter/star_size = 0.10000000405148
+shader_parameter/star_flicker_speed = 0.50000002049012
+shader_parameter/camera_position = Vector2(0, 0)
+shader_parameter/camera_zoom = 1.0
+shader_parameter/parallax_pan_factor = 0.050000002375
+shader_parameter/parallax_zoom_factor = 0.10000000475
 
 [node name="Level" type="Node2D" unique_id=2067866758]
 script = ExtResource("1")
 PreviewSeed = -1
-_pressWorldPos = Vector2(0, 0)
-_ghostFleetRadius = 8.0
-_ghostFleetFill = Color(0.9, 0.2, 0.2, 0.3)
-_ghostFleetOutline = Color(1, 0.3, 0, 1)
-_ghostFleetOutlineWidth = 0.5
-_defenderBonus = 1.0
-_systemRadius = 50.0
-_transitDurationSeconds = 1.2
-_transitFleetScene = ExtResource("2_kl8ac")
-_combatEffectScene = ExtResource("3_qifjx")
-_fogEnabled = true
-_fogClearSeconds = 1.5
-_fadeOutSeconds = 4.0
-_fadeOverlay = null
-_selectionPanel = null
-_aiSystemPanel = null
-_notificationPanel = null
-_endConditionReached = false
-_objectiveSystemIndex = -1
-_targetPlayerOwner = 0
-_defendSystemIndex = -1
-_countdownTimer = null
-_resolvedMissionDescription = ""
-_chatWindow = null
-_camera = null
-_infoButton = null
-_aiController = null
-_lastSystemClickTime = -1.7976931348623157e+308
-_lastClickedSystemIndex = -1
-_rerouteButtonNode = null
-_forgeButtonNode = null
-_fortifyButtonNode = null
-_splitButtonNode = null
-_isPickingRerouteTarget = false
-_rerouteArrowScene = ExtResource("4_dke22")
-_selectedFleetSlot = -1
+
+[node name="Background" type="CanvasLayer" parent="." unique_id=200200200]
+layer = -10
+
+[node name="SpaceBackground" type="ColorRect" parent="Background" unique_id=200200201]
+material = SubResource("ShaderMaterial_spacebg")
+offset_right = 480.0
+offset_bottom = 720.0
+mouse_filter = 2
+script = ExtResource("script_spacebg")
 
 [node name="PersistentUI" type="CanvasLayer" parent="." unique_id=100100100]
 layer = 10
 
-[node name="SpeedControlPanel" parent="PersistentUI" instance=ExtResource("6_speed") unique_id=100100101]
+[node name="SpeedControlPanel" parent="PersistentUI" unique_id=100100101 instance=ExtResource("6_speed")]
 unique_name_in_owner = true
+anchors_preset = 1
 
-[node name="CountdownTimerNode" parent="PersistentUI" instance=ExtResource("7_timer") unique_id=100100102]
+[node name="CountdownTimerNode" parent="PersistentUI" unique_id=100100102 instance=ExtResource("7_timer")]
 unique_name_in_owner = true
 visible = false
-
-[node name="Stars01V1" type="Sprite2D" parent="." unique_id=2051090164]
-visible = false
-modulate = Color(1, 1, 1, 0.39215687)
-z_index = -2
-y_sort_enabled = true
-texture_repeat = 2
-position = Vector2(8.999985, 1517)
-scale = Vector2(0.397, 0.4)
-texture = ExtResource("5_qifjx")
+layout_mode = 3
+anchors_preset = 1
+offset_left = -80.0
+offset_top = 0.0
+offset_right = 0.0
+offset_bottom = 36.0
