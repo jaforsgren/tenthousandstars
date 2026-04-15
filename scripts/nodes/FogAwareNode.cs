@@ -8,7 +8,7 @@ public abstract partial class FogAwareNode : Node2D
 
 	private Tween? _fogTween;
 
-	public FogState FogState { get; private set; } = FogState.Revealed;
+	public FogState FogState { get; private set; } = FogState.Hidden;
 
 	public void SetFogState(FogState fogState, float clearSeconds)
 	{

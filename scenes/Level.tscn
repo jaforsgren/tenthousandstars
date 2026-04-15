@@ -22,7 +22,7 @@ seamless = true
 shader = ExtResource("shader_spacebg")
 shader_parameter/stars_on = true
 shader_parameter/stars_flicker = true
-shader_parameter/timeScaleFactor = 0.018
+shader_parameter/timeScaleFactor = 0.004
 shader_parameter/noise_texture = SubResource("NoiseTexture2D_spacebg")
 shader_parameter/colour_muiltiplier = Color(1, 1, 1, 1)
 shader_parameter/colour_muiltiplier2 = Color(1, 1, 1, 1)
@@ -53,11 +53,45 @@ shader_parameter/parallax_zoom_factor = 0.10000000475
 [node name="Level" type="Node2D" unique_id=2067866758]
 script = ExtResource("1")
 PreviewSeed = -1
+_pressWorldPos = Vector2(0, 0)
+_ghostFleetRadius = 0.0
+_ghostFleetFill = Color(0, 0, 0, 0)
+_ghostFleetOutline = Color(0, 0, 0, 0)
+_ghostFleetOutlineWidth = 0.0
+_defenderBonus = 0.0
+_systemRadius = 0.0
+_transitDurationSeconds = 0.0
+_transitFleetScene = null
+_combatEffectScene = null
+_fogEnabled = false
+_fogClearSeconds = 0.0
+_fadeOutSeconds = 0.0
+_camera = null
+_aiController = null
+_gameController = null
+_levelUi = null
+_lastSystemClickTime = -1.7976931348623157e+308
+_lastClickedSystemIndex = -1
+_isPickingRerouteTarget = false
+_rerouteArrowScene = null
+_selectedFleetSlot = -1
+_speedControlPanel = null
+_countdownTimer = null
+_debugOverlay = null
+_endConditionReached = false
+_objectiveSystemIndex = -1
 
 [node name="Background" type="CanvasLayer" parent="." unique_id=200200200]
 layer = -10
 
 [node name="SpaceBackground" type="ColorRect" parent="Background" unique_id=200200201]
+material = SubResource("ShaderMaterial_spacebg")
+offset_right = 480.0
+offset_bottom = 720.0
+mouse_filter = 2
+script = ExtResource("script_spacebg")
+
+[node name="SpaceBackground2" type="ColorRect" parent="Background" unique_id=196979957]
 material = SubResource("ShaderMaterial_spacebg")
 offset_right = 480.0
 offset_bottom = 720.0

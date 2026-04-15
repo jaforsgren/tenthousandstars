@@ -51,16 +51,24 @@ internal sealed class FogSystem
 				scoutedByPlayer.Add(neighbor);
 		}
 
+		var baseStates = new FogState[_systems.Count];
+
 		for (var i = 0; i < _systems.Count; i++)
 		{
-			FogState state;
+			FogState baseState;
 			if (_systems[i].IsPlayerOwned)
-				state = FogState.Revealed;
+				baseState = FogState.Revealed;
 			else if (scoutedByPlayer.Contains(i))
-				state = FogState.Scouted;
+				baseState = FogState.Scouted;
 			else
-				state = FogState.Hidden;
-			var permanent = (FogState)Math.Max((int)state, (int)_systems[i].FogState);
+				baseState = FogState.Hidden;
+
+			baseStates[i] = baseState;
+
+			var displayState = (baseState == FogState.Scouted && _systems[i].IsAiOwned)
+				? FogState.Revealed
+				: baseState;
+			var permanent = (FogState)Math.Max((int)displayState, (int)_systems[i].FogState);
 			_systems[i].SetFogState(permanent, _fogClearSeconds);
 		}
 
@@ -69,11 +77,11 @@ internal sealed class FogSystem
 
 		foreach (var (from, to, routeNode) in _routeNodes)
 		{
-			var fromState = _systems[from].FogState;
-			var toState = _systems[to].FogState;
+			var fromState = baseStates[from];
+			var toState = baseStates[to];
 
 			FogState routeState;
-			if (fromState == FogState.Hidden && toState == FogState.Hidden)
+			if (fromState == FogState.Hidden || toState == FogState.Hidden)
 				routeState = FogState.Hidden;
 			else if (fromState == FogState.Revealed || toState == FogState.Revealed)
 				routeState = FogState.Revealed;
