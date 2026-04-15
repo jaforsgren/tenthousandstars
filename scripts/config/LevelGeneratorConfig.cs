@@ -7,7 +7,6 @@ public record LevelGeneratorConfig(
 	float Margin,
 	float SpawnWidth,
 	float SpawnHeight,
-	float PlanetProductionRate,
 	float MinOrbit,
 	float MaxOrbit,
 	float MinPlanetSize,

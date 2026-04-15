@@ -27,10 +27,10 @@ public static class LevelGenerator
 {
     private static readonly SystemOwner[] AiOwners = [SystemOwner.Ai1, SystemOwner.Ai2, SystemOwner.Ai3, SystemOwner.Ai4];
 
-    public static LevelData Generate(Random rng, LevelGeneratorConfig cfg, AiConfig aiCfg, AiNamingConfig aiNamingCfg)
+    public static LevelData Generate(Random rng, LevelGeneratorConfig cfg, AiConfig aiCfg, AiNamingConfig aiNamingCfg, SystemConfig sysCfg)
     {
         var count = rng.Next(cfg.MinSystems, cfg.MaxSystems + 1);
-        var systems = PlaceSystems(rng, count, (int)cfg.SpawnWidth, (int)cfg.SpawnHeight, cfg);
+        var systems = PlaceSystems(rng, count, (int)cfg.SpawnWidth, (int)cfg.SpawnHeight, cfg, sysCfg.PlanetProductionRate);
         var routes = BuildRoutes(rng, systems, cfg);
         var withPlayer = AssignPlayerStart(rng, systems);
         var opponentCount = rng.Next(aiCfg.MinOpponents, aiCfg.MaxOpponents + 1);
@@ -85,7 +85,7 @@ public static class LevelGenerator
         ).ToList();
     }
 
-    private static IReadOnlyList<SystemData> PlaceSystems(Random rng, int count, int width, int height, LevelGeneratorConfig cfg)
+    private static IReadOnlyList<SystemData> PlaceSystems(Random rng, int count, int width, int height, LevelGeneratorConfig cfg, float planetProductionRate)
     {
         var positions = new List<Vector2>();
         var attempts = cfg.MaxPlacementAttempts;
@@ -100,7 +100,7 @@ public static class LevelGenerator
                 positions.Add(candidate);
         }
 
-        return positions.ConvertAll(p => new SystemData(p, GeneratePlanets(rng, cfg)));
+        return positions.ConvertAll(p => new SystemData(p, GeneratePlanets(rng, cfg, planetProductionRate)));
     }
 
     private static bool IsWellSpaced(Vector2 candidate, List<Vector2> placed, float minSpacing)
@@ -110,7 +110,7 @@ public static class LevelGenerator
         return true;
     }
 
-    private static IReadOnlyList<Planet> GeneratePlanets(Random rng, LevelGeneratorConfig cfg)
+    private static IReadOnlyList<Planet> GeneratePlanets(Random rng, LevelGeneratorConfig cfg, float planetProductionRate)
     {
         var count = rng.Next(0, 6);
         var planets = new List<Planet>(count);
@@ -121,7 +121,7 @@ public static class LevelGenerator
             var orbit = cfg.MinOrbit + (float)rng.NextDouble() * (cfg.MaxOrbit - cfg.MinOrbit);
             var angle = angleStep * i + (float)(rng.NextDouble() * 0.4);
             var size = cfg.MinPlanetSize + (float)rng.NextDouble() * (cfg.MaxPlanetSize - cfg.MinPlanetSize);
-            planets.Add(new Planet(cfg.PlanetProductionRate, orbit, angle, size));
+            planets.Add(new Planet(planetProductionRate, orbit, angle, size));
         }
 
         return planets;

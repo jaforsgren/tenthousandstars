@@ -15,6 +15,7 @@ public partial class StoryDebugScene : Control
 	private RichTextLabel _outputText = null!;
 
 	private StoryText? _outro;
+	private StoryState? _outroState;
 
 	private static readonly string[] ArchetypeIds = ["falling_empire", "rising_power", "conquest"];
 	private static readonly string[] ArchetypeLabels = ["Falling Empire", "Rising Power", "Conquest"];
@@ -43,6 +44,7 @@ public partial class StoryDebugScene : Control
 	private void OnGeneratePressed()
 	{
 		_outro = null;
+		_outroState = null;
 		_previewOutroButton.Disabled = true;
 
 		foreach (Node child in _interludePreviewButtons.GetChildren())
@@ -98,9 +100,9 @@ public partial class StoryDebugScene : Control
 			// ── Interlude ──
 			if (ctx.Interlude != null)
 			{
-				var capturedInterlude = ctx.Interlude;
+				var capturedCtx = ctx;
 				var capturedLabel = $"Interlude {i + 1}";
-				AddPreviewButton(capturedLabel, () => ShowNarrativePreview(capturedInterlude));
+				AddPreviewButton(capturedLabel, () => ShowNarrativePreview(capturedCtx));
 
 				AppendSubheader(sb, "INTERLUDE");
 				if (!string.IsNullOrEmpty(ctx.Interlude.Title))
@@ -173,6 +175,7 @@ public partial class StoryDebugScene : Control
 		if (controller.IsCampaignComplete)
 		{
 			_outro = controller.GenerateOutro();
+			_outroState = controller.CurrentState;
 			_previewOutroButton.Disabled = false;
 
 			AppendHeader(sb, "OUTRO");
@@ -216,26 +219,28 @@ public partial class StoryDebugScene : Control
 		_interludePreviewButtons.AddChild(btn);
 	}
 
-	private void ShowNarrativePreview(StoryText storyText)
+	private void ShowNarrativePreview(MissionContext ctx)
 	{
+		var data = NarrativePageData.FromMission(ctx);
 		var layer = new CanvasLayer { Layer = 20 };
 		AddChild(layer);
-		var panel = GD.Load<PackedScene>("res://scenes/ui/NarrativePanel.tscn").Instantiate<NarrativePanel>();
-		layer.AddChild(panel);
-		panel.ShowDismissable(storyText.Title, storyText.Body, GetViewport().GetVisibleRect().Size, () => layer.QueueFree());
+		var screen = GD.Load<PackedScene>("res://scenes/ui/NarrativeScreen.tscn").Instantiate<NarrativeScreen>();
+		layer.AddChild(screen);
+		screen.ShowMissionBrief(data, onStartMission: () => layer.QueueFree());
 	}
 
 	private void ShowOutroPreview()
 	{
-		if (_outro == null) return;
+		if (_outro == null || _outroState == null) return;
+		var data = NarrativePageData.FromOutro(_outro, _outroState);
 		var layer = new CanvasLayer { Layer = 20 };
 		AddChild(layer);
-		var panel = GD.Load<PackedScene>("res://scenes/ui/NarrativePanel.tscn").Instantiate<NarrativePanel>();
-		layer.AddChild(panel);
-		panel.ShowWithActions(_outro.Title, _outro.Body, GetViewport().GetVisibleRect().Size);
-		panel.NewCampaignPressed += () => layer.QueueFree();
-		panel.RandomMissionsPressed += () => layer.QueueFree();
-		panel.QuitPressed += () => layer.QueueFree();
+		var screen = GD.Load<PackedScene>("res://scenes/ui/NarrativeScreen.tscn").Instantiate<NarrativeScreen>();
+		layer.AddChild(screen);
+		screen.ShowOutro(data);
+		screen.NewCampaignPressed += () => layer.QueueFree();
+		screen.RandomMissionsPressed += () => layer.QueueFree();
+		screen.QuitPressed += () => layer.QueueFree();
 	}
 
 	// ── Input parsing ──
@@ -258,11 +263,5 @@ public partial class StoryDebugScene : Control
 		return result;
 	}
 
-	private static string GetArchetypeName(string id) => id switch
-	{
-		"falling_empire" => "The Falling Empire",
-		"rising_power"   => "The Rising Power",
-		"conquest"       => "Total Conquest",
-		_                => id
-	};
+	private static string GetArchetypeName(string id) => NarrativePageData.ArchetypeName(id);
 }

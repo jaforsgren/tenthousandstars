@@ -4,6 +4,7 @@ public record SystemConfig(
 	float SystemRadius,
 	float FleetCircleGap,
 	float BaseProduction,
+	float PlanetProductionRate,
 	float LabelWidth,
 	float LabelHeight,
 	ColorData SystemFill,

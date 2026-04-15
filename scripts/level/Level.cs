@@ -122,8 +122,9 @@ public partial class Level : Node2D
 		var genCfg = ConfigLoader.Load<LevelGeneratorConfig>("res://config/level_generator.json");
 		var aiCfg = ConfigLoader.Load<AiConfig>("res://config/ai.json");
 		var aiNamingCfg = ConfigLoader.Load<AiNamingConfig>("res://config/ai_naming.json");
+		var sysCfg = ConfigLoader.Load<SystemConfig>("res://config/system.json");
 		var seed = PreviewSeed != UnsetSeed ? PreviewSeed : levelCfg.DefaultPreviewSeed;
-		Build(LevelGenerator.Generate(new Random(seed), genCfg, aiCfg, aiNamingCfg));
+		Build(LevelGenerator.Generate(new Random(seed), genCfg, aiCfg, aiNamingCfg, sysCfg), sysCfg);
 	}
 
 	private void GenerateRuntime()
@@ -132,10 +133,11 @@ public partial class Level : Node2D
 		var genCfg = ConfigLoader.Load<LevelGeneratorConfig>("res://config/level_generator.json");
 		var aiCfg = ConfigLoader.Load<AiConfig>("res://config/ai.json");
 		var aiNamingCfg = ConfigLoader.Load<AiNamingConfig>("res://config/ai_naming.json");
+		var sysCfg = ConfigLoader.Load<SystemConfig>("res://config/system.json");
 
 		_barkConfig = ConfigLoader.Load<BarkConfig>("res://config/barks.json");
-		var data = LevelGenerator.Generate(_rng, genCfg, aiCfg, aiNamingCfg);
-		Build(data);
+		var data = LevelGenerator.Generate(_rng, genCfg, aiCfg, aiNamingCfg, sysCfg);
+		Build(data, sysCfg);
 		_aiPlayers = data.AiPlayers;
 
 		var endStateCfg = ConfigLoader.Load<EndStateConfig>("res://config/end_states.json");
@@ -152,8 +154,7 @@ public partial class Level : Node2D
 		}
 
 		EndCondition? activeCondition;
-		string? missionDescription;
-		StoryText? pendingInterlude;
+		NarrativePageData? missionBriefPage;
 		ScenarioDefinition[] pendingScenarios;
 
 		var narrative = GameSession.NarrativeController;
@@ -164,15 +165,13 @@ public partial class Level : Node2D
 				narrative.UpdateEnemy(primaryAi);
 			var missionContext = narrative.GetNextMission();
 			activeCondition = missionContext.Condition.ToEndCondition();
-			missionDescription = missionContext.Briefing;
-			pendingInterlude = missionContext.Interlude;
+			missionBriefPage = NarrativePageData.FromMission(missionContext);
 			pendingScenarios = missionContext.Scenarios;
 		}
 		else
 		{
 			activeCondition = endStateCfg.Conditions[_rng.Next(endStateCfg.Conditions.Length)];
-			missionDescription = null;
-			pendingInterlude = null;
+			missionBriefPage = null;
 			pendingScenarios = LoadRandomModeScenarios();
 		}
 
@@ -189,7 +188,7 @@ public partial class Level : Node2D
 		AddChild(_gameController);
 		_gameController.GameEnded += () => _endConditionReached = true;
 		_gameController.Initialize(
-			activeCondition, endStateCfg, missionDescription, pendingInterlude,
+			activeCondition, endStateCfg, missionBriefPage,
 			_routeSet, _systems, _aiPlayers, _rng, _levelUi, _camera, _countdownTimer, _fadeOutSeconds);
 
 		_objectiveSystemIndex = _gameController.ObjectiveSystemIndex;
@@ -217,9 +216,8 @@ public partial class Level : Node2D
 		}
 	}
 
-	private void Build(LevelData data)
+	private void Build(LevelData data, SystemConfig sysCfg)
 	{
-		var sysCfg = ConfigLoader.Load<SystemConfig>("res://config/system.json");
 		var aiCfg = ConfigLoader.Load<AiConfig>("res://config/ai.json");
 		_ghostFleetRadius = sysCfg.LabelHeight / 2f;
 		_ghostFleetFill = sysCfg.FleetFill.ToColor();

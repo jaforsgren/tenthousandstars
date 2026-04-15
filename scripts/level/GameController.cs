@@ -16,7 +16,7 @@ internal sealed partial class GameController : Node
 	private EndCondition? _condition;
 	private EndStateConfig _endStateCfg = null!;
 	private string? _missionDescription;
-	private StoryText? _pendingInterlude;
+	private NarrativePageData? _missionBriefPage;
 	private SystemOwner _targetPlayerOwner = SystemOwner.None;
 	private int _defendSystemIndex = -1;
 
@@ -31,8 +31,7 @@ internal sealed partial class GameController : Node
 	internal void Initialize(
 		EndCondition? condition,
 		EndStateConfig endStateCfg,
-		string? missionDescription,
-		StoryText? pendingInterlude,
+		NarrativePageData? missionBriefPage,
 		HashSet<(int, int)> routeSet,
 		IReadOnlyList<SystemNode> systems,
 		IReadOnlyList<AiPlayerData> aiPlayers,
@@ -44,8 +43,7 @@ internal sealed partial class GameController : Node
 	{
 		_condition = condition;
 		_endStateCfg = endStateCfg;
-		_missionDescription = missionDescription;
-		_pendingInterlude = pendingInterlude;
+		_missionBriefPage = missionBriefPage;
 		_systems = systems;
 		_aiPlayers = aiPlayers;
 		_rng = rng;
@@ -76,8 +74,8 @@ internal sealed partial class GameController : Node
 
 	internal void StartMission()
 	{
-		if (_pendingInterlude != null)
-			SpawnNarrativePanel(_pendingInterlude, onDismiss: ShowMissionBrief);
+		if (_missionBriefPage != null)
+			SpawnNarrativeScreen(_missionBriefPage);
 		else
 			ShowMissionBrief();
 	}
@@ -164,23 +162,26 @@ internal sealed partial class GameController : Node
 	private void SpawnOutroPanel()
 	{
 		var storyText = GameSession.NarrativeController!.GenerateOutro();
+		var state = GameSession.NarrativeController!.CurrentState;
+		var data = NarrativePageData.FromOutro(storyText, state);
+
 		var layer = new CanvasLayer { Layer = 14 };
 		AddChild(layer);
-		var panel = GD.Load<PackedScene>("res://scenes/ui/NarrativePanel.tscn").Instantiate<NarrativePanel>();
-		layer.AddChild(panel);
-		panel.ShowWithActions(storyText.Title, storyText.Body, GetViewport().GetVisibleRect().Size);
-		panel.NewCampaignPressed += OnNewCampaignPressed;
-		panel.RandomMissionsPressed += OnRandomMissionsPressed;
-		panel.QuitPressed += () => GetTree().Quit();
+		var screen = GD.Load<PackedScene>("res://scenes/ui/NarrativeScreen.tscn").Instantiate<NarrativeScreen>();
+		layer.AddChild(screen);
+		screen.ShowOutro(data);
+		screen.NewCampaignPressed += OnNewCampaignPressed;
+		screen.RandomMissionsPressed += OnRandomMissionsPressed;
+		screen.QuitPressed += () => GetTree().Quit();
 	}
 
-	private void SpawnNarrativePanel(StoryText storyText, Action onDismiss)
+	private void SpawnNarrativeScreen(NarrativePageData data)
 	{
 		var layer = new CanvasLayer { Layer = 13 };
 		AddChild(layer);
-		var panel = GD.Load<PackedScene>("res://scenes/ui/NarrativePanel.tscn").Instantiate<NarrativePanel>();
-		layer.AddChild(panel);
-		panel.ShowDismissable(storyText.Title, storyText.Body, GetViewport().GetVisibleRect().Size, onDismiss);
+		var screen = GD.Load<PackedScene>("res://scenes/ui/NarrativeScreen.tscn").Instantiate<NarrativeScreen>();
+		layer.AddChild(screen);
+		screen.ShowMissionBrief(data, onStartMission: () => layer.QueueFree());
 	}
 
 	private void OnNewCampaignPressed()
