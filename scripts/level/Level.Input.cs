@@ -49,7 +49,7 @@ public partial class Level
 				_drag.IsActive = true;
 				_drag.FromIndex = _drag.CandidateIndex;
 				_drag.WorldPos = worldPos;
-				_systems[_drag.FromIndex].SetSelected(true);
+				_systems[_drag.FromIndex].RefreshFleetVisuals();
 				QueueRedraw();
 			}
 			GetViewport().SetInputAsHandled();
@@ -191,7 +191,7 @@ public partial class Level
 		}
 
 		if (!resolved)
-			_systems[_drag.FromIndex].SetSelected(false);
+			_systems[_drag.FromIndex].RefreshFleetVisuals();
 
 		_drag = DragState.None;
 		QueueRedraw();

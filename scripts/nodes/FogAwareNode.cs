@@ -6,6 +6,8 @@ public abstract partial class FogAwareNode : Node2D
 {
 	private static readonly Color ScoutedModulate = new(0.5f, 0.55f, 0.65f, 0.45f);
 
+	private Tween? _fogTween;
+
 	public FogState FogState { get; private set; } = FogState.Revealed;
 
 	public void SetFogState(FogState fogState, float clearSeconds)
@@ -25,7 +27,8 @@ public abstract partial class FogAwareNode : Node2D
 		if (previousState == FogState.Hidden)
 			Modulate = targetModulate.WithAlpha(0f);
 
-		var tween = CreateTween();
-		tween.TweenProperty(this, "modulate", targetModulate, clearSeconds);
+		_fogTween?.Kill();
+		_fogTween = CreateTween();
+		_fogTween.TweenProperty(this, "modulate", targetModulate, clearSeconds);
 	}
 }

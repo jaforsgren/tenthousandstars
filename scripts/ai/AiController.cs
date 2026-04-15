@@ -39,19 +39,7 @@ public partial class AiController : Node
 		_rng = rng;
 		_launchTransit = launchTransit;
 		_thinkTimer = config.ThinkIntervalSeconds;
-		BuildAdjacency();
-	}
-
-	private void BuildAdjacency()
-	{
-		_adjacency = new Dictionary<int, List<int>>(_systems.Count);
-		for (var i = 0; i < _systems.Count; i++)
-			_adjacency[i] = [];
-		foreach (var (from, to) in _routeSet)
-		{
-			_adjacency[from].Add(to);
-			_adjacency[to].Add(from);
-		}
+		_adjacency = GraphUtils.BuildAdjacency(_systems.Count, _routeSet);
 	}
 
 	public override void _Process(double delta)

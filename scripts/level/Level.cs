@@ -204,18 +204,6 @@ public partial class Level : Node2D
 		AddChild(_debugOverlay);
 	}
 
-	private void BuildAdjacency(int systemCount)
-	{
-		_adjacency = new Dictionary<int, List<int>>(systemCount);
-		for (var i = 0; i < systemCount; i++)
-			_adjacency[i] = [];
-		foreach (var (from, to) in _routeSet)
-		{
-			_adjacency[from].Add(to);
-			_adjacency[to].Add(from);
-		}
-	}
-
 	private void Build(LevelData data, SystemConfig sysCfg)
 	{
 		var aiCfg = ConfigLoader.Load<AiConfig>("res://config/ai.json");
@@ -235,7 +223,7 @@ public partial class Level : Node2D
 		_rerouteArrowScene = GD.Load<PackedScene>("res://scenes/system/RerouteArrowNode.tscn");
 		_upgradeCfg = ConfigLoader.Load<UpgradeConfig>("res://config/upgrade.json");
 		_routeSet = new HashSet<(int, int)>(data.Routes);
-		BuildAdjacency(data.Systems.Count);
+		_adjacency = GraphUtils.BuildAdjacency(data.Systems.Count, _routeSet);
 
 		var camCfg = ConfigLoader.Load<CameraConfig>("res://config/camera.json");
 
@@ -360,31 +348,8 @@ public partial class Level : Node2D
 				continue;
 
 			var fleet = source.TakeFleet();
-			var fromEdge = EdgeToward(source.Position, _systems[targetIndex].Position, _systemRadius);
-			var toEdge = EdgeToward(_systems[targetIndex].Position, source.Position, _systemRadius);
-			var transit = _transitFleetScene.Instantiate<TransitFleetNode>();
-			AddChild(transit);
-
-			var at = new ActiveTransit
-			{
-				FromIndex = sourceIndex,
-				ToIndex = targetIndex,
-				Owner = SystemOwner.Player,
-				Fleet = fleet,
-				LaunchTimeSec = Time.GetTicksMsec() / 1000.0,
-				TotalDurationSec = _transitDurationSeconds,
-				Node = transit,
-				ToWorldPos = toEdge
-			};
-
-			transit.Arrived += () =>
-			{
-				_transitSystem.Remove(at);
-				ResolvePlayerTransitArrival(at.ToIndex, at.Fleet);
-			};
-
-			transit.Launch(fromEdge, toEdge, _ghostFleetOutline, _transitDurationSeconds);
-			RegisterTransit(at);
+			LaunchTransit(sourceIndex, targetIndex, fleet, SystemOwner.Player, _ghostFleetOutline,
+				(toIdx, f) => ResolvePlayerTransitArrival(toIdx, f));
 
 			fogUpdateNeeded = true;
 		}

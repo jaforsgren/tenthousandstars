@@ -221,7 +221,7 @@ public partial class SystemNode : FogAwareNode
 			DrawArc(Vector2.Zero, _systemRadius + AiOwnerRingGap, 0f, Mathf.Tau, 64, _aiOwnerColor.Value, AiOwnerRingWidth);
 	}
 
-	public void SetSelected(bool selected)
+	public void RefreshFleetVisuals()
 	{
 		for (var i = 0; i < _fleetNodes.Count; i++)
 			_fleetNodes[i].UpdateFleet(_fleetShips[i]);

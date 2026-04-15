@@ -5,6 +5,19 @@ namespace Tts;
 
 public static class GraphUtils
 {
+	public static Dictionary<int, List<int>> BuildAdjacency(int nodeCount, IEnumerable<(int, int)> edges)
+	{
+		var adj = new Dictionary<int, List<int>>(nodeCount);
+		for (var i = 0; i < nodeCount; i++)
+			adj[i] = [];
+		foreach (var (from, to) in edges)
+		{
+			adj[from].Add(to);
+			adj[to].Add(from);
+		}
+		return adj;
+	}
+
 	public static int[] BfsHopDistances(int startIndex, int nodeCount, IEnumerable<(int From, int To)> edges)
 	{
 		var distances = new int[nodeCount];

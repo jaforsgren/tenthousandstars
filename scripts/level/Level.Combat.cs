@@ -1,3 +1,4 @@
+using System;
 using Godot;
 
 namespace Tts;
@@ -5,6 +6,10 @@ namespace Tts;
 public partial class Level
 {
 	private void LaunchPlayerTransit(int fromIndex, int toIndex, float fleet)
+		=> LaunchTransit(fromIndex, toIndex, fleet, SystemOwner.Player, _ghostFleetOutline,
+			(toIdx, f) => ResolvePlayerTransitArrival(toIdx, f));
+
+	private void LaunchTransit(int fromIndex, int toIndex, float fleet, SystemOwner owner, Color dotColor, Action<int, float> onArrival)
 	{
 		var fromEdge = EdgeToward(_systems[fromIndex].Position, _systems[toIndex].Position, _systemRadius);
 		var toEdge = EdgeToward(_systems[toIndex].Position, _systems[fromIndex].Position, _systemRadius);
@@ -16,7 +21,7 @@ public partial class Level
 		{
 			FromIndex = fromIndex,
 			ToIndex = toIndex,
-			Owner = SystemOwner.Player,
+			Owner = owner,
 			Fleet = fleet,
 			LaunchTimeSec = Time.GetTicksMsec() / 1000.0,
 			TotalDurationSec = _transitDurationSeconds,
@@ -27,10 +32,10 @@ public partial class Level
 		transit.Arrived += () =>
 		{
 			_transitSystem.Remove(at);
-			ResolvePlayerTransitArrival(at.ToIndex, at.Fleet);
+			onArrival(at.ToIndex, at.Fleet);
 		};
 
-		transit.Launch(fromEdge, toEdge, _ghostFleetOutline, _transitDurationSeconds);
+		transit.Launch(fromEdge, toEdge, dotColor, _transitDurationSeconds);
 		RegisterTransit(at);
 	}
 
@@ -73,32 +78,8 @@ public partial class Level
 		}
 
 		var dotColor = _aiColors[aiPlayer.Owner];
-		var fromEdge = EdgeToward(_systems[fromIndex].Position, _systems[toIndex].Position, _systemRadius);
-		var toEdge = EdgeToward(_systems[toIndex].Position, _systems[fromIndex].Position, _systemRadius);
-
-		var transit = _transitFleetScene.Instantiate<TransitFleetNode>();
-		AddChild(transit);
-
-		var at = new ActiveTransit
-		{
-			FromIndex = fromIndex,
-			ToIndex = toIndex,
-			Owner = aiPlayer.Owner,
-			Fleet = fleet,
-			LaunchTimeSec = Time.GetTicksMsec() / 1000.0,
-			TotalDurationSec = _transitDurationSeconds,
-			Node = transit,
-			ToWorldPos = toEdge
-		};
-
-		transit.Arrived += () =>
-		{
-			_transitSystem.Remove(at);
-			ResolveAiTransitArrival(at.ToIndex, at.Fleet, aiPlayer.Owner, aiPlayer, dotColor);
-		};
-
-		transit.Launch(fromEdge, toEdge, dotColor, _transitDurationSeconds);
-		RegisterTransit(at);
+		LaunchTransit(fromIndex, toIndex, fleet, aiPlayer.Owner, dotColor,
+			(toIdx, f) => ResolveAiTransitArrival(toIdx, f, aiPlayer.Owner, aiPlayer, dotColor));
 	}
 
 	private void ResolveAiTransitArrival(int toIndex, float fleet, SystemOwner senderOwner, AiPlayerData aiPlayer, Godot.Color aiOwnerColor)
