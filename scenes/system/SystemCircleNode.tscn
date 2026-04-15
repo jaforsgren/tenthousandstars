@@ -2,34 +2,49 @@
 
 [ext_resource type="Texture2D" uid="uid://cvngafkmuwdnh" path="res://assets/images/systems/circle dashed.svg" id="2_1s7tc"]
 [ext_resource type="Texture2D" uid="uid://bfhh8rlhweacc" path="res://assets/images/systems/circle dash-5-40.svg" id="2_x51l5"]
+[ext_resource type="Shader" uid="uid://cshl34icsfdpy" path="res://shaders/sun.gdshader" id="shader_sun"]
 
-[sub_resource type="CanvasItemMaterial" id="CanvasItemMaterial_ps4o4"]
-blend_mode = 1
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_sun"]
+seed = 7
+frequency = 0.012
 
-[sub_resource type="Gradient" id="Gradient_sygu2"]
-interpolation_mode = 2
-interpolation_color_space = 2
-offsets = PackedFloat32Array(0, 0.036101084, 0.299639, 0.71119136)
-colors = PackedColorArray(1.5448625, 1.0405341, 0.7555223, 0.9843137, 1.2870692, 0.8580292, 0.6163186, 0.98944354, 0.406631, 0.25874728, 0.17547049, 0.99570036, 0, 0, 0, 1)
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_sun"]
+noise = SubResource("FastNoiseLite_sun")
+seamless = true
 
-[sub_resource type="GradientTexture2D" id="GradientTexture2D_klkxq"]
-gradient = SubResource("Gradient_sygu2")
-fill = 1
-fill_from = Vector2(0.4957265, 0.5192308)
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_sun"]
+shader = ExtResource("shader_sun")
+shader_parameter/timeScaleFactor = 0.02
+shader_parameter/noise_texture = SubResource("NoiseTexture2D_sun")
+shader_parameter/brightness = 1.8330000870675
+shader_parameter/clouds_resolution = 3.84400018259
+shader_parameter/clouds_intesity = 0.05
+shader_parameter/waveyness = 1.7010000807974999
+shader_parameter/fragmentation = 4.790000227525
+shader_parameter/distortion = 1.5
+shader_parameter/clouds_alpha = 0.5
+shader_parameter/movement = 1.16800001030907
+shader_parameter/blur = 1.0410000494475
+shader_parameter/blur2 = 0.01
+shader_parameter/bg_speed = 0.2
+shader_parameter/mid_speed = 0.6
+shader_parameter/fg_speed = 1.0
+shader_parameter/fromColor = Color(0.8519727, 0.72309965, 0.5610586, 1)
+shader_parameter/toColor = Color(0.99999994, 0.5765271, 0.2743176, 1)
+shader_parameter/colorChangeTimeScale = 0.0
+shader_parameter/circle_radius = 0.48
+shader_parameter/edge_softness = 0.070000003325
 
 [node name="SystemCircleNode" type="Node2D" unique_id=1335027929]
 
-[node name="sun gradient" type="Sprite2D" parent="." unique_id=1116226013]
-material = SubResource("CanvasItemMaterial_ps4o4")
-position = Vector2(9.536743e-07, 0)
-scale = Vector2(1.6761252, 1.472125)
-texture = SubResource("GradientTexture2D_klkxq")
-
-[node name="sun glare gradient" type="Sprite2D" parent="." unique_id=35142583]
-material = SubResource("CanvasItemMaterial_ps4o4")
-position = Vector2(-4.7683716e-07, 0)
-scale = Vector2(0.106125005, 0.09512499)
-texture = SubResource("GradientTexture2D_klkxq")
+[node name="SunVisual" type="ColorRect" parent="." unique_id=1116226020]
+material = SubResource("ShaderMaterial_sun")
+offset_left = -20.0
+offset_top = -21.0
+offset_right = 20.0
+offset_bottom = 19.0
+mouse_filter = 2
+metadata/_edit_use_anchors_ = true
 
 [node name="CircleDashed" type="Sprite2D" parent="." unique_id=1452468083]
 scale = Vector2(0.21, 0.21)

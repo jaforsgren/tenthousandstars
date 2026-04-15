@@ -5,39 +5,56 @@ namespace Tts;
 public partial class PlanetNode : Node2D
 {
 	private float _size;
-	private Color _fill;
-	private Color _outline;
-	private float _outlineWidth;
+	private float _orbitRadius;
+	private float _orbitAngle;
+	private float _orbitSpeed;
+	private ShaderMaterial _material = null!;
+	private ColorRect _visualRect = null!;
 
 	private const float MinTapRadius = 10f;
-	private const int ArcSegments = 16;
 	private const string VisualScenePath = "res://scenes/system/PlanetNode.tscn";
 
 	public override void _Ready()
 	{
 		var scene = GD.Load<PackedScene>(VisualScenePath);
-		if (scene != null)
-			AddChild(scene.Instantiate());
+		if (scene == null) return;
+		var visual = scene.Instantiate();
+		AddChild(visual);
+		_visualRect = visual.GetNode<ColorRect>("PlanetVisual");
+		_material = (ShaderMaterial)_visualRect.Material.Duplicate();
+		_visualRect.Material = _material;
 	}
 
-	public void Initialize(Planet planet, Color fill, Color outline, float outlineWidth)
+	public void Initialize(Planet planet, Color innerColor, Color outerColor, float orbitSpeed)
 	{
 		_size = planet.Size;
-		_fill = fill;
-		_outline = outline;
-		_outlineWidth = outlineWidth;
+		_orbitRadius = planet.OrbitRadius;
+		_orbitAngle = planet.OrbitAngle;
+		_orbitSpeed = orbitSpeed;
+
 		Position = new Vector2(
-			Mathf.Cos(planet.OrbitAngle) * planet.OrbitRadius,
-			Mathf.Sin(planet.OrbitAngle) * planet.OrbitRadius
+			Mathf.Cos(_orbitAngle) * _orbitRadius,
+			Mathf.Sin(_orbitAngle) * _orbitRadius
 		);
+
+		_visualRect.Size = new Vector2(_size * 2f, _size * 2f);
+		_visualRect.Position = new Vector2(-_size, -_size);
+		_material.SetShaderParameter("color_inner", innerColor);
+		_material.SetShaderParameter("color_outer", outerColor);
+		_material.SetShaderParameter("gradient_direction", (-Position).Normalized());
 	}
 
 	public bool ContainsPoint(Vector2 worldPos)
 		=> worldPos.DistanceTo(GlobalPosition) <= Mathf.Max(_size, MinTapRadius);
 
-	public override void _Draw()
+	public override void _Process(double delta)
 	{
-		DrawCircle(Vector2.Zero, _size, _fill);
-		DrawArc(Vector2.Zero, _size, 0f, Mathf.Tau, ArcSegments, _outline, _outlineWidth);
+		if (Engine.IsEditorHint()) return;
+		_orbitAngle += _orbitSpeed * (float)delta;
+		Position = new Vector2(
+			Mathf.Cos(_orbitAngle) * _orbitRadius,
+			Mathf.Sin(_orbitAngle) * _orbitRadius
+		);
+		_material.SetShaderParameter("gradient_direction", (-Position).Normalized());
 	}
 }

@@ -1,4 +1,5 @@
 using Godot;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -17,11 +18,10 @@ public partial class SystemNode : FogAwareNode
 	private float _fleetCircleGap;
 	private float _labelWidth;
 	private float _baseProduction;
-	private Color _planetFill;
-	private Color _planetOutline;
-	private float _planetOutlineWidth;
 	private Color _playerSystemOutline;
 	private Color _neutralSystemOutline;
+	private PlanetGradient[] _planetGradients = [];
+	private float _planetOrbitSpeed;
 
 	private SystemCircleNode _systemCircle = null!;
 	private readonly List<PlanetNode> _planetNodes = [];
@@ -242,7 +242,9 @@ public partial class SystemNode : FogAwareNode
 		{
 			var planetNode = new PlanetNode();
 			AddChild(planetNode);
-			planetNode.Initialize(planet, _planetFill, _planetOutline, _planetOutlineWidth);
+			var gi = Math.Abs((int)(planet.OrbitAngle * 10000f)) % _planetGradients.Length;
+			var gradient = _planetGradients[gi];
+			planetNode.Initialize(planet, gradient.Inner.ToColor(), gradient.Outer.ToColor(), _planetOrbitSpeed);
 			_planetNodes.Add(planetNode);
 		}
 
@@ -266,9 +268,8 @@ public partial class SystemNode : FogAwareNode
 		_baseProduction = cfg.BaseProduction;
 		_playerSystemOutline = cfg.SystemOutline.ToColor();
 		_neutralSystemOutline = cfg.NeutralSystemOutline.ToColor();
-		_planetFill = cfg.PlanetFill.ToColor();
-		_planetOutline = cfg.PlanetOutline.ToColor();
-		_planetOutlineWidth = cfg.PlanetOutlineWidth;
+		_planetGradients = cfg.PlanetGradients;
+		_planetOrbitSpeed = cfg.PlanetOrbitSpeed;
 		var upgradeCfg = ConfigLoader.Load<UpgradeConfig>("res://config/upgrade.json");
 		_forgeProductionBonus = upgradeCfg.ForgeProductionBonus;
 		_fortifyDefenseBonusMultiplier = upgradeCfg.FortifyDefenseBonusMultiplier;
