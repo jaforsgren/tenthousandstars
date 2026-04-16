@@ -3,28 +3,38 @@
 [ext_resource type="Script" uid="uid://cs4gown0xvkt8" path="res://scripts/ui/CountdownTimerNode.cs" id="1_script"]
 [ext_resource type="LabelSettings" uid="uid://d3o3fa7cpfaii" path="res://scenes/ui/LabelTitle.tres" id="2_lbltitle"]
 
+[sub_resource type="Theme" id="Theme_jxxf3"]
+
 [node name="CountdownTimerNode" type="Control" unique_id=1916531486]
 custom_minimum_size = Vector2(80, 36)
+layout_mode = 3
+anchors_preset = 1
 anchor_left = 1.0
 anchor_right = 1.0
+offset_left = -102.0
+offset_top = 2.0
+offset_bottom = 38.0
 grow_horizontal = 0
-offset_right = -8.0
-offset_top = 55.0
 script = ExtResource("1_script")
 
-[node name="VBoxContainer" type="VBoxContainer" parent="." unique_id=1552150375]
-layout_mode = 0
-offset_right = 80.0
-offset_bottom = 36.0
+[node name="HBoxContainer" type="HBoxContainer" parent="." unique_id=1533691360]
+layout_mode = 1
+anchors_preset = -1
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_left = 0.046001434
+offset_right = -4096.0
+offset_bottom = 4.0
+theme = SubResource("Theme_jxxf3")
 
-[node name="LabelTitle" type="Label" parent="VBoxContainer" unique_id=851314175]
+[node name="LabelTitle" type="Label" parent="HBoxContainer" unique_id=851314175]
 unique_name_in_owner = true
 layout_mode = 2
 text = "TIME LEFT"
 label_settings = ExtResource("2_lbltitle")
 horizontal_alignment = 2
 
-[node name="LabelTime" type="Label" parent="VBoxContainer" unique_id=1427996711]
+[node name="LabelTime" type="Label" parent="HBoxContainer" unique_id=1427996711]
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_font_sizes/font_size = 15

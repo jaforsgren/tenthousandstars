@@ -22,7 +22,7 @@ seamless = true
 shader = ExtResource("shader_spacebg")
 shader_parameter/stars_on = true
 shader_parameter/stars_flicker = true
-shader_parameter/timeScaleFactor = 0.004
+shader_parameter/timeScaleFactor = 0.01
 shader_parameter/noise_texture = SubResource("NoiseTexture2D_spacebg")
 shader_parameter/colour_muiltiplier = Color(1, 1, 1, 1)
 shader_parameter/colour_muiltiplier2 = Color(1, 1, 1, 1)
@@ -40,7 +40,7 @@ shader_parameter/bg_speed = 0.3
 shader_parameter/mid_speed = 1.0
 shader_parameter/fg_speed = 0.4
 shader_parameter/fromColor = Color(0.2, 0.2, 0.2, 1)
-shader_parameter/toColor = Color(0.13037175, 0.21188805, 0.26032653, 1)
+shader_parameter/toColor = Color(0.12773606, 0.12773591, 0.12773594, 1)
 shader_parameter/colorChangeTimeScale = 0.050000002375
 shader_parameter/star_density = 0.98199998005314
 shader_parameter/star_size = 0.10000000405148
@@ -103,14 +103,17 @@ layer = 10
 
 [node name="SpeedControlPanel" parent="PersistentUI" unique_id=100100101 instance=ExtResource("6_speed")]
 unique_name_in_owner = true
-anchors_preset = 1
+anchors_preset = 0
+anchor_left = 0.0
+anchor_right = 0.0
+offset_top = 0.0
+offset_right = 134.0
+offset_bottom = 43.0
+grow_horizontal = 1
 
 [node name="CountdownTimerNode" parent="PersistentUI" unique_id=100100102 instance=ExtResource("7_timer")]
 unique_name_in_owner = true
-visible = false
-layout_mode = 3
-anchors_preset = 1
-offset_left = -80.0
-offset_top = 0.0
-offset_right = 0.0
-offset_bottom = 36.0
+offset_left = -108.0
+offset_top = 10.0
+offset_right = -28.0
+offset_bottom = 46.0
