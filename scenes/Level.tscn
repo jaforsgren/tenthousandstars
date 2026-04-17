@@ -6,12 +6,19 @@
 [ext_resource type="Script" uid="uid://drmxla3b0ires" path="res://scripts/nodes/CameraController.cs" id="script_camera"]
 [ext_resource type="Script" uid="uid://kyobp8kn4qbl" path="res://scripts/nodes/ColorRemapNode.cs" id="script_colorremap"]
 [ext_resource type="Script" uid="uid://c5qscvpqqh2rr" path="res://scripts/nodes/GridOverlayNode.cs" id="script_gridoverlay"]
+[ext_resource type="Script" uid="uid://dtapa24tvlynx" path="res://scripts/ui/LevelUi.cs" id="script_levelui"]
 [ext_resource type="Script" uid="uid://dnn2emct8nxra" path="res://scripts/nodes/SpaceBackgroundNode.cs" id="script_spacebg"]
 [ext_resource type="Shader" uid="uid://rjds60jhqikm" path="res://shaders/color_correction.gdshader" id="shader_cc"]
 [ext_resource type="Shader" uid="uid://8u1honyhwhvo" path="res://shaders/gradient_overlay.gdshader" id="shader_gradient"]
 [ext_resource type="Shader" uid="uid://7ydvadaulvnb" path="res://shaders/grid_overlay.gdshader" id="shader_grid"]
 [ext_resource type="Shader" uid="uid://boef3sins8d7o" path="res://shaders/color_remap.gdshader" id="shader_remap"]
 [ext_resource type="Shader" uid="uid://cv8wn7xycdhsw" path="res://shaders/space_background.gdshader" id="shader_spacebg"]
+[ext_resource type="PackedScene" uid="uid://dsam00001" path="res://scenes/ui/SystemActionMenu.tscn" id="ui_action"]
+[ext_resource type="PackedScene" uid="uid://cx4j5nai2b3dk" path="res://scenes/ui/AiSystemPanel.tscn" id="ui_ai"]
+[ext_resource type="PackedScene" uid="uid://chatwnd12345" path="res://scenes/ui/ChatWindowNode.tscn" id="ui_chat"]
+[ext_resource type="PackedScene" uid="uid://bfc704rs71xe2" path="res://scenes/ui/NotificationPanel.tscn" id="ui_notif"]
+[ext_resource type="PackedScene" uid="uid://bv3pq7n8r2sx4" path="res://scenes/ui/ScenarioPanel.tscn" id="ui_scenario"]
+[ext_resource type="PackedScene" uid="uid://eb6y3qr60wd1" path="res://scenes/ui/SelectionPanel.tscn" id="ui_sel"]
 
 [sub_resource type="FastNoiseLite" id="FastNoiseLite_spacebg"]
 seed = 1
@@ -83,28 +90,18 @@ shader_parameter/vignette_softness = 0.40000001830148
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_grid"]
 shader = ExtResource("shader_grid")
-shader_parameter/line_color = Color(1, 1, 1, 1)
-shader_parameter/bg_color = Color(0, 0, 0, 0)
-shader_parameter/grid_cell_size = 192.419
-shader_parameter/line_thickness = 0.005
-shader_parameter/glow_width = 0.0
-shader_parameter/glow_strength = 0.0
-shader_parameter/dot_size = 8.881
-shader_parameter/wobble = 1.541
-shader_parameter/cell_variation = 1.0
-shader_parameter/opacity = 0.283
-shader_parameter/camera_position = Vector2(0, 0)
-shader_parameter/camera_zoom = 1.0
+shader_parameter/bg_color = Vector3(0.07, 0.08, 0.09)
+shader_parameter/bg_alpha = 0.0
+shader_parameter/line_color = Vector3(0.7, 0.7, 0.7)
+shader_parameter/grid_alpha = 1.0
+shader_parameter/accent = Vector3(0.1, 0.8, 0.6)
+shader_parameter/grid_scale = 40.0
 
 [node name="Level" type="Node2D" unique_id=2067866758]
 script = ExtResource("1")
-PreviewSeed = -1
+PreviewSeed = 4
 
 [node name="CameraController" type="Camera2D" parent="." unique_id=400400400]
-limit_left = 0
-limit_top = 0
-limit_right = 480
-limit_bottom = 720
 script = ExtResource("script_camera")
 
 [node name="Background" type="CanvasLayer" parent="." unique_id=200200200]
@@ -151,16 +148,15 @@ material = SubResource("ShaderMaterial_cc")
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = -216.0
-offset_top = -143.0
-offset_right = -216.0
-offset_bottom = -143.0
+offset_left = -31.0
+offset_top = 5.0
+offset_right = 76.0
+offset_bottom = 52.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 
 [node name="GridOverlay" type="ColorRect" parent="PostProcess" unique_id=300300302]
-visible = false
 material = SubResource("ShaderMaterial_grid")
 anchors_preset = 15
 anchor_right = 1.0
@@ -169,15 +165,16 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 script = ExtResource("script_gridoverlay")
-LineColor = Color(1, 1, 1, 1)
-GridCellSize = 192.419
-LineThickness = 0.005
+LineColor = Color(0, 0, 0, 1)
+BgColor = Color(0, 0, 0, 1)
+GridCellSize = 0.0
+LineThickness = 0.0
 GlowWidth = 0.0
 GlowStrength = 0.0
-DotSize = 8.881
-Wobble = 1.541
-CellVariation = 1.0
-Opacity = 0.283
+DotSize = 0.0
+Wobble = 0.0
+CellVariation = 0.0
+Opacity = 0.0
 
 [node name="PersistentUI" type="CanvasLayer" parent="." unique_id=100100100]
 layer = 10
@@ -198,3 +195,72 @@ offset_left = -108.0
 offset_top = 10.0
 offset_right = -28.0
 offset_bottom = 46.0
+
+[node name="LevelUi" type="Node" parent="." unique_id=500500500]
+unique_name_in_owner = true
+script = ExtResource("script_levelui")
+
+[node name="FadeLayer" type="CanvasLayer" parent="LevelUi" unique_id=500500501]
+layer = 9
+
+[node name="FadeOverlay" type="ColorRect" parent="LevelUi/FadeLayer" unique_id=500500502]
+unique_name_in_owner = true
+modulate = Color(1, 1, 1, 0)
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0, 0, 0, 1)
+
+[node name="PanelLayer" type="CanvasLayer" parent="LevelUi" unique_id=500500503]
+layer = 10
+
+[node name="SelectionPanel" parent="LevelUi/PanelLayer" unique_id=500500504 instance=ExtResource("ui_sel")]
+unique_name_in_owner = true
+visible = false
+offset_left = 270.0
+offset_top = 100.0
+offset_right = 470.0
+offset_bottom = 116.0
+
+[node name="AiSystemPanel" parent="LevelUi/PanelLayer" unique_id=500500505 instance=ExtResource("ui_ai")]
+unique_name_in_owner = true
+visible = false
+offset_left = 270.0
+offset_top = 100.0
+offset_right = 470.0
+
+[node name="ChatWindowNode" parent="LevelUi/PanelLayer" unique_id=500500506 instance=ExtResource("ui_chat")]
+unique_name_in_owner = true
+offset_left = 8.0
+offset_top = 658.0
+offset_right = 472.0
+offset_bottom = 712.0
+
+[node name="NotificationLayer" type="CanvasLayer" parent="LevelUi" unique_id=500500507]
+layer = 11
+
+[node name="NotificationPanel" parent="LevelUi/NotificationLayer" unique_id=500500508 instance=ExtResource("ui_notif")]
+unique_name_in_owner = true
+visible = false
+offset_left = 230.0
+offset_top = 100.0
+offset_right = 470.0
+offset_bottom = 386.0
+
+[node name="ActionMenuLayer" type="CanvasLayer" parent="LevelUi" unique_id=500500509]
+layer = 12
+
+[node name="SystemActionMenu" parent="LevelUi/ActionMenuLayer" unique_id=500500510 instance=ExtResource("ui_action")]
+unique_name_in_owner = true
+visible = false
+z_index = 50
+
+[node name="ScenarioLayer" type="CanvasLayer" parent="LevelUi" unique_id=500500511]
+layer = 13
+visible = false
+
+[node name="ScenarioPanel" parent="LevelUi/ScenarioLayer" unique_id=500500512 instance=ExtResource("ui_scenario")]
+unique_name_in_owner = true

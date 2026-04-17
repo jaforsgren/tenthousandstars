@@ -43,8 +43,6 @@ public partial class NotificationPanel : PanelContainer
 			ApplyEditorPreview();
 			return;
 		}
-
-		Visible = false;
 	}
 
 	public void Show(string title, string description, float displaySeconds, Vector2 viewportSize, Action onDismiss, bool allowEarlyDismiss = true)
@@ -57,7 +55,7 @@ public partial class NotificationPanel : PanelContainer
 		_active = true;
 
 		var x = (viewportSize.X - PanelWidth) / 2f;
-		Position = new Vector2(x, TopPadding);
+		// Position = new Vector2(x, TopPadding);
 		Visible = true;
 	}
 

@@ -126,7 +126,8 @@ public partial class AiController : Node
 
 	// Multi-source BFS from all frontline systems back through owned territory.
 	// Each rear system records which adjacent owned system is one hop toward the front.
-	// Fleets move one hop per tick, naturally pathing through owned systems.
+	// Fleets move one hop per tick, naturally pathing through owned systems
+	// TODO: cache this, we do not need to rebuild this each tick
 	private void BuildReinforceOptions(AiPlayerData player, List<(int From, int To)> buffer)
 	{
 		buffer.Clear();

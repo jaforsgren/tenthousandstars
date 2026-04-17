@@ -107,7 +107,6 @@ public partial class SystemActionMenu : Control
 		_splitSlot = GetNode<SplitButtonNode>("SplitButtonNode");
 		MouseFilter = MouseFilterEnum.Ignore;
 		ClipContents = false;
-		Visible = false;
 	}
 
 	public void Initialize(CameraController camera, float systemRadius, ActionMenuConfig config)

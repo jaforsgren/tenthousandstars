@@ -11,6 +11,7 @@ public partial class SystemCircleNode : Node2D
 	private float _outlineWidth;
 	private float _sunRadiusRatio;
 	private ColorRect _sunVisual = null!;
+	private CollisionShape2D _clickShape = null!;
 
 	private const int ArcSegments = 64;
 	private const string VisualScenePath = "res://scenes/system/SystemCircleNode.tscn";
@@ -25,6 +26,7 @@ public partial class SystemCircleNode : Node2D
 		var visual = scene.Instantiate();
 		AddChild(visual);
 		_sunVisual = visual.GetNode<ColorRect>("SunVisual");
+		_clickShape = visual.GetNode<CollisionShape2D>("ClickArea/ClickShape");
 
 		var variants = visual.GetChildren().OfType<Sprite2D>().ToArray();
 		foreach (var sprite in variants)
@@ -43,6 +45,8 @@ public partial class SystemCircleNode : Node2D
 		var sunRadius = _radius * _sunRadiusRatio;
 		_sunVisual.Size = new Vector2(sunRadius * 2f, sunRadius * 2f);
 		_sunVisual.Position = new Vector2(-sunRadius, -sunRadius);
+
+		((RectangleShape2D)_clickShape.Shape).Size = new Vector2(_radius * 2f, _radius * 2f);
 	}
 
 	public void SetOutline(Color outline)

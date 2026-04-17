@@ -16,7 +16,6 @@ theme = ExtResource("2_theme")
 theme_override_styles/panel = ExtResource("2_6q077")
 script = ExtResource("1_notp")
 PreviewInEditor = true
-theme_override_styles/panel = ExtResource("2_6q077")
 
 [node name="Content" type="Control" parent="." unique_id=1186808606]
 layout_mode = 2

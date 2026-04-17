@@ -42,6 +42,9 @@ shader_parameter/colorChangeTimeScale = 0.0
 shader_parameter/circle_radius = 0.48
 shader_parameter/edge_softness = 0.070000003325
 
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_click"]
+size = Vector2(150, 150)
+
 [node name="SystemCircleNode" type="Node2D" unique_id=1335027929]
 
 [node name="SunVisual" type="ColorRect" parent="." unique_id=1116226020]
@@ -96,3 +99,11 @@ texture = ExtResource("9_800o0")
 [node name="System09" type="Sprite2D" parent="." unique_id=2147119310]
 scale = Vector2(0.2, 0.2)
 texture = ExtResource("10_d82wl")
+
+[node name="ClickArea" type="Area2D" parent="." unique_id=600600600]
+collision_layer = 0
+collision_mask = 0
+
+[node name="ClickShape" type="CollisionShape2D" parent="ClickArea" unique_id=600600601]
+shape = SubResource("RectangleShape2D_click")
+debug_color = Color(0, 0.5950001, 0.7, 0)

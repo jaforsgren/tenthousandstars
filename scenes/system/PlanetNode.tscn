@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://biglwxya2m5vi"]
 
-[ext_resource type="Shader" path="res://shaders/planet.gdshader" id="shader_planet"]
+[ext_resource type="Shader" uid="uid://dalfb3j51b3s6" path="res://shaders/planet.gdshader" id="shader_planet"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_planet"]
 shader = ExtResource("shader_planet")
@@ -8,11 +8,14 @@ shader_parameter/color_inner = Color(0.2, 0.5, 0.9, 1)
 shader_parameter/color_outer = Color(0.05, 0.1, 0.3, 1)
 shader_parameter/circle_radius = 0.45
 shader_parameter/gradient_scale = 1.0
+shader_parameter/gradient_direction = Vector2(0, -1)
 
 [node name="PlanetNode" type="Node2D" unique_id=2095391403]
 
 [node name="PlanetVisual" type="ColorRect" parent="." unique_id=1494034074]
-mouse_filter = 2
 material = SubResource("ShaderMaterial_planet")
-position = Vector2(-10, -10)
-size = Vector2(20, 20)
+offset_left = -10.0
+offset_top = -10.0
+offset_right = 10.0
+offset_bottom = 10.0
+mouse_filter = 2

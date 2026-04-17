@@ -179,8 +179,7 @@ public partial class Level : Node2D
 		AssignScenarios(pendingScenarios);
 		SpawnAiController(data, aiCfg);
 
-		_levelUi = new LevelUi();
-		AddChild(_levelUi);
+		_levelUi = GetNode<LevelUi>("%LevelUi");
 		var actionCfg = ConfigLoader.Load<ActionMenuConfig>("res://config/action_menu.json");
 		_levelUi.Initialize(_camera, _systemRadius, actionCfg);
 
@@ -282,7 +281,8 @@ public partial class Level : Node2D
 	private void ClearForPreview()
 	{
 		foreach (var child in GetChildren())
-			if (child.Name != "PersistentUI" && child.Name != "Background" && child.Name != "PostProcess")
+			if (child.Name != "PersistentUI" && child.Name != "Background" && child.Name != "PostProcess"
+				&& child.Name != "LevelUi" && child.Name != "CameraController")
 				child.QueueFree();
 		_systems.Clear();
 		_routeSet.Clear();

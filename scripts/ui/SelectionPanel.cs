@@ -56,8 +56,6 @@ public partial class SelectionPanel : PanelContainer
 			ApplyEditorPreview();
 			return;
 		}
-
-		Visible = false;
 	}
 
 	public void ShowAt(string title, string description, Vector2 viewportSize)
@@ -68,7 +66,6 @@ public partial class SelectionPanel : PanelContainer
 		_onEnterAction = null;
 		_onIgnoreAction = null;
 		Visible = true;
-		Position = new Vector2((viewportSize.X - PanelWidth) / 2f, TopPadding);
 		Callable.From(() => ClampScrollHeight(viewportSize)).CallDeferred();
 	}
 
@@ -87,7 +84,6 @@ public partial class SelectionPanel : PanelContainer
 		_onIgnoreAction = onIgnore;
 		_scenarioSection.Visible = true;
 		Visible = true;
-		Position = new Vector2((viewportSize.X - PanelWidth) / 2f, TopPadding);
 		Callable.From(() => ClampScrollHeight(viewportSize)).CallDeferred();
 	}
 

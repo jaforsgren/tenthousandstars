@@ -19,7 +19,6 @@ public partial class ScenarioPanel : Control
         _titleLabel = GetNode<Label>("PanelBox/Layout/Title");
         _stageText = GetNode<Label>("PanelBox/Layout/ScrollArea/StageText");
         _choiceContainer = GetNode<HBoxContainer>("PanelBox/Layout/Choices");
-        Visible = false;
     }
 
     public void Show(ScenarioDefinition scenario, Vector2 viewportSize, Action onClose)

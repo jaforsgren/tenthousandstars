@@ -5,8 +5,7 @@
 [ext_resource type="LabelSettings" uid="uid://d3o3fa7cpfaii" path="res://scenes/ui/LabelTitle.tres" id="3_lbltitle"]
 [ext_resource type="LabelSettings" uid="uid://dkumsv7cpfaii" path="res://scenes/ui/LabelBody.tres" id="4_lblbody"]
 
-[node name="ScenarioPanel" type="Control" unique_id=901000001 node_paths=PackedStringArray("_titleLabel", "_stageText", "_choiceContainer")]
-visible = false
+[node name="ScenarioPanel" type="Control" unique_id=901000001]
 z_index = 99
 layout_mode = 3
 anchors_preset = 15
@@ -16,11 +15,9 @@ grow_horizontal = 2
 grow_vertical = 2
 theme = ExtResource("2_theme")
 script = ExtResource("1_scrp")
-_titleLabel = NodePath("PanelBox/Layout/Title")
-_stageText = NodePath("PanelBox/Layout/ScrollArea/StageText")
-_choiceContainer = NodePath("PanelBox/Layout/Choices")
 
 [node name="Background" type="ColorRect" parent="." unique_id=901000002]
+visible = false
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
