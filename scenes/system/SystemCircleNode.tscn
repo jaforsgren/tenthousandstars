@@ -70,7 +70,7 @@ texture = ExtResource("4_cf06x")
 
 [node name="System04" type="Sprite2D" parent="." unique_id=1069939389]
 visible = false
-scale = Vector2(0.25, 0.25)
+scale = Vector2(0.22, 0.22)
 texture = ExtResource("5_gj12j")
 
 [node name="System05" type="Sprite2D" parent="." unique_id=393022428]
@@ -85,14 +85,14 @@ texture = ExtResource("7_m2tbq")
 
 [node name="System07" type="Sprite2D" parent="." unique_id=1938353161]
 visible = false
-scale = Vector2(0.23, 0.23)
+scale = Vector2(0.21, 0.21)
 texture = ExtResource("8_b5i2r")
 
 [node name="System08" type="Sprite2D" parent="." unique_id=671777865]
 visible = false
-scale = Vector2(0.25, 0.25)
+scale = Vector2(0.22, 0.22)
 texture = ExtResource("9_800o0")
 
 [node name="System09" type="Sprite2D" parent="." unique_id=2147119310]
-scale = Vector2(0.25, 0.25)
+scale = Vector2(0.2, 0.2)
 texture = ExtResource("10_d82wl")

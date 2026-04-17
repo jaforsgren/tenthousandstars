@@ -330,10 +330,16 @@ public partial class Level : Node2D
 			return;
 
 		var playerSystem = data.Systems.FirstOrDefault(s => s.Owner == SystemOwner.Player);
-		_camera = new CameraController();
-		AddChild(_camera);
+		_camera = GetNodeOrNull<CameraController>("CameraController") ?? AddCameraController();
 		_camera.MakeCurrent();
 		_camera.FocusOn(playerSystem?.Position ?? Vector2.Zero, camCfg.StartZoom);
+	}
+
+	private CameraController AddCameraController()
+	{
+		var camera = new CameraController();
+		AddChild(camera);
+		return camera;
 	}
 
 	private void ProcessReroutes()

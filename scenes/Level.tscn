@@ -3,6 +3,7 @@
 [ext_resource type="Script" uid="uid://ct5eymu2l0jtw" path="res://scripts/level/Level.cs" id="1"]
 [ext_resource type="PackedScene" uid="uid://c5snd4x7yqbr2" path="res://scenes/ui/SpeedControlPanel.tscn" id="6_speed"]
 [ext_resource type="PackedScene" uid="uid://cntdwntmr1234" path="res://scenes/ui/CountdownTimerNode.tscn" id="7_timer"]
+[ext_resource type="Script" uid="uid://drmxla3b0ires" path="res://scripts/nodes/CameraController.cs" id="script_camera"]
 [ext_resource type="Script" uid="uid://kyobp8kn4qbl" path="res://scripts/nodes/ColorRemapNode.cs" id="script_colorremap"]
 [ext_resource type="Script" uid="uid://c5qscvpqqh2rr" path="res://scripts/nodes/GridOverlayNode.cs" id="script_gridoverlay"]
 [ext_resource type="Script" uid="uid://dnn2emct8nxra" path="res://scripts/nodes/SpaceBackgroundNode.cs" id="script_spacebg"]
@@ -99,6 +100,13 @@ shader_parameter/camera_zoom = 1.0
 script = ExtResource("1")
 PreviewSeed = -1
 
+[node name="CameraController" type="Camera2D" parent="." unique_id=400400400]
+limit_left = 0
+limit_top = 0
+limit_right = 480
+limit_bottom = 720
+script = ExtResource("script_camera")
+
 [node name="Background" type="CanvasLayer" parent="." unique_id=200200200]
 layer = -10
 
@@ -143,6 +151,10 @@ material = SubResource("ShaderMaterial_cc")
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+offset_left = -216.0
+offset_top = -143.0
+offset_right = -216.0
+offset_bottom = -143.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
