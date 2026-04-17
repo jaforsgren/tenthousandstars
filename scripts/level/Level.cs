@@ -282,7 +282,7 @@ public partial class Level : Node2D
 	private void ClearForPreview()
 	{
 		foreach (var child in GetChildren())
-			if (child.Name != "PersistentUI" && child.Name != "Background")
+			if (child.Name != "PersistentUI" && child.Name != "Background" && child.Name != "PostProcess")
 				child.QueueFree();
 		_systems.Clear();
 		_routeSet.Clear();

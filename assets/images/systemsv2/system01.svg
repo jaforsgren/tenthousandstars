@@ -1,0 +1,32 @@
+<svg width="1024" height="1024" viewBox="-80 -80 160 160" xmlns="http://www.w3.org/2000/svg">
+
+  <rect x="-80" y="-80" width="160" height="160" fill="none"/>
+
+  <defs>
+    <g id="orbit16">
+      <circle cx="0" cy="-55" r="1.5" fill="white"/>
+      <circle cx="21" cy="-51" r="1.5" fill="white"/>
+      <circle cx="40" cy="-40" r="1.5" fill="white"/>
+      <circle cx="51" cy="-21" r="1.5" fill="white"/>
+      <circle cx="55" cy="0" r="1.5" fill="white"/>
+      <circle cx="51" cy="21" r="1.5" fill="white"/>
+      <circle cx="40" cy="40" r="1.5" fill="white"/>
+      <circle cx="21" cy="51" r="1.5" fill="white"/>
+      <circle cx="0" cy="55" r="1.5" fill="white"/>
+      <circle cx="-21" cy="51" r="1.5" fill="white"/>
+      <circle cx="-40" cy="40" r="1.5" fill="white"/>
+      <circle cx="-51" cy="21" r="1.5" fill="white"/>
+      <circle cx="-55" cy="0" r="1.5" fill="white"/>
+      <circle cx="-51" cy="-21" r="1.5" fill="white"/>
+      <circle cx="-40" cy="-40" r="1.5" fill="white"/>
+      <circle cx="-21" cy="-51" r="1.5" fill="white"/>
+    </g>
+  </defs>
+
+  <circle cx="0" cy="0" r="60" fill="none" stroke="white" stroke-width="0.5"/>
+  <circle cx="0" cy="0" r="48" fill="none" stroke="white" stroke-width="0.3"/>
+  <circle cx="0" cy="0" r="36" fill="none" stroke="white" stroke-width="0.3"/>
+
+  <use href="#orbit16" fill="white"/>
+
+</svg>

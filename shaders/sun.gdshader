@@ -94,7 +94,20 @@ void fragment() {
 	// center
 	vec2 uv_center = UV - vec2(0.5);
 	float dist = length(uv_center) * 2.0;
-	float alpha = smoothstep(circle_radius, circle_radius - edge_softness, dist);
+	
+	
+	// add edge noise
+	float edge_noise = noise(uv_center * 1.0 + localTime() * 1.5);
+	edge_noise += noise(uv_center * 200.0 - localTime() * 300.3) * 0.5;
+
+	// control how strong the breakup is
+	float edge_strength = 0.1;
+
+	// distort the radius
+	float distorted_radius = circle_radius + (edge_noise - 0.1) * edge_strength;
+
+	// apply mask
+	float alpha = smoothstep(distorted_radius, distorted_radius - edge_softness, dist);
 	
 	vec4 center = vec4(final_col, alpha);
 	
@@ -105,12 +118,13 @@ void fragment() {
 	
 	float dist_glow = length(uv_center) * 1.8;
 	float glow_softness = 2.0;
-	float glow_radius = 1.0;
+	float glow_radius = 1.1;
 	float alpha_glow = smoothstep(glow_radius, glow_radius - glow_softness, dist_glow);
-	
+
 	vec3 glow_col = final_col*final_col * final_col;
 	
 	vec4 glow = vec4( glow_col, alpha_glow);
+	glow = ((glow + glow) * (glow + 0.2));
 	
-	COLOR = glow + center;
+	COLOR = (glow + center);
 }

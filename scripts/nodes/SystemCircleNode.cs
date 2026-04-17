@@ -1,3 +1,4 @@
+using System.Linq;
 using Godot;
 
 namespace Tts;
@@ -24,6 +25,12 @@ public partial class SystemCircleNode : Node2D
 		var visual = scene.Instantiate();
 		AddChild(visual);
 		_sunVisual = visual.GetNode<ColorRect>("SunVisual");
+
+		var variants = visual.GetChildren().OfType<Sprite2D>().ToArray();
+		foreach (var sprite in variants)
+			sprite.Visible = false;
+		if (variants.Length > 0)
+			variants[GD.RandRange(0, variants.Length - 1)].Visible = true;
 	}
 
 	public void Initialize(float radius, Color fill, Color outline, float outlineWidth)

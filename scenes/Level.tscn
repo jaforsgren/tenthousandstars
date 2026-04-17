@@ -3,7 +3,13 @@
 [ext_resource type="Script" uid="uid://ct5eymu2l0jtw" path="res://scripts/level/Level.cs" id="1"]
 [ext_resource type="PackedScene" uid="uid://c5snd4x7yqbr2" path="res://scenes/ui/SpeedControlPanel.tscn" id="6_speed"]
 [ext_resource type="PackedScene" uid="uid://cntdwntmr1234" path="res://scenes/ui/CountdownTimerNode.tscn" id="7_timer"]
+[ext_resource type="Script" uid="uid://kyobp8kn4qbl" path="res://scripts/nodes/ColorRemapNode.cs" id="script_colorremap"]
+[ext_resource type="Script" uid="uid://c5qscvpqqh2rr" path="res://scripts/nodes/GridOverlayNode.cs" id="script_gridoverlay"]
 [ext_resource type="Script" uid="uid://dnn2emct8nxra" path="res://scripts/nodes/SpaceBackgroundNode.cs" id="script_spacebg"]
+[ext_resource type="Shader" uid="uid://rjds60jhqikm" path="res://shaders/color_correction.gdshader" id="shader_cc"]
+[ext_resource type="Shader" uid="uid://8u1honyhwhvo" path="res://shaders/gradient_overlay.gdshader" id="shader_gradient"]
+[ext_resource type="Shader" uid="uid://7ydvadaulvnb" path="res://shaders/grid_overlay.gdshader" id="shader_grid"]
+[ext_resource type="Shader" uid="uid://boef3sins8d7o" path="res://shaders/color_remap.gdshader" id="shader_remap"]
 [ext_resource type="Shader" uid="uid://cv8wn7xycdhsw" path="res://shaders/space_background.gdshader" id="shader_spacebg"]
 
 [sub_resource type="FastNoiseLite" id="FastNoiseLite_spacebg"]
@@ -42,61 +48,124 @@ shader_parameter/fg_speed = 0.4
 shader_parameter/fromColor = Color(0.2, 0.2, 0.2, 1)
 shader_parameter/toColor = Color(0.12773606, 0.12773591, 0.12773594, 1)
 shader_parameter/colorChangeTimeScale = 0.050000002375
-shader_parameter/star_density = 0.98199998005314
-shader_parameter/star_size = 0.10000000405148
+shader_parameter/star_density = 0.94799997843814
+shader_parameter/star_size = 0.17900000780398
 shader_parameter/star_flicker_speed = 0.50000002049012
 shader_parameter/camera_position = Vector2(0, 0)
 shader_parameter/camera_zoom = 1.0
 shader_parameter/parallax_pan_factor = 0.050000002375
 shader_parameter/parallax_zoom_factor = 0.10000000475
 
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_gradient"]
+shader = ExtResource("shader_gradient")
+shader_parameter/color_top = Color(0, 0, 0, 1)
+shader_parameter/color_bottom = Color(0.051266506, 0.055569064, 0.05700325, 1)
+shader_parameter/gradient_coverage = 0.8
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_remap"]
+shader = ExtResource("shader_remap")
+shader_parameter/shadow_color = Color(0.16007635, 0.0003298641, 0.35891142, 1)
+shader_parameter/highlight_color = Color(0.92, 0, 0.7053331, 1)
+shader_parameter/strength = 1.0
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_cc"]
+shader = ExtResource("shader_cc")
+shader_parameter/brightness = 1.0000000475
+shader_parameter/contrast = 1.0000000475
+shader_parameter/saturation = 1.0000000475
+shader_parameter/tint = Color(0.8428, 0.7056, 0.98, 0)
+shader_parameter/radial_inner = Color(0.9941245, 0, 0.20432511, 1)
+shader_parameter/radial_outer = Color(0.52, 0.52, 0.52, 0)
+shader_parameter/radial_strength = 0.2370000112575
+shader_parameter/vignette_strength = 1.0
+shader_parameter/vignette_softness = 0.40000001830148
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_grid"]
+shader = ExtResource("shader_grid")
+shader_parameter/line_color = Color(1, 1, 1, 1)
+shader_parameter/bg_color = Color(0, 0, 0, 0)
+shader_parameter/grid_cell_size = 192.419
+shader_parameter/line_thickness = 0.005
+shader_parameter/glow_width = 0.0
+shader_parameter/glow_strength = 0.0
+shader_parameter/dot_size = 8.881
+shader_parameter/wobble = 1.541
+shader_parameter/cell_variation = 1.0
+shader_parameter/opacity = 0.283
+shader_parameter/camera_position = Vector2(0, 0)
+shader_parameter/camera_zoom = 1.0
+
 [node name="Level" type="Node2D" unique_id=2067866758]
 script = ExtResource("1")
 PreviewSeed = -1
-_pressWorldPos = Vector2(0, 0)
-_ghostFleetRadius = 0.0
-_ghostFleetFill = Color(0, 0, 0, 0)
-_ghostFleetOutline = Color(0, 0, 0, 0)
-_ghostFleetOutlineWidth = 0.0
-_defenderBonus = 0.0
-_systemRadius = 0.0
-_transitDurationSeconds = 0.0
-_transitFleetScene = null
-_combatEffectScene = null
-_fogEnabled = false
-_fogClearSeconds = 0.0
-_fadeOutSeconds = 0.0
-_camera = null
-_aiController = null
-_gameController = null
-_levelUi = null
-_lastSystemClickTime = -1.7976931348623157e+308
-_lastClickedSystemIndex = -1
-_isPickingRerouteTarget = false
-_rerouteArrowScene = null
-_selectedFleetSlot = -1
-_speedControlPanel = null
-_countdownTimer = null
-_debugOverlay = null
-_endConditionReached = false
-_objectiveSystemIndex = -1
 
 [node name="Background" type="CanvasLayer" parent="." unique_id=200200200]
 layer = -10
 
 [node name="SpaceBackground" type="ColorRect" parent="Background" unique_id=200200201]
 material = SubResource("ShaderMaterial_spacebg")
-offset_right = 480.0
-offset_bottom = 720.0
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 mouse_filter = 2
 script = ExtResource("script_spacebg")
 
-[node name="SpaceBackground2" type="ColorRect" parent="Background" unique_id=196979957]
-material = SubResource("ShaderMaterial_spacebg")
-offset_right = 480.0
-offset_bottom = 720.0
+[node name="GradientOverlay" type="ColorRect" parent="Background" unique_id=200200202]
+material = SubResource("ShaderMaterial_gradient")
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 mouse_filter = 2
-script = ExtResource("script_spacebg")
+
+[node name="PostProcess" type="CanvasLayer" parent="." unique_id=300300300]
+layer = 9
+
+[node name="ColorRemap" type="ColorRect" parent="PostProcess" unique_id=300300303]
+visible = false
+material = SubResource("ShaderMaterial_remap")
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("script_colorremap")
+ShadowColor = Color(0.16007635, 0.0003298641, 0.35891142, 1)
+HighlightColor = Color(0.92, 0, 0.7053331, 1)
+Strength = 1.0
+
+[node name="ColorCorrection" type="ColorRect" parent="PostProcess" unique_id=300300301]
+material = SubResource("ShaderMaterial_cc")
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="GridOverlay" type="ColorRect" parent="PostProcess" unique_id=300300302]
+visible = false
+material = SubResource("ShaderMaterial_grid")
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("script_gridoverlay")
+LineColor = Color(1, 1, 1, 1)
+GridCellSize = 192.419
+LineThickness = 0.005
+GlowWidth = 0.0
+GlowStrength = 0.0
+DotSize = 8.881
+Wobble = 1.541
+CellVariation = 1.0
+Opacity = 0.283
 
 [node name="PersistentUI" type="CanvasLayer" parent="." unique_id=100100100]
 layer = 10
