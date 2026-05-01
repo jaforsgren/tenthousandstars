@@ -85,6 +85,9 @@ public partial class Level : Node2D
 	private CountdownTimerNode _countdownTimer = null!;
 	private DebugOverlay _debugOverlay = null!;
 	private ScenarioController _scenarioController = null!;
+	private CommitmentController _commitmentController = null!;
+	private CommitmentConfig _commitmentConfig = null!;
+	private (int SystemIndex, float Fleet)? _pendingArrival;
 	private readonly TransitSystem _transitSystem = new();
 	private FogSystem? _fogSystem;
 	private bool _endConditionReached;
@@ -177,6 +180,7 @@ public partial class Level : Node2D
 
 		AssignLoreSeeds(data);
 		AssignScenarios(pendingScenarios);
+		SpawnCommitmentController();
 		SpawnAiController(data, aiCfg);
 
 		_levelUi = GetNode<LevelUi>("%LevelUi");
@@ -191,7 +195,7 @@ public partial class Level : Node2D
 			_routeSet, _systems, _aiPlayers, _rng, _levelUi, _camera, _countdownTimer, _fadeOutSeconds);
 
 		_objectiveSystemIndex = _gameController.ObjectiveSystemIndex;
-		_fogSystem!.Update(_objectiveSystemIndex);
+		UpdateFog();
 
 		SpawnDebugOverlay();
 		_gameController.StartMission();
@@ -263,17 +267,79 @@ public partial class Level : Node2D
 			&& s.Criteria.MinMissionsLost == null);
 	}
 
+	private void UpdateFog()
+	{
+		if (_fogSystem == null) return;
+		var committed = new HashSet<int>();
+		foreach (var c in _commitmentController.GetAllActive())
+			if (c.Owner == SystemOwner.Player && !c.IsComplete && !c.IsInterrupted)
+				committed.Add(c.SystemIndex);
+		_fogSystem.Update(_objectiveSystemIndex, committed);
+	}
+
+	private void SpawnCommitmentController()
+	{
+		_commitmentConfig = ConfigLoader.Load<CommitmentConfig>("res://config/commitment.json");
+		_commitmentController = new CommitmentController();
+		AddChild(_commitmentController);
+		_commitmentController.Initialize(
+			_commitmentConfig,
+			_systems,
+			owner => _aiColors.GetValueOrDefault(owner, new Color(0.6f, 0.6f, 0.6f)),
+			_systemRadius,
+			_rng.Next());
+		_commitmentController.CommitmentResolved += OnCommitmentResolved;
+	}
+
+	private void OnCommitmentResolved(int systemIndex, int ownerInt, bool controlGained, float remainingStrength)
+	{
+		var owner = (SystemOwner)ownerInt;
+		var target = _systems[systemIndex];
+
+		if (controlGained)
+		{
+			if (owner == SystemOwner.Player)
+			{
+				target.Capture(remainingStrength, SystemOwner.Player);
+				SpawnCombatEffect(systemIndex, attackerWon: true);
+				if (_camera.IsFollowing)
+					_camera.FollowSystem(target.GlobalPosition);
+				ClearReroute(systemIndex);
+			}
+			else
+			{
+				var aiPlayer = _aiPlayers.FirstOrDefault(p => p.Owner == owner);
+				if (aiPlayer != null)
+				{
+					target.Capture(remainingStrength, owner, aiPlayer, _aiColors[owner]);
+					SpawnCombatEffect(systemIndex, attackerWon: true);
+					ClearReroute(systemIndex);
+				}
+			}
+		}
+		else
+		{
+			SpawnCombatEffect(systemIndex, attackerWon: false);
+		}
+
+		UpdateFog();
+		_gameController.EvaluateEndState();
+	}
+
 	private void SpawnAiController(LevelData data, AiConfig aiCfg)
 	{
 		_aiController = new AiController();
 		AddChild(_aiController);
 		_aiController.ActionTaken += OnAiActionTaken;
-		_aiController.Initialize(_systems, _routeSet, _defenderBonus, data.AiPlayers, aiCfg, _rng, LaunchAiTransit);
+		_aiController.Initialize(
+			_systems, _routeSet, _defenderBonus, data.AiPlayers, aiCfg,
+			_commitmentConfig, _commitmentController,
+			_rng, LaunchAiTransit, CommitAiOwnSystem);
 	}
 
 	private void OnAiActionTaken()
 	{
-		_fogSystem?.Update(_objectiveSystemIndex);
+		UpdateFog();
 		_gameController.EvaluateEndState();
 	}
 
@@ -361,7 +427,7 @@ public partial class Level : Node2D
 		}
 
 		if (fogUpdateNeeded)
-			_fogSystem?.Update(_objectiveSystemIndex);
+			UpdateFog();
 	}
 
 	private void SetRerouteTarget(int sourceIndex, int targetIndex)

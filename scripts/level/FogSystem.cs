@@ -29,7 +29,7 @@ internal sealed class FogSystem
 		_fogClearSeconds = fogClearSeconds;
 	}
 
-	internal void Update(int objectiveSystemIndex)
+	internal void Update(int objectiveSystemIndex, IReadOnlyCollection<int>? committedByPlayer = null)
 	{
 		if (!_fogEnabled)
 		{
@@ -50,6 +50,10 @@ internal sealed class FogSystem
 			foreach (var neighbor in _adjacency[i])
 				scoutedByPlayer.Add(neighbor);
 		}
+
+		if (committedByPlayer != null)
+			foreach (var idx in committedByPlayer)
+				scoutedByPlayer.Add(idx);
 
 		var baseStates = new FogState[_systems.Count];
 

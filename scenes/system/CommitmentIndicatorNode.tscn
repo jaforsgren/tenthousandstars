@@ -1,0 +1,15 @@
+[gd_scene format=3 uid="uid://commit_ind_001"]
+
+[ext_resource type="Script" uid="uid://commit_ind_002" path="res://scripts/commitment/CommitmentIndicatorNode.cs" id="1_ci"]
+
+[node name="CommitmentIndicatorNode" type="Node2D"]
+script = ExtResource("1_ci")
+
+[node name="IntentButton" type="Button" parent="."]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(16, 14)
+offset_left = -8.0
+offset_top = -7.0
+offset_right = 8.0
+offset_bottom = 7.0
+mouse_filter = 2

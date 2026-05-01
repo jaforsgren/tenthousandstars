@@ -10,6 +10,7 @@ internal sealed partial class LevelUi : Node
 	internal NotificationPanel NotificationPanel { get; private set; } = null!;
 	internal SystemActionMenu SystemActionMenu { get; private set; } = null!;
 	internal ScenarioPanel ScenarioPanel { get; private set; } = null!;
+	internal IntentPickerMenu IntentPickerMenu { get; private set; } = null!;
 	internal ChatWindowNode? ChatWindow { get; private set; }
 
 	public override void _Ready()
@@ -22,6 +23,9 @@ internal sealed partial class LevelUi : Node
 		ScenarioPanel = GetNode<ScenarioPanel>("%ScenarioPanel");
 		ChatWindow = GetNode<ChatWindowNode>("%ChatWindowNode");
 
+		IntentPickerMenu = new IntentPickerMenu();
+		AddChild(IntentPickerMenu);
+
 		SelectionPanel.Hide();
 		AiSystemPanel.Hide();
 		NotificationPanel.Hide();
@@ -32,12 +36,19 @@ internal sealed partial class LevelUi : Node
 	internal void Initialize(CameraController camera, float systemRadius, ActionMenuConfig cfg)
 	{
 		SystemActionMenu.Initialize(camera, systemRadius, cfg);
+		IntentPickerMenu.Initialize(camera);
+	}
+
+	internal void HideContextMenus()
+	{
+		SystemActionMenu.HideAll();
+		IntentPickerMenu.HideIfOptional();
 	}
 
 	internal void HideForGameEnd()
 	{
 		SelectionPanel.Hide();
 		AiSystemPanel.Hide();
-		SystemActionMenu.HideAll();
+		HideContextMenus();
 	}
 }

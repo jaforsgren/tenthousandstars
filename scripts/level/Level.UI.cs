@@ -20,9 +20,11 @@ public partial class Level
 				fa, fd, () => DoUpgrade(systemIndex, SystemUpgrade.Fortify),
 				ga, gd, () => DoUpgrade(systemIndex, SystemUpgrade.Forge),
 				splitDisabled, () => OnSplitButtonPressed(systemIndex, slot));
+			ShowOwnSystemIntentPicker(systemIndex);
 		}
 		else if (_systems[systemIndex].IsAiOwned)
 		{
+			_levelUi.IntentPickerMenu.HideMenu();
 			_levelUi.SystemActionMenu.ShowForAiSystem(
 				_systems[systemIndex].GlobalPosition,
 				() => ShowFleetInfo(systemIndex),
@@ -30,6 +32,7 @@ public partial class Level
 		}
 		else
 		{
+			_levelUi.IntentPickerMenu.HideMenu();
 			_levelUi.SystemActionMenu.ShowInfoOnly(_systems[systemIndex].GlobalPosition, () => ShowFleetInfo(systemIndex));
 		}
 	}
@@ -47,19 +50,40 @@ public partial class Level
 				fa, fd, () => DoUpgrade(systemIndex, SystemUpgrade.Fortify),
 				ga, gd, () => DoUpgrade(systemIndex, SystemUpgrade.Forge),
 				splitDisabled, () => OnSplitButtonPressed(systemIndex, 0));
+			ShowOwnSystemIntentPicker(systemIndex);
 		}
 		else
 		{
+			_levelUi.IntentPickerMenu.HideMenu();
 			_levelUi.SystemActionMenu.ShowInfoOnly(_systems[systemIndex].GlobalPosition, () => ShowSystemInfo(systemIndex));
 		}
 	}
 
 	private void SelectAiSystem(int systemIndex)
 	{
+		_levelUi.IntentPickerMenu.HideMenu();
 		_levelUi.SystemActionMenu.ShowForAiSystem(
 			_systems[systemIndex].GlobalPosition,
 			() => ShowSystemInfo(systemIndex),
 			() => ShowAiSystemInfo(systemIndex));
+	}
+
+	private void ShowOwnSystemIntentPicker(int systemIndex)
+	{
+		if (!_systems[systemIndex].HasFleet)
+		{
+			_levelUi.IntentPickerMenu.HideMenu();
+			return;
+		}
+		_levelUi.IntentPickerMenu.ShowAt(
+			_systems[systemIndex].GlobalPosition,
+			_systemRadius,
+			[
+				("Fortify",     IntentType.Fortify),
+				("Investigate", IntentType.Investigate),
+				("Exploit",     IntentType.Exploit)
+			],
+			intent => CommitOwnSystem(systemIndex, intent));
 	}
 
 	private void ComputeUpgradeStates(
@@ -120,7 +144,7 @@ public partial class Level
 	private void OpenScenario(int systemIndex, ScenarioDefinition scenario)
 	{
 		_levelUi.SelectionPanel.Hide();
-		_levelUi.SystemActionMenu.HideAll();
+		_levelUi.HideContextMenus();
 		_levelUi.ScenarioPanel.Show(scenario, GetViewport().GetVisibleRect().Size, onClose: () =>
 		{
 			DismissScenario(systemIndex);

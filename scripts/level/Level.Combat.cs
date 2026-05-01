@@ -46,68 +46,89 @@ public partial class Level
 		if (target.OwnerPlayer == SystemOwner.Player)
 		{
 			target.AddFleet(fleet);
-		}
-		else
-		{
-			var defBonus = _defenderBonus * (1f + target.DefenseBonusMultiplier);
-			var result = CombatResolver.Resolve(fleet, target.Ships, defBonus);
-			if (result.AttackerWins)
-			{
-				target.Capture(result.AttackerRemainder, SystemOwner.Player);
-				SpawnCombatEffect(toIndex, attackerWon: true);
-				if (_camera.IsFollowing)
-					_camera.FollowSystem(target.GlobalPosition);
-			}
-			else
-			{
-				target.SustainDefense(result.DefenderRemainder);
-				SpawnCombatEffect(toIndex, attackerWon: false);
-			}
+			UpdateFog();
+			_gameController.EvaluateEndState();
+			return;
 		}
 
-		_fogSystem?.Update(_objectiveSystemIndex);
-		_gameController.EvaluateEndState();
+		_pendingArrival = (toIndex, fleet);
+		_levelUi.IntentPickerMenu.ShowAt(
+			target.GlobalPosition,
+			_systemRadius,
+			[("Attack", IntentType.Attack), ("Contest", IntentType.Contest)],
+			CommitPendingArrival,
+			required: true);
+		UpdateFog();
 	}
 
-	private void LaunchAiTransit(int fromIndex, int toIndex, float fleet, AiPlayerData aiPlayer)
+	private void CommitPendingArrival(IntentType intent)
 	{
-		if (_systems[toIndex].OwnerPlayer == SystemOwner.Player)
-		{
-			PostBark(_barkConfig?.Get("player_under_attack"));
-			PostAiBark(aiPlayer);
-		}
+		if (_pendingArrival is not { } arrival) return;
+		_pendingArrival = null;
+		var target = _systems[arrival.SystemIndex];
+		_commitmentController.StartCommitment(
+			arrival.SystemIndex,
+			SystemOwner.Player,
+			intent,
+			BuildFleetInfluences(arrival.Fleet),
+			Time.GetTicksMsec() / 1000.0,
+			target.Ships);
+		UpdateFog();
+	}
 
+	internal void CommitOwnSystem(int systemIndex, IntentType intent)
+	{
+		_commitmentController.StartCommitment(
+			systemIndex,
+			SystemOwner.Player,
+			intent,
+			BuildFleetInfluences(_systems[systemIndex].Ships),
+			Time.GetTicksMsec() / 1000.0);
+		UpdateFog();
+	}
+
+	private void LaunchAiTransit(int fromIndex, int toIndex, float fleet, AiPlayerData aiPlayer, IntentType intent)
+	{
 		var dotColor = _aiColors[aiPlayer.Owner];
 		LaunchTransit(fromIndex, toIndex, fleet, aiPlayer.Owner, dotColor,
-			(toIdx, f) => ResolveAiTransitArrival(toIdx, f, aiPlayer.Owner, aiPlayer, dotColor));
+			(toIdx, f) => ResolveAiTransitArrival(toIdx, f, aiPlayer.Owner, aiPlayer, intent));
 	}
 
-	private void ResolveAiTransitArrival(int toIndex, float fleet, SystemOwner senderOwner, AiPlayerData aiPlayer, Godot.Color aiOwnerColor)
+	private void ResolveAiTransitArrival(int toIndex, float fleet, SystemOwner senderOwner, AiPlayerData aiPlayer, IntentType intent)
 	{
 		var target = _systems[toIndex];
 
 		if (target.OwnerPlayer == senderOwner)
 		{
 			target.AddFleet(fleet);
-		}
-		else
-		{
-			var defBonus = _defenderBonus * (1f + target.DefenseBonusMultiplier);
-			var result = CombatResolver.Resolve(fleet, target.Ships, defBonus);
-			if (result.AttackerWins)
-			{
-				target.Capture(result.AttackerRemainder, senderOwner, aiPlayer, aiOwnerColor);
-				SpawnCombatEffect(toIndex, attackerWon: true);
-				ClearReroute(toIndex);
-			}
-			else
-			{
-				target.SustainDefense(result.DefenderRemainder);
-				SpawnCombatEffect(toIndex, attackerWon: false);
-			}
+			OnAiActionTaken();
+			return;
 		}
 
-		OnAiActionTaken();
+		// Bark fires on arrival, not on resolution — commitment duration is invisible to the player
+		if (target.OwnerPlayer == SystemOwner.Player)
+		{
+			PostBark(_barkConfig?.Get("player_under_attack"));
+			PostAiBark(aiPlayer);
+		}
+
+		_commitmentController.StartCommitment(
+			toIndex,
+			senderOwner,
+			intent,
+			BuildFleetInfluences(fleet),
+			Time.GetTicksMsec() / 1000.0,
+			target.Ships);
+	}
+
+	private void CommitAiOwnSystem(int systemIndex, AiPlayerData player, IntentType intent)
+	{
+		_commitmentController.StartCommitment(
+			systemIndex,
+			player.Owner,
+			intent,
+			BuildFleetInfluences(_systems[systemIndex].Ships),
+			Time.GetTicksMsec() / 1000.0);
 	}
 
 	private void RegisterTransit(ActiveTransit newTransit)
@@ -192,6 +213,17 @@ public partial class Level
 		impact.Position = pos;
 		impact.PlayImpact();
 	}
+
+	// Maps raw ship count to FleetInfluences for any commitment intent.
+	// All four values scale with ships so that fleet size affects every intent type.
+	// Ratios reflect what a transit fleet is likely good at: strong on aggression/discipline,
+	// weaker on curiosity/stability — those scale at lower rates but are not fixed.
+	// The Aggression multiplier must match CommitmentController.InfluenceAggressionPerShip.
+	private static FleetInfluences BuildFleetInfluences(float ships) => new(
+		Aggression: ships * CommitmentController.InfluenceAggressionPerShip,
+		Discipline: ships * 0.08f,
+		Curiosity:  ships * 0.05f,
+		Stability:  ships * 0.04f);
 
 	private void PostPlayerTransitBark(int toIndex)
 	{

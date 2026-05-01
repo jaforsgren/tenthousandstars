@@ -50,6 +50,7 @@ public partial class Level
 				_drag.FromIndex = _drag.CandidateIndex;
 				_drag.WorldPos = worldPos;
 				_systems[_drag.FromIndex].RefreshFleetVisuals();
+				_levelUi.IntentPickerMenu.HideMenu();
 				QueueRedraw();
 			}
 			GetViewport().SetInputAsHandled();
@@ -109,7 +110,7 @@ public partial class Level
 		_levelUi.AiSystemPanel.Hide();
 		_levelUi.SelectionPanel.Hide();
 		_camera.ExitFollowMode();
-		_levelUi.SystemActionMenu.HideAll();
+		_levelUi.HideContextMenus();
 	}
 
 	private void HandleSystemClick(int systemIndex)
@@ -139,7 +140,7 @@ public partial class Level
 		{
 			_isPickingRerouteTarget = true;
 			_rerouteSourceIndex = systemIndex;
-			_levelUi.SystemActionMenu.HideAll();
+			_levelUi.HideContextMenus();
 			_levelUi.SelectionPanel.Hide();
 		}
 	}
@@ -197,6 +198,6 @@ public partial class Level
 		QueueRedraw();
 
 		if (resolved)
-			_fogSystem?.Update(_objectiveSystemIndex);
+			UpdateFog();
 	}
 }

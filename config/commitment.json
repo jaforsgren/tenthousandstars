@@ -1,0 +1,99 @@
+{
+  "ArrivalBaseDurationSeconds": 3.0,
+  "EngagementBaseDurationSeconds": 10.0,
+  "ResolutionBaseDurationSeconds": 4.0,
+  "BaseRiskAccumulationRate": 0.04,
+  "RiskPerCohabitantMultiplier": 0.12,
+  "InterruptPenaltyMultiplier": 0.8,
+  "AlterationRiskThreshold": 0.65,
+  "HiddenStateInitRange": 0.4,
+  "Intents": {
+    "Attack": {
+      "ArrivalMultiplier": 1.0,
+      "EngagementMultiplier": 1.2,
+      "ResolutionMultiplier": 0.8,
+      "BaseRiskRate": 0.08,
+      "FullControlThreshold": 0.4,
+      "PartialControlThreshold": 0.1,
+      "FleetDamageScale": 0.15,
+      "SystemInstabilityScale": 0.2,
+      "DefenderFleetScale": 0.05,
+      "HostilityDefenseScale": 0.3
+    },
+    "Contest": {
+      "ArrivalMultiplier": 0.8,
+      "EngagementMultiplier": 1.0,
+      "ResolutionMultiplier": 1.2,
+      "BaseRiskRate": 0.05,
+      "FullControlThreshold": 0.7,
+      "PartialControlThreshold": 0.3,
+      "FleetDamageScale": 0.05,
+      "SystemInstabilityScale": 0.3
+    },
+    "Fortify": {
+      "ArrivalMultiplier": 1.2,
+      "EngagementMultiplier": 0.9,
+      "ResolutionMultiplier": 1.0,
+      "BaseRiskRate": 0.02,
+      "FullControlThreshold": 1.0,
+      "PartialControlThreshold": 0.5,
+      "FleetDamageScale": 0.02,
+      "SystemInstabilityScale": 0.0
+    },
+    "Investigate": {
+      "ArrivalMultiplier": 1.0,
+      "EngagementMultiplier": 1.0,
+      "ResolutionMultiplier": 1.0,
+      "BaseRiskRate": 0.03,
+      "FullControlThreshold": 0.8,
+      "PartialControlThreshold": 0.4,
+      "FleetDamageScale": 0.02,
+      "SystemInstabilityScale": 0.05
+    },
+    "Exploit": {
+      "ArrivalMultiplier": 1.0,
+      "EngagementMultiplier": 1.1,
+      "ResolutionMultiplier": 0.9,
+      "BaseRiskRate": 0.06,
+      "FullControlThreshold": 1.0,
+      "PartialControlThreshold": 0.5,
+      "FleetDamageScale": 0.0,
+      "SystemInstabilityScale": 0.15
+    }
+  },
+  "Ai": {
+    "MinCommitIntervalSeconds": 5.0,
+    "MaxActiveCommitmentsPerPlayer": 3,
+    "InterruptRiskThreshold": 0.75,
+    "DispositionIntentWeights": {
+      "Aggressive": {
+        "Attack": 0.7,
+        "Contest": 0.2,
+        "Fortify": 0.05,
+        "Investigate": 0.0,
+        "Exploit": 0.05
+      },
+      "Strategic": {
+        "Attack": 0.35,
+        "Contest": 0.25,
+        "Fortify": 0.15,
+        "Investigate": 0.1,
+        "Exploit": 0.15
+      },
+      "Cautious": {
+        "Attack": 0.1,
+        "Contest": 0.2,
+        "Fortify": 0.3,
+        "Investigate": 0.25,
+        "Exploit": 0.15
+      },
+      "Dormant": {
+        "Attack": 0.0,
+        "Contest": 0.0,
+        "Fortify": 0.0,
+        "Investigate": 0.0,
+        "Exploit": 0.0
+      }
+    }
+  }
+}
