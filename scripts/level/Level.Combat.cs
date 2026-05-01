@@ -52,9 +52,8 @@ public partial class Level
 		}
 
 		_pendingArrival = (toIndex, fleet);
-		_levelUi.IntentPickerMenu.ShowAt(
+		_levelUi.SystemActionMenu.ShowIntentOnly(
 			target.GlobalPosition,
-			_systemRadius,
 			[("Attack", IntentType.Attack), ("Contest", IntentType.Contest)],
 			CommitPendingArrival,
 			required: true);

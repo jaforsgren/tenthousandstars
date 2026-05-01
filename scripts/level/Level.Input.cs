@@ -50,7 +50,7 @@ public partial class Level
 				_drag.FromIndex = _drag.CandidateIndex;
 				_drag.WorldPos = worldPos;
 				_systems[_drag.FromIndex].RefreshFleetVisuals();
-				_levelUi.IntentPickerMenu.HideMenu();
+				_levelUi.SystemActionMenu.HideAll();
 				QueueRedraw();
 			}
 			GetViewport().SetInputAsHandled();

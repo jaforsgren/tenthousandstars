@@ -20,11 +20,10 @@ public partial class Level
 				fa, fd, () => DoUpgrade(systemIndex, SystemUpgrade.Fortify),
 				ga, gd, () => DoUpgrade(systemIndex, SystemUpgrade.Forge),
 				splitDisabled, () => OnSplitButtonPressed(systemIndex, slot));
-			ShowOwnSystemIntentPicker(systemIndex);
+			AppendOwnSystemIntentOptions(systemIndex);
 		}
 		else if (_systems[systemIndex].IsAiOwned)
 		{
-			_levelUi.IntentPickerMenu.HideMenu();
 			_levelUi.SystemActionMenu.ShowForAiSystem(
 				_systems[systemIndex].GlobalPosition,
 				() => ShowFleetInfo(systemIndex),
@@ -32,7 +31,6 @@ public partial class Level
 		}
 		else
 		{
-			_levelUi.IntentPickerMenu.HideMenu();
 			_levelUi.SystemActionMenu.ShowInfoOnly(_systems[systemIndex].GlobalPosition, () => ShowFleetInfo(systemIndex));
 		}
 	}
@@ -50,34 +48,26 @@ public partial class Level
 				fa, fd, () => DoUpgrade(systemIndex, SystemUpgrade.Fortify),
 				ga, gd, () => DoUpgrade(systemIndex, SystemUpgrade.Forge),
 				splitDisabled, () => OnSplitButtonPressed(systemIndex, 0));
-			ShowOwnSystemIntentPicker(systemIndex);
+			AppendOwnSystemIntentOptions(systemIndex);
 		}
 		else
 		{
-			_levelUi.IntentPickerMenu.HideMenu();
 			_levelUi.SystemActionMenu.ShowInfoOnly(_systems[systemIndex].GlobalPosition, () => ShowSystemInfo(systemIndex));
 		}
 	}
 
 	private void SelectAiSystem(int systemIndex)
 	{
-		_levelUi.IntentPickerMenu.HideMenu();
 		_levelUi.SystemActionMenu.ShowForAiSystem(
 			_systems[systemIndex].GlobalPosition,
 			() => ShowSystemInfo(systemIndex),
 			() => ShowAiSystemInfo(systemIndex));
 	}
 
-	private void ShowOwnSystemIntentPicker(int systemIndex)
+	private void AppendOwnSystemIntentOptions(int systemIndex)
 	{
-		if (!_systems[systemIndex].HasFleet)
-		{
-			_levelUi.IntentPickerMenu.HideMenu();
-			return;
-		}
-		_levelUi.IntentPickerMenu.ShowAt(
-			_systems[systemIndex].GlobalPosition,
-			_systemRadius,
+		if (!_systems[systemIndex].HasFleet) return;
+		_levelUi.SystemActionMenu.SetIntentOptions(
 			[
 				("Fortify",     IntentType.Fortify),
 				("Investigate", IntentType.Investigate),
