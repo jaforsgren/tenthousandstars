@@ -82,7 +82,7 @@ public partial class Level
 		out bool forgeActive, out bool forgeDisabled)
 	{
 		var upgrade = _systems[systemIndex].Upgrade;
-		var canAfford = _systems[systemIndex].Ships >= _upgradeCfg.UpgradeCost;
+		var canAfford = _systems[systemIndex].Ships >= _levelCfg.UpgradeCost;
 		fortifyActive = upgrade == SystemUpgrade.Fortify;
 		fortifyDisabled = !fortifyActive && (upgrade != SystemUpgrade.None || !canAfford);
 		forgeActive = upgrade == SystemUpgrade.Forge;
@@ -151,7 +151,7 @@ public partial class Level
 	private void DoUpgrade(int systemIndex, SystemUpgrade upgrade)
 	{
 		if (upgrade != SystemUpgrade.None)
-			_systems[systemIndex].SpendShips(_upgradeCfg.UpgradeCost);
+			_systems[systemIndex].SpendShips(_levelCfg.UpgradeCost);
 		_systems[systemIndex].ApplyUpgrade(upgrade);
 
 		var pool = upgrade switch

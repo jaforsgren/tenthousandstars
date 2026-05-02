@@ -270,9 +270,9 @@ public partial class SystemNode : FogAwareNode
 		_neutralSystemOutline = cfg.NeutralSystemOutline.ToColor();
 		_planetGradients = cfg.PlanetGradients;
 		_planetOrbitSpeed = cfg.PlanetOrbitSpeed;
-		var upgradeCfg = ConfigLoader.Load<UpgradeConfig>("res://config/upgrade.json");
-		_forgeProductionBonus = upgradeCfg.ForgeProductionBonus;
-		_fortifyDefenseBonusMultiplier = upgradeCfg.FortifyDefenseBonusMultiplier;
+		var levelCfg = ConfigLoader.Load<LevelConfig>("res://config/level.json");
+		_forgeProductionBonus = levelCfg.ForgeProductionBonus;
+		_fortifyDefenseBonusMultiplier = levelCfg.FortifyDefenseBonusMultiplier;
 		_systemCircle = new SystemCircleNode();
 		AddChild(_systemCircle);
 		// Default to neutral outline; Initialize() updates it once the owner is known

@@ -26,7 +26,7 @@ public partial class RouteNode : FogAwareNode
 
 	public override void _Ready()
 	{
-		_routeWidth = ConfigLoader.Load<RouteConfig>("res://config/route.json").RouteWidth;
+		_routeWidth = ConfigLoader.Load<UiConfig>("res://config/ui.json").RouteWidth;
 	}
 
 	public override void _Draw()

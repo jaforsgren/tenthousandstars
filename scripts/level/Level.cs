@@ -74,7 +74,7 @@ public partial class Level : Node2D
 	private LevelUi _levelUi = null!;
 	private double _lastSystemClickTime = double.MinValue;
 	private int _lastClickedSystemIndex = -1;
-	private UpgradeConfig _upgradeCfg = null!;
+	private LevelConfig _levelCfg = null!;
 	private readonly Dictionary<int, int> _rerouteTargets = [];
 	private readonly Dictionary<int, RerouteArrowNode> _rerouteArrows = [];
 	private bool _isPickingRerouteTarget;
@@ -184,8 +184,8 @@ public partial class Level : Node2D
 		SpawnAiController(data, aiCfg);
 
 		_levelUi = GetNode<LevelUi>("%LevelUi");
-		var actionCfg = ConfigLoader.Load<ActionMenuConfig>("res://config/action_menu.json");
-		_levelUi.Initialize(_camera, _systemRadius, actionCfg);
+		var uiCfg = ConfigLoader.Load<UiConfig>("res://config/ui.json");
+		_levelUi.Initialize(_camera, _systemRadius, uiCfg.ActionMenu);
 
 		_gameController = new GameController();
 		AddChild(_gameController);
@@ -215,16 +215,15 @@ public partial class Level : Node2D
 		_ghostFleetOutline = sysCfg.FleetOutline.ToColor();
 		_ghostFleetOutlineWidth = sysCfg.FleetOutlineWidth;
 		_systemRadius = sysCfg.SystemRadius;
-		_defenderBonus = ConfigLoader.Load<CombatConfig>("res://config/combat.json").DefenderBonus;
-		var levelCfg = ConfigLoader.Load<LevelConfig>("res://config/level.json");
-		_fogEnabled = levelCfg.FogEnabled;
-		_fogClearSeconds = levelCfg.FogClearSeconds;
-		_fadeOutSeconds = levelCfg.FadeOutSeconds;
-		_transitDurationSeconds = levelCfg.TransitDurationSeconds;
+		_levelCfg = ConfigLoader.Load<LevelConfig>("res://config/level.json");
+		_defenderBonus = _levelCfg.DefenderBonus;
+		_fogEnabled = _levelCfg.FogEnabled;
+		_fogClearSeconds = _levelCfg.FogClearSeconds;
+		_fadeOutSeconds = _levelCfg.FadeOutSeconds;
+		_transitDurationSeconds = _levelCfg.TransitDurationSeconds;
 		_transitFleetScene = GD.Load<PackedScene>("res://scenes/fleet/TransitFleetNode.tscn");
 		_combatEffectScene = GD.Load<PackedScene>("res://scenes/effects/CombatEffectNode.tscn");
 		_rerouteArrowScene = GD.Load<PackedScene>("res://scenes/system/RerouteArrowNode.tscn");
-		_upgradeCfg = ConfigLoader.Load<UpgradeConfig>("res://config/upgrade.json");
 		_routeSet = new HashSet<(int, int)>(data.Routes);
 		_adjacency = GraphUtils.BuildAdjacency(data.Systems.Count, _routeSet);
 

@@ -3,5 +3,9 @@
   "FogEnabled": true,
   "FogClearSeconds": 1.5,
   "FadeOutSeconds": 4.0,
-  "TransitDurationSeconds": 1.2
+  "TransitDurationSeconds": 1.2,
+  "DefenderBonus": 1.0,
+  "UpgradeCost": 5.0,
+  "ForgeProductionBonus": 0.5,
+  "FortifyDefenseBonusMultiplier": 0.5
 }
