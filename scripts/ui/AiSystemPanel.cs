@@ -12,7 +12,6 @@ public partial class AiSystemPanel : PanelContainer
 	private Label _dispositionLabel = null!;
 	private Label _descriptionLabel = null!;
 	private Label _barkLabel = null!;
-	private AiConfig _aiConfig = null!;
 
 	private bool _previewInEditor;
 
@@ -38,12 +37,7 @@ public partial class AiSystemPanel : PanelContainer
 		_barkLabel = GetNode<Label>("%Bark");
 
 		if (Engine.IsEditorHint())
-		{
 			ApplyEditorPreview();
-			return;
-		}
-
-		_aiConfig = ConfigLoader.Load<AiConfig>("res://config/ai.json");
 	}
 
 	public void ShowFor(AiPlayerData aiPlayer, Color dispositionColor, int seed, Vector2 viewportSize)
@@ -62,7 +56,6 @@ public partial class AiSystemPanel : PanelContainer
 		_barkLabel.AddThemeColorOverride("font_color", dispositionColor.WithAlpha(0.65f));
 
 		Visible = true;
-		//Position = new Vector2((viewportSize.X - PanelWidth) / 2f, TopPadding);
 	}
 
 	private void ApplyEditorPreview()

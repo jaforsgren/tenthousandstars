@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Tts;
 
-public class NarrativeBarkSystem : INarrativeBarkSystem
+public class NarrativeBarkSystem : TagMatchingBase, INarrativeBarkSystem
 {
     private readonly NarrativeDatabase _db;
     private readonly Random _rng;
@@ -41,10 +41,5 @@ public class NarrativeBarkSystem : INarrativeBarkSystem
         _ => trigger.ToString()
     };
 
-    private static bool HasTag(string[] tags, string tag)
-    {
-        foreach (var t in tags)
-            if (t == tag) return true;
-        return false;
-    }
+
 }

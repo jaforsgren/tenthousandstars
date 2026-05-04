@@ -13,7 +13,7 @@ public partial class Level
 			ComputeUpgradeStates(systemIndex, out var fa, out var fd, out var ga, out var gd);
 			var slot = _selectedFleetSlot;
 			var splitDisabled = _systems[systemIndex].GetFleetShips(slot) < 2f;
-			_levelUi.SystemActionMenu.ShowForPlayerFleet(
+			_levelUi.SystemActionMenu.ShowForPlayer(
 				_systems[systemIndex].GlobalPosition,
 				() => ShowFleetInfo(systemIndex),
 				_rerouteTargets.ContainsKey(systemIndex), () => OnRerouteButtonPressed(systemIndex),
@@ -41,7 +41,7 @@ public partial class Level
 		{
 			ComputeUpgradeStates(systemIndex, out var fa, out var fd, out var ga, out var gd);
 			var splitDisabled = !_systems[systemIndex].HasFleet || _systems[systemIndex].GetFleetShips(0) < 2f;
-			_levelUi.SystemActionMenu.ShowForPlayerSystem(
+			_levelUi.SystemActionMenu.ShowForPlayer(
 				_systems[systemIndex].GlobalPosition,
 				() => ShowSystemInfo(systemIndex),
 				_rerouteTargets.ContainsKey(systemIndex), () => OnRerouteButtonPressed(systemIndex),

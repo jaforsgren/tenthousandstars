@@ -199,26 +199,7 @@ public partial class SystemActionMenu : Control
 		DrawLine(dir * systemEdgeLocal, slot.Position, _lineColor, _lineWidth);
 	}
 
-	public void ShowForPlayerFleet(
-		Vector2 worldPos,
-		Action onInfo,
-		bool hasReroute, Action onReroute,
-		bool fortifyActive, bool fortifyDisabled, Action onFortify,
-		bool forgeActive, bool forgeDisabled, Action onForge,
-		bool splitDisabled, Action onSplit)
-	{
-		ClearIntentSlots();
-		_trackedWorldPos = worldPos;
-		_infoSlot.Configure(onInfo);
-		_opponentInfoSlot.Visible = false;
-		_rerouteSlot.Configure(hasReroute, onReroute);
-		_fortifySlot.Configure(fortifyActive, fortifyDisabled, onFortify);
-		_forgeSlot.Configure(forgeActive, forgeDisabled, onForge);
-		_splitSlot.Configure(splitDisabled, onSplit);
-		PlayShowAnimation();
-	}
-
-	public void ShowForPlayerSystem(
+	public void ShowForPlayer(
 		Vector2 worldPos,
 		Action onInfo,
 		bool hasReroute, Action onReroute,
@@ -355,13 +336,17 @@ public partial class SystemActionMenu : Control
 			_intentSlots.Add(slot);
 		}
 
+		GameSpeed.PushUiPause();
 		_intentAnimElapsed = 0f;
+		var paused = Engine.TimeScale == 0.0;
 		foreach (var slot in _intentSlots)
-			slot.Scale = Vector2.Zero;
+			slot.Scale = paused ? Vector2.One : Vector2.Zero;
 	}
 
 	private void ClearIntentSlots()
 	{
+		if (_intentSlots.Count > 0)
+			GameSpeed.PopUiPause();
 		foreach (var slot in _intentSlots)
 			slot.QueueFree();
 		_intentSlots.Clear();

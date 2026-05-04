@@ -4,6 +4,13 @@ namespace Tts;
 
 public abstract class TagMatchingBase
 {
+    protected static bool HasTag(string[] tags, string tag)
+    {
+        foreach (var t in tags)
+            if (t == tag) return true;
+        return false;
+    }
+
     protected static bool HasAnyTag(string[] conditionTags, string[] requiredTags)
     {
         foreach (var required in requiredTags)

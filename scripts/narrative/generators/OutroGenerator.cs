@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Tts;
 
-public class OutroGenerator
+public class OutroGenerator : TagMatchingBase
 {
     private readonly StoryTextConfig _config;
     private readonly NarrativeDatabase _db;
@@ -65,10 +65,5 @@ public class OutroGenerator
         return result;
     }
 
-    private static bool HasTag(string[] tags, string tag)
-    {
-        foreach (var t in tags)
-            if (t == tag) return true;
-        return false;
-    }
+
 }
