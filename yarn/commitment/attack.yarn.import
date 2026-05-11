@@ -1,0 +1,14 @@
+[remap]
+
+importer="yarnscript"
+type="Resource"
+uid="uid://yqe7nxvxyoqt"
+path="res://.godot/imported/attack.yarn-4229bad536d1f922519d1117f3339044.tres"
+
+[deps]
+
+source_file="res://yarn/commitment/attack.yarn"
+dest_files=["res://.godot/imported/attack.yarn-4229bad536d1f922519d1117f3339044.tres"]
+
+[params]
+

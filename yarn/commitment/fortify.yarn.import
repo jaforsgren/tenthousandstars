@@ -1,0 +1,14 @@
+[remap]
+
+importer="yarnscript"
+type="Resource"
+uid="uid://cqol0eylr1c8d"
+path="res://.godot/imported/fortify.yarn-9fe7ff7f8f85d46fb798d0ba49ab8743.tres"
+
+[deps]
+
+source_file="res://yarn/commitment/fortify.yarn"
+dest_files=["res://.godot/imported/fortify.yarn-9fe7ff7f8f85d46fb798d0ba49ab8743.tres"]
+
+[params]
+

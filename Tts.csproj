@@ -1,11 +1,9 @@
 <Project Sdk="Godot.NET.Sdk/4.6.1">
+  <Import Project="addons\YarnSpinner-Godot\YarnSpinner-Godot.props" />
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
     <TargetFramework Condition=" '$(GodotTargetPlatform)' == 'android' ">net9.0</TargetFramework>
     <EnableDynamicLoading>true</EnableDynamicLoading>
-  </PropertyGroup>
-  <PropertyGroup>
-    <OutputType>Exe</OutputType>
   </PropertyGroup>
   <PropertyGroup>
     <Nullable>enable</Nullable>
@@ -16,5 +14,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Remove="tests/**/*.cs" />
+    <!-- program.cs defines a global static class Program which conflicts with Yarn.Program in the YarnSpinner addon -->
+    <Compile Remove="program.cs" />
   </ItemGroup>
 </Project>

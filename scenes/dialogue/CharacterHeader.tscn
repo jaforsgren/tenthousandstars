@@ -1,0 +1,28 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/dialogue/CharacterHeader.cs" id="1"]
+[ext_resource type="Theme" path="res://themes/dialog_theme.tres" id="2"]
+
+[node name="CharacterHeader" type="HBoxContainer"]
+theme = ExtResource("2")
+theme_override_constants/separation = 12
+script = ExtResource("1")
+
+[node name="Portrait" type="TextureRect" parent="."]
+custom_minimum_size = Vector2(140, 140)
+layout_mode = 2
+size_flags_vertical = 0
+expand_mode = 4
+stretch_mode = 5
+
+[node name="Info" type="VBoxContainer" parent="."]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 4
+theme_override_constants/separation = 2
+
+[node name="SpeakerName" type="Label" parent="Info"]
+layout_mode = 2
+
+[node name="Descriptor" type="Label" parent="Info"]
+layout_mode = 2

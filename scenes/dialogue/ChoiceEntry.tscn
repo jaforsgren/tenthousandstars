@@ -1,0 +1,21 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/dialogue/ChoiceEntry.cs" id="1"]
+[ext_resource type="Theme" path="res://themes/dialog_theme.tres" id="2"]
+
+[node name="ChoiceEntry" type="VBoxContainer"]
+theme = ExtResource("2")
+theme_override_constants/separation = 6
+script = ExtResource("1")
+
+[node name="YouLabel" type="Label" parent="."]
+layout_mode = 2
+text = "You"
+
+[node name="ButtonsContainer" type="VBoxContainer" parent="."]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="Divider" type="ColorRect" parent="."]
+custom_minimum_size = Vector2(0, 1)
+layout_mode = 2

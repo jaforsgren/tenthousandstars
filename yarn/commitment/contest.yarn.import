@@ -1,0 +1,14 @@
+[remap]
+
+importer="yarnscript"
+type="Resource"
+uid="uid://cbe0q4gy7ie4g"
+path="res://.godot/imported/contest.yarn-009a12c8615d3c55e3a64a4cb8d0a75b.tres"
+
+[deps]
+
+source_file="res://yarn/commitment/contest.yarn"
+dest_files=["res://.godot/imported/contest.yarn-009a12c8615d3c55e3a64a4cb8d0a75b.tres"]
+
+[params]
+

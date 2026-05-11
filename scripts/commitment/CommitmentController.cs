@@ -10,7 +10,7 @@ namespace Tts;
 public partial class CommitmentController : Node
 {
     [Signal]
-    public delegate void CommitmentResolvedEventHandler(int systemIndex, int ownerInt, bool controlGained, float remainingStrength);
+    public delegate void CommitmentResolvedEventHandler(int systemIndex, int ownerInt, int intentInt, bool controlGained, float remainingStrength);
 
     [Signal]
     public delegate void CommitmentSignalChangedEventHandler(int systemIndex);
@@ -150,6 +150,7 @@ public partial class CommitmentController : Node
             EmitSignal(SignalName.CommitmentResolved,
                 commitment.SystemIndex,
                 (int)commitment.Owner,
+                (int)commitment.Intent,
                 outcome.ControlChange != ControlChange.None,
                 remaining);
             EmitSignal(SignalName.CommitmentSignalChanged, commitment.SystemIndex);

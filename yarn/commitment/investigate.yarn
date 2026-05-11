@@ -1,0 +1,135 @@
+title: investigate_reveals
+---
+
+Narrator:
+The scouts return with more than you sent them for.
+
+---
+
+Narrator:
+You expected standard survey data.
+Orbital periods.
+Resource density.
+Defensive infrastructure.
+
+---
+
+Narrator:
+That's all here.
+
+But there's something else at the edges of the report.
+
+---
+
+Narrator:
+Not a conclusion.
+
+A shape of something.
+
+---
+
+Narrator:
+Energy readings that don't match the declared installations.
+
+Sensor interference that follows a pattern too consistent to be natural.
+
+Historical entries that were altered — not removed, just changed.
+
+Subtly.
+
+---
+
+Narrator:
+Whoever maintained this system wanted it to appear a certain way.
+
+---
+
+Narrator:
+They were almost successful.
+
+---
+
+Narrator:
+Almost.
+
+---
+
+-> [Review the report carefully]
+    Narrator:
+    You go through it again.
+
+    Narrator:
+    Slower this time.
+
+    Narrator:
+    Looking for what they wanted you to miss.
+
+    <<jump investigate_done>>
+
+-> [File it and move on]
+    Narrator:
+    You mark it for deeper review later.
+
+    Narrator:
+    For now, the intelligence is enough.
+
+    <<jump investigate_done>>
+
+===
+
+title: investigate_quiet
+---
+
+Narrator:
+The scouts come back clean.
+
+---
+
+Narrator:
+Which means one of two things.
+
+---
+
+Narrator:
+Either there is genuinely nothing to find.
+
+Or there is nothing that wanted to be found.
+
+---
+
+Narrator:
+You have no way to tell the difference.
+
+That's the problem with good concealment.
+
+---
+
+Narrator:
+The absence of information is not the same as the presence of safety.
+
+---
+
+Narrator:
+You file the report under inconclusive.
+
+You've accumulated quite a few of those.
+
+---
+
+-> [Acknowledge]
+    <<jump investigate_done>>
+
+===
+
+title: investigate_done
+---
+===
+
+title: investigate_commit
+---
+Narrator: Reconnaissance order sent.
+
+Eyes on the system. Listen more than you look. The details that matter are never on the surface.
+
+Return with something useful.
+===

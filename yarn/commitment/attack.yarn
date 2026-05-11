@@ -1,0 +1,165 @@
+title: attack_won
+---
+
+Narrator:
+The reports come through in fragments.
+
+First the silence.
+
+Then confirmation.
+
+---
+
+Narrator:
+Your ships are still.
+
+No drift. No correction.
+
+The engagement is over.
+
+---
+
+Narrator:
+The system changes hands.
+
+Not dramatically.
+
+A flag removed.
+A new registration filed.
+
+The archive accepts it without comment.
+
+---
+
+Narrator:
+You check the fleet strength.
+
+<<if $remaining_strength > 8>>
+    Narrator:
+    Better than expected.
+
+    Narrator:
+    Whoever defended that system — they held longer than the models predicted.
+
+    Narrator:
+    You take note of that.
+
+<<elseif $remaining_strength > 3>>
+    Narrator:
+    Acceptable losses.
+
+    Narrator:
+    You've paid more for less.
+
+<<else>>
+    Narrator:
+    The numbers are worse than you wanted.
+
+    Narrator:
+    The system is yours.
+
+    Narrator:
+    The question is whether you can hold it.
+
+<<endif>>
+
+---
+
+Narrator:
+Control is a temporary condition.
+
+You've taken enough systems to know that.
+
+---
+
+-> [Acknowledge]
+    <<jump attack_done>>
+
+===
+
+title: attack_repulsed
+---
+
+Narrator:
+The contact window closes before you expect it.
+
+---
+
+Narrator:
+Your ships are withdrawing.
+
+Not routed — the distinction matters to some people.
+
+To the fleet logs, it matters.
+
+---
+
+Narrator:
+The system did not fall.
+
+---
+
+Narrator:
+You review the engagement data.
+
+There is always something in the data.
+
+Resistance levels.
+Fleet ratios.
+Timing.
+
+---
+
+<<if $remaining_strength > 5>>
+    Narrator:
+    The fleet survived. That's the important part.
+
+    Narrator:
+    You came close.
+
+    Narrator:
+    Close enough to learn something.
+
+<<else>>
+    Narrator:
+    The losses are significant.
+
+    Narrator:
+    You've committed more to worse outcomes.
+
+    Narrator:
+    But this one stings.
+
+<<endif>>
+
+---
+
+Narrator:
+You mark the system.
+
+Not for now.
+
+---
+
+Narrator:
+But noted.
+
+---
+
+-> [Acknowledge]
+    <<jump attack_done>>
+
+===
+
+title: attack_done
+---
+===
+
+title: attack_commit
+---
+Narrator: Fleet committed to assault.
+
+The approach vector is locked. There is no negotiation at the end of this vector — only outcome.
+
+Engage when ready.
+===

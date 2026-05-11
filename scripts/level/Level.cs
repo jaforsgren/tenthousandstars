@@ -87,6 +87,8 @@ public partial class Level : Node2D
 	private ScenarioController _scenarioController = null!;
 	private CommitmentController _commitmentController = null!;
 	private CommitmentConfig _commitmentConfig = null!;
+	private CommitmentDialogueController _commitmentDialogue = null!;
+	private PackedScene _commitmentDialogueScene = null!;
 	private (int SystemIndex, float Fleet)? _pendingArrival;
 	private readonly TransitSystem _transitSystem = new();
 	private FogSystem? _fogSystem;
@@ -288,9 +290,14 @@ public partial class Level : Node2D
 			_systemRadius,
 			_rng.Next());
 		_commitmentController.CommitmentResolved += OnCommitmentResolved;
+
+		_commitmentDialogueScene = GD.Load<PackedScene>("res://scenes/dialogue/CommitmentDialoguePanel.tscn");
+		_commitmentDialogue = _commitmentDialogueScene.Instantiate<CommitmentDialogueController>();
+		AddChild(_commitmentDialogue);
+		_commitmentController.CommitmentResolved += _commitmentDialogue.OnCommitmentResolved;
 	}
 
-	private void OnCommitmentResolved(int systemIndex, int ownerInt, bool controlGained, float remainingStrength)
+	private void OnCommitmentResolved(int systemIndex, int ownerInt, int intentInt, bool controlGained, float remainingStrength)
 	{
 		var owner = (SystemOwner)ownerInt;
 		var target = _systems[systemIndex];

@@ -167,6 +167,7 @@ public partial class SystemActionMenu : Control
 	private void AnimateIntentSlots(double delta)
 	{
 		if (_intentSlots.Count == 0) return;
+		if (Engine.TimeScale == 0.0) return;
 		_intentAnimElapsed += (float)delta;
 		for (var i = 0; i < _intentSlots.Count; i++)
 		{

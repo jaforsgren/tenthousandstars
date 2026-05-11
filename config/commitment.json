@@ -1,7 +1,7 @@
 {
-  "ArrivalBaseDurationSeconds": 3.0,
-  "EngagementBaseDurationSeconds": 10.0,
-  "ResolutionBaseDurationSeconds": 4.0,
+  "ArrivalBaseDurationSeconds": 2.0,
+  "EngagementBaseDurationSeconds": 6.0,
+  "ResolutionBaseDurationSeconds": 2.0,
   "BaseRiskAccumulationRate": 0.04,
   "RiskPerCohabitantMultiplier": 0.12,
   "InterruptPenaltyMultiplier": 0.8,

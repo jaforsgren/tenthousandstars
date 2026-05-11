@@ -63,27 +63,33 @@ public partial class Level
 	private void CommitPendingArrival(IntentType intent)
 	{
 		if (_pendingArrival is not { } arrival) return;
-		_pendingArrival = null;
-		var target = _systems[arrival.SystemIndex];
-		_commitmentController.StartCommitment(
-			arrival.SystemIndex,
-			SystemOwner.Player,
-			intent,
-			BuildFleetInfluences(arrival.Fleet),
-			Time.GetTicksMsec() / 1000.0,
-			target.Ships);
-		UpdateFog();
+		_commitmentDialogue.ShowPreCommitment(intent, () =>
+		{
+			_pendingArrival = null;
+			var target = _systems[arrival.SystemIndex];
+			_commitmentController.StartCommitment(
+				arrival.SystemIndex,
+				SystemOwner.Player,
+				intent,
+				BuildFleetInfluences(arrival.Fleet),
+				Time.GetTicksMsec() / 1000.0,
+				target.Ships);
+			UpdateFog();
+		});
 	}
 
 	internal void CommitOwnSystem(int systemIndex, IntentType intent)
 	{
-		_commitmentController.StartCommitment(
-			systemIndex,
-			SystemOwner.Player,
-			intent,
-			BuildFleetInfluences(_systems[systemIndex].Ships),
-			Time.GetTicksMsec() / 1000.0);
-		UpdateFog();
+		_commitmentDialogue.ShowPreCommitment(intent, () =>
+		{
+			_commitmentController.StartCommitment(
+				systemIndex,
+				SystemOwner.Player,
+				intent,
+				BuildFleetInfluences(_systems[systemIndex].Ships),
+				Time.GetTicksMsec() / 1000.0);
+			UpdateFog();
+		});
 	}
 
 	private void LaunchAiTransit(int fromIndex, int toIndex, float fleet, AiPlayerData aiPlayer, IntentType intent)
