@@ -70,8 +70,12 @@ public partial class DialogueController : Node
 		foreach (Node child in _dialogStack.GetChildren())
 			child.QueueFree();
 
-		if (!string.IsNullOrEmpty(PreviewNode))
-			GetNode<YarnSpinnerGodot.DialogueRunner>("DialogueRunnerNode").startNode = PreviewNode;
+		if (!string.IsNullOrEmpty(PreviewNode) && HasNode("DialogueRunnerNode"))
+		{
+			var runner = GetNode<YarnSpinnerGodot.DialogueRunner>("DialogueRunnerNode");
+			runner.dialoguePresenters.Add(_bridge);
+			_ = runner.StartDialogue(PreviewNode);
+		}
 
 		_bridge.Adapter.LineReady += OnLineReadyTrigger;
 		_bridge.Adapter.SkillCheckReady += OnSkillCheckReadyTrigger;
