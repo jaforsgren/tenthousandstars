@@ -56,7 +56,7 @@ public partial class DialogueController : Node
 	private Tween? _scrollTween;
 
 	private static readonly HashSet<string> PortraitlessSpeakers =
-		new(StringComparer.OrdinalIgnoreCase) { "you", "narration", "" };
+		new(StringComparer.OrdinalIgnoreCase) { "you", "narration", "narrator", "" };
 
 	public override void _Ready()
 	{

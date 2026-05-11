@@ -81,6 +81,7 @@ public partial class DialogEntry : VBoxContainer
 				return YouPrefix.Length;
 
 			case "narration":
+			case "narrator":
 			case "":
 				_youLabel.Visible = false;
 				_dialogueText.ThemeTypeVariation = "Narration";
