@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Godot;
 using YarnSpinnerGodot;
 
-namespace Tts;
+namespace Tts.Dialogue;
 
 /// <summary>
 /// A single stacked dialogue entry. Speaker styling is applied via BBCode:

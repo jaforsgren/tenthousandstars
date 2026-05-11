@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using Godot;
 using Godot.Collections;
 
-namespace Tts;
+namespace Tts.Dialogue;
 
 /// <summary>
 /// Manages gameplay segments triggered from Yarn via <c>&lt;&lt;gameplay "scene_name"&gt;&gt;</c>.

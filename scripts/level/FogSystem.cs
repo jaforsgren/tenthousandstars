@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using Godot;
 
-namespace Tts;
+namespace Tts.Level;
 
 internal sealed class FogSystem
 {

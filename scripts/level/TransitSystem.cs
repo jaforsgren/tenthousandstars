@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace Tts;
+namespace Tts.Level;
 
 internal sealed class TransitSystem
 {

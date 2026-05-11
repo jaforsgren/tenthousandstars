@@ -1,6 +1,6 @@
 using System;
 
-namespace Tts;
+namespace Tts.Config;
 
 public record Bark(string[] Tags, StateCondition? When, string Npc, string Message);
 

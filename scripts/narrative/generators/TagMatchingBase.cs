@@ -1,6 +1,6 @@
 using System.Linq;
 
-namespace Tts;
+namespace Tts.Narrative;
 
 public abstract class TagMatchingBase
 {

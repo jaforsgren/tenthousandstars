@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Text;
 using Yarn.Markup;
 
-namespace Tts;
+namespace Tts.Dialogue;
 
 /// <summary>
 /// Converts a Yarn <see cref="MarkupParseResult"/> into a BBCode string

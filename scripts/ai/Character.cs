@@ -1,4 +1,4 @@
-namespace Tts;
+namespace Tts.Ai;
 
 public record Character(
     AiDisposition Disposition,

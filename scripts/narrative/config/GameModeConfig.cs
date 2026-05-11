@@ -1,4 +1,4 @@
-namespace Tts;
+namespace Tts.Narrative;
 
 public enum GameMode { Random, Story }
 

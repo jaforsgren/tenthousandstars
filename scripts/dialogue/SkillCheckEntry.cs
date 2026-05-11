@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using Godot;
 using YarnSpinnerGodot;
 
-namespace Tts;
+namespace Tts.Dialogue;
 
 /// <summary>
 /// A visually distinct dialogue stack entry for skill check results.

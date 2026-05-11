@@ -1,4 +1,4 @@
-namespace Tts;
+namespace Tts.Utils;
 
 public readonly record struct CombatResult(bool AttackerWins, float AttackerRemainder, float DefenderRemainder);
 

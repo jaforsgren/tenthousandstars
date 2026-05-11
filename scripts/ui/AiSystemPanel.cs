@@ -1,6 +1,6 @@
 using Godot;
 
-namespace Tts;
+namespace Tts.Ui;
 
 [Tool]
 public partial class AiSystemPanel : PanelContainer

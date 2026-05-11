@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using Godot;
 
-namespace Tts;
+namespace Tts.Ui;
 
 // Positions all action and intent buttons in a half-circle around the selected system.
 // All visible slots (named action slots + dynamic intent slots) are distributed evenly

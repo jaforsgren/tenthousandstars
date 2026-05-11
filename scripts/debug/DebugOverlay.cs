@@ -1,7 +1,7 @@
 using Godot;
 using System.Collections.Generic;
 
-namespace Tts;
+namespace Tts.Debug;
 
 public partial class DebugOverlay : CanvasLayer
 {

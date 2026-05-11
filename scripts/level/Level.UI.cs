@@ -2,7 +2,7 @@ using System;
 using System.Linq;
 using Godot;
 
-namespace Tts;
+namespace Tts.Level;
 
 public partial class Level
 {

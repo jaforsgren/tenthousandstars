@@ -1,6 +1,6 @@
 using Godot;
 
-namespace Tts;
+namespace Tts.Utils;
 
 public static class UILayout
 {

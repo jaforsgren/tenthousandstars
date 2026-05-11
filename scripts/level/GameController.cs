@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Godot;
 
-namespace Tts;
+namespace Tts.Level;
 
 internal sealed partial class GameController : Node
 {

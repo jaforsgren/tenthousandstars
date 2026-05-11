@@ -3,7 +3,7 @@
 using System;
 using System.Threading.Tasks;
 
-namespace Tts;
+namespace Tts.Dialogue;
 
 /// <summary>
 /// Decoupling layer between <see cref="YarnBridge"/> (Yarn Spinner side)

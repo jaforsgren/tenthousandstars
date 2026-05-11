@@ -1,7 +1,7 @@
 using System;
 using System.Text;
 
-namespace Tts;
+namespace Tts.Debug;
 
 public static class NarrativeCli
 {

@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace Tts;
+namespace Tts.Utils;
 
 public static class GraphUtils
 {

@@ -2,7 +2,7 @@ using System;
 using System.Linq;
 using Godot;
 
-namespace Tts;
+namespace Tts.Ui;
 
 [Tool]
 public partial class ScenarioPanel : Control

@@ -1,7 +1,7 @@
 using System;
 using System.Linq;
 
-namespace Tts;
+namespace Tts.Narrative;
 
 public class NarrativeService : INarrativeService
 {

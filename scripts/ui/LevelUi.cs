@@ -1,6 +1,6 @@
 using Godot;
 
-namespace Tts;
+namespace Tts.Ui;
 
 internal sealed partial class LevelUi : Node
 {

@@ -1,6 +1,6 @@
 using System;
 
-namespace Tts;
+namespace Tts.Ai;
 
 public static partial class AiNaming
 {

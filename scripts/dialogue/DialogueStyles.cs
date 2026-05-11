@@ -2,7 +2,7 @@
 
 using Godot;
 
-namespace Tts;
+namespace Tts.Dialogue;
 
 // Values the theme system cannot express:
 //   - BBCode hex strings embedded in markup at runtime

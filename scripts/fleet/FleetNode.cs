@@ -1,6 +1,6 @@
 using Godot;
 
-namespace Tts;
+namespace Tts.Fleet;
 
 public abstract partial class FleetNodeBase : Node2D
 {

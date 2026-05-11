@@ -1,6 +1,6 @@
 using System;
 
-namespace Tts;
+namespace Tts.Narrative;
 
 public interface IMissionGenerator
 {

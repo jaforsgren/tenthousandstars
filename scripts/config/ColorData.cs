@@ -1,6 +1,6 @@
 using Godot;
 
-namespace Tts;
+namespace Tts.Config;
 
 public record ColorData(float R, float G, float B, float A)
 {

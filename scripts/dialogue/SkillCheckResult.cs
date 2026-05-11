@@ -1,6 +1,6 @@
 #nullable enable
 
-namespace Tts;
+namespace Tts.Dialogue;
 
 public sealed record SkillCheckResult(
 	string Skill,

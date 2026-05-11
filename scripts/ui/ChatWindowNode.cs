@@ -1,6 +1,6 @@
 using Godot;
 
-namespace Tts;
+namespace Tts.Ui;
 
 public partial class ChatWindowNode : Control
 {

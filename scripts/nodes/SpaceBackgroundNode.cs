@@ -1,6 +1,6 @@
 using Godot;
 
-namespace Tts;
+namespace Tts.Nodes;
 
 [Tool]
 public partial class SpaceBackgroundNode : ColorRect

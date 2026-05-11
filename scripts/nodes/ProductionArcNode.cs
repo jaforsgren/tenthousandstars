@@ -1,6 +1,6 @@
 using Godot;
 
-namespace Tts;
+namespace Tts.Nodes;
 
 public partial class ProductionArcNode : Node2D
 {

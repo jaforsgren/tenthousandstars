@@ -1,7 +1,7 @@
 using System;
 using Godot;
 
-namespace Tts;
+namespace Tts.Ui;
 
 [Tool]
 public partial class NarrativeScreen : Control

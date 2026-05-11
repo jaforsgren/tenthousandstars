@@ -2,7 +2,7 @@
 
 using System;
 
-namespace Tts;
+namespace Tts.Dialogue;
 
 /// <summary>
 /// Resolves skill checks: rolls 2d6 + skill value against a difficulty.

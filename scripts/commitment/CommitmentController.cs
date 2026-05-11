@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using Godot;
 
-namespace Tts;
+namespace Tts.Commitment;
 
 // Godot Node that drives CommitmentEngine each _Process tick.
 // Owns all active CommitmentState objects, per-system SystemHiddenState,

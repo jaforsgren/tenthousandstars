@@ -1,4 +1,4 @@
-namespace Tts;
+namespace Tts.Narrative;
 
 internal static class StateConditionMatcher
 {

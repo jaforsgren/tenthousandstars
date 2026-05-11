@@ -1,6 +1,6 @@
 using Godot;
 
-namespace Tts;
+namespace Tts.Nodes;
 
 public abstract partial class FogAwareNode : Node2D
 {

@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Tts;
+namespace Tts.Level;
 
 [Tool]
 public partial class Level : Node2D

@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using Godot;
 using YarnSpinnerGodot;
 
-namespace Tts;
+namespace Tts.Dialogue;
 
 /// <summary>
 /// Displayed once at the top of each NPC speaker segment.

@@ -5,7 +5,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using Godot;
 
-namespace Tts;
+namespace Tts.Utils;
 
 public static class ConfigLoader
 {

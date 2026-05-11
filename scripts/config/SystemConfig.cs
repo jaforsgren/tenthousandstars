@@ -1,4 +1,4 @@
-namespace Tts;
+namespace Tts.Config;
 
 public record SystemConfig(
 	float SystemRadius,

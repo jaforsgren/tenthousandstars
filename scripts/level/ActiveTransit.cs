@@ -1,6 +1,6 @@
 using Godot;
 
-namespace Tts;
+namespace Tts.Level;
 
 internal sealed class ActiveTransit
 {

@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Tts;
+namespace Tts.Level;
 
 internal static class EndConditionEvaluator
 {

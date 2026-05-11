@@ -1,4 +1,4 @@
-namespace Tts;
+namespace Tts.Types;
 
 public enum FogState
 {

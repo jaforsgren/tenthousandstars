@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using Godot;
 
-namespace Tts;
+namespace Tts.Narrative;
 
 // Plain C# class (not a Node) — held as a persistent field in Level.
 // This is the only class in the narrative module with a Godot dependency (ConfigLoader, GD.Print).

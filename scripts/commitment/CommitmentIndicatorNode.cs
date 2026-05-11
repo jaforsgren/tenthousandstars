@@ -1,6 +1,6 @@
 using Godot;
 
-namespace Tts;
+namespace Tts.Commitment;
 
 // Attached to a SystemNode as a child.
 // Draws a phase-segmented arc around the system and shows an intent badge above it.

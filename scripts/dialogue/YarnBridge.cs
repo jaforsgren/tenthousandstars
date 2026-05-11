@@ -10,7 +10,7 @@ using Godot.Collections;
 using Yarn.Markup;
 using YarnSpinnerGodot;
 
-namespace Tts;
+namespace Tts.Dialogue;
 
 /// <summary>
 /// Yarn Spinner dialogue presenter that bridges the Yarn runtime to the

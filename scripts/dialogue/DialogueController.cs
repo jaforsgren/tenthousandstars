@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Godot;
 
-namespace Tts;
+namespace Tts.Dialogue;
 
 /// <summary>
 /// Root controller for the Disco-Elysium-style stacked dialogue UI.

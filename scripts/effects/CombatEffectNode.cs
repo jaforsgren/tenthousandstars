@@ -1,6 +1,6 @@
 using Godot;
 
-namespace Tts;
+namespace Tts.Effects;
 
 // Visual layers (ImpactLayer, CaptureLayer) and all animation data live in
 // CombatEffectNode.tscn — edit shapes and timings there in the Godot editor.

@@ -1,4 +1,4 @@
-namespace Tts;
+namespace Tts.Narrative;
 
 // Source types — loaded from JSON; TextFile paths resolved in NarrativeController.
 public record StoryTextTemplateSource(string Id, string[] Tags, string? Title, string TextFile);

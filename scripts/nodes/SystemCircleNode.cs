@@ -1,7 +1,7 @@
 using System.Linq;
 using Godot;
 
-namespace Tts;
+namespace Tts.Nodes;
 
 public partial class SystemCircleNode : Node2D
 {

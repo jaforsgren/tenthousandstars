@@ -2,7 +2,7 @@ using System;
 using Godot;
 using YarnSpinnerGodot;
 
-namespace Tts;
+namespace Tts.Dialogue;
 
 // Bridges CommitmentController resolution events to the YarnSpinner dialogue panel.
 // Lives as a CanvasLayer that overlays the game viewport; auto-hides when dialogue ends.

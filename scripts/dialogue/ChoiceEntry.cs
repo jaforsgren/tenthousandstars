@@ -3,7 +3,7 @@
 using System;
 using Godot;
 
-namespace Tts;
+namespace Tts.Dialogue;
 
 /// <summary>
 /// Renders player choices in the dialogue scroll stack.

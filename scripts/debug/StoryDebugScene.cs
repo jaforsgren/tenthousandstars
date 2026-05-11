@@ -2,7 +2,7 @@ using System;
 using System.Text;
 using Godot;
 
-namespace Tts;
+namespace Tts.Debug;
 
 public partial class StoryDebugScene : Control
 {

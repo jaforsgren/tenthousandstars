@@ -1,6 +1,6 @@
 using Godot;
 
-namespace Tts;
+namespace Tts.Fleet;
 
 // Color is applied via Modulate so the white Polygon2D takes the fleet's color.
 public partial class TransitFleetNode : Node2D

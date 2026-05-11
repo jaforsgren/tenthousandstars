@@ -1,4 +1,4 @@
-namespace Tts;
+namespace Tts.Commitment;
 
 public enum IntentType { Attack, Contest, Fortify, Investigate, Exploit }
 public enum CommitmentPhase { Arrival, Engagement, Resolution }

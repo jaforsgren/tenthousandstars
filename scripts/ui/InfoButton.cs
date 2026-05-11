@@ -1,7 +1,7 @@
 using Godot;
 using System;
 
-namespace Tts;
+namespace Tts.Ui;
 
 public partial class InfoButton : Control
 {

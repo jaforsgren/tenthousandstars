@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace Tts;
+namespace Tts.Commitment;
 
 // Pure stateless AI decision logic for the commitment system.
 // AI infers hidden state from visible signals — it never reads SystemHiddenState directly.

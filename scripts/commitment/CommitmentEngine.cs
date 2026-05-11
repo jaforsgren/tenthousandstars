@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace Tts;
+namespace Tts.Commitment;
 
 // Pure stateless logic — no Godot dependency.
 // CommitmentController owns state and calls into here each tick.
