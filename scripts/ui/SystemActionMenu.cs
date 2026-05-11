@@ -1,6 +1,10 @@
 using System;
 using System.Collections.Generic;
 using Godot;
+using Tts.Commitment;
+using Tts.Config;
+using Tts.Nodes;
+using Tts.Utils;
 
 namespace Tts.Ui;
 

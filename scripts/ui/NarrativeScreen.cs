@@ -1,5 +1,6 @@
 using System;
 using Godot;
+using Tts.Narrative;
 
 namespace Tts.Ui;
 

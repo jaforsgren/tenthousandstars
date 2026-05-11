@@ -1,6 +1,8 @@
 using System;
 using Godot;
 using YarnSpinnerGodot;
+using Tts.Commitment;
+using Tts.Level;
 
 namespace Tts.Dialogue;
 

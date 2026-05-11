@@ -2,6 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Godot;
+using Tts.Commitment;
+using Tts.Config;
+using Tts.Level;
+using Tts.Nodes;
+using Tts.Utils;
 
 namespace Tts.Ai;
 

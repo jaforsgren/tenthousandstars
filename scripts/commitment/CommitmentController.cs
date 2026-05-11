@@ -1,6 +1,9 @@
 using System;
 using System.Collections.Generic;
 using Godot;
+using Tts.Config;
+using Tts.Level;
+using Tts.Nodes;
 
 namespace Tts.Commitment;
 

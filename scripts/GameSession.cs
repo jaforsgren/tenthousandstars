@@ -1,3 +1,4 @@
+using Tts.Narrative;
 namespace Tts;
 
 // Holds state that must survive scene reloads between game rounds.

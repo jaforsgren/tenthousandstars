@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using Godot;
+using Tts.Config;
 
 namespace Tts.Ui;
 

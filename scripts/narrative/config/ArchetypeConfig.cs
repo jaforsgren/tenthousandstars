@@ -1,3 +1,4 @@
+using Tts.Ai;
 namespace Tts.Narrative;
 
 public record ArchetypeConfig(

@@ -1,4 +1,5 @@
 using Godot;
+using Tts.Types;
 
 namespace Tts.Nodes;
 

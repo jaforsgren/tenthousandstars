@@ -1,5 +1,7 @@
 using System.Linq;
 using Godot;
+using Tts.Config;
+using Tts.Utils;
 
 namespace Tts.Nodes;
 

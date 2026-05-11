@@ -2,6 +2,9 @@ using Godot;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Tts.Ai;
+using Tts.Config;
+using Tts.Utils;
 
 namespace Tts.Level;
 

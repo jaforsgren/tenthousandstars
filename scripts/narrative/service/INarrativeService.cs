@@ -1,3 +1,4 @@
+using Tts.Config;
 namespace Tts.Narrative;
 
 public interface INarrativeService

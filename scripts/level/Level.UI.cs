@@ -1,6 +1,10 @@
 using System;
 using System.Linq;
 using Godot;
+using Tts.Commitment;
+using Tts.Config;
+using Tts.Types;
+using Tts.Ui;
 
 namespace Tts.Level;
 

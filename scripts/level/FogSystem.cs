@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 using Godot;
+using Tts.Nodes;
+using Tts.Types;
 
 namespace Tts.Level;
 

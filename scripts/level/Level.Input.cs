@@ -1,4 +1,6 @@
 using Godot;
+using Tts.Types;
+using Tts.Ui;
 
 namespace Tts.Level;
 

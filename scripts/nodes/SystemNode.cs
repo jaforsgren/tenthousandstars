@@ -2,6 +2,11 @@ using Godot;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Tts.Config;
+using Tts.Fleet;
+using Tts.Level;
+using Tts.Types;
+using Tts.Utils;
 
 namespace Tts.Nodes;
 

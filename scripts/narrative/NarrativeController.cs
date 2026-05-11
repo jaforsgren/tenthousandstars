@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 using Godot;
+using Tts.Config;
+using Tts.Utils;
 
 namespace Tts.Narrative;
 
