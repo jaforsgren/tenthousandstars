@@ -92,10 +92,11 @@ grow_horizontal = 2
 mouse_filter = 2
 color = Color(0, 0, 0, 1)
 
-[node name="YarnBridge" type="Node" parent="DialogueRoot"]
+[node name="YarnBridge" type="Node" parent="DialogueRoot" node_paths=PackedStringArray("dialogueRunner")]
 script = ExtResource("3")
+dialogueRunner = NodePath("../../DialogueRunnerNode")
 
-[node name="DialogueRunnerNode" type="Control" parent="."]
+[node name="DialogueRunnerNode" type="Control" parent="." node_paths=PackedStringArray("variableStorage", "lineProvider")]
 visible = false
 layout_mode = 3
 anchors_preset = 15
