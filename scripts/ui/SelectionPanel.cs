@@ -95,6 +95,7 @@ public partial class SelectionPanel : PanelContainer
 
 	private void ApplyEditorPreview()
 	{
+		if (_titleLabel is null) return;
 		if (_previewInEditor)
 		{
 			_titleLabel.Text = "Test Prime";

@@ -96,6 +96,7 @@ public partial class NotificationPanel : PanelContainer
 
 	private void ApplyEditorPreview()
 	{
+		if (_titleLabel is null) return;
 		if (_previewInEditor)
 		{
 			_titleLabel.Text = "Mission Brief";

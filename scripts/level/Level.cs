@@ -108,12 +108,16 @@ public partial class Level : Node2D
 
 	public override void _Ready()
 	{
-		_speedControlPanel = GetNode<SpeedControlPanel>("%SpeedControlPanel");
-		_countdownTimer = GetNode<CountdownTimerNode>("%CountdownTimerNode");
 		if (Engine.IsEditorHint())
+		{
 			GeneratePreview();
+		}
 		else
+		{
+			_speedControlPanel = GetNode<SpeedControlPanel>("%SpeedControlPanel");
+			_countdownTimer = GetNode<CountdownTimerNode>("%CountdownTimerNode");
 			GenerateRuntime();
+		}
 	}
 
 	public override void _Process(double delta)

@@ -61,6 +61,7 @@ public partial class AiSystemPanel : PanelContainer
 
 	private void ApplyEditorPreview()
 	{
+		if (_nameLabel is null) return;
 		if (_previewInEditor)
 		{
 			var previewColor = new Color(1f, 0.49f, 0.13f);

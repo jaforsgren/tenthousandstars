@@ -105,6 +105,7 @@ public partial class SystemActionMenu : Control
 
 	public override void _Ready()
 	{
+		if (Engine.IsEditorHint()) return;
 		_animPlayer       = GetNode<AnimationPlayer>("AnimationPlayer");
 		_infoSlot         = GetNode<InfoButton>("InfoButton");
 		_opponentInfoSlot = GetNode<InfoButton>("OpponentInfoButton");
