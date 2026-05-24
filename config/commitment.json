@@ -7,6 +7,7 @@
   "InterruptPenaltyMultiplier": 0.8,
   "AlterationRiskThreshold": 0.65,
   "HiddenStateInitRange": 0.4,
+  "EncounterSystemChance": 0.1,
   "Intents": {
     "Attack": {
       "ArrivalMultiplier": 1.0,

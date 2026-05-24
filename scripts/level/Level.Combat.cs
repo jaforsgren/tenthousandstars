@@ -56,13 +56,46 @@ public partial class Level
 			return;
 		}
 
-		_pendingArrival = (toIndex, fleet);
-		_levelUi.SystemActionMenu.ShowIntentOnly(
-			target.GlobalPosition,
-			[("Attack", IntentType.Attack), ("Contest", IntentType.Contest)],
-			CommitPendingArrival,
-			required: true);
+		if (_encounterSystems.Contains(toIndex))
+		{
+			_pendingArrival = (toIndex, fleet);
+			_levelUi.SystemActionMenu.ShowIntentOnly(
+				target.GlobalPosition,
+				[("Attack", IntentType.Attack), ("Contest", IntentType.Contest)],
+				CommitPendingArrival,
+				required: true);
+			UpdateFog();
+		}
+		else
+		{
+			ResolveDirectCombat(toIndex, fleet);
+		}
+	}
+
+	private void ResolveDirectCombat(int systemIndex, float fleet)
+	{
+		var target = _systems[systemIndex];
+		var effectiveDefenderBonus = _defenderBonus * (1f + target.DefenseBonusMultiplier);
+		var result = CombatResolver.Resolve(fleet, target.Ships, effectiveDefenderBonus);
+
+		if (result.AttackerWins)
+		{
+			var remainder = Math.Max(0f, result.AttackerRemainder);
+			target.Capture(remainder, SystemOwner.Player);
+			SpawnCombatEffect(systemIndex, attackerWon: true);
+			if (_camera.IsFollowing)
+				_camera.FollowSystem(target.GlobalPosition);
+			ClearReroute(systemIndex);
+		}
+		else
+		{
+			target.SustainDefense(Math.Max(0f, result.DefenderRemainder));
+			SpawnCombatEffect(systemIndex, attackerWon: false);
+		}
+
+		PostBark(_barkConfig?.Get("player_attack"));
 		UpdateFog();
+		_gameController.EvaluateEndState();
 	}
 
 	private void CommitPendingArrival(IntentType intent)

@@ -105,6 +105,7 @@ public partial class Level : Node2D
 	private FogSystem? _fogSystem;
 	private bool _endConditionReached;
 	private int _objectiveSystemIndex = -1;
+	private readonly HashSet<int> _encounterSystems = [];
 
 	public override void _Ready()
 	{
@@ -198,6 +199,7 @@ public partial class Level : Node2D
 		AssignLoreSeeds(data);
 		AssignScenarios(pendingScenarios);
 		SpawnCommitmentController();
+		AssignEncounters();
 		SpawnAiController(data, aiCfg);
 
 		_levelUi = GetNode<LevelUi>("%LevelUi");
@@ -264,6 +266,20 @@ public partial class Level : Node2D
 		{
 			_systemLoreSeeds.Add(loreRng.Next());
 			_fleetLoreSeeds.Add(loreRng.Next());
+		}
+	}
+
+	private void AssignEncounters()
+	{
+		_encounterSystems.Clear();
+		for (var i = 0; i < _systems.Count; i++)
+		{
+			if (_systems[i].IsPlayerOwned) continue;
+			if (_rng.NextDouble() < _commitmentConfig.EncounterSystemChance)
+			{
+				_encounterSystems.Add(i);
+				_systems[i].SetEncounterMark(true);
+			}
 		}
 	}
 

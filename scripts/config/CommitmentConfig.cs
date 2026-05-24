@@ -12,6 +12,7 @@ public sealed record CommitmentConfig
     public float InterruptPenaltyMultiplier { get; init; }
     public float AlterationRiskThreshold { get; init; }
     public float HiddenStateInitRange { get; init; }
+    public float EncounterSystemChance { get; init; }
     public Dictionary<string, IntentConfig> Intents { get; init; } = new();
     public AiCommitmentConfig Ai { get; init; } = new();
 }

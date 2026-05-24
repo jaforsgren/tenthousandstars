@@ -55,9 +55,13 @@ public partial class SystemNode : FogAwareNode
 	private const float DefendRingWidth = 1.5f;
 	private const float AiOwnerRingGap = 2f;
 	private const float AiOwnerRingWidth = 1.5f;
+	private static readonly Color EncounterRingColor = new(1f, 0.65f, 0.1f, 0.85f);
+	private const float EncounterRingGap = 7f;
+	private const float EncounterRingWidth = 1.5f;
 
 	private bool _isObjective;
 	private bool _isDefend;
+	private bool _hasEncounterMark;
 	private SystemOwner _targetOwner = SystemOwner.None;
 	private float _cachedProductionRate;
 	private ScenarioBadgeNode? _scenarioBadge;
@@ -196,6 +200,12 @@ public partial class SystemNode : FogAwareNode
 		QueueRedraw();
 	}
 
+	public void SetEncounterMark(bool has)
+	{
+		_hasEncounterMark = has;
+		QueueRedraw();
+	}
+
 	public void SetScenarioBadge(bool show)
 	{
 		if (show && _scenarioBadge == null)
@@ -218,6 +228,9 @@ public partial class SystemNode : FogAwareNode
 
 		if (_isDefend)
 			DrawArc(Vector2.Zero, _systemRadius + DefendRingGap, 0f, Mathf.Tau, 64, DefendRingColor, DefendRingWidth);
+
+		if (_hasEncounterMark)
+			DrawArc(Vector2.Zero, _systemRadius + EncounterRingGap, 0f, Mathf.Tau, 64, EncounterRingColor, EncounterRingWidth);
 
 		if (_targetOwner != SystemOwner.None && _ownerPlayer == _targetOwner)
 			DrawArc(Vector2.Zero, _systemRadius + TargetRingGap, 0f, Mathf.Tau, 64, TargetRingColor, TargetRingWidth);
