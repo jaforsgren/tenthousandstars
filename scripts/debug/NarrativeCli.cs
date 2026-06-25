@@ -167,7 +167,7 @@ public static class NarrativeCli
         sb.AppendLine();
     }
 
-    private static bool[] ParseWinPattern(string input, int chapters)
+    public static bool[] ParseWinPattern(string input, int chapters)
     {
         var result = new bool[chapters];
         if (string.IsNullOrEmpty(input))

@@ -95,7 +95,8 @@ public partial class Level : Node2D
 	private int _selectedFleetSlot = -1;
 	private SpeedControlPanel _speedControlPanel = null!;
 	private CountdownTimerNode _countdownTimer = null!;
-	private DebugOverlay _debugOverlay = null!;
+	private DebugOverlay? _debugOverlay;
+	private bool _debugRevealFog;
 	private ScenarioController _scenarioController = null!;
 	private CommitmentController _commitmentController = null!;
 	private CommitmentConfig _commitmentConfig = null!;
@@ -227,8 +228,16 @@ public partial class Level : Node2D
 
 	private void SpawnDebugOverlay()
 	{
+		if (!OS.IsDebugBuild()) return;
 		_debugOverlay = new DebugOverlay();
 		AddChild(_debugOverlay);
+	}
+
+	private void ToggleDebugFog()
+	{
+		_debugRevealFog = !_debugRevealFog;
+		UpdateFog();
+		DebugOverlay.Log($"Fog reveal: {(_debugRevealFog ? "ON" : "OFF")}");
 	}
 
 	private void Build(LevelData data, SystemConfig sysCfg)
@@ -318,6 +327,11 @@ public partial class Level : Node2D
 	private void UpdateFog()
 	{
 		if (_fogSystem == null) return;
+		if (_debugRevealFog)
+		{
+			_fogSystem.RevealAll();
+			return;
+		}
 		var committed = new HashSet<int>();
 		foreach (var c in _commitmentController.GetAllActive())
 			if (c.Owner == SystemOwner.Player && !c.IsComplete && !c.IsInterrupted)

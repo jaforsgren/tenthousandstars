@@ -1,14 +1,13 @@
 using System;
-using Tts;
+using Tts.Debug;
 
 public static class Program
 {
     public static void Main(string[] args)
     {
-        Console.WriteLine("START"); // sanity check
-
-        NarrativeCli.Run(args);
-
-        Console.WriteLine("END"); // sanity check
+        if (args.Length > 0 && args[0] == "combat")
+            CombatCli.Run(args[1..]);
+        else
+            NarrativeCli.Run(args);
     }
 }

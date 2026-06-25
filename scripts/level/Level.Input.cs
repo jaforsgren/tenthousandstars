@@ -21,11 +21,31 @@ public partial class Level
 
 	private void HandleKeyDebug(InputEventKey key)
 	{
-		if (key.Keycode != Key.F2) return;
-		var idx = _systems.FindIndex(s => s.IsPlayerOwned);
-		if (idx < 0) return;
-		SelectSystem(idx);
-		GetViewport().SetInputAsHandled();
+		if (!OS.IsDebugBuild()) return;
+		switch (key.Keycode)
+		{
+			case Key.F1:
+				DebugOverlay.ShowHelp();
+				GetViewport().SetInputAsHandled();
+				break;
+			case Key.F2:
+				var idx = _systems.FindIndex(s => s.IsPlayerOwned);
+				if (idx >= 0) SelectSystem(idx);
+				GetViewport().SetInputAsHandled();
+				break;
+			case Key.F3:
+				ToggleDebugFog();
+				GetViewport().SetInputAsHandled();
+				break;
+			case Key.F4:
+				GetTree().ChangeSceneToFile("res://scenes/debug/StoryDebugScene.tscn");
+				GetViewport().SetInputAsHandled();
+				break;
+			case Key.F5:
+				DebugOverlay.LogAi(_aiController.GetDebugState());
+				GetViewport().SetInputAsHandled();
+				break;
+		}
 	}
 
 	private void HandleMouseButton(InputEventMouseButton e)

@@ -308,6 +308,24 @@ public partial class AiController : Node
 		return true;
 	}
 
+	public string GetDebugState()
+	{
+		var parts = new List<string>();
+		foreach (var player in _players)
+		{
+			var owned = 0;
+			var fleet = 0f;
+			for (var i = 0; i < _systems.Count; i++)
+			{
+				if (_systems[i].OwnerPlayer != player.Owner) continue;
+				owned++;
+				fleet += _systems[i].Ships;
+			}
+			parts.Add($"{player.Owner}({player.Disposition.ToString()[..3]}) sys:{owned} fl:{fleet:F0}");
+		}
+		return string.Join("  ", parts);
+	}
+
 	private List<int> GetAdjacentSystemIndices(int index)
 		=> _adjacency.TryGetValue(index, out var neighbors) ? neighbors : [];
 }

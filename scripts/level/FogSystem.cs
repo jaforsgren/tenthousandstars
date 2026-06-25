@@ -99,6 +99,17 @@ internal sealed class FogSystem
 		}
 	}
 
+	internal void RevealAll()
+	{
+		for (var i = 0; i < _systems.Count; i++)
+			_systems[i].SetFogState(FogState.Revealed, 0f);
+		foreach (var (from, to, routeNode) in _routeNodes)
+		{
+			routeNode.SetFogState(FogState.Revealed, 0f);
+			routeNode.SetOwnerColor(SharedOwnerColor(from, to));
+		}
+	}
+
 	private Color? SharedOwnerColor(int fromIndex, int toIndex)
 	{
 		var fromOwner = _systems[fromIndex].OwnerPlayer;

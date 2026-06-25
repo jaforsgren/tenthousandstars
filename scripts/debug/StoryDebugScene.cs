@@ -248,25 +248,8 @@ public partial class StoryDebugScene : Control
 		screen.QuitPressed += () => layer.QueueFree();
 	}
 
-	// ── Input parsing ──
-
 	private static bool[] ParseWinPattern(string input, int chapters)
-	{
-		var result = new bool[chapters];
-		if (string.IsNullOrEmpty(input))
-		{
-			Array.Fill(result, true);
-			return result;
-		}
-
-		var parts = input.ToUpperInvariant().Split(',', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries);
-		for (var i = 0; i < chapters; i++)
-		{
-			var idx = Math.Min(i, parts.Length - 1);
-			result[i] = parts[idx] != "L";
-		}
-		return result;
-	}
+		=> NarrativeCli.ParseWinPattern(input, chapters);
 
 	private static string GetArchetypeName(string id) => NarrativePageData.ArchetypeName(id);
 }
