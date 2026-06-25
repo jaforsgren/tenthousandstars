@@ -1,0 +1,61 @@
+title: barbarian_ritual
+---
+Narrator:
+The system's moon is wrong.
+
+---
+
+Narrator:
+It doesn't rotate. No tidal lock should produce this result at this orbital distance. Your navigator runs the calculation three times.
+
+The moon is being held in place. Something is holding it.
+
+---
+
+Narrator:
+On the surface, your long-range optics resolve shapes. Structures — no, formations. Living formations. Thousands of figures arranged in concentric rings around a central point.
+
+They are performing something.
+
+---
+
+Narrator:
+Your science officer says the readings from the central point are anomalous. Not impossible, technically. But anomalous.
+
+She uses that word the way people use it when they don't want to say what they actually think.
+
+---
+
+-> [Allow observation — send a probe]
+    <<apply_effect "eldritch_corruption">>
+    Narrator:
+    The probe transmits for eleven minutes before the feed cuts to static.
+
+    Narrator:
+    Your science officer seals the data. She says the probe's final images require further analysis.
+
+    Narrator:
+    Three crew members in the observation bay request medical leave. They won't say why.
+
+    Narrator:
+    Whatever is in that system, you've seen enough of it to know you don't want to see more.
+
+-> [Destroy the formation — break the ritual]
+    <<apply_effect "blessed_weapons">>
+    <<chain_event "barbarian_relic">>
+    Narrator:
+    You fire from maximum range. The formations scatter.
+
+    Narrator:
+    The moon begins to rotate again.
+
+    Narrator:
+    Your weapons officer says the targeting systems felt "clean" during the engagement. More responsive. She can't explain it.
+
+    Narrator:
+    Something in that system approved of what you did.
+
+    Narrator:
+    That thought does not comfort you.
+
+===

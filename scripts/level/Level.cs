@@ -8,6 +8,7 @@ using Tts.Config;
 using Tts.Debug;
 using Tts.Dialogue;
 using Tts.Effects;
+using Tts.Events;
 using Tts.Fleet;
 using Tts.Narrative;
 using Tts.Nodes;
@@ -100,8 +101,11 @@ public partial class Level : Node2D
 	private CommitmentConfig _commitmentConfig = null!;
 	private CommitmentDialogueController _commitmentDialogue = null!;
 	private PackedScene _commitmentDialogueScene = null!;
-	private (int SystemIndex, float Fleet)? _pendingArrival;
+	private LevelEventController _levelEventController = null!;
+	private EffectRegistry _effectRegistry = null!;
+	private EffectDisplayPanel _effectDisplayPanel = null!;
 	private readonly TransitSystem _transitSystem = new();
+
 	private FogSystem? _fogSystem;
 	private bool _endConditionReached;
 	private int _objectiveSystemIndex = -1;
@@ -199,6 +203,7 @@ public partial class Level : Node2D
 		AssignLoreSeeds(data);
 		AssignScenarios(pendingScenarios);
 		SpawnCommitmentController();
+		SpawnEventSystem();
 		AssignEncounters();
 		SpawnAiController(data, aiCfg);
 
@@ -267,6 +272,17 @@ public partial class Level : Node2D
 			_systemLoreSeeds.Add(loreRng.Next());
 			_fleetLoreSeeds.Add(loreRng.Next());
 		}
+	}
+
+	private void SpawnEventSystem()
+	{
+		_effectRegistry = new EffectRegistry();
+		var scenarioType = (LevelScenarioType)_rng.Next(4);
+		_levelEventController = new LevelEventController(scenarioType, _commitmentConfig.EncounterSystemChance, _rng);
+
+		_effectDisplayPanel = new EffectDisplayPanel();
+		AddChild(_effectDisplayPanel);
+		_effectRegistry.Changed += () => _effectDisplayPanel.Refresh(_effectRegistry.Effects);
 	}
 
 	private void AssignEncounters()

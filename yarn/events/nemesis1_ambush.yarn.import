@@ -1,0 +1,14 @@
+[remap]
+
+importer="yarnscript"
+type="Resource"
+uid="uid://cwv3141tdv3yo"
+path="res://.godot/imported/nemesis1_ambush.yarn-0f951d98807f6f614028464396e76c23.tres"
+
+[deps]
+
+source_file="res://yarn/events/nemesis1_ambush.yarn"
+dest_files=["res://.godot/imported/nemesis1_ambush.yarn-0f951d98807f6f614028464396e76c23.tres"]
+
+[params]
+

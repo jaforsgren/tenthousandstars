@@ -1,7 +1,9 @@
 using System;
+using System.Linq;
 using Godot;
 using Tts.Commitment;
 using Tts.Effects;
+using Tts.Events;
 using Tts.Fleet;
 using Tts.Ui;
 using Tts.Utils;
@@ -58,29 +60,39 @@ public partial class Level
 
 		if (_encounterSystems.Contains(toIndex))
 		{
-			_pendingArrival = (toIndex, fleet);
-			_levelUi.SystemActionMenu.ShowIntentOnly(
-				target.GlobalPosition,
-				[("Attack", IntentType.Attack), ("Contest", IntentType.Contest)],
-				CommitPendingArrival,
-				required: true);
-			UpdateFog();
+			var eventNode = _levelEventController.NextEventNode();
+			if (eventNode != null)
+			{
+				_levelEventController.MarkSeen(eventNode);
+				_commitmentDialogue.ShowEncounterEvent(eventNode,
+					() => ResolveDirectCombat(toIndex, fleet));
+			}
+			else
+			{
+				ResolveDirectCombat(toIndex, fleet);
+			}
 		}
 		else
 		{
 			ResolveDirectCombat(toIndex, fleet);
 		}
+
+		UpdateFog();
 	}
 
 	private void ResolveDirectCombat(int systemIndex, float fleet)
 	{
 		var target = _systems[systemIndex];
-		var effectiveDefenderBonus = _defenderBonus * (1f + target.DefenseBonusMultiplier);
-		var result = CombatResolver.Resolve(fleet, target.Ships, effectiveDefenderBonus);
+		var registry = EffectRegistry.Instance;
+		var attackerFleet = fleet + (registry?.TotalAttackerStrengthBonus() ?? 0f);
+		var defenderBonus = (_defenderBonus + (registry?.TotalDefenderBonusDelta() ?? 0f))
+		                    * (1f + target.DefenseBonusMultiplier);
+		var result = CombatResolver.Resolve(Math.Max(0f, attackerFleet), target.Ships, Math.Max(0f, defenderBonus));
 
 		if (result.AttackerWins)
 		{
 			var remainder = Math.Max(0f, result.AttackerRemainder);
+			var aiPlayer = _aiPlayers.FirstOrDefault(p => p.Owner == target.OwnerPlayer);
 			target.Capture(remainder, SystemOwner.Player);
 			SpawnCombatEffect(systemIndex, attackerWon: true);
 			if (_camera.IsFollowing)
@@ -96,24 +108,6 @@ public partial class Level
 		PostBark(_barkConfig?.Get("player_attack"));
 		UpdateFog();
 		_gameController.EvaluateEndState();
-	}
-
-	private void CommitPendingArrival(IntentType intent)
-	{
-		if (_pendingArrival is not { } arrival) return;
-		_commitmentDialogue.ShowPreCommitment(intent, () =>
-		{
-			_pendingArrival = null;
-			var target = _systems[arrival.SystemIndex];
-			_commitmentController.StartCommitment(
-				arrival.SystemIndex,
-				SystemOwner.Player,
-				intent,
-				BuildFleetInfluences(arrival.Fleet),
-				Time.GetTicksMsec() / 1000.0,
-				target.Ships);
-			UpdateFog();
-		});
 	}
 
 	internal void CommitOwnSystem(int systemIndex, IntentType intent)

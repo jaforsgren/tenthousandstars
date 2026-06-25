@@ -1,0 +1,14 @@
+[remap]
+
+importer="yarnscript"
+type="Resource"
+uid="uid://docg0w0cmot8b"
+path="res://.godot/imported/nemesis2_sanctum.yarn-827ad90d14660725335fc435778d7743.tres"
+
+[deps]
+
+source_file="res://yarn/events/nemesis2_sanctum.yarn"
+dest_files=["res://.godot/imported/nemesis2_sanctum.yarn-827ad90d14660725335fc435778d7743.tres"]
+
+[params]
+

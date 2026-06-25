@@ -1,0 +1,14 @@
+[remap]
+
+importer="yarnscript"
+type="Resource"
+uid="uid://du4sbr6gtk2ge"
+path="res://.godot/imported/nemesis1_messenger.yarn-ddfd81bf820b29127bc05d3ffcc85757.tres"
+
+[deps]
+
+source_file="res://yarn/events/nemesis1_messenger.yarn"
+dest_files=["res://.godot/imported/nemesis1_messenger.yarn-ddfd81bf820b29127bc05d3ffcc85757.tres"]
+
+[params]
+

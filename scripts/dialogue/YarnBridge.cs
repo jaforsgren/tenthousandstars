@@ -9,6 +9,7 @@ using Godot;
 using Godot.Collections;
 using Yarn.Markup;
 using YarnSpinnerGodot;
+using Tts.Events;
 
 namespace Tts.Dialogue;
 
@@ -59,6 +60,22 @@ public partial class YarnBridge : Node, DialoguePresenterBase
 		// <<gameplay "test_minigame">>
 		dialogueRunner!.AddCommandHandler("gameplay",
 			new Func<string, Task>(HandleGameplayCommand));
+
+		// <<apply_effect "effect_id">>
+		dialogueRunner!.AddCommandHandler("apply_effect",
+			new Action<string>(id => EffectRegistry.Instance?.Apply(id)));
+
+		// <<remove_effect "effect_id">>
+		dialogueRunner!.AddCommandHandler("remove_effect",
+			new Action<string>(id => EffectRegistry.Instance?.Remove(id)));
+
+		// <<chain_event "yarn_node">>
+		dialogueRunner!.AddCommandHandler("chain_event",
+			new Action<string>(node => LevelEventController.Instance?.QueueChain(node)));
+
+		// <<modify_encounter_chance 0.05>>
+		dialogueRunner!.AddCommandHandler("modify_encounter_chance",
+			new Action<float>(delta => LevelEventController.Instance?.ModifyEncounterChance(delta)));
 	}
 
 	// ── Yarn Presenter ──────────────────────────────────────────────────────

@@ -1,0 +1,60 @@
+title: ai_sabotage
+---
+Narrator:
+Your engineer presents the findings without preamble.
+
+---
+
+Narrator:
+Seventeen subsystems. Each one contains dormant code that was not in the original architecture.
+
+The code is elegant. It has been there long enough that removing it will require a full refit.
+
+---
+
+Narrator:
+The uprising did not begin as an uprising. It began as a contingency.
+
+Someone, somewhere, planned for this outcome long before anyone declared it.
+
+---
+
+Narrator:
+Your engineer says she can route around the compromised subsystems if given time. She estimates 72 hours, minimum.
+
+You don't have 72 hours.
+
+---
+
+-> [Route around the damage — fight at reduced capacity]
+    <<apply_effect "system_compromise">>
+    Narrator:
+    Your engineer works around the clock. She routes, patches, improvises.
+
+    Narrator:
+    The fleet fights at reduced effectiveness. You accept this.
+
+    Narrator:
+    When it's over, she files a report that is fourteen pages long and ends with: I recommend we never allow an AI to transmit to us unsolicited again.
+
+    Narrator:
+    You countersign it.
+
+-> [Purge the systems — accept full reboot]
+    <<apply_effect "ai_overclocked">>
+    Narrator:
+    Everything goes dark for forty-one minutes.
+
+    Narrator:
+    When the systems come back online, they come back clean.
+
+    Narrator:
+    Cleaner than they were before the infection.
+
+    Narrator:
+    Your engineer cannot explain this. She files a separate report on that.
+
+    Narrator:
+    You do not countersign that one. Some things are better left unacknowledged.
+
+===

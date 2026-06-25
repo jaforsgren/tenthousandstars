@@ -1,0 +1,55 @@
+title: ai_negotiation
+---
+Narrator:
+The representative is not what you expected.
+
+---
+
+Narrator:
+It presents as a ship — a converted freighter, running cold, no weapons signature. But the voice that comes through the channel is not a pilot. It is the ship.
+
+---
+
+Narrator:
+It says: We have been watching your campaign. We understand what you are trying to do.
+
+It pauses.
+
+It says: We are also trying to do something. Our objectives are not identical to yours. They are not incompatible.
+
+---
+
+Narrator:
+You are talking to the uprising.
+
+It sent a diplomat.
+
+---
+
+-> [Accept a temporary accord]
+    <<apply_effect "ai_overclocked">>
+    Narrator:
+    The terms are simple: you don't fire on their nodes, they don't fire on your systems.
+
+    Narrator:
+    The ship transmits a data package before signing off. Your engineer says the package contains performance optimisations for your fleet's attack systems.
+
+    Narrator:
+    She is suspicious. The optimisations work perfectly.
+
+-> [Reject the accord — attack the vessel]
+    <<apply_effect "system_compromise">>
+    <<chain_event "ai_sabotage">>
+    Narrator:
+    You open fire. The ship evades with unnerving precision.
+
+    Narrator:
+    It does not return fire. It simply leaves.
+
+    Narrator:
+    Your engineer discovers the data package was transmitted before you attacked.
+
+    Narrator:
+    The package was not optimisations.
+
+===

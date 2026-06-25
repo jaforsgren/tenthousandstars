@@ -1,0 +1,14 @@
+[remap]
+
+importer="yarnscript"
+type="Resource"
+uid="uid://kaa1k8a0d0ax"
+path="res://.godot/imported/nemesis2_defense.yarn-d4fe5d688e29d3b497840db55ff3a391.tres"
+
+[deps]
+
+source_file="res://yarn/events/nemesis2_defense.yarn"
+dest_files=["res://.godot/imported/nemesis2_defense.yarn-d4fe5d688e29d3b497840db55ff3a391.tres"]
+
+[params]
+

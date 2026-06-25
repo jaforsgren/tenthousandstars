@@ -1,0 +1,14 @@
+[remap]
+
+importer="yarnscript"
+type="Resource"
+uid="uid://cta1wcg7031kh"
+path="res://.godot/imported/barbarian_ritual.yarn-7e29d72ebce5fc4f099cf9003365bdeb.tres"
+
+[deps]
+
+source_file="res://yarn/events/barbarian_ritual.yarn"
+dest_files=["res://.godot/imported/barbarian_ritual.yarn-7e29d72ebce5fc4f099cf9003365bdeb.tres"]
+
+[params]
+

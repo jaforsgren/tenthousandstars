@@ -1,0 +1,61 @@
+title: nemesis1_contact
+---
+Narrator:
+Someone has been here before you.
+
+---
+
+Narrator:
+The system shows signs of recent passage — not the slow residue of habitation, but the sharp trace of deliberate transit. Someone moved through here quickly. Recently.
+
+Your navigator estimates within the last six days.
+
+---
+
+Narrator:
+There is a message buoy at the transit point.
+
+It is addressed to you. By name.
+
+---
+
+Narrator:
+Your security officer advises against activating it. Whatever intelligence operation is running here is more sophisticated than standard doctrine. They knew your approach vector before you did.
+
+Your signals officer says: that's why we should hear what they have to say.
+
+---
+
+-> [Activate the buoy]
+    <<apply_effect "nemesis_intel">>
+    <<chain_event "nemesis1_ambush">>
+    Narrator:
+    The message is brief.
+
+    Narrator:
+    It says: You are not the first fleet we have watched. You are the first one that concerns us.
+
+    Narrator:
+    It says: We will be watching the next system, too. What you do there matters to us.
+
+    Narrator:
+    It says nothing else.
+
+    Narrator:
+    Your security officer begins compiling a dossier. Whatever this is, it's been running longer than either of you.
+
+-> [Destroy the buoy — leave no trace]
+    <<apply_effect "nemesis_curse">>
+    Narrator:
+    The shaped charge detonates cleanly.
+
+    Narrator:
+    Forty minutes later, a second buoy deploys from a concealed cache on the system's outer body.
+
+    Narrator:
+    It does not contain a message. It contains a record of you destroying the first one.
+
+    Narrator:
+    Someone is keeping notes.
+
+===

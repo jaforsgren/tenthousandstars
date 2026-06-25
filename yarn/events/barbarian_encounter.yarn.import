@@ -1,0 +1,14 @@
+[remap]
+
+importer="yarnscript"
+type="Resource"
+uid="uid://bghu6oj6ugv2"
+path="res://.godot/imported/barbarian_encounter.yarn-9f81efaee22a362c702cfbb30acbab07.tres"
+
+[deps]
+
+source_file="res://yarn/events/barbarian_encounter.yarn"
+dest_files=["res://.godot/imported/barbarian_encounter.yarn-9f81efaee22a362c702cfbb30acbab07.tres"]
+
+[params]
+

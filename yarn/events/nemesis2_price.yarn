@@ -1,0 +1,75 @@
+title: nemesis2_price
+---
+Narrator:
+The download completes.
+
+---
+
+Narrator:
+Your security officer does not speak immediately. She reads for a long time.
+
+When she speaks, her voice is level. That is the most troubling thing about it.
+
+---
+
+Narrator:
+She says: the archive contains everything.
+
+She says: the campaigns, the outcomes, the patterns. It contains projections — models of where this conflict ends if current trajectories hold.
+
+---
+
+Narrator:
+She says: none of the projections end well.
+
+She does not say for whom.
+
+---
+
+Narrator:
+The archive also contains a second set of files. Sealed. They are addressed to you, specifically.
+
+To your name.
+
+Not your rank. Your name.
+
+---
+
+-> [Open the sealed files]
+    <<apply_effect "blood_price">>
+    Narrator:
+    You open them alone.
+
+    Narrator:
+    You do not share what is inside.
+
+    Narrator:
+    When your security officer asks what they contained, you tell her: strategic assessments. Nothing actionable.
+
+    Narrator:
+    She knows you're lying. She lets it go.
+
+    Narrator:
+    You proceed to the next system carrying something you cannot put down.
+
+-> [Destroy the sealed files — don't look]
+    <<apply_effect "inner_sanctum_key">>
+    Narrator:
+    You delete them without reading.
+
+    Narrator:
+    Your security officer says nothing. She files the action under "command discretion."
+
+    Narrator:
+    For three days you wonder what was in them.
+
+    Narrator:
+    On the fourth day, you stop wondering.
+
+    Narrator:
+    That is either discipline or loss.
+
+    Narrator:
+    You're no longer sure of the difference.
+
+===

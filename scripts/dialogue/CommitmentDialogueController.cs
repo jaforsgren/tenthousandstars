@@ -36,6 +36,14 @@ public partial class CommitmentDialogueController : CanvasLayer
         Hide();
     }
 
+    public void ShowEncounterEvent(string yarnNode, Action onComplete)
+    {
+        _onDialogueComplete = onComplete;
+        GameSpeed.PushUiPause();
+        Show();
+        _ = _runner.StartDialogue(yarnNode);
+    }
+
     public void ShowPreCommitment(IntentType intent, Action onComplete)
     {
         _onDialogueComplete = onComplete;

@@ -1,0 +1,64 @@
+title: barbarian_encounter
+---
+Narrator:
+The system reads as contested before your ships are in range.
+
+---
+
+Narrator:
+Not by any faction on your charts.
+
+The transponder signatures are wrong — pre-standard, almost organic in their irregularity. Someone is broadcasting on frequencies that haven't been in use since before the Compact.
+
+---
+
+Narrator:
+Your lead vessel crosses the threshold and the chatter stops.
+
+Then, without warning, a single vessel detaches from the debris field and holds position directly across your approach vector. It makes no aggressive move. It simply waits.
+
+---
+
+Narrator:
+Your signals officer translates the broadcast as best she can. It is not a language. It is closer to a liturgy.
+
+Something is being worshipped here.
+
+Something old.
+
+---
+
+-> [Open a channel — offer tribute]
+    <<apply_effect "horde_tribute">>
+    <<chain_event "barbarian_ritual">>
+    Narrator:
+    You broadcast on their frequency. Food stores. Fuel cells. Whatever they want.
+
+    Narrator:
+    The vessel holds for a long moment. Then it withdraws.
+
+    Narrator:
+    Your signals officer marks the system. She doesn't say what she's thinking.
+
+    Narrator:
+    You paid. They accepted. The hordes pull back — for now.
+
+-> [Refuse to yield — push through]
+    <<apply_effect "horde_aggression">>
+    <<chain_event "barbarian_ritual">>
+    Narrator:
+    You give the order. Your ships accelerate.
+
+    Narrator:
+    The lone vessel doesn't move until you're almost on top of it.
+
+    Narrator:
+    Then it screams — not a signal, not a weapon — a sound, somehow, broadcast on every frequency at once.
+
+    Narrator:
+    The horde answers.
+
+    Narrator:
+    You'll be fighting your way through every system they claim from here on.
+
+===

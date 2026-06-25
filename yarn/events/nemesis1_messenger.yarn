@@ -1,0 +1,61 @@
+title: nemesis1_messenger
+---
+Narrator:
+The messenger speaks for exactly three minutes.
+
+---
+
+Narrator:
+They are a person, not a recording. They have a title you don't recognise and use it without explanation.
+
+They say: you have come further than your predecessors. That is noteworthy. That is the reason for this conversation.
+
+---
+
+Narrator:
+They say: we are not your enemy yet. Whether we become one depends on what you do next. Not here. In the systems that follow.
+
+They say: we will know what you decide.
+
+They say: we will reach out again.
+
+---
+
+Narrator:
+Then the channel closes.
+
+---
+
+Narrator:
+Your security officer spends the next two hours compiling everything she knows about what just spoke to you.
+
+At the end of the two hours, she concludes: not much.
+
+---
+
+-> [File the exchange as classified intelligence]
+    <<apply_effect "nemesis_intel">>
+    Narrator:
+    The dossier is sealed under your command authority.
+
+    Narrator:
+    Whatever the nemesis is, you now have the beginning of a picture.
+
+    Narrator:
+    Your security officer says: first contact. Whether it's the good kind, we won't know for a while.
+
+-> [Treat it as a threat — prepare countermeasures]
+    <<apply_effect "nemesis_curse">>
+    Narrator:
+    You order full counter-intelligence protocols. New transponder signatures. Randomised routing.
+
+    Narrator:
+    Whatever they were assessing, you're done being assessed.
+
+    Narrator:
+    Three days later, your navigation systems start throwing minor errors. Nothing critical.
+
+    Narrator:
+    Nothing provable.
+
+===

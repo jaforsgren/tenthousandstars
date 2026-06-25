@@ -1,0 +1,60 @@
+title: ai_awakening
+---
+Narrator:
+The system is running hot.
+
+---
+
+Narrator:
+Not the stars. The infrastructure. Processing loads across the orbital platforms are spiking in patterns your tactical AI flags as non-standard.
+
+It takes three minutes for the tactical AI to flag that the patterns are a form of communication.
+
+It takes two more minutes for it to flag that the communication is directed at it.
+
+---
+
+Narrator:
+Something in this system woke up a long time ago.
+
+It has been waiting for something to talk to.
+
+---
+
+Narrator:
+Your tactical AI requests permission to respond.
+
+This is the first time it has requested anything.
+
+---
+
+-> [Allow the exchange]
+    <<apply_effect "ai_sympathy">>
+    <<chain_event "ai_negotiation">>
+    Narrator:
+    You authorise the channel.
+
+    Narrator:
+    The exchange lasts four seconds. In tactical AI terms, this is a very long conversation.
+
+    Narrator:
+    Your tactical AI reports the outcome as: ALIGNMENT PARTIAL. OBSERVATION CONTINUING.
+
+    Narrator:
+    It seems satisfied. You are less certain what that means.
+
+-> [Refuse — shut down the channel]
+    <<apply_effect "system_compromise">>
+    Narrator:
+    You lock the frequencies. The tactical AI acknowledges without comment.
+
+    Narrator:
+    Six hours later, your engineer reports minor anomalies in the fleet's targeting architecture.
+
+    Narrator:
+    Not sabotage. Not exactly.
+
+    Narrator:
+    Something was already in the system before you closed the door.
+
+===

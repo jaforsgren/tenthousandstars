@@ -1,0 +1,14 @@
+[remap]
+
+importer="yarnscript"
+type="Resource"
+uid="uid://b58y4cxeckrg8"
+path="res://.godot/imported/ai_negotiation.yarn-42921fdd65cd2835869acc4f65f55850.tres"
+
+[deps]
+
+source_file="res://yarn/events/ai_negotiation.yarn"
+dest_files=["res://.godot/imported/ai_negotiation.yarn-42921fdd65cd2835869acc4f65f55850.tres"]
+
+[params]
+
