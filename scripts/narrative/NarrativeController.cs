@@ -12,13 +12,15 @@ public class NarrativeController
 {
     private readonly INarrativeService _service;
     private readonly INarrativeBarkSystem _barkSystem;
-    private readonly OutroGenerator _outroGenerator;
+    private readonly NarrativeTextConfig _textConfig;
+    private readonly Random _rng;
 
-    private NarrativeController(INarrativeService service, INarrativeBarkSystem barkSystem, OutroGenerator outroGenerator)
+    private NarrativeController(INarrativeService service, INarrativeBarkSystem barkSystem, NarrativeTextConfig textConfig, Random rng)
     {
         _service = service;
         _barkSystem = barkSystem;
-        _outroGenerator = outroGenerator;
+        _textConfig = textConfig;
+        _rng = rng;
     }
 
     private static void Log(string msg)
@@ -44,29 +46,15 @@ public class NarrativeController
         var conditionSet = ConfigLoader.Load<NarrativeConditionSet>("res://config/story/conditions.json");
         var briefingConfig = ConfigLoader.Load<BriefingConfig>("res://config/story/briefings.json");
         var barkConfig = ConfigLoader.Load<BarkConfig>("res://config/barks.json");
-        var storyTextConfig = ResolveStoryTextConfig(
-            ConfigLoader.Load<StoryTextConfigSource>("res://config/story/texts.json"));
+        var textConfig = ConfigLoader.Load<NarrativeTextConfig>("res://config/story/narrative.json");
         var aiNamingConfig = ConfigLoader.Load<AiNamingConfig>("res://config/ai_naming.json");
         var scenarioConfig = ConfigLoader.Load<ScenarioConfig>("res://config/scenarios.json");
 
-        var db = new NarrativeDatabase(archetypes, chapters, conditionSet.Conditions, briefingConfig, barkConfig, storyTextConfig, scenarioConfig);
+        var db = new NarrativeDatabase(archetypes, chapters, conditionSet.Conditions, briefingConfig, barkConfig, scenarioConfig);
         var service = new NarrativeService(db, new ChapterGenerator(), new MissionGenerator(db), new BriefingGenerator(db, rng), aiNamingConfig, rng);
         var barkSystem = new NarrativeBarkSystem(db, rng);
-        var outroGenerator = new OutroGenerator(storyTextConfig, db, rng);
 
-        return new NarrativeController(service, barkSystem, outroGenerator);
-    }
-
-    private static StoryTextConfig ResolveStoryTextConfig(StoryTextConfigSource source)
-    {
-        var templates = new StoryTextTemplate[source.Templates.Length];
-        for (var i = 0; i < source.Templates.Length; i++)
-        {
-            var t = source.Templates[i];
-            var text = ConfigLoader.LoadText($"res://{t.TextFile}");
-            templates[i] = new StoryTextTemplate(t.Id, t.Tags, t.Title, text);
-        }
-        return new StoryTextConfig(source.BaseYear, source.DateFormat, source.SectorNames, templates);
+        return new NarrativeController(service, barkSystem, textConfig, rng);
     }
 
     public bool IsCampaignComplete => _service.IsCampaignComplete;
@@ -85,9 +73,16 @@ public class NarrativeController
     public MissionContext GetNextMission()
     {
         var ctx = _service.GetNextMission();
-        Log($"[Narrative] Mission {ctx.State.MissionsCompleted + 1} — chapter: {ctx.Chapter.ChapterId}, condition: {ctx.Condition.Id}");
+        var sectorName = _textConfig.SectorNames[_rng.Next(_textConfig.SectorNames.Length)];
+        var year = _textConfig.BaseYear + ctx.State.MissionsCompleted;
+        var date = _textConfig.DateFormat
+            .Replace("{MissionIndex}", (ctx.State.MissionsCompleted + 1).ToString())
+            .Replace("{Year}", year.ToString());
+
+        Log($"[Narrative] Mission {ctx.State.MissionsCompleted + 1} — chapter: {ctx.Chapter.ChapterId}, interlude: {ctx.InterludeNodeName ?? "none"}");
         Log($"[Narrative] Briefing: {ctx.Briefing}");
-        return ctx;
+
+        return ctx with { SectorName = sectorName, InterludeDate = date };
     }
 
     public void OnMissionComplete(bool won, int playerSystems, int enemySystems, int enemyFleets)
@@ -96,11 +91,42 @@ public class NarrativeController
         Log($"[Narrative] Mission complete — won: {won}, chapter: {_service.CurrentState.CurrentChapterIndex}/{_service.CurrentState.TotalChapters}");
     }
 
-    public StoryText GenerateOutro()
+    public string GetOutroNodeName()
     {
-        var storyText = _outroGenerator.Generate(_service.CurrentState);
-        Log($"[Narrative] Outro: {storyText.Title}");
-        return storyText;
+        var state = _service.CurrentState;
+        var won = state.MissionsWon * 2 >= state.TotalChapters;
+        var winTag = won ? "win" : "loss";
+
+        // Prefer archetype-specific node, fall back to generic
+        var archetypeNode = $"outro_{state.ArchetypeId}_{winTag}";
+        var genericNode = $"outro_generic_{winTag}";
+
+        // Return archetype node if archetype is known, otherwise generic
+        return state.ArchetypeId is "falling_empire" or "rising_power" or "conquest"
+            ? archetypeNode
+            : genericNode;
+    }
+
+    public Dictionary<string, string> BuildOutroVars()
+    {
+        var state = _service.CurrentState;
+        var archetypeName = ArchetypeDisplayName(state.ArchetypeId);
+        var sectorName = _textConfig.SectorNames[_rng.Next(_textConfig.SectorNames.Length)];
+        var year = _textConfig.BaseYear + state.MissionsCompleted;
+        var date = _textConfig.DateFormat
+            .Replace("{MissionIndex}", state.MissionsCompleted.ToString())
+            .Replace("{Year}", year.ToString());
+
+        return new Dictionary<string, string>
+        {
+            ["$player_faction"] = state.Player.FactionName,
+            ["$enemy_faction"]  = state.Enemy.FactionName,
+            ["$missions_won"]   = state.MissionsWon.ToString(),
+            ["$total_missions"] = state.TotalChapters.ToString(),
+            ["$archetype_name"] = archetypeName,
+            ["$sector_name"]    = sectorName,
+            ["$date"]           = date,
+        };
     }
 
     public ScenarioDefinition[] SelectEligibleScenarios()
@@ -126,4 +152,12 @@ public class NarrativeController
         Log($"[Narrative Debug] Missions: {s.MissionsWon}/{s.MissionsCompleted} won | Enemy winning: {s.EnemyIsWinning} | Player stronger: {s.PlayerStrongerThanEnemy}");
         Log($"[Narrative Debug] Factions: {s.Player.FactionName} ({s.Player.Title}) vs {s.Enemy.FactionName} ({s.Enemy.Title})");
     }
+
+    private static string ArchetypeDisplayName(string id) => id switch
+    {
+        "falling_empire" => "The Falling Empire",
+        "rising_power"   => "The Rising Power",
+        "conquest"       => "Total Conquest",
+        _                => id
+    };
 }

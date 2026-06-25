@@ -1,5 +1,3 @@
-using System.Linq;
-
 namespace Tts.Narrative;
 
 public abstract class TagMatchingBase
@@ -11,18 +9,17 @@ public abstract class TagMatchingBase
         return false;
     }
 
-    protected static bool HasAnyTag(string[] conditionTags, string[] requiredTags)
+    protected static bool HasAnyTag(string[] tags, string[] matchTags)
     {
-        foreach (var required in requiredTags)
-            foreach (var tag in conditionTags)
-                if (tag == required) return true;
+        foreach (var mt in matchTags)
+            if (HasTag(tags, mt)) return true;
         return false;
     }
 
-    protected static bool HasAllTags(string[] conditionTags, string[] requiredTags)
+    protected static bool HasAllTags(string[] tags, string[] requiredTags)
     {
-        foreach (var required in requiredTags)
-            if (!conditionTags.Contains(required)) return false;
+        foreach (var rt in requiredTags)
+            if (!HasTag(tags, rt)) return false;
         return true;
     }
 }

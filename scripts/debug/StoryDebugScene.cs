@@ -1,10 +1,11 @@
 using System;
+using System.Collections.Generic;
 using System.Text;
 using Godot;
 using Tts.Ai;
 using Tts.Config;
+using Tts.Dialogue;
 using Tts.Narrative;
-using Tts.Ui;
 using Tts.Utils;
 
 namespace Tts.Debug;
@@ -19,11 +20,13 @@ public partial class StoryDebugScene : Control
 	private Button _previewOutroButton = null!;
 	private RichTextLabel _outputText = null!;
 
-	private StoryText? _outro;
-	private StoryState? _outroState;
+	private string? _outroNodeName;
+	private Dictionary<string, string>? _outroVars;
 
 	private static readonly string[] ArchetypeIds = ["falling_empire", "rising_power", "conquest"];
 	private static readonly string[] ArchetypeLabels = ["Falling Empire", "Rising Power", "Conquest"];
+
+	private const string DialoguePanelPath = "res://scenes/dialogue/CommitmentDialoguePanel.tscn";
 
 	public override void _Ready()
 	{
@@ -42,14 +45,14 @@ public partial class StoryDebugScene : Control
 
 		_generateButton.Pressed += OnGeneratePressed;
 		_backButton.Pressed += () => GetTree().ChangeSceneToFile("res://scenes/Level.tscn");
-		_previewOutroButton.Pressed += ShowOutroPreview;
+		_previewOutroButton.Pressed += PreviewOutro;
 		_previewOutroButton.Disabled = true;
 	}
 
 	private void OnGeneratePressed()
 	{
-		_outro = null;
-		_outroState = null;
+		_outroNodeName = null;
+		_outroVars = null;
 		_previewOutroButton.Disabled = true;
 
 		foreach (Node child in _interludePreviewButtons.GetChildren())
@@ -84,8 +87,7 @@ public partial class StoryDebugScene : Control
 
 		var sb = new StringBuilder();
 
-		// ── Campaign header ──
-		AppendHeader(sb, $"CAMPAIGN: {GetArchetypeName(state.ArchetypeId)}");
+		AppendHeader(sb, $"CAMPAIGN: {ArchetypeDisplayName(state.ArchetypeId)}");
 		AppendField(sb, "Archetype", state.ArchetypeId);
 		AppendField(sb, "Faction", $"{state.Player.FactionName} ({state.Player.Title})");
 		AppendField(sb, "Enemy", $"{state.Enemy.FactionName} ({state.Enemy.Title})");
@@ -98,25 +100,22 @@ public partial class StoryDebugScene : Control
 			var ctx = controller.GetNextMission();
 			var won = wins[i];
 
-			// ── Chapter header ──
 			sb.AppendLine($"[color=cyan][b]── Chapter {i + 1}/{chapters}: {ctx.Chapter.ChapterTitle}  ({ctx.Chapter.ChapterId}) ──[/b][/color]");
 			sb.AppendLine();
 
-			// ── Interlude ──
-			if (ctx.Interlude != null)
+			if (ctx.InterludeNodeName != null)
 			{
 				var capturedCtx = ctx;
 				var capturedLabel = $"Interlude {i + 1}";
-				AddPreviewButton(capturedLabel, () => ShowNarrativePreview(capturedCtx));
+				AddPreviewButton(capturedLabel, () => PreviewYarnNode(capturedCtx.InterludeNodeName!, BuildInterludeVars(capturedCtx)));
 
 				AppendSubheader(sb, "INTERLUDE");
-				if (!string.IsNullOrEmpty(ctx.Interlude.Title))
-					sb.AppendLine($"  [b]{ctx.Interlude.Title}[/b]");
-				AppendIndented(sb, ctx.Interlude.Body);
+				AppendField(sb, "Yarn Node", ctx.InterludeNodeName, indent: true);
+				AppendField(sb, "Sector", ctx.SectorName, indent: true);
+				AppendField(sb, "Date", ctx.InterludeDate, indent: true);
 				sb.AppendLine();
 			}
 
-			// ── Mission ──
 			AppendSubheader(sb, "MISSION");
 			AppendField(sb, "Condition", ctx.Condition.Id, indent: true);
 			AppendField(sb, "Tags", $"[{string.Join(", ", ctx.Condition.Tags)}]", indent: true);
@@ -125,12 +124,10 @@ public partial class StoryDebugScene : Control
 				AppendField(sb, "Timeout", $"{ctx.Condition.TimeoutSeconds}s — {ctx.Condition.TimeoutMessage}", indent: true);
 			sb.AppendLine();
 
-			// ── Briefing ──
 			AppendSubheader(sb, "BRIEFING");
 			AppendIndented(sb, ctx.Briefing);
 			sb.AppendLine();
 
-			// ── Intro barks ──
 			if (ctx.Chapter.IntroBarks.Length > 0)
 			{
 				AppendSubheader(sb, "INTRO BARKS");
@@ -139,7 +136,6 @@ public partial class StoryDebugScene : Control
 				sb.AppendLine();
 			}
 
-			// ── Narrative barks (all triggers) ──
 			AppendSubheader(sb, "NARRATIVE BARKS");
 			var anyBark = false;
 			foreach (BarkTrigger trigger in Enum.GetValues<BarkTrigger>())
@@ -152,7 +148,6 @@ public partial class StoryDebugScene : Control
 			if (!anyBark) sb.AppendLine("  (none match current state)");
 			sb.AppendLine();
 
-			// ── Outcome ──
 			var outcomeColor = won ? "lime" : "tomato";
 			sb.AppendLine($"[color={outcomeColor}][b]▸ OUTCOME: {(won ? "WIN" : "LOSS")}[/b][/color]");
 			if (won)
@@ -161,7 +156,6 @@ public partial class StoryDebugScene : Control
 				sb.AppendLine($"  {ctx.Condition.TimeoutMessage ?? "Mission failed."}");
 			sb.AppendLine();
 
-			// ── Outro barks ──
 			if (ctx.Chapter.OutroBarks.Length > 0)
 			{
 				AppendSubheader(sb, "OUTRO BARKS");
@@ -170,22 +164,19 @@ public partial class StoryDebugScene : Control
 				sb.AppendLine();
 			}
 
-			// Simulate system counts: winning player has more systems
 			var playerSys = won ? 8 : 3;
 			var enemySys  = won ? 2 : 7;
 			controller.OnMissionComplete(won, playerSys, enemySys, enemySys / 2);
 		}
 
-		// ── Outro ──
 		if (controller.IsCampaignComplete)
 		{
-			_outro = controller.GenerateOutro();
-			_outroState = controller.CurrentState;
+			_outroNodeName = controller.GetOutroNodeName();
+			_outroVars = controller.BuildOutroVars();
 			_previewOutroButton.Disabled = false;
 
 			AppendHeader(sb, "OUTRO");
-			sb.AppendLine($"  [b]{_outro.Title}[/b]");
-			AppendIndented(sb, _outro.Body);
+			AppendField(sb, "Yarn Node", _outroNodeName);
 			sb.AppendLine();
 
 			var finalState = controller.CurrentState;
@@ -193,6 +184,38 @@ public partial class StoryDebugScene : Control
 		}
 
 		return sb.ToString();
+	}
+
+	private static Dictionary<string, string> BuildInterludeVars(MissionContext ctx) => new()
+	{
+		["$player_faction"]    = ctx.State.Player.FactionName,
+		["$enemy_faction"]     = ctx.State.Enemy.FactionName,
+		["$sector_name"]       = ctx.SectorName,
+		["$mission_objective"] = ctx.Condition.Description,
+		["$chapter_title"]     = ctx.Chapter.ChapterTitle,
+		["$date"]              = ctx.InterludeDate,
+	};
+
+	private void PreviewYarnNode(string nodeName, IReadOnlyDictionary<string, string> vars)
+	{
+		var panel = GD.Load<PackedScene>(DialoguePanelPath).Instantiate<CommitmentDialogueController>();
+		AddChild(panel);
+		panel.ShowNarrative(nodeName, vars, onComplete: panel.QueueFree);
+	}
+
+	private void PreviewOutro()
+	{
+		if (_outroNodeName == null || _outroVars == null) return;
+		var panel = GD.Load<PackedScene>(DialoguePanelPath).Instantiate<CommitmentDialogueController>();
+		AddChild(panel);
+		panel.ShowNarrative(_outroNodeName, _outroVars, onComplete: panel.QueueFree);
+	}
+
+	private void AddPreviewButton(string label, Action callback)
+	{
+		var btn = new Button { Text = label };
+		btn.Pressed += callback;
+		_interludePreviewButtons.AddChild(btn);
 	}
 
 	// ── Formatting helpers ──
@@ -215,41 +238,14 @@ public partial class StoryDebugScene : Control
 			sb.AppendLine($"  {line}");
 	}
 
-	// ── Preview helpers ──
-
-	private void AddPreviewButton(string label, Action callback)
-	{
-		var btn = new Button { Text = label };
-		btn.Pressed += callback;
-		_interludePreviewButtons.AddChild(btn);
-	}
-
-	private void ShowNarrativePreview(MissionContext ctx)
-	{
-		var data = NarrativePageData.FromMission(ctx);
-		var layer = new CanvasLayer { Layer = 20 };
-		AddChild(layer);
-		var screen = GD.Load<PackedScene>("res://scenes/ui/NarrativeScreen.tscn").Instantiate<NarrativeScreen>();
-		layer.AddChild(screen);
-		screen.ShowMissionBrief(data, onStartMission: () => layer.QueueFree());
-	}
-
-	private void ShowOutroPreview()
-	{
-		if (_outro == null || _outroState == null) return;
-		var data = NarrativePageData.FromOutro(_outro, _outroState);
-		var layer = new CanvasLayer { Layer = 20 };
-		AddChild(layer);
-		var screen = GD.Load<PackedScene>("res://scenes/ui/NarrativeScreen.tscn").Instantiate<NarrativeScreen>();
-		layer.AddChild(screen);
-		screen.ShowOutro(data);
-		screen.NewCampaignPressed += () => layer.QueueFree();
-		screen.RandomMissionsPressed += () => layer.QueueFree();
-		screen.QuitPressed += () => layer.QueueFree();
-	}
-
 	private static bool[] ParseWinPattern(string input, int chapters)
 		=> NarrativeCli.ParseWinPattern(input, chapters);
 
-	private static string GetArchetypeName(string id) => NarrativePageData.ArchetypeName(id);
+	private static string ArchetypeDisplayName(string id) => id switch
+	{
+		"falling_empire" => "The Falling Empire",
+		"rising_power"   => "The Rising Power",
+		"conquest"       => "Total Conquest",
+		_                => id
+	};
 }

@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using Godot;
 using YarnSpinnerGodot;
 using Tts.Commitment;
@@ -6,8 +7,9 @@ using Tts.Level;
 
 namespace Tts.Dialogue;
 
-// Bridges CommitmentController resolution events to the YarnSpinner dialogue panel.
-// Lives as a CanvasLayer that overlays the game viewport; auto-hides when dialogue ends.
+// Bridges CommitmentController resolution events and narrative interludes/outros
+// to the YarnSpinner dialogue panel. Lives as a CanvasLayer that overlays the game
+// viewport; auto-hides when dialogue ends.
 //
 // Scene layout expected (CommitmentDialoguePanel.tscn):
 //   CommitmentDialoguePanel (CanvasLayer — this script)
@@ -22,6 +24,8 @@ public partial class CommitmentDialogueController : CanvasLayer
     private InMemoryVariableStorage _vars = null!;
     private Action? _onDialogueComplete;
 
+    public string LastNarrativeAction { get; private set; } = "";
+
     public override void _Ready()
     {
         _runner = GetNode<DialogueRunner>("DialogueRunnerNode");
@@ -33,6 +37,9 @@ public partial class CommitmentDialogueController : CanvasLayer
 
         _runner.onDialogueComplete += OnDialogueComplete;
 
+        _runner.AddCommandHandler("narrative_action",
+            new Action<string>(action => LastNarrativeAction = action));
+
         Hide();
     }
 
@@ -43,6 +50,19 @@ public partial class CommitmentDialogueController : CanvasLayer
         Show();
         _ = _runner.StartDialogue(yarnNode);
     }
+
+    public void ShowNarrative(string yarnNode, IReadOnlyDictionary<string, string> vars, Action? onComplete = null)
+    {
+        LastNarrativeAction = "";
+        foreach (var (k, v) in vars)
+            _vars.SetValue(k, v);
+        _onDialogueComplete = onComplete;
+        GameSpeed.PushUiPause();
+        Show();
+        _ = _runner.StartDialogue(yarnNode);
+    }
+
+    public void SetNarrativeVar(string name, string value) => _vars.SetValue(name, value);
 
     public void ShowPreCommitment(IntentType intent, Action onComplete)
     {

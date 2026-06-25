@@ -54,12 +54,10 @@ public static class NarrativeCli
 
             sb.AppendLine($"--- Chapter {i + 1}: {ctx.Chapter.ChapterId} ---");
 
-            if (ctx.Interlude != null)
+            if (ctx.InterludeNodeName != null)
             {
-                sb.AppendLine("INTERLUDE:");
-                if (!string.IsNullOrEmpty(ctx.Interlude.Title))
-                    sb.AppendLine(ctx.Interlude.Title);
-                sb.AppendLine(ctx.Interlude.Body);
+                sb.AppendLine($"INTERLUDE: {ctx.InterludeNodeName}");
+                sb.AppendLine($"  sector={ctx.SectorName}  date={ctx.InterludeDate}");
                 sb.AppendLine();
             }
 
@@ -84,10 +82,7 @@ public static class NarrativeCli
 
         if (controller.IsCampaignComplete)
         {
-            var outro = controller.GenerateOutro();
-            sb.AppendLine("OUTRO:");
-            sb.AppendLine(outro.Title);
-            sb.AppendLine(outro.Body);
+            sb.AppendLine($"OUTRO: {controller.GetOutroNodeName()}");
         }
 
         Console.WriteLine(sb.ToString());

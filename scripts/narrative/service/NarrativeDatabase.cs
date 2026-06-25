@@ -11,7 +11,6 @@ public class NarrativeDatabase
 	public IReadOnlyList<NarrativeConditionConfig> Conditions { get; }
 	public BriefingConfig BriefingTemplates { get; }
 	public BarkConfig Barks { get; }
-	public StoryTextConfig StoryTexts { get; }
 	public ScenarioConfig Scenarios { get; }
 
 	public NarrativeDatabase(
@@ -20,7 +19,6 @@ public class NarrativeDatabase
 		IReadOnlyList<NarrativeConditionConfig> conditions,
 		BriefingConfig briefingTemplates,
 		BarkConfig barks,
-		StoryTextConfig storyTexts,
 		ScenarioConfig scenarios)
 	{
 		Archetypes = archetypes;
@@ -28,7 +26,6 @@ public class NarrativeDatabase
 		Conditions = conditions;
 		BriefingTemplates = briefingTemplates;
 		Barks = barks;
-		StoryTexts = storyTexts;
 		Scenarios = scenarios;
 	}
 

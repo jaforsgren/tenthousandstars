@@ -180,7 +180,7 @@ public partial class Level : Node2D
 		}
 
 		EndCondition? activeCondition;
-		NarrativePageData? missionBriefPage;
+		MissionContext? missionContext = null;
 		ScenarioDefinition[] pendingScenarios;
 
 		var narrative = GameSession.NarrativeController;
@@ -189,15 +189,13 @@ public partial class Level : Node2D
 			var primaryAi = _aiPlayers.Count > 0 ? _aiPlayers[_rng.Next(_aiPlayers.Count)] : null;
 			if (primaryAi != null)
 				narrative.UpdateEnemy(primaryAi);
-			var missionContext = narrative.GetNextMission();
+			missionContext = narrative.GetNextMission();
 			activeCondition = missionContext.Condition.ToEndCondition();
-			missionBriefPage = NarrativePageData.FromMission(missionContext);
 			pendingScenarios = missionContext.Scenarios;
 		}
 		else
 		{
 			activeCondition = endStateCfg.Conditions[_rng.Next(endStateCfg.Conditions.Length)];
-			missionBriefPage = null;
 			pendingScenarios = LoadRandomModeScenarios();
 		}
 
@@ -216,8 +214,8 @@ public partial class Level : Node2D
 		AddChild(_gameController);
 		_gameController.GameEnded += () => _endConditionReached = true;
 		_gameController.Initialize(
-			activeCondition, endStateCfg, missionBriefPage,
-			_routeSet, _systems, _aiPlayers, _rng, _levelUi, _camera, _countdownTimer, _fadeOutSeconds);
+			activeCondition, endStateCfg, missionContext,
+			_routeSet, _systems, _aiPlayers, _rng, _levelUi, _camera, _countdownTimer, _fadeOutSeconds, _commitmentDialogue);
 
 		_objectiveSystemIndex = _gameController.ObjectiveSystemIndex;
 		UpdateFog();

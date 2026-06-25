@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Godot;
 using Tts.Config;
+using Tts.Dialogue;
 using Tts.Narrative;
 using Tts.Nodes;
 using Tts.Ui;
@@ -21,7 +22,8 @@ internal sealed partial class GameController : Node
 	private EndCondition? _condition;
 	private EndStateConfig _endStateCfg = null!;
 	private string? _missionDescription;
-	private NarrativePageData? _missionBriefPage;
+	private MissionContext? _missionContext;
+	private CommitmentDialogueController _narrativePanel = null!;
 	private SystemOwner _targetPlayerOwner = SystemOwner.None;
 	private int _defendSystemIndex = -1;
 
@@ -36,7 +38,7 @@ internal sealed partial class GameController : Node
 	internal void Initialize(
 		EndCondition? condition,
 		EndStateConfig endStateCfg,
-		NarrativePageData? missionBriefPage,
+		MissionContext? missionContext,
 		HashSet<(int, int)> routeSet,
 		IReadOnlyList<SystemNode> systems,
 		IReadOnlyList<AiPlayerData> aiPlayers,
@@ -44,11 +46,12 @@ internal sealed partial class GameController : Node
 		LevelUi levelUi,
 		CameraController camera,
 		CountdownTimerNode countdownTimer,
-		float fadeOutSeconds)
+		float fadeOutSeconds,
+		CommitmentDialogueController narrativePanel)
 	{
 		_condition = condition;
 		_endStateCfg = endStateCfg;
-		_missionBriefPage = missionBriefPage;
+		_missionContext = missionContext;
 		_systems = systems;
 		_aiPlayers = aiPlayers;
 		_rng = rng;
@@ -56,6 +59,7 @@ internal sealed partial class GameController : Node
 		_camera = camera;
 		_countdownTimer = countdownTimer;
 		_fadeOutSeconds = fadeOutSeconds;
+		_narrativePanel = narrativePanel;
 
 		if (condition?.TargetSystemHops.HasValue == true)
 		{
@@ -79,8 +83,8 @@ internal sealed partial class GameController : Node
 
 	internal void StartMission()
 	{
-		if (_missionBriefPage != null)
-			SpawnNarrativeScreen(_missionBriefPage);
+		if (_missionContext?.InterludeNodeName != null)
+			ShowInterlude(_missionContext);
 		else
 			ShowMissionBrief();
 	}
@@ -126,6 +130,20 @@ internal sealed partial class GameController : Node
 		EmitSignal(SignalName.GameEnded);
 	}
 
+	private void ShowInterlude(MissionContext ctx)
+	{
+		var vars = new Dictionary<string, string>
+		{
+			["$player_faction"]    = ctx.State.Player.FactionName,
+			["$enemy_faction"]     = ctx.State.Enemy.FactionName,
+			["$sector_name"]       = ctx.SectorName,
+			["$mission_objective"] = ctx.Condition.Description,
+			["$chapter_title"]     = ctx.Chapter.ChapterTitle,
+			["$date"]              = ctx.InterludeDate,
+		};
+		_narrativePanel.ShowNarrative(ctx.InterludeNodeName!, vars, onComplete: ShowMissionBrief);
+	}
+
 	private void ShowMissionBrief()
 	{
 		GameSpeed.PushUiPause();
@@ -159,34 +177,27 @@ internal sealed partial class GameController : Node
 	private void OnEndSequenceDismissed()
 	{
 		if (GameSession.NarrativeController?.IsCampaignComplete == true)
-			SpawnOutroPanel();
+			ShowOutro();
 		else
 			GetTree().ReloadCurrentScene();
 	}
 
-	private void SpawnOutroPanel()
+	private void ShowOutro()
 	{
-		var storyText = GameSession.NarrativeController!.GenerateOutro();
-		var state = GameSession.NarrativeController!.CurrentState;
-		var data = NarrativePageData.FromOutro(storyText, state);
-
-		var layer = new CanvasLayer { Layer = 14 };
-		AddChild(layer);
-		var screen = GD.Load<PackedScene>("res://scenes/ui/NarrativeScreen.tscn").Instantiate<NarrativeScreen>();
-		layer.AddChild(screen);
-		screen.ShowOutro(data);
-		screen.NewCampaignPressed += OnNewCampaignPressed;
-		screen.RandomMissionsPressed += OnRandomMissionsPressed;
-		screen.QuitPressed += () => GetTree().Quit();
+		var nc = GameSession.NarrativeController!;
+		var outroNode = nc.GetOutroNodeName();
+		var vars = nc.BuildOutroVars();
+		_narrativePanel.ShowNarrative(outroNode, vars, onComplete: OnOutroDialogueComplete);
 	}
 
-	private void SpawnNarrativeScreen(NarrativePageData data)
+	private void OnOutroDialogueComplete()
 	{
-		var layer = new CanvasLayer { Layer = 13 };
-		AddChild(layer);
-		var screen = GD.Load<PackedScene>("res://scenes/ui/NarrativeScreen.tscn").Instantiate<NarrativeScreen>();
-		layer.AddChild(screen);
-		screen.ShowMissionBrief(data, onStartMission: () => layer.QueueFree());
+		switch (_narrativePanel.LastNarrativeAction)
+		{
+			case "new_campaign":    OnNewCampaignPressed();    break;
+			case "random_missions": OnRandomMissionsPressed(); break;
+			default:                GetTree().Quit();          break;
+		}
 	}
 
 	private void OnNewCampaignPressed()

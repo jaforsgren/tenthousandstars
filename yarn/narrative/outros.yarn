@@ -1,0 +1,331 @@
+// Outro sequences shown at campaign end.
+// Variables set before running: $player_faction, $enemy_faction, $missions_won,
+//   $total_missions, $archetype_name, $sector_name, $date
+// Outro nodes end with <<narrative_action>> to signal caller which action to take.
+
+title: outro_falling_empire_win
+---
+Narrator: {$player_faction} — Final Command
+Narrator: {$date}
+---
+Narrator: {$sector_name}. It's still there.
+
+That's the first surprise. It shouldn't be.
+---
+Narrator: Final campaign status: {$player_faction} retains control over core systems within {$sector_name}. {$enemy_faction} offensive has been halted and structurally disrupted. Several outer systems remain lost or contested.
+
+No one won cleanly. No one could.
+---
+Narrator: The map looks torn.
+
+Not divided. Not orderly. Torn.
+
+Edges of control are ragged. Systems sit half-connected, held together by exhausted logistics and patched command chains. Entire regions are dark, but not hostile anymore. Just empty of pressure.
+
+The advance is gone.
+---
+Narrator: You stopped them.
+
+Not everywhere. Not permanently. But enough.
+
+The sector didn't fall. That was never guaranteed. It came close in ways the reports will never fully capture.
+---
+Narrator: There are silences where systems used to be.
+
+No enemy presence. No battle noise. Just absence of signal.
+
+You don't rush to fill them. Not yet. You're not sure what's left to send.
+---
+Narrator: They're alive. More than expected. Less than before.
+
+You read evacuation logs, survival counts, fragmented reports from places that shouldn't still have people in them. And yet they do.
+
+Some thank you. Most don't have the words for it. Neither do you.
+---
+Narrator: The sector doesn't feel like it belongs to anyone anymore.
+
+Not really. It feels survived.
+
+Like something that was pushed to the edge of collapse and stepped back, not into strength—but into continuation.
+
+The war didn't end them. It wore them down to something that can no longer advance.
+
+You look at the map of {$sector_name}. It's scarred. But it's still there.
+
+And for now— that's enough to begin again.
+---
+-> New Campaign
+    <<narrative_action "new_campaign">>
+-> Random Missions
+    <<narrative_action "random_missions">>
+-> Quit
+    <<narrative_action "quit">>
+===
+
+title: outro_falling_empire_loss
+---
+Narrator: Commander,
+
+{$player_faction} fought to the last. {$missions_won} of {$total_missions} engagements — every one of them hard, none of them enough.
+---
+Narrator: {$enemy_faction} now stands the victor proud and mighty. Their hegemony over the sector is now a matter of record. Our councils are silent, our routes fallen under foreign banners.
+
+Another system-state has swallowed us whole. They speak our words, keep our feast-days, worship the same stars we named. The civil war does not erase what we are, but in the hall of the stars our prayers fall on deaf ears and our names will be forgotten.
+
+We withdraw. For now. The embers of {$player_faction} are not entirely cold.
+---
+-> New Campaign
+    <<narrative_action "new_campaign">>
+-> Random Missions
+    <<narrative_action "random_missions">>
+-> Quit
+    <<narrative_action "quit">>
+===
+
+title: outro_rising_power_win
+---
+Narrator: {$player_faction} — High Command
+Narrator: {$date}
+---
+Narrator: {$sector_name} no longer resists being named.
+
+It has been shaped into something that accepts definition.
+---
+Narrator: Final status: {$player_faction} has achieved complete strategic and administrative control over {$sector_name}. {$enemy_faction} forces eliminated, dispersed, or rendered non-operational across all major systems.
+
+There are no contested zones left. Only results.
+---
+Narrator: The map is stable. That's what everyone says.
+
+It does not move anymore. Systems are locked into place under unified control structures. Trade lanes are restored. Military corridors are simplified. Borders cease to fluctuate because there is nothing left to contest them.
+
+It looks like order. If you stop looking too closely.
+---
+Narrator: There is silence where resistance used to be.
+
+Systems that once argued back now comply without friction or fail to respond at all. The sector no longer pushes against you. It yields before contact is even made.
+
+You start noticing the absence of friction more than anything else. It feels like something is missing. You do not name it.
+---
+Narrator: There are records.
+
+Some marked "evacuation." Some marked "casualty." Some not marked at all because no category fit cleanly.
+
+You see them briefly in briefings. In summaries. In footnotes that try very hard to remain footnotes.
+
+You learn not to dwell on them. It would not change anything that comes after.
+---
+Narrator: You are still issuing orders. But they no longer feel like decisions.
+
+They feel like maintenance of a system that now runs on its own momentum, shaped by everything you approved along the way.
+
+Stopping would require stepping outside of it. There is no clear outside anymore.
+
+So you remain inside. And continue.
+---
+Narrator: The sector is quiet in a way that does not resemble rest.
+
+The final kind.
+
+Systems operate with precision now. Efficient. Unquestioning. The kind of stability that only appears after everything that could argue against it has been removed or rewritten.
+
+They will say it was necessary. They will say it was progress.
+
+And you know, with a clarity that arrives too late to be useful, that both statements will be true in the same way a weapon is true when it fires.
+
+You look at the map of {$sector_name}. It is whole. It is yours.
+
+And it does not know what else it could have been.
+---
+-> New Campaign
+    <<narrative_action "new_campaign">>
+-> Random Missions
+    <<narrative_action "random_missions">>
+-> Quit
+    <<narrative_action "quit">>
+===
+
+title: outro_rising_power_loss
+---
+Narrator: Commander,
+
+We reached too far, too fast. {$missions_won} of {$total_missions} engagements. The stars saw {$player_faction} and found us lacking, and in our hubris we are scorned by all.
+---
+Narrator: {$enemy_faction} held firm where we expected them to crack. A gross miscalculation.
+
+The great civil war among the system-states does not reward raw ambition alone. The old leagues learned that lesson over generations of blood and overextension.
+
+But we are still here. And so are the stars. Both will wait for us to learn what we must.
+---
+-> New Campaign
+    <<narrative_action "new_campaign">>
+-> Random Missions
+    <<narrative_action "random_missions">>
+-> Quit
+    <<narrative_action "quit">>
+===
+
+title: outro_conquest_win
+---
+Narrator: {$player_faction} — Final War Directive
+Narrator: {$date}
+---
+Narrator: {$sector_name} doesn't answer to anyone anymore.
+
+Not in the way it used to. Now it just settles.
+---
+Narrator: Final campaign status: {$player_faction} has established sector-wide control over {$sector_name}. Organized resistance from {$enemy_faction} has ceased. Remaining opposition fragmented, uncoordinated, or evacuated.
+
+There is no front line anymore, only aftermath.
+---
+Narrator: The map has stopped changing.
+
+Systems are marked, stabilized, integrated. Trade routes reappear. Fleet positions become administrative rather than tactical.
+
+It looks like order even though it feels like exhaustion.
+---
+Narrator: It worked. Not cleanly. Not cheaply. But completely enough to matter.
+
+Every competing calculation resolved in one direction. Every variable forced into alignment. What couldn't be controlled was removed from the equation.
+
+What remains is what you raised.
+---
+Narrator: You are still issuing commands. That doesn't stop. It just changes shape.
+
+Now it's administration. Stability. Quiet enforcement of a reality that no longer has alternatives.
+
+You expected relief but what you get is continuity.
+---
+Narrator: The sector feels different now that it's yours.
+
+Not safe. Not peaceful. Finished.
+
+Like something that stopped struggling and hasn't yet decided what comes after struggle.
+
+The last transmission from {$enemy_faction} is not a message. It is silence with structure.
+
+You look at the map of {$sector_name}. It belongs to you.
+
+And for the first time since this began— that doesn't feel like victory.
+---
+-> New Campaign
+    <<narrative_action "new_campaign">>
+-> Random Missions
+    <<narrative_action "random_missions">>
+-> Quit
+    <<narrative_action "quit">>
+===
+
+title: outro_conquest_loss
+---
+Narrator: Commander,
+
+{$player_faction} came to conquer. {$missions_won} of {$total_missions} engagements — it was not enough.
+---
+Narrator: {$enemy_faction} denied us the sector. Their phalanxes held where ours broke. Their strategists outpaced our own. We must say it plainly: we were outmatched by kinsmen who learned the same lessons and applied them better.
+
+The civil war continues without us at its center. Another system-state will rise in our place, speak our language, invoke the same ancestors — and remember us as a cautionary verse in their victory songs.
+
+We regroup. The ambition remains. The reckoning, too.
+---
+-> New Campaign
+    <<narrative_action "new_campaign">>
+-> Random Missions
+    <<narrative_action "random_missions">>
+-> Quit
+    <<narrative_action "quit">>
+===
+
+title: outro_generic_win
+---
+Narrator: {$date}
+---
+Narrator: The sector is called {$sector_name}. It is yours.
+
+That sentence used to feel like control. Now it feels like damage.
+---
+Narrator: Final status: {$player_faction} has achieved decisive victory over {$enemy_faction} within {$sector_name}. Enemy command structure dismantled. Remaining opposition eliminated, scattered, or withdrawn beyond operational reach.
+
+The war is over. The records will agree.
+
+You still don't.
+---
+Narrator: The map is still lit.
+
+Systems under control. Supply lines reconnected. Defensive grids reactivated. Everything in its proper place again.
+
+But you see what it cost to get it there.
+
+Empty corridors. Burned trade lanes. Stations that will never fully function again, even if they say they will.
+
+The sector is stable. It looks wrong.
+---
+Narrator: You won. By every measurable metric.
+
+{$enemy_faction} can no longer sustain operations in {$sector_name}. No coordinated resistance remains. Strategic initiative fully removed.
+
+This is what success looks like.
+
+You expected it to feel different. It doesn't.
+---
+Narrator: There should be relief.
+
+There isn't.
+
+There is only the absence of incoming reports. The silence where alarms used to be. The reflex to check channels that no longer need checking.
+
+Your body still waits for the next failure. It doesn't come.
+
+That feels like another kind of threat.
+---
+Narrator: You read the casualty summaries. Once. Then again.
+
+Then you stop reading them linearly and start scanning for anomalies—numbers that feel wrong, places where names blur into counts.
+
+There are too many. You remember some of them. You wish you didn't.
+
+You stop telling yourself it was necessary. That part of you stopped working somewhere mid-war.
+---
+Narrator: The sector is quiet.
+
+Not peaceful.
+
+Quiet in the way a place is quiet after something has been removed from it that cannot be put back.
+
+There are survivors. There are rebuild orders. There are protocols for recovery.
+
+You understand all of them.
+
+You just don't feel like the person who should be allowed to approve them.
+
+Because somewhere between the first engagement and this silence, something in you stopped returning intact.
+
+The war is over. And your mind is still fighting it.
+---
+-> New Campaign
+    <<narrative_action "new_campaign">>
+-> Random Missions
+    <<narrative_action "random_missions">>
+-> Quit
+    <<narrative_action "quit">>
+===
+
+title: outro_generic_loss
+---
+Narrator: Commander,
+
+The campaign is over. {$player_faction} secured {$missions_won} of {$total_missions} engagements — and it was not enough.
+---
+Narrator: {$enemy_faction} held their ground with a steadiness we could not match. The sector remains beyond our reach. Our council will want an accounting of how it came to this: how kinsmen who share our tongue and our traditions proved the stronger hand.
+
+We are no longer favoured by the stars. That is a harder defeat than any single lost engagement.
+
+For now — it ends here.
+---
+-> New Campaign
+    <<narrative_action "new_campaign">>
+-> Random Missions
+    <<narrative_action "random_missions">>
+-> Quit
+    <<narrative_action "quit">>
+===

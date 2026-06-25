@@ -15,7 +15,6 @@ public class NarrativeService : INarrativeService
     private readonly Random _rng;
 
     private ArchetypeConfig _archetype = null!;
-    private IInterludeGenerator _interludeGenerator = null!;
     private int _missionsCompleted;
     private int _missionsWon;
     private bool _lastMissionWon;
@@ -56,7 +55,6 @@ public class NarrativeService : INarrativeService
         _player = AiNaming.GenerateCharacter(_aiNamingCfg, _archetype.PlayerDisposition, _rng);
         _enemy = AiNaming.GenerateCharacter(_aiNamingCfg, (AiDisposition)_rng.Next(Enum.GetValues<AiDisposition>().Length), _rng);
 
-        _interludeGenerator = new InterludeGenerator(_db.StoryTexts, _rng, _archetype.Id);
         CurrentState = BuildState();
     }
 
@@ -76,13 +74,10 @@ public class NarrativeService : INarrativeService
         var chapter = _chapterGenerator.GenerateChapter(chapterDef, CurrentState);
         var condition = _missionGenerator.SelectCondition(chapterDef.MissionTags, CurrentState, _rng);
         var briefing = _briefingGenerator.GenerateBriefing(condition, chapter, CurrentState);
-
-        // Interlude requires a partially-built MissionContext for token substitution, so build without interlude first
-        var contextWithoutInterlude = new MissionContext(condition, briefing, chapter, CurrentState, Interlude: null, Scenarios: []);
-        var interlude = _interludeGenerator.TryGenerate(contextWithoutInterlude);
+        var interludeNodeName = ResolveInterludeNodeName(_archetype.Id, _currentChapterIndex, _archetype.ChapterSequence.Length);
         var scenarios = SelectEligibleScenarios(CurrentState);
 
-        return contextWithoutInterlude with { Interlude = interlude, Scenarios = scenarios };
+        return new MissionContext(condition, briefing, chapter, CurrentState, interludeNodeName, SectorName: "", InterludeDate: "", scenarios);
     }
 
     public ScenarioDefinition[] SelectEligibleScenarios(StoryState state)
@@ -115,6 +110,14 @@ public class NarrativeService : INarrativeService
         CurrentState = BuildState(
             enemyIsWinning: result.EnemySystemCount > result.PlayerSystemCount,
             playerStronger: result.PlayerSystemCount > result.EnemySystemCount);
+    }
+
+    private static string ResolveInterludeNodeName(string archetypeId, int chapterIndex, int totalChapters)
+    {
+        var phase = chapterIndex == 0 ? "begin"
+            : chapterIndex >= totalChapters - 1 ? "end"
+            : "mid";
+        return $"{archetypeId}_{phase}";
     }
 
     private StoryState BuildState(bool enemyIsWinning = false, bool playerStronger = true)

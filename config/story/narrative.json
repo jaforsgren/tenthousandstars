@@ -1,0 +1,14 @@
+{
+  "BaseYear": 2847,
+  "DateFormat": "Sequence {MissionIndex}-{Year}",
+  "SectorNames": [
+    "Aigaron", "Belthae", "Kyranthos", "Thaloria", "Dorephon",
+    "Myrenos", "Erythae", "Kalydon Reach", "Pheros Gate", "Zanthis Veil",
+    "Ormenos Deep", "Lykarion", "Aigene Expanse", "Theron Belt", "Melanthos Verge",
+    "Nerathos Wake", "Talmenon Drift", "Vorethan Span", "Sandros Reach", "Ikaron Vale",
+    "Drakonis Gulf", "Helene Verge", "Praxene Corridor", "Kyphene Shallows", "Orynth Vale",
+    "Selkaron Reach", "Thyron Gate", "Arkenos Expanse", "Dalmora Fringe", "Ephrene Depths",
+    "Korvane Passage", "Mythran Verge", "Nakoran Reach", "Orphene Veil", "Pelyran Span",
+    "Rhythean Belt", "Tarkane Expanse"
+  ]
+}
