@@ -11,10 +11,21 @@ public partial class Level
 		if (Engine.IsEditorHint() || _endConditionReached)
 			return;
 
-		if (@event is InputEventMouseButton mb)
+		if (@event is InputEventKey { Pressed: true, Echo: false } key)
+			HandleKeyDebug(key);
+		else if (@event is InputEventMouseButton mb)
 			HandleMouseButton(mb);
 		else if (@event is InputEventMouseMotion)
 			HandleMouseMotion();
+	}
+
+	private void HandleKeyDebug(InputEventKey key)
+	{
+		if (key.Keycode != Key.F2) return;
+		var idx = _systems.FindIndex(s => s.IsPlayerOwned);
+		if (idx < 0) return;
+		SelectSystem(idx);
+		GetViewport().SetInputAsHandled();
 	}
 
 	private void HandleMouseButton(InputEventMouseButton e)

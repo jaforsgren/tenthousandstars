@@ -342,7 +342,8 @@ public partial class SystemActionMenu : Control
 			_intentSlots.Add(slot);
 		}
 
-		GameSpeed.PushUiPause();
+		if (required)
+			GameSpeed.PushUiPause();
 		_intentAnimElapsed = 0f;
 		var paused = Engine.TimeScale == 0.0;
 		foreach (var slot in _intentSlots)
@@ -351,7 +352,7 @@ public partial class SystemActionMenu : Control
 
 	private void ClearIntentSlots()
 	{
-		if (_intentSlots.Count > 0)
+		if (_required)
 			GameSpeed.PopUiPause();
 		foreach (var slot in _intentSlots)
 			slot.QueueFree();
