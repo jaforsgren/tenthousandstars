@@ -136,5 +136,17 @@
 		"G": 0.7,
 		"B": 0.7,
 		"A": 1.0
-	}
+	},
+	"SystemTexturePaths": [
+		"res://assets/images/systemsv2/system01.svg",
+		"res://assets/images/systemsv2/system02.svg",
+		"res://assets/images/systemsv2/system03.svg",
+		"res://assets/images/systemsv2/system04.svg",
+		"res://assets/images/systemsv2/system05.svg",
+		"res://assets/images/systemsv2/system06.svg",
+		"res://assets/images/systemsv2/system07.svg",
+		"res://assets/images/systemsv2/system08.svg",
+		"res://assets/images/systemsv2/system09.svg"
+	],
+	"SystemTextureScales": [0.20, 0.20, 0.15, 0.22, 0.20, 0.15, 0.21, 0.22, 0.20]
 }

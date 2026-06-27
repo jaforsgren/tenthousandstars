@@ -15,6 +15,11 @@ run/main_scene="res://scenes/Level.tscn"
 config/features=PackedStringArray("4.6", "C#", "Mobile")
 config/icon="res://icon.svg"
 
+[autoload]
+
+GameState="*res://scripts/dialogue/GameState.cs"
+GameManager="*res://scripts/dialogue/GameManager.cs"
+
 [display]
 
 window/size/viewport_width=480

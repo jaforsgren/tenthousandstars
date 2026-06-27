@@ -9,3 +9,5 @@ tasks/
 backup/
 .DS_Store
 bitmappery/
+_archive/
+_source/

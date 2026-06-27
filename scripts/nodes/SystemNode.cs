@@ -14,7 +14,7 @@ public partial class SystemNode : FogAwareNode
 {
 	private IReadOnlyList<Planet> _planets = [];
 	private readonly List<float> _fleetShips = [];
-	private readonly List<FleetNodeBase> _fleetNodes = [];
+	private readonly List<FleetNode> _fleetNodes = [];
 	private SystemOwner _ownerPlayer;
 	private AiPlayerData? _aiPlayerData;
 	private Color? _aiOwnerColor;
@@ -31,18 +31,17 @@ public partial class SystemNode : FogAwareNode
 	private SystemCircleNode _systemCircle = null!;
 	private readonly List<PlanetNode> _planetNodes = [];
 	private SystemUpgrade _upgrade = SystemUpgrade.None;
-	private Node2D? _upgradeBadge;
 	private float _forgeProductionBonus;
 	private float _fortifyDefenseBonusMultiplier;
 
-	private const string ForgeBadgePath = "res://scenes/system/ForgeUpgradeBadge.tscn";
-	private const string FortifyBadgePath = "res://scenes/system/FortifyUpgradeBadge.tscn";
 	private const string ScenarioBadgePath = "res://scenes/system/ScenarioBadgeNode.tscn";
 	private const string ProductionArcScenePath = "res://scenes/system/ProductionArcNode.tscn";
-	private const string PlayerFleetScenePath = "res://scenes/fleet/PlayerFleetNode.tscn";
-	private const string NeutralFleetScenePath = "res://scenes/fleet/NeutralFleetNode.tscn";
-	private const string AiFleetScenePath = "res://scenes/fleet/AiFleetNode.tscn";
+	private const string FleetScenePath = "res://scenes/fleet/FleetNode.tscn";
 	private const float FleetNodeSpacing = 4f;
+
+	private static readonly Color ForgeBadgeColor   = new(1f,  0.55f, 0.1f, 0.95f);
+	private static readonly Color FortifyBadgeColor = new(0.2f, 0.6f, 1f,  0.95f);
+	private const float BadgeRadius = 8f;
 
 	private static readonly Color ObjectiveRingColor = new(1f, 0.85f, 0.2f, 0.8f);
 	private const float ObjectiveRingGap = 5f;
@@ -143,16 +142,7 @@ public partial class SystemNode : FogAwareNode
 	{
 		_upgrade = upgrade;
 		RefreshProductionRate();
-		_upgradeBadge?.QueueFree();
-		_upgradeBadge = null;
-
-		if (upgrade == SystemUpgrade.None || Engine.IsEditorHint())
-			return;
-
-		var scenePath = upgrade == SystemUpgrade.Forge ? ForgeBadgePath : FortifyBadgePath;
-		_upgradeBadge = GD.Load<PackedScene>(scenePath).Instantiate<Node2D>();
-		AddChild(_upgradeBadge);
-		_upgradeBadge.Position = new Vector2(_systemRadius * 0.6f, -_systemRadius * 0.9f);
+		QueueRedraw();
 	}
 
 	public void Capture(float ships, SystemOwner newOwner, AiPlayerData? aiPlayer = null, Color? aiOwnerColor = null)
@@ -237,6 +227,16 @@ public partial class SystemNode : FogAwareNode
 
 		if (_ownerPlayer.IsAi() && _aiOwnerColor.HasValue)
 			DrawArc(Vector2.Zero, _systemRadius + AiOwnerRingGap, 0f, Mathf.Tau, 64, _aiOwnerColor.Value, AiOwnerRingWidth);
+
+		if (_upgrade != SystemUpgrade.None)
+		{
+			var badgePos = new Vector2(_systemRadius * 0.6f, -_systemRadius * 0.9f);
+			var badgeColor = _upgrade == SystemUpgrade.Forge ? ForgeBadgeColor : FortifyBadgeColor;
+			var letter = _upgrade == SystemUpgrade.Forge ? "F" : "D";
+			DrawCircle(badgePos, BadgeRadius, badgeColor);
+			DrawString(ThemeDB.FallbackFont, badgePos + new Vector2(-4f, 4f), letter,
+				HorizontalAlignment.Left, -1, 10, Colors.Black);
+		}
 	}
 
 	public void RefreshFleetVisuals()
@@ -353,28 +353,17 @@ public partial class SystemNode : FogAwareNode
 		}
 	}
 
-	private FleetNodeBase CreateFleetNode(SystemOwner owner)
+	private FleetNode CreateFleetNode(SystemOwner owner)
 	{
+		var node = GD.Load<PackedScene>(FleetScenePath).Instantiate<FleetNode>();
+		AddChild(node);
 		if (owner == SystemOwner.Player)
-		{
-			var node = GD.Load<PackedScene>(PlayerFleetScenePath).Instantiate<PlayerFleetNode>();
-			AddChild(node);
-			node.Initialize(_systemRadius, _fleetCircleGap);
-			return node;
-		}
-
-		if (owner.IsAi() && _aiPlayerData != null && _aiOwnerColor.HasValue)
-		{
-			var node = GD.Load<PackedScene>(AiFleetScenePath).Instantiate<AiFleetNode>();
-			AddChild(node);
-			node.Initialize(_systemRadius, _fleetCircleGap, _aiOwnerColor.Value, _aiPlayerData);
-			return node;
-		}
-
-		var neutral = GD.Load<PackedScene>(NeutralFleetScenePath).Instantiate<NeutralFleetNode>();
-		AddChild(neutral);
-		neutral.Initialize(_systemRadius, _fleetCircleGap);
-		return neutral;
+			node.InitializePlayer(_systemRadius, _fleetCircleGap);
+		else if (owner.IsAi() && _aiPlayerData != null && _aiOwnerColor.HasValue)
+			node.InitializeAi(_systemRadius, _fleetCircleGap, _aiOwnerColor.Value, _aiPlayerData.FactionName);
+		else
+			node.InitializeNeutral(_systemRadius, _fleetCircleGap);
+		return node;
 	}
 
 	private void SpawnProductionArc(float currentShips)

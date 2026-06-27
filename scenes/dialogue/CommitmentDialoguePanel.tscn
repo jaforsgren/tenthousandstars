@@ -1,6 +1,7 @@
 [gd_scene format=3]
 
 [ext_resource type="Script" path="res://scripts/dialogue/CommitmentDialogueController.cs" id="1"]
+[ext_resource type="Shader" path="res://shaders/top_fade.gdshader" id="shader_topfade"]
 [ext_resource type="Script" path="res://scripts/dialogue/DialogueController.cs" id="2"]
 [ext_resource type="Script" path="res://scripts/dialogue/YarnBridge.cs" id="3"]
 [ext_resource type="Script" path="res://addons/YarnSpinner-Godot/Runtime/DialogueRunner.cs" id="4"]
@@ -10,19 +11,11 @@
 [ext_resource type="Theme" path="res://themes/dialog_theme.tres" id="8"]
 [ext_resource type="PackedScene" path="res://scenes/dialogue/DialogEntry.tscn" id="9"]
 [ext_resource type="PackedScene" path="res://scenes/dialogue/SkillCheckEntry.tscn" id="10"]
-[ext_resource type="Script" path="res://scripts/dialogue/GameState.cs" id="11"]
-[ext_resource type="Script" path="res://scripts/dialogue/GameManager.cs" id="12"]
 [ext_resource type="PackedScene" path="res://scenes/dialogue/CharacterHeader.tscn" id="13"]
 [ext_resource type="PackedScene" path="res://scenes/dialogue/ChoiceEntry.tscn" id="14"]
 
-[sub_resource type="Shader" id="Shader_topfade"]
-code = "shader_type canvas_item;
-void fragment() {
-	COLOR = vec4(0.00, 0.00, 0.00, (1.0 - UV.y) * 0.96);
-}"
-
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_topfade"]
-shader = SubResource("Shader_topfade")
+shader = ExtResource("shader_topfade")
 
 [node name="CommitmentDialoguePanel" type="CanvasLayer"]
 script = ExtResource("1")
@@ -115,12 +108,7 @@ startNode = ""
 [node name="InMemoryVariableStorage" type="Node" parent="."]
 script = ExtResource("5")
 
-[node name="TextLineProvider" type="Node2D" parent="."]
+[node name="TextLineProvider" type="Node" parent="."]
 script = ExtResource("6")
 YarnProject = ExtResource("7")
 
-[node name="GameState" type="Node" parent="."]
-script = ExtResource("11")
-
-[node name="GameManager" type="Node" parent="."]
-script = ExtResource("12")

@@ -1,14 +1,5 @@
 [gd_scene format=3 uid="uid://ccfeu0kvy1pat"]
 
-[ext_resource type="Texture2D" uid="uid://b4ky78re6kxai" path="res://assets/images/systemsv2/system01.svg" id="2_x3vl2"]
-[ext_resource type="Texture2D" uid="uid://dh6dktoylvd0w" path="res://assets/images/systemsv2/system02.svg" id="3_7nmtt"]
-[ext_resource type="Texture2D" uid="uid://c3ort171ffoa2" path="res://assets/images/systemsv2/system03.svg" id="4_cf06x"]
-[ext_resource type="Texture2D" uid="uid://do253ekd58xkl" path="res://assets/images/systemsv2/system04.svg" id="5_gj12j"]
-[ext_resource type="Texture2D" uid="uid://cpct6cqhxfas2" path="res://assets/images/systemsv2/system05.svg" id="6_0ytvo"]
-[ext_resource type="Texture2D" uid="uid://cvihgca1313pj" path="res://assets/images/systemsv2/system06.svg" id="7_m2tbq"]
-[ext_resource type="Texture2D" uid="uid://blwtvjq68nexo" path="res://assets/images/systemsv2/system07.svg" id="8_b5i2r"]
-[ext_resource type="Texture2D" uid="uid://b5426vt36k4vm" path="res://assets/images/systemsv2/system08.svg" id="9_800o0"]
-[ext_resource type="Texture2D" uid="uid://cl65hbm4iagch" path="res://assets/images/systemsv2/system09.svg" id="10_d82wl"]
 [ext_resource type="Shader" uid="uid://cshl34icsfdpy" path="res://shaders/sun.gdshader" id="shader_sun"]
 
 [sub_resource type="FastNoiseLite" id="FastNoiseLite_sun"]
@@ -56,49 +47,7 @@ offset_bottom = 19.0
 mouse_filter = 2
 metadata/_edit_use_anchors_ = true
 
-[node name="System01" type="Sprite2D" parent="." unique_id=548148702]
-visible = false
-scale = Vector2(0.2, 0.2)
-texture = ExtResource("2_x3vl2")
-
-[node name="System02" type="Sprite2D" parent="." unique_id=297646709]
-visible = false
-scale = Vector2(0.2, 0.2)
-texture = ExtResource("3_7nmtt")
-
-[node name="System03" type="Sprite2D" parent="." unique_id=1543211100]
-visible = false
-scale = Vector2(0.15, 0.15)
-texture = ExtResource("4_cf06x")
-
-[node name="System04" type="Sprite2D" parent="." unique_id=1069939389]
-visible = false
-scale = Vector2(0.22, 0.22)
-texture = ExtResource("5_gj12j")
-
-[node name="System05" type="Sprite2D" parent="." unique_id=393022428]
-visible = false
-scale = Vector2(0.2, 0.2)
-texture = ExtResource("6_0ytvo")
-
-[node name="System06" type="Sprite2D" parent="." unique_id=1512265408]
-visible = false
-scale = Vector2(0.15, 0.15)
-texture = ExtResource("7_m2tbq")
-
-[node name="System07" type="Sprite2D" parent="." unique_id=1938353161]
-visible = false
-scale = Vector2(0.21, 0.21)
-texture = ExtResource("8_b5i2r")
-
-[node name="System08" type="Sprite2D" parent="." unique_id=671777865]
-visible = false
-scale = Vector2(0.22, 0.22)
-texture = ExtResource("9_800o0")
-
-[node name="System09" type="Sprite2D" parent="." unique_id=2147119310]
-scale = Vector2(0.2, 0.2)
-texture = ExtResource("10_d82wl")
+[node name="VariantVisual" type="Sprite2D" parent="." unique_id=548148702]
 
 [node name="ClickArea" type="Area2D" parent="." unique_id=600600600]
 collision_layer = 0
