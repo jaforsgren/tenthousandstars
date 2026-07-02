@@ -1,0 +1,347 @@
+// Falling Empire — interludes and outros.
+// Variables set before running: $player_faction, $enemy_faction, $sector_name,
+//   $mission_objective, $chapter_title, $date
+// Outro also uses: $missions_won, $total_missions
+
+title: falling_empire_begin
+---
+Narrator: {$player_faction} — Internal Record
+Narrator: {$date}
+---
+Narrator: The sector is called {$sector_name}. You signed off on that designation once.
+
+A clean entry. A stable region. Worth defending.
+
+You remember believing that.
+---
+Narrator: {$sector_name}. Multi-system stronghold under {$player_faction} command. You know the numbers. Population, fleet capacity, output.
+
+You used to recite them like facts.
+
+Now they feel like promises you made to people who are about to find out you were wrong.
+---
+Narrator: You've been staring at the map too long.
+
+Enemy movements from {$enemy_faction} trace themselves behind your eyes even when you look away. You can predict some of it now. Not enough to stop it. Enough to dread being right.
+
+They don't push. They unmake.
+
+A system destabilizes. Another overcommits. You reinforce one front and create two new weaknesses.
+
+You can see it happening. You are part of it happening.
+---
+Narrator: {$mission_objective}: defend the sector.
+
+You turn it over in your head like it might change shape.
+
+It doesn't.
+
+There is no version of this where you save everything. You know that. You've always known that.
+
+You just never had to say it out loud.
+---
+Narrator: Every incoming report spikes the same way. Not fear. Not exactly.
+
+Anticipation of loss.
+
+Coordinates. Casualty numbers. Strategic assets reduced to past tense. You read them faster now. You have to. There's always another one waiting.
+---
+Narrator: They trust you.
+
+That's the worst part.
+
+Captains asking for permission to hold position. Station commanders requesting reinforcements you don't have. Civilians routing questions through military channels because someone told them you would know what to do.
+
+You answer. Calm. Precise.
+
+You sound like someone who deserves that trust. You're not sure you do.
+---
+Narrator: Your voice doesn't shake.
+
+Orders go out. Clear. Final.
+
+Hold this line. Abandon that orbit. Redirect everything you have to a place you know might already be lost by the time they arrive.
+
+No hesitation. Hesitation gets people killed. So does confidence.
+
+You choose the one that lets you keep moving.
+---
+Narrator: You haven't stopped.
+
+That's the only thing holding this together. Not the fleets. Not the infrastructure.
+
+You.
+
+As long as you keep deciding, the sector still has a shape. Still has intent.
+
+You don't know how long that lasts. You don't check.
+---
+Narrator: Date: {$date}. Official record marks this as an ongoing defensive action against {$enemy_faction} incursion.
+
+There will be reports. Summaries. After-action analyses.
+
+They will not capture this.
+---
+Narrator: There was a moment—early—when you thought you could push them back.
+
+You remember it clearly. It embarrasses you now.
+
+The latest transmission from {$enemy_faction} comes through filtered channels. Not meant for you, but not hidden either.
+
+They're already talking about what comes after. Like the outcome is decided.
+
+You lean back. Just for a second. Just enough to feel it.
+
+The weight of the sector. Of {$sector_name}. Of every system that still lights up on your map because you haven't let it go yet.
+
+You give another order.
+
+Not because you think it will be enough.
+
+Because it's yours to give.
+
+And as long as that's true— they don't have it.
+===
+
+title: falling_empire_mid
+---
+Narrator: {$player_faction} — Sealed Transmission
+Narrator: {$date}
+---
+Narrator: The sector is called {$sector_name}. You signed off on that designation once.
+
+A clean entry. A stable region. Worth defending.
+
+You remember believing that.
+---
+Narrator: {$sector_name}. Multi-system stronghold under {$player_faction} command. You know the numbers. Population, fleet capacity, output.
+
+You used to recite them like facts.
+
+Now they feel like promises you made to people who are about to find out you were wrong.
+---
+Narrator: You've been staring at the map too long.
+
+Enemy movements from {$enemy_faction} trace themselves behind your eyes even when you look away. You can predict some of it now. Not enough to stop it. Enough to dread being right.
+
+They don't push. They unmake.
+
+A system destabilizes. Another overcommits. You reinforce one front and create two new weaknesses.
+
+You can see it happening. You are part of it happening.
+---
+Narrator: {$mission_objective}: defend the sector.
+
+You turn it over in your head like it might change shape. It doesn't.
+
+There is no version of this where you save everything. You know that. You've always known that.
+
+You just never had to say it out loud.
+---
+Narrator: Every incoming report spikes the same way. Not fear. Not exactly. Anticipation of loss.
+
+Coordinates. Casualty numbers. Strategic assets reduced to past tense. You read them faster now. You have to. There's always another one waiting.
+---
+Narrator: They trust you.
+
+That's the worst part.
+
+Captains asking for permission to hold position. Station commanders requesting reinforcements you don't have. Civilians routing questions through military channels because someone told them you would know what to do.
+
+You answer. Calm. Precise.
+
+You sound like someone who deserves that trust. You're not sure you do.
+---
+Narrator: Your voice doesn't shake.
+
+Orders go out. Clear. Final.
+
+Hold this line. Abandon that orbit. Redirect everything you have to a place you know might already be lost by the time they arrive.
+
+No hesitation. Hesitation gets people killed. So does confidence.
+
+You choose the one that lets you keep moving.
+---
+Narrator: You haven't stopped.
+
+That's the only thing holding this together. Not the fleets. Not the infrastructure. You.
+
+As long as you keep deciding, the sector still has a shape. Still has intent.
+
+You don't know how long that lasts. You don't check.
+---
+Narrator: Date: {$date}. Official record marks this as an ongoing defensive action against {$enemy_faction} incursion.
+
+There will be reports. Summaries. After-action analyses. They will not capture this.
+---
+Narrator: There was a moment—early—when you thought you could push them back.
+
+You remember it clearly. It embarrasses you now.
+
+The latest transmission from {$enemy_faction} comes through filtered channels. Not meant for you, but not hidden either. They're already talking about what comes after. Like the outcome is decided.
+
+You lean back. Just for a second. Just enough to feel it.
+
+The weight of the sector. Of {$sector_name}. Of every system that still lights up on your map because you haven't let it go yet.
+
+You give another order. Not because you think it will be enough. Because it's yours to give.
+
+And as long as that's true— they don't have it.
+===
+
+title: falling_empire_end
+---
+Narrator: {$player_faction} — Final Command
+Narrator: {$date}
+---
+Narrator: {$sector_name}. It's still there.
+
+That's the first surprise. It shouldn't be.
+---
+Narrator: Final campaign status: {$player_faction} retains control over core systems within {$sector_name}. {$enemy_faction} offensive has been halted and structurally disrupted. Several outer systems remain lost or contested.
+
+No one won cleanly. No one could.
+---
+Narrator: The map looks torn.
+
+Not divided. Not orderly. Torn.
+
+Edges of control are ragged. Systems sit half-connected, held together by exhausted logistics and patched command chains. Entire regions are dark, but not hostile anymore. Just empty of pressure.
+
+The advance is gone.
+---
+Narrator: You stopped them.
+
+Not everywhere. Not permanently. But enough.
+
+The sector didn't fall. That was never guaranteed. It came close in ways the reports will never fully capture.
+---
+Narrator: There are silences where systems used to be.
+
+No enemy presence. No battle noise. Just absence of signal. Absence of anything at all.
+
+You don't rush to fill them. Not yet. You're not sure what's left to send.
+---
+Narrator: They're alive.
+
+More than expected. Less than before.
+
+You read evacuation logs, survival counts, fragmented reports from places that shouldn't still have people in them. And yet they do.
+
+Some thank you. Most don't have the words for it. Neither do you.
+---
+Narrator: {$mission_objective}: contained.
+
+That's what it becomes in the end. Not fulfilled. Not clean. Contained.
+
+A shape forced back from collapse. A line that bent until it almost broke, then held anyway. Barely.
+---
+Narrator: You keep issuing orders.
+
+But they're different now. Not expansion. Not pursuit.
+
+Stabilization. Recovery. Reconnection.
+
+Each one feels like rebuilding something you don't fully remember designing. But you give them anyway. Because no one else can.
+---
+Narrator: Date: {$date}. Conflict concluded in partial outcome. {$sector_name} remains under {$player_faction} control with significant losses recorded.
+
+"Victory" is not listed. Neither is defeat.
+---
+Narrator: The sector doesn't feel like it belongs to anyone anymore.
+
+Not really. It feels survived.
+
+Like something that was pushed to the edge of collapse and stepped back, not into strength—but into continuation.
+
+There are rebuilding efforts already beginning. Slow. Uneven. Almost reluctant.
+
+As if the sector itself is unsure it deserves to grow again.
+---
+Narrator: The last transmission from {$enemy_faction} is fragmented. Not defiant. Not gone. Just reduced.
+
+The war didn't end them. It wore them down to something that can no longer advance.
+
+You look at the map of {$sector_name}. It's scarred. But it's still there.
+
+And for now— that's enough to begin again.
+===
+
+title: outro_falling_empire_win
+---
+Narrator: {$player_faction} — Final Command
+Narrator: {$date}
+---
+Narrator: {$sector_name}. It's still there.
+
+That's the first surprise. It shouldn't be.
+---
+Narrator: Final campaign status: {$player_faction} retains control over core systems within {$sector_name}. {$enemy_faction} offensive has been halted and structurally disrupted. Several outer systems remain lost or contested.
+
+No one won cleanly. No one could.
+---
+Narrator: The map looks torn.
+
+Not divided. Not orderly. Torn.
+
+Edges of control are ragged. Systems sit half-connected, held together by exhausted logistics and patched command chains. Entire regions are dark, but not hostile anymore. Just empty of pressure.
+
+The advance is gone.
+---
+Narrator: You stopped them.
+
+Not everywhere. Not permanently. But enough.
+
+The sector didn't fall. That was never guaranteed. It came close in ways the reports will never fully capture.
+---
+Narrator: There are silences where systems used to be.
+
+No enemy presence. No battle noise. Just absence of signal.
+
+You don't rush to fill them. Not yet. You're not sure what's left to send.
+---
+Narrator: They're alive. More than expected. Less than before.
+
+You read evacuation logs, survival counts, fragmented reports from places that shouldn't still have people in them. And yet they do.
+
+Some thank you. Most don't have the words for it. Neither do you.
+---
+Narrator: The sector doesn't feel like it belongs to anyone anymore.
+
+Not really. It feels survived.
+
+Like something that was pushed to the edge of collapse and stepped back, not into strength—but into continuation.
+
+The war didn't end them. It wore them down to something that can no longer advance.
+
+You look at the map of {$sector_name}. It's scarred. But it's still there.
+
+And for now— that's enough to begin again.
+---
+-> New Campaign
+    <<narrative_action "new_campaign">>
+-> Random Missions
+    <<narrative_action "random_missions">>
+-> Quit
+    <<narrative_action "quit">>
+===
+
+title: outro_falling_empire_loss
+---
+Narrator: Commander,
+
+{$player_faction} fought to the last. {$missions_won} of {$total_missions} engagements — every one of them hard, none of them enough.
+---
+Narrator: {$enemy_faction} now stands the victor proud and mighty. Their hegemony over the sector is now a matter of record. Our councils are silent, our routes fallen under foreign banners.
+
+Another system-state has swallowed us whole. They speak our words, keep our feast-days, worship the same stars we named. The civil war does not erase what we are, but in the hall of the stars our prayers fall on deaf ears and our names will be forgotten.
+
+We withdraw. For now. The embers of {$player_faction} are not entirely cold.
+---
+-> New Campaign
+    <<narrative_action "new_campaign">>
+-> Random Missions
+    <<narrative_action "random_missions">>
+-> Quit
+    <<narrative_action "quit">>
+===

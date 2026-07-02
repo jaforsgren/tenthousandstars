@@ -1,0 +1,14 @@
+[remap]
+
+importer="yarnscript"
+type="Resource"
+uid="uid://c2r1s1ngp0w3r01"
+path="res://.godot/imported/rising_power.yarn-c2r1s1ngp0w3r01.tres"
+
+[deps]
+
+source_file="res://yarn/narrative/rising_power.yarn"
+dest_files=["res://.godot/imported/rising_power.yarn-c2r1s1ngp0w3r01.tres"]
+
+[params]
+
