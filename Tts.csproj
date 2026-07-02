@@ -14,6 +14,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Remove="tests/**/*.cs" />
+    <Compile Remove="tools/**/*.cs" />
     <!-- program.cs defines a global static class Program which conflicts with Yarn.Program in the YarnSpinner addon -->
     <Compile Remove="program.cs" />
   </ItemGroup>

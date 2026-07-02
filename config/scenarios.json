@@ -1,91 +1,91 @@
 {
   "Scenarios": [
-    {
-      "Id": "the_relay_chain",
-      "Title": "",
-      "IntroText": "",
-      "Stages": [
-        {
-          "DependsOn": null,
-          "Choices": [
-            { "Label": "Reactivate the arrays", "Outcome": "relay_active" },
-            { "Label": "Destroy the arrays",    "Outcome": "relay_destroyed" }
-          ]
-        },
-        {
-          "DependsOn": "relay_active",
-          "Choices": [
-            { "Label": "Trace the signal source",       "Outcome": "relay_traced" },
-            { "Label": "Log the coordinates and move on", "Outcome": "relay_logged" }
-          ]
-        },
-        { "DependsOn": "relay_traced",   "Choices": [] },
-        { "DependsOn": "relay_logged",   "Choices": [] },
-        { "DependsOn": "relay_destroyed","Choices": [] }
-      ],
-      "Criteria": {
-        "MinMissionsPlayed": 0,
-        "MinMissionsWon": null,
-        "MinMissionsLost": null
-      }
-    },
-    {
-      "Id": "survivor_enclave",
-      "Title": "",
-      "IntroText": "",
-      "Stages": [
-        {
-          "DependsOn": null,
-          "Choices": [
-            { "Label": "Send the transports",         "Outcome": "extracted" },
-            { "Label": "Leave them. The war comes first.", "Outcome": "abandoned" }
-          ]
-        },
-        {
-          "DependsOn": "extracted",
-          "Choices": [
-            { "Label": "Credit her by name",                         "Outcome": "credited" },
-            { "Label": "File it as fleet intelligence, source classified", "Outcome": "classified" }
-          ]
-        },
-        { "DependsOn": "credited",    "Choices": [] },
-        { "DependsOn": "classified",  "Choices": [] },
-        { "DependsOn": "abandoned",   "Choices": [] }
-      ],
-      "Criteria": {
-        "MinMissionsPlayed": 1,
-        "MinMissionsWon": 1,
-        "MinMissionsLost": null
-      }
-    },
-    {
-      "Id": "the_ghost_fleet",
-      "Title": "",
-      "IntroText": "",
-      "Stages": [
-        {
-          "DependsOn": null,
-          "Choices": [
-            { "Label": "Retrieve the crews first.",      "Outcome": "recovered" },
-            { "Label": "Salvage first. We need the materiel.", "Outcome": "salvaged" }
-          ]
-        },
-        {
-          "DependsOn": "recovered",
-          "Choices": [
-            { "Label": "Countersign it",            "Outcome": "countersigned" },
-            { "Label": "Add a commendation for Calix", "Outcome": "commended" }
-          ]
-        },
-        { "DependsOn": "countersigned", "Choices": [] },
-        { "DependsOn": "commended",     "Choices": [] },
-        { "DependsOn": "salvaged",      "Choices": [] }
-      ],
-      "Criteria": {
-        "MinMissionsPlayed": 1,
-        "MinMissionsWon": null,
-        "MinMissionsLost": 1
-      }
-    }
+	{
+	  "Id": "the_relay_chain",
+	  "Title": "",
+	  "IntroText": "",
+	  "Stages": [
+		{
+		  "DependsOn": null,
+		  "Choices": [
+			{ "Label": "Reactivate the arrays", "Outcome": "relay_active" },
+			{ "Label": "Destroy the arrays",    "Outcome": "relay_destroyed" }
+		  ]
+		},
+		{
+		  "DependsOn": "relay_active",
+		  "Choices": [
+			{ "Label": "Trace the signal source",       "Outcome": "relay_traced" },
+			{ "Label": "Log the coordinates and move on", "Outcome": "relay_logged" }
+		  ]
+		},
+		{ "DependsOn": "relay_traced",   "Choices": [] },
+		{ "DependsOn": "relay_logged",   "Choices": [] },
+		{ "DependsOn": "relay_destroyed","Choices": [] }
+	  ],
+	  "Criteria": {
+		"MinMissionsPlayed": 0,
+		"MinMissionsWon": null,
+		"MinMissionsLost": null
+	  }
+	},
+	{
+	  "Id": "survivor_enclave",
+	  "Title": "",
+	  "IntroText": "",
+	  "Stages": [
+		{
+		  "DependsOn": null,
+		  "Choices": [
+			{ "Label": "Send the transports",         "Outcome": "extracted" },
+			{ "Label": "Leave them. The war comes first.", "Outcome": "abandoned" }
+		  ]
+		},
+		{
+		  "DependsOn": "extracted",
+		  "Choices": [
+			{ "Label": "Credit her by name",                         "Outcome": "credited" },
+			{ "Label": "File it as fleet intelligence, source classified", "Outcome": "classified" }
+		  ]
+		},
+		{ "DependsOn": "credited",    "Choices": [] },
+		{ "DependsOn": "classified",  "Choices": [] },
+		{ "DependsOn": "abandoned",   "Choices": [] }
+	  ],
+	  "Criteria": {
+		"MinMissionsPlayed": 1,
+		"MinMissionsWon": 1,
+		"MinMissionsLost": null
+	  }
+	},
+	{
+	  "Id": "the_ghost_fleet",
+	  "Title": "",
+	  "IntroText": "",
+	  "Stages": [
+		{
+		  "DependsOn": null,
+		  "Choices": [
+			{ "Label": "Retrieve the crews first.",      "Outcome": "recovered" },
+			{ "Label": "Salvage first. We need the materiel.", "Outcome": "salvaged" }
+		  ]
+		},
+		{
+		  "DependsOn": "recovered",
+		  "Choices": [
+			{ "Label": "Countersign it",            "Outcome": "countersigned" },
+			{ "Label": "Add a commendation for Calix", "Outcome": "commended" }
+		  ]
+		},
+		{ "DependsOn": "countersigned", "Choices": [] },
+		{ "DependsOn": "commended",     "Choices": [] },
+		{ "DependsOn": "salvaged",      "Choices": [] }
+	  ],
+	  "Criteria": {
+		"MinMissionsPlayed": 1,
+		"MinMissionsWon": null,
+		"MinMissionsLost": 1
+	  }
+	}
   ]
 }

@@ -48,6 +48,10 @@ public partial class Level
 				DebugOverlay.LogAi(_aiController.GetDebugState());
 				GetViewport().SetInputAsHandled();
 				break;
+			case Key.F6:
+				GetTree().ChangeSceneToFile("res://scenes/debug/NarrativeDebugRoot.tscn");
+				GetViewport().SetInputAsHandled();
+				break;
 		}
 	}
 

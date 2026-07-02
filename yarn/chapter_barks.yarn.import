@@ -2,13 +2,13 @@
 
 importer="yarnscript"
 type="Resource"
-uid="uid://ch4pt3rb4rks001"
-path="res://.godot/imported/chapter_barks.yarn-ch4pt3rb4rks001.tres"
+uid="uid://bsqmbn1quw8ky"
+path="res://.godot/imported/chapter_barks.yarn-d10d4f083373562ad7540b02ff8ea390.tres"
 
 [deps]
 
 source_file="res://yarn/chapter_barks.yarn"
-dest_files=["res://.godot/imported/chapter_barks.yarn-ch4pt3rb4rks001.tres"]
+dest_files=["res://.godot/imported/chapter_barks.yarn-d10d4f083373562ad7540b02ff8ea390.tres"]
 
 [params]
 

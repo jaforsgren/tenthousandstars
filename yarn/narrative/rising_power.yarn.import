@@ -2,13 +2,13 @@
 
 importer="yarnscript"
 type="Resource"
-uid="uid://c2r1s1ngp0w3r01"
-path="res://.godot/imported/rising_power.yarn-c2r1s1ngp0w3r01.tres"
+uid="uid://bh4y41mfi8lho"
+path="res://.godot/imported/rising_power.yarn-75a4b3e61ed4e497034051b0697b11af.tres"
 
 [deps]
 
 source_file="res://yarn/narrative/rising_power.yarn"
-dest_files=["res://.godot/imported/rising_power.yarn-c2r1s1ngp0w3r01.tres"]
+dest_files=["res://.godot/imported/rising_power.yarn-75a4b3e61ed4e497034051b0697b11af.tres"]
 
 [params]
 

@@ -3,16 +3,19 @@
 // "root" = initial stage (DependsOn: null)
 
 title: the_relay_chain_title
+position: 12,12
 ---
 The Relay Chain
 ===
 
 title: the_relay_chain_intro_text
+position: 232,12
 ---
 Dormant comm arrays pulse with residual signal. Something — or someone — is still broadcasting from deep in this system.
 ===
 
 title: the_relay_chain_root
+position: 452,12
 ---
 The Relay Chain
 Your sensor operators flag the anomaly at 0300 watch: a coherent signal pattern, repeating on a pre-war frequency. Not random static. Not a ghost echo.
@@ -25,6 +28,7 @@ The decision is yours.
 ===
 
 title: the_relay_chain_relay_active
+position: 12,157
 ---
 The Relay Chain
 The arrays come online one by one. Ancient hardware cycling through startup sequences designed decades before your commanders were born.
@@ -36,6 +40,7 @@ The relay network is now live. Your signals officer reports that the network ext
 ===
 
 title: the_relay_chain_relay_traced
+position: 232,157
 ---
 The Relay Chain
 The trace takes four hours. Your signals officer does not sleep.
@@ -48,6 +53,7 @@ Something is waiting for you.
 ===
 
 title: the_relay_chain_relay_logged
+position: 571,240
 ---
 The Relay Chain
 The coordinates are logged and flagged for fleet command. Your signals officer maps the active relay network and seals the access tunnels behind you.
@@ -57,6 +63,7 @@ Your signals officer notes it in the log. Neither of you say anything else about
 ===
 
 title: the_relay_chain_relay_destroyed
+position: 12,302
 ---
 The Relay Chain
 The demolition teams finish in under an hour. Shaped charges in the access shafts. Clean detonations. The arrays collapse inward and go dark.

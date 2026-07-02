@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using Godot;
 
@@ -12,7 +13,17 @@ public static class YarnLinePool
 {
     public static Dictionary<string, string[]> Load(string resPath)
     {
-        var text = FileAccess.GetFileAsString(resPath);
+        string text;
+        if (Type.GetType("Godot.Engine, GodotSharp") != null)
+        {
+            text = Godot.FileAccess.GetFileAsString(resPath);
+        }
+        else
+        {
+            var root = Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, "../../../../.."));
+            var fsPath = Path.Combine(root, resPath.Replace("res://", ""));
+            text = File.ReadAllText(fsPath);
+        }
         return Parse(text);
     }
 

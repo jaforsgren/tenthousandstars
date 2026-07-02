@@ -1,8 +1,8 @@
 {
     "projectFileVersion": 3,
     "sourceFiles": [
-        "**/*.yarn",
-        "../narrative/**/*.yarn"
+        "commitment/**/*.yarn",
+        "narrative/**/*.yarn"
     ],
     "excludeFiles": [],
     "localisation": {},

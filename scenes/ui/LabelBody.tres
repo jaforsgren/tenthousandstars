@@ -3,7 +3,7 @@
 [ext_resource type="FontFile" uid="uid://c6wtytnqyvsf6" path="res://fonts/IBMPlexMono-Thin.ttf" id="1"]
 
 [resource]
-font = ExtResource("1")
 line_spacing = 0.0
-font_size = 10
-font_color = Color(0.62, 0.62, 0.62, 1)
+font = ExtResource("1")
+font_size = 8
+font_color = Color(1, 0.48000002, 0.48000002, 1)

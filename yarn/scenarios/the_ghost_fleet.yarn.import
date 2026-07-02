@@ -2,13 +2,13 @@
 
 importer="yarnscript"
 type="Resource"
-uid="uid://gh0stfl33t0001"
-path="res://.godot/imported/the_ghost_fleet.yarn-gh0stfl33t0001.tres"
+uid="uid://dbrtkkhic3q3q"
+path="res://.godot/imported/the_ghost_fleet.yarn-af734dc7db0c40b8ebfb872e616a5631.tres"
 
 [deps]
 
 source_file="res://yarn/scenarios/the_ghost_fleet.yarn"
-dest_files=["res://.godot/imported/the_ghost_fleet.yarn-gh0stfl33t0001.tres"]
+dest_files=["res://.godot/imported/the_ghost_fleet.yarn-af734dc7db0c40b8ebfb872e616a5631.tres"]
 
 [params]
 

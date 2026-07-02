@@ -1,68 +1,48 @@
 title: fortify_complete
 ---
 
-Narrator:
-The reinforcement completes on schedule.
+Narrator: The reinforcement completes on schedule.
 
----
 
-Narrator:
-Additional garrison. Resupply lines secured. Overlapping patrol routes confirmed.
+Narrator: Additional garrison. Resupply lines secured. Overlapping patrol routes confirmed.
 
 The system is harder to move now.
 
----
 
-Narrator:
-Not because it's impregnable.
+Narrator: Not because it's impregnable.
 
 Nothing is impregnable.
 
----
 
-Narrator:
-Because the cost of taking it just went up.
+Narrator: Because the cost of taking it just went up.
 
----
 
 <<if $remaining_strength > 10>>
-    Narrator:
-    The numbers look solid.
+    Narrator: The numbers look solid.
 
-    Narrator:
-    Whoever comes for this system will need to commit more than they'd like to.
+    Narrator: Whoever comes for this system will need to commit more than they'd like to.
 
-    Narrator:
-    That buys time.
+    Narrator: That buys time.
 
-    Narrator:
-    Time is what you're actually purchasing here.
+    Narrator: Time is what you're actually purchasing here.
 
 <<else>>
-    Narrator:
-    It's lighter than ideal.
+    Narrator: It's lighter than ideal.
 
-    Narrator:
-    But it's something.
+    Narrator: But it's something.
 
-    Narrator:
-    The difference between a system that falls in minutes and one that holds for hours can decide everything.
+    Narrator: The difference between a system that falls in minutes and one that holds for hours can decide everything.
 
 <<endif>>
 
----
 
-Narrator:
-You file the defensive upgrade.
+Narrator: You file the defensive upgrade.
 
 The log accepts it without event.
 
----
 
-Narrator:
-Good.
+Narrator: Good.
 
----
 
 -> [Acknowledge]
 

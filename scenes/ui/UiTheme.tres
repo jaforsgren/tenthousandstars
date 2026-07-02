@@ -1,20 +1,22 @@
 [gd_resource type="Theme" format=3 uid="uid://6r4gcsr0tf77"]
 
 [ext_resource type="StyleBox" uid="uid://4lpdkaxmvadr" path="res://white_style_box_flat.tres" id="1_dfk0a"]
-[ext_resource type="FontFile" uid="uid://c6wtytnqyvsf6" path="res://fonts/IBMPlexMono-Thin.ttf" id="font_thin"]
 [ext_resource type="FontFile" uid="uid://bbiiy76g3bcvu" path="res://fonts/IBMPlexMono-Light.ttf" id="font_light"]
+[ext_resource type="FontFile" uid="uid://c6wtytnqyvsf6" path="res://fonts/IBMPlexMono-Thin.ttf" id="font_thin"]
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_btn_normal"]
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_btn_disabled"]
 content_margin_left = 8.0
 content_margin_top = 6.0
 content_margin_right = 8.0
 content_margin_bottom = 6.0
-bg_color = Color(0.08, 0.08, 0.08, 0.88)
+bg_color = Color(0.1, 0.1, 0.1, 0.5)
 border_width_left = 1
 border_width_top = 1
 border_width_right = 1
 border_width_bottom = 1
-border_color = Color(0.3, 0.3, 0.3, 0.7)
+border_color = Color(0.2, 0.2, 0.2, 0.4)
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_focus"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_btn_hover"]
 content_margin_left = 8.0
@@ -40,19 +42,17 @@ border_width_right = 1
 border_width_bottom = 1
 border_color = Color(0.6, 0.3, 0.04, 1)
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_btn_disabled"]
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_btn_normal"]
 content_margin_left = 8.0
 content_margin_top = 6.0
 content_margin_right = 8.0
 content_margin_bottom = 6.0
-bg_color = Color(0.1, 0.1, 0.1, 0.5)
+bg_color = Color(0.08, 0.08, 0.08, 0.88)
 border_width_left = 1
 border_width_top = 1
 border_width_right = 1
 border_width_bottom = 1
-border_color = Color(0.2, 0.2, 0.2, 0.4)
-
-[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_focus"]
+border_color = Color(0.3, 0.3, 0.3, 0.7)
 
 [resource]
 default_font = ExtResource("font_thin")

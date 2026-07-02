@@ -5,17 +5,14 @@
 title: outro_generic_win
 ---
 Narrator: {$date}
----
 Narrator: The sector is called {$sector_name}. It is yours.
 
 That sentence used to feel like control. Now it feels like damage.
----
 Narrator: Final status: {$player_faction} has achieved decisive victory over {$enemy_faction} within {$sector_name}. Enemy command structure dismantled. Remaining opposition eliminated, scattered, or withdrawn beyond operational reach.
 
 The war is over. The records will agree.
 
 You still don't.
----
 Narrator: The map is still lit.
 
 Systems under control. Supply lines reconnected. Defensive grids reactivated. Everything in its proper place again.
@@ -25,7 +22,6 @@ But you see what it cost to get it there.
 Empty corridors. Burned trade lanes. Stations that will never fully function again, even if they say they will.
 
 The sector is stable. It looks wrong.
----
 Narrator: You won. By every measurable metric.
 
 {$enemy_faction} can no longer sustain operations in {$sector_name}. No coordinated resistance remains. Strategic initiative fully removed.
@@ -33,7 +29,6 @@ Narrator: You won. By every measurable metric.
 This is what success looks like.
 
 You expected it to feel different. It doesn't.
----
 Narrator: There should be relief.
 
 There isn't.
@@ -43,7 +38,6 @@ There is only the absence of incoming reports. The silence where alarms used to 
 Your body still waits for the next failure. It doesn't come.
 
 That feels like another kind of threat.
----
 Narrator: You read the casualty summaries. Once. Then again.
 
 Then you stop reading them linearly and start scanning for anomalies—numbers that feel wrong, places where names blur into counts.
@@ -51,7 +45,6 @@ Then you stop reading them linearly and start scanning for anomalies—numbers t
 There are too many. You remember some of them. You wish you didn't.
 
 You stop telling yourself it was necessary. That part of you stopped working somewhere mid-war.
----
 Narrator: The sector is quiet.
 
 Not peaceful.
@@ -67,7 +60,6 @@ You just don't feel like the person who should be allowed to approve them.
 Because somewhere between the first engagement and this silence, something in you stopped returning intact.
 
 The war is over. And your mind is still fighting it.
----
 -> New Campaign
     <<narrative_action "new_campaign">>
 -> Random Missions
@@ -81,13 +73,11 @@ title: outro_generic_loss
 Narrator: Commander,
 
 The campaign is over. {$player_faction} secured {$missions_won} of {$total_missions} engagements — and it was not enough.
----
 Narrator: {$enemy_faction} held their ground with a steadiness we could not match. The sector remains beyond our reach. Our council will want an accounting of how it came to this: how kinsmen who share our tongue and our traditions proved the stronger hand.
 
 We are no longer favoured by the stars. That is a harder defeat than any single lost engagement.
 
 For now — it ends here.
----
 -> New Campaign
     <<narrative_action "new_campaign">>
 -> Random Missions

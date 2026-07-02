@@ -6,7 +6,6 @@ using Tts.Ai;
 using Tts.Commitment;
 using Tts.Config;
 using Tts.Debug;
-using Tts.Dialogue;
 using Tts.Effects;
 using Tts.Events;
 using Tts.Fleet;
@@ -103,8 +102,8 @@ public partial class Level : Node2D
 	private ScenarioController _scenarioController = null!;
 	private CommitmentController _commitmentController = null!;
 	private CommitmentConfig _commitmentConfig = null!;
-	private CommitmentDialogueController _commitmentDialogue = null!;
-	private PackedScene _commitmentDialogueScene = null!;
+	private NarrativePanel _narrativePanel = null!;
+	private PackedScene _narrativePanelScene = null!;
 	private LevelEventController _levelEventController = null!;
 	private EffectRegistry _effectRegistry = null!;
 	private EffectDisplayPanel _effectDisplayPanel = null!;
@@ -220,7 +219,7 @@ public partial class Level : Node2D
 		_gameController.GameEnded += () => _endConditionReached = true;
 		_gameController.Initialize(
 			activeCondition, endStateCfg, missionContext,
-			_routeSet, _systems, _aiPlayers, _rng, _levelUi, _camera, _countdownTimer, _fadeOutSeconds, _commitmentDialogue);
+			_routeSet, _systems, _aiPlayers, _rng, _levelUi, _camera, _countdownTimer, _fadeOutSeconds, _narrativePanel);
 
 		_objectiveSystemIndex = _gameController.ObjectiveSystemIndex;
 		UpdateFog();
@@ -395,10 +394,10 @@ public partial class Level : Node2D
 			_rng.Next());
 		_commitmentController.CommitmentResolved += OnCommitmentResolved;
 
-		_commitmentDialogueScene = GD.Load<PackedScene>("res://scenes/dialogue/CommitmentDialoguePanel.tscn");
-		_commitmentDialogue = _commitmentDialogueScene.Instantiate<CommitmentDialogueController>();
-		AddChild(_commitmentDialogue);
-		_commitmentController.CommitmentResolved += _commitmentDialogue.OnCommitmentResolved;
+		_narrativePanelScene = GD.Load<PackedScene>("res://scenes/narrative/NarrativePanel.tscn");
+		_narrativePanel = _narrativePanelScene.Instantiate<NarrativePanel>();
+		AddChild(_narrativePanel);
+		_commitmentController.CommitmentResolved += _narrativePanel.OnCommitmentResolved;
 	}
 
 	private void OnCommitmentResolved(int systemIndex, int ownerInt, int intentInt, bool controlGained, float remainingStrength)

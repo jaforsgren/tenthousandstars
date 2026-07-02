@@ -2,13 +2,13 @@
 
 importer="yarnscript"
 type="Resource"
-uid="uid://c4g3n3r1c0utr01"
-path="res://.godot/imported/generic.yarn-c4g3n3r1c0utr01.tres"
+uid="uid://ku0frgmyxg37"
+path="res://.godot/imported/generic.yarn-9398d30a9127edc752265046ea7acc47.tres"
 
 [deps]
 
 source_file="res://yarn/narrative/generic.yarn"
-dest_files=["res://.godot/imported/generic.yarn-c4g3n3r1c0utr01.tres"]
+dest_files=["res://.godot/imported/generic.yarn-9398d30a9127edc752265046ea7acc47.tres"]
 
 [params]
 

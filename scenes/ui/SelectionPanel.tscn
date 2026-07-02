@@ -25,14 +25,14 @@ size_flags_vertical = 4
 unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 20)
 layout_mode = 2
-text = "System Name"
+text = "Test Prime"
 label_settings = ExtResource("3_lbltitle")
 
 [node name="Description" type="Label" parent="ScrollArea/Content" unique_id=1298544558]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 20)
 layout_mode = 2
-text = "Description text goes here."
+text = "A contested frontier world. Rich in ore deposits but scarred by old campaigns."
 label_settings = ExtResource("4_lblbody")
 autowrap_mode = 3
 

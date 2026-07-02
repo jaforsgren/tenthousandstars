@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using Godot;
 using Tts.Config;
-using Tts.Dialogue;
 using Tts.Narrative;
 using Tts.Nodes;
 using Tts.Ui;
@@ -23,7 +22,7 @@ internal sealed partial class GameController : Node
 	private EndStateConfig _endStateCfg = null!;
 	private string? _missionDescription;
 	private MissionContext? _missionContext;
-	private CommitmentDialogueController _narrativePanel = null!;
+	private NarrativePanel _narrativePanel = null!;
 	private SystemOwner _targetPlayerOwner = SystemOwner.None;
 	private int _defendSystemIndex = -1;
 
@@ -47,7 +46,7 @@ internal sealed partial class GameController : Node
 		CameraController camera,
 		CountdownTimerNode countdownTimer,
 		float fadeOutSeconds,
-		CommitmentDialogueController narrativePanel)
+		NarrativePanel narrativePanel)
 	{
 		_condition = condition;
 		_endStateCfg = endStateCfg;

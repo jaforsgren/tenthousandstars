@@ -4,7 +4,6 @@ using System.Text;
 using Godot;
 using Tts.Ai;
 using Tts.Config;
-using Tts.Dialogue;
 using Tts.Narrative;
 using Tts.Utils;
 
@@ -26,7 +25,7 @@ public partial class StoryDebugScene : Control
 	private static readonly string[] ArchetypeIds = ["falling_empire", "rising_power", "conquest"];
 	private static readonly string[] ArchetypeLabels = ["Falling Empire", "Rising Power", "Conquest"];
 
-	private const string DialoguePanelPath = "res://scenes/dialogue/CommitmentDialoguePanel.tscn";
+	private const string NarrativePanelPath = "res://scenes/narrative/NarrativePanel.tscn";
 
 	public override void _Ready()
 	{
@@ -198,7 +197,7 @@ public partial class StoryDebugScene : Control
 
 	private void PreviewYarnNode(string nodeName, IReadOnlyDictionary<string, string> vars)
 	{
-		var panel = GD.Load<PackedScene>(DialoguePanelPath).Instantiate<CommitmentDialogueController>();
+		var panel = GD.Load<PackedScene>(DialoguePanelPath).Instantiate<NarrativePanel>();
 		AddChild(panel);
 		panel.ShowNarrative(nodeName, vars, onComplete: panel.QueueFree);
 	}
@@ -206,7 +205,7 @@ public partial class StoryDebugScene : Control
 	private void PreviewOutro()
 	{
 		if (_outroNodeName == null || _outroVars == null) return;
-		var panel = GD.Load<PackedScene>(DialoguePanelPath).Instantiate<CommitmentDialogueController>();
+		var panel = GD.Load<PackedScene>(DialoguePanelPath).Instantiate<NarrativePanel>();
 		AddChild(panel);
 		panel.ShowNarrative(_outroNodeName, _outroVars, onComplete: panel.QueueFree);
 	}

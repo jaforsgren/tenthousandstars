@@ -2,13 +2,13 @@
 
 importer="yarnscript"
 type="Resource"
-uid="uid://l0r3p00ls00001"
-path="res://.godot/imported/lore.yarn-l0r3p00ls00001.tres"
+uid="uid://bo2286wut6uya"
+path="res://.godot/imported/lore.yarn-702362a63e849262ad6830b9d0b68025.tres"
 
 [deps]
 
 source_file="res://yarn/lore.yarn"
-dest_files=["res://.godot/imported/lore.yarn-l0r3p00ls00001.tres"]
+dest_files=["res://.godot/imported/lore.yarn-702362a63e849262ad6830b9d0b68025.tres"]
 
 [params]
 

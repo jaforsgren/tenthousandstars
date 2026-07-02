@@ -2,13 +2,13 @@
 
 importer="yarnscript"
 type="Resource"
-uid="uid://c3c0nqu3st00001"
-path="res://.godot/imported/conquest.yarn-c3c0nqu3st00001.tres"
+uid="uid://4xdfe3yr5gou"
+path="res://.godot/imported/conquest.yarn-5b8fac545c2177008b2c24fc1c696965.tres"
 
 [deps]
 
 source_file="res://yarn/narrative/conquest.yarn"
-dest_files=["res://.godot/imported/conquest.yarn-c3c0nqu3st00001.tres"]
+dest_files=["res://.godot/imported/conquest.yarn-5b8fac545c2177008b2c24fc1c696965.tres"]
 
 [params]
 

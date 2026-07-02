@@ -4,16 +4,15 @@
 // Outro also uses: $missions_won, $total_missions
 
 title: conquest_begin
+position: 86,1
 ---
 Narrator: {$player_faction}
 Narrator: {$date}
----
 Narrator: The sector is called {$sector_name}. That already tells you something.
 
 Not a system. Bigger. Messier. A stretch of space stitched together by trade routes, old wars, and decisions no one remembers making.
 
 Multiple stars. Multiple chances to get it wrong. And that they did.
----
 Narrator: {$sector_name} spans several inhabited systems under the control of {$enemy_faction}. Expansion occurred in waves—first exploration, then extraction, then consolidation. Standard pattern.
 
 Standard mistake.
@@ -23,7 +22,6 @@ They treated distance like safety. They thought spread meant strength. It just g
 The systems don't match each other. They never do. One burns bright with industry, another hides behind research stations and quiet ambition. Some are barely held together—outposts pretending to be permanent.
 
 All of them connected. All of them vulnerable.
----
 Narrator: Trade lanes cut through the dark like veins. Predictable. Efficient. Easy to follow.
 
 Easy to sever.
@@ -31,7 +29,6 @@ Easy to sever.
 Defense fleets are distributed across key systems. Not centralized. Not coordinated well enough. Response times lag between stars.
 
 Too much space. Not enough control. You can feel the delay baked into everything they do.
----
 Narrator: They cannot defend all of it.
 
 They will try. They will fail.
@@ -39,7 +36,6 @@ They will try. They will fail.
 {$player_faction} doesn't need to break the sector at once. Just the right parts, in the right order. Pressure applied where it hurts most.
 
 The rest collapses on its own. It always does.
----
 Narrator: Panic won't stay local.
 
 It will jump systems. Faster than ships. Faster than orders.
@@ -47,7 +43,6 @@ It will jump systems. Faster than ships. Faster than orders.
 One world burns, and another starts preparing for it. Not efficiently. Not rationally. Just desperately.
 
 They will overreact in one place. Underreact in another. You can use both.
----
 Narrator: There are billions spread across these stars. Different skies. Different routines. Same assumption.
 
 That this will continue. That tomorrow belongs to them.
@@ -55,7 +50,6 @@ That this will continue. That tomorrow belongs to them.
 It doesn't.
 
 You don't need to know them to end that.
----
 Narrator: {$mission_objective} defines the campaign. Not the details. The outcome.
 
 You are not raiding. You are reshaping ownership.
@@ -63,13 +57,11 @@ You are not raiding. You are reshaping ownership.
 Every system taken is a message to the next. Resistance is not heroic. It's inefficient.
 
 They will learn. Or they won't. It changes nothing.
----
 Narrator: They hesitate across distance. You don't.
 
 Orders from {$enemy_faction} will arrive late, misinterpreted, or not at all. Command fractures when stretched this thin.
 
 Yours doesn't. You move. The sector reacts. Too slow. Always too slow.
----
 Narrator: Campaign start: {$date}. Logged as a regional conflict.
 
 It won't stay that way.
@@ -77,7 +69,6 @@ It won't stay that way.
 Sectors like this don't fall quietly. They echo. Neighbors take notice. Lines get redrawn.
 
 But that comes later. Right now, it's just the beginning.
----
 Narrator: Somewhere between the stars, in the empty space they thought didn't matter, something shifts.
 
 Routes that felt stable start to feel exposed. Distances shrink, not physically, but in consequence.
@@ -94,24 +85,21 @@ They won't. Not everywhere. Not against you.
 ===
 
 title: conquest_mid
+position: -135,163
 ---
 Narrator: {$player_faction} — Field Command
 Narrator: {$date}
----
 Narrator: {$sector_name} is quieter now.
 
 Not silent. Just less alive than it was when you arrived.
----
 Narrator: Mid-campaign status: {$player_faction} has established forward dominance in multiple systems across {$sector_name}. Resistance from {$enemy_faction} persists, but coordination has degraded.
 
 They're still fighting, just not together.
----
 Narrator: The map is starting to make sense.
 
 Pockets of resistance. Isolated. Reactive. You can see where they'll try to hold, where they'll break, where they're already gone but haven't admitted it yet.
 
 You're closing around them.
----
 Narrator: Momentum is yours.
 
 Not absolute. Not guaranteed. But real.
@@ -119,35 +107,29 @@ Not absolute. Not guaranteed. But real.
 Every move they make now is a response. Every decision comes after yours. They've lost the initiative, and they know it.
 
 That knowledge does half the work for you.
----
 Narrator: They're getting desperate.
 
 You can hear it in their transmissions. Shorter. Sharper. Less certainty behind the words.
 
 Desperation makes them dangerous. Also predictable.
----
 Narrator: They're holding onto what's left.
 
 You don't spend time thinking about what that means for them.
 
 You can't. Not if you want to finish this.
----
 Narrator: {$mission_objective} advances.
 
 Not complete. Not yet. But inevitable.
 
 You're no longer testing the sector. You're reshaping it.
----
 Narrator: There's no hesitation left in you now.
 
 The first strike is always the hardest. After that, it becomes clearer. Simpler. Each system taken reinforces the next decision.
 
 You move because stopping would be the only real mistake.
----
 Narrator: Date: {$date}. Campaign midpoint logged. Strategic advantage held by {$player_faction}.
 
 Dry words. Accurate ones.
----
 Narrator: The sector feels different under you now.
 
 Not resisting in the same way. Not pushing back as hard.
@@ -162,18 +144,16 @@ You issue the next order. And the sector tightens around it.
 ===
 
 title: conquest_end
+position: -189,299
 ---
 Narrator: {$player_faction} — Final War Directive
 Narrator: {$date}
----
 Narrator: {$sector_name} doesn't answer to anyone anymore.
 
 Not in the way it used to. Now it just settles.
----
 Narrator: Final campaign status: {$player_faction} has established sector-wide control over {$sector_name}. Organized resistance from {$enemy_faction} has ceased. Remaining opposition fragmented, uncoordinated, or evacuated.
 
 There is no front line anymore, only aftermath.
----
 Narrator: The map has stopped changing.
 
 That's the first thing you notice.
@@ -181,13 +161,11 @@ That's the first thing you notice.
 Systems are marked, stabilized, integrated. Trade routes reappear. Fleet positions become administrative rather than tactical. What used to be movement is now placement.
 
 It looks like order even though it feels like exhaustion.
----
 Narrator: It worked. Not cleanly. Not cheaply. But completely enough to matter.
 
 Every competing calculation resolved in one direction. Every variable forced into alignment. What couldn't be controlled was removed from the equation.
 
 What remains is what you raised.
----
 Narrator: There is no last battle.
 
 Just a slow recognition that there won't be another.
@@ -195,27 +173,22 @@ Just a slow recognition that there won't be another.
 Signals taper off. Resistance stops sounding like resistance and starts sounding like absence of capacity. The sector stops bracing itself between reports.
 
 And starts breathing again. Carefully.
----
 Narrator: You receive surrender confirmations. Some formal. Some not. Some don't bother with words at all.
 
 You think about the people who will keep living here under a different flag. About how quickly they will adapt. About how quickly they will pretend it was always this way.
 
 But you don't dwell on it. You can't afford to.
----
 Narrator: {$mission_objective}: complete.
 
 It feels smaller than it should. Or maybe everything else got larger.
 
 Orders shift from conquest to consolidation. From movement to maintenance. The sector doesn't need to be taken anymore. It needs to be kept.
----
 Narrator: You are still issuing commands. That doesn't stop. It just changes shape.
 
 Now it's administration. Stability. Quiet enforcement of a reality that no longer has alternatives.
 
 You expected relief but what you get is continuity.
----
 Narrator: Date: {$date}. Campaign concluded. {$sector_name} recorded as secured territory under {$player_faction} control.
----
 Narrator: The sector feels different now that it's yours.
 
 Not safe. Not peaceful. Finished.
@@ -234,36 +207,31 @@ And for the first time since this began— that doesn't feel like victory.
 ===
 
 title: outro_conquest_win
+position: 136,162
 ---
 Narrator: {$player_faction} — Final War Directive
 Narrator: {$date}
----
 Narrator: {$sector_name} doesn't answer to anyone anymore.
 
 Not in the way it used to. Now it just settles.
----
 Narrator: Final campaign status: {$player_faction} has established sector-wide control over {$sector_name}. Organized resistance from {$enemy_faction} has ceased. Remaining opposition fragmented, uncoordinated, or evacuated.
 
 There is no front line anymore, only aftermath.
----
 Narrator: The map has stopped changing.
 
 Systems are marked, stabilized, integrated. Trade routes reappear. Fleet positions become administrative rather than tactical.
 
 It looks like order even though it feels like exhaustion.
----
 Narrator: It worked. Not cleanly. Not cheaply. But completely enough to matter.
 
 Every competing calculation resolved in one direction. Every variable forced into alignment. What couldn't be controlled was removed from the equation.
 
 What remains is what you raised.
----
 Narrator: You are still issuing commands. That doesn't stop. It just changes shape.
 
 Now it's administration. Stability. Quiet enforcement of a reality that no longer has alternatives.
 
 You expected relief but what you get is continuity.
----
 Narrator: The sector feels different now that it's yours.
 
 Not safe. Not peaceful. Finished.
@@ -275,7 +243,6 @@ The last transmission from {$enemy_faction} is not a message. It is silence with
 You look at the map of {$sector_name}. It belongs to you.
 
 And for the first time since this began— that doesn't feel like victory.
----
 -> New Campaign
     <<narrative_action "new_campaign">>
 -> Random Missions
@@ -285,17 +252,16 @@ And for the first time since this began— that doesn't feel like victory.
 ===
 
 title: outro_conquest_loss
+position: 479,-26
 ---
 Narrator: Commander,
 
 {$player_faction} came to conquer. {$missions_won} of {$total_missions} engagements — it was not enough.
----
 Narrator: {$enemy_faction} denied us the sector. Their phalanxes held where ours broke. Their strategists outpaced our own. We must say it plainly: we were outmatched by kinsmen who learned the same lessons and applied them better.
 
 The civil war continues without us at its center. Another system-state will rise in our place, speak our language, invoke the same ancestors — and remember us as a cautionary verse in their victory songs.
 
 We regroup. The ambition remains. The reckoning, too.
----
 -> New Campaign
     <<narrative_action "new_campaign">>
 -> Random Missions

@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Text;
 using Tts.Ai;
 using Tts.Config;
@@ -12,20 +13,24 @@ public static class NarrativeCli
     // Usage:
     //   (no args)             — full campaign with all wins, includes eligible scenarios per mission
     //   <archetype> [pattern] — full campaign for archetype (e.g. "conquest W,L,W")
+    //   -v / --verbose        — also print Yarn text for each interlude and outro
     //   scenarios             — list all scenarios and their criteria, no campaign
     //   scenarios <played> <won> <lost> — list scenarios eligible at given mission stats
     public static void Run(string[] args)
     {
+        var verbose = Array.IndexOf(args, "-v") >= 0 || Array.IndexOf(args, "--verbose") >= 0;
+        args = Array.FindAll(args, a => a != "-v" && a != "--verbose");
+
         if (args.Length > 0 && args[0] == "scenarios")
         {
             RunScenariosStandalone(args);
             return;
         }
 
-        RunCampaign(args);
+        RunCampaign(args, verbose);
     }
 
-    private static void RunCampaign(string[] args)
+    private static void RunCampaign(string[] args, bool verbose)
     {
         var rng = new Random();
         var archetype = args.Length > 0 ? args[0] : "";
@@ -41,7 +46,13 @@ public static class NarrativeCli
         var state = controller.CurrentState;
         var wins = ParseWinPattern(pattern, state.TotalChapters);
 
+        var narrativePool = verbose
+            ? YarnLinePool.Load($"res://yarn/narrative/{state.ArchetypeId}.yarn")
+            : null;
+
         var sb = new StringBuilder();
+        var lastSectorName = "";
+        var lastDate = "";
 
         sb.AppendLine($"CAMPAIGN: {state.ArchetypeId}");
         sb.AppendLine($"Faction: {state.Player.FactionName}");
@@ -50,6 +61,8 @@ public static class NarrativeCli
         for (var i = 0; i < state.TotalChapters; i++)
         {
             var ctx = controller.GetNextMission();
+            if (ctx.SectorName != null) lastSectorName = ctx.SectorName;
+            if (ctx.InterludeDate != null) lastDate = ctx.InterludeDate;
             var won = wins[i];
 
             sb.AppendLine($"--- Chapter {i + 1}: {ctx.Chapter.ChapterId} ---");
@@ -58,6 +71,8 @@ public static class NarrativeCli
             {
                 sb.AppendLine($"INTERLUDE: {ctx.InterludeNodeName}");
                 sb.AppendLine($"  sector={ctx.SectorName}  date={ctx.InterludeDate}");
+                if (narrativePool != null)
+                    AppendYarnText(sb, narrativePool, ctx.InterludeNodeName, ctx.SectorName, ctx.InterludeDate, state.Player.FactionName, enemy.FactionName, ctx.Condition.Description);
                 sb.AppendLine();
             }
 
@@ -82,7 +97,11 @@ public static class NarrativeCli
 
         if (controller.IsCampaignComplete)
         {
-            sb.AppendLine($"OUTRO: {controller.GetOutroNodeName()}");
+            var outroNode = controller.GetOutroNodeName();
+            sb.AppendLine($"OUTRO: {outroNode}");
+            if (narrativePool != null)
+                AppendYarnText(sb, narrativePool, outroNode, lastSectorName, lastDate, state.Player.FactionName, enemy.FactionName,
+                    missionsWon: wins.Count(w => w), totalMissions: state.TotalChapters);
         }
 
         Console.WriteLine(sb.ToString());
@@ -160,6 +179,43 @@ public static class NarrativeCli
             }
         }
         sb.AppendLine();
+    }
+
+    private static void AppendYarnText(
+        StringBuilder sb,
+        System.Collections.Generic.Dictionary<string, string[]> pool,
+        string nodeName,
+        string? sectorName,
+        string? date,
+        string playerFaction,
+        string enemyFaction,
+        string missionObjective = "",
+        int missionsWon = 0,
+        int totalMissions = 0)
+    {
+        var lines = YarnLinePool.GetPool(pool, nodeName);
+        if (lines.Length == 0) return;
+
+        sb.AppendLine();
+        foreach (var raw in lines)
+        {
+            var line = raw
+                .Replace("{$player_faction}", playerFaction)
+                .Replace("{$enemy_faction}", enemyFaction)
+                .Replace("{$sector_name}", sectorName ?? "")
+                .Replace("{$date}", date ?? "")
+                .Replace("{$mission_objective}", missionObjective)
+                .Replace("{$missions_won}", missionsWon.ToString())
+                .Replace("{$total_missions}", totalMissions.ToString());
+
+            // Strip "Narrator: " prefix
+            var text = line.StartsWith("Narrator: ", StringComparison.Ordinal)
+                ? line["Narrator: ".Length..]
+                : line;
+
+            if (!string.IsNullOrWhiteSpace(text))
+                sb.AppendLine($"  {text}");
+        }
     }
 
     public static bool[] ParseWinPattern(string input, int chapters)

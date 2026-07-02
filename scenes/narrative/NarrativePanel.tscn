@@ -1,0 +1,10 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/narrative/NarrativePanel.cs" id="1"]
+[ext_resource type="PackedScene" path="res://scenes/dialogue/DialogueContent.tscn" id="2"]
+
+[node name="NarrativePanel" type="CanvasLayer"]
+layer = 10
+script = ExtResource("1")
+
+[node name="DialogueContent" parent="." instance=ExtResource("2")]

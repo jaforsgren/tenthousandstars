@@ -1,0 +1,13 @@
+title: declarations
+---
+// Variables injected at runtime from C# before running any narrative node.
+<<declare $player_faction = "" as string>>
+<<declare $enemy_faction = "" as string>>
+<<declare $sector_name = "" as string>>
+<<declare $date = "" as string>>
+<<declare $mission_objective = "" as string>>
+<<declare $missions_won = 0 as number>>
+<<declare $total_missions = 0 as number>>
+// Variable injected at runtime from C# before running any commitment node.
+<<declare $remaining_strength = 0 as number>>
+===

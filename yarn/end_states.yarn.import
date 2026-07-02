@@ -2,13 +2,13 @@
 
 importer="yarnscript"
 type="Resource"
-uid="uid://3ndst4t3sp00l1"
-path="res://.godot/imported/end_states.yarn-3ndst4t3sp00l1.tres"
+uid="uid://cy748r723n2wm"
+path="res://.godot/imported/end_states.yarn-a76ba2ebf069da6683992eb094fea276.tres"
 
 [deps]
 
 source_file="res://yarn/end_states.yarn"
-dest_files=["res://.godot/imported/end_states.yarn-3ndst4t3sp00l1.tres"]
+dest_files=["res://.godot/imported/end_states.yarn-a76ba2ebf069da6683992eb094fea276.tres"]
 
 [params]
 

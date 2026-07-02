@@ -1,26 +1,21 @@
 title: attack_won
 ---
 
-Narrator:
-The reports come through in fragments.
+Narrator: The reports come through in fragments.
 
 First the silence.
 
 Then confirmation.
 
----
 
-Narrator:
-Your ships are still.
+Narrator: Your ships are still.
 
 No drift. No correction.
 
 The engagement is over.
 
----
 
-Narrator:
-The system changes hands.
+Narrator: The system changes hands.
 
 Not dramatically.
 
@@ -29,48 +24,35 @@ A new registration filed.
 
 The archive accepts it without comment.
 
----
 
-Narrator:
-You check the fleet strength.
+Narrator: You check the fleet strength.
 
 <<if $remaining_strength > 8>>
-    Narrator:
-    Better than expected.
+    Narrator: Better than expected.
 
-    Narrator:
-    Whoever defended that system — they held longer than the models predicted.
+    Narrator: Whoever defended that system — they held longer than the models predicted.
 
-    Narrator:
-    You take note of that.
+    Narrator: You take note of that.
 
 <<elseif $remaining_strength > 3>>
-    Narrator:
-    Acceptable losses.
+    Narrator: Acceptable losses.
 
-    Narrator:
-    You've paid more for less.
+    Narrator: You've paid more for less.
 
 <<else>>
-    Narrator:
-    The numbers are worse than you wanted.
+    Narrator: The numbers are worse than you wanted.
 
-    Narrator:
-    The system is yours.
+    Narrator: The system is yours.
 
-    Narrator:
-    The question is whether you can hold it.
+    Narrator: The question is whether you can hold it.
 
 <<endif>>
 
----
 
-Narrator:
-Control is a temporary condition.
+Narrator: Control is a temporary condition.
 
 You've taken enough systems to know that.
 
----
 
 -> [Acknowledge]
 
@@ -79,27 +61,20 @@ You've taken enough systems to know that.
 title: attack_repulsed
 ---
 
-Narrator:
-The contact window closes before you expect it.
+Narrator: The contact window closes before you expect it.
 
----
 
-Narrator:
-Your ships are withdrawing.
+Narrator: Your ships are withdrawing.
 
 Not routed — the distinction matters to some people.
 
 To the fleet logs, it matters.
 
----
 
-Narrator:
-The system did not fall.
+Narrator: The system did not fall.
 
----
 
-Narrator:
-You review the engagement data.
+Narrator: You review the engagement data.
 
 There is always something in the data.
 
@@ -107,43 +82,31 @@ Resistance levels.
 Fleet ratios.
 Timing.
 
----
 
 <<if $remaining_strength > 5>>
-    Narrator:
-    The fleet survived. That's the important part.
+    Narrator: The fleet survived. That's the important part.
 
-    Narrator:
-    You came close.
+    Narrator: You came close.
 
-    Narrator:
-    Close enough to learn something.
+    Narrator: Close enough to learn something.
 
 <<else>>
-    Narrator:
-    The losses are significant.
+    Narrator: The losses are significant.
 
-    Narrator:
-    You've committed more to worse outcomes.
+    Narrator: You've committed more to worse outcomes.
 
-    Narrator:
-    But this one stings.
+    Narrator: But this one stings.
 
 <<endif>>
 
----
 
-Narrator:
-You mark the system.
+Narrator: You mark the system.
 
 Not for now.
 
----
 
-Narrator:
-But noted.
+Narrator: But noted.
 
----
 
 -> [Acknowledge]
 

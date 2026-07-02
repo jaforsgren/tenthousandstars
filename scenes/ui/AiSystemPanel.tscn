@@ -16,7 +16,6 @@ offset_bottom = 116.0
 mouse_filter = 2
 theme = ExtResource("2_theme")
 script = ExtResource("1_aisys")
-PreviewInEditor = false
 
 [node name="Content" type="Control" parent="." unique_id=2037952807]
 layout_mode = 2
@@ -27,9 +26,8 @@ layout_mode = 0
 offset_top = -8.0
 offset_right = 180.0
 offset_bottom = 15.0
-theme_override_colors/font_color = Color(0.91, 0.63, 0.13, 1)
 theme_override_font_sizes/font_size = 13
-text = "The Crimson Veil"
+text = "Title"
 
 [node name="Title2" type="Label" parent="Content" unique_id=1589216896]
 unique_name_in_owner = true
@@ -38,9 +36,8 @@ offset_left = 2.0
 offset_top = 15.0
 offset_right = 182.0
 offset_bottom = 29.0
-theme_override_colors/font_color = Color(0.55, 0.55, 0.55, 1)
 theme_override_font_sizes/font_size = 8
-text = "Aggressive — Veilhammer"
+text = "Disposition : Name"
 
 [node name="Decription" type="Label" parent="Content" unique_id=1563879449]
 unique_name_in_owner = true
@@ -49,7 +46,7 @@ offset_left = 3.0
 offset_top = 30.0
 offset_right = 183.0
 offset_bottom = 60.0
-text = "They expand through force alone. Every system taken by blood."
+text = "Description"
 label_settings = ExtResource("3_lblbody")
 autowrap_mode = 3
 
@@ -60,7 +57,6 @@ offset_left = 1.0
 offset_top = 74.0
 offset_right = 181.0
 offset_bottom = 94.0
-theme_override_colors/font_color = Color(0.91, 0.63, 0.13, 0.5)
 theme_override_font_sizes/font_size = 10
-text = "\"Your kind is weak.\""
+text = "\"Bark\""
 label_settings = SubResource("LabelSettings_bdi1f")

@@ -3,8 +3,7 @@
 [ext_resource type="FontFile" uid="uid://c6wtytnqyvsf6" path="res://fonts/IBMPlexMono-Thin.ttf" id="1"]
 [ext_resource type="Texture2D" uid="uid://dscm4p8etlojm" path="res://ui/dialogue/highlight_bar.png" id="2"]
 [ext_resource type="FontFile" uid="uid://bbiiy76g3bcvu" path="res://fonts/IBMPlexMono-Light.ttf" id="3"]
-[ext_resource type="Texture2D" uid="uid://rju7j4omy1g5" path="res://ui/dialogue/panel_bg_opaque.png" id="4"]
-[ext_resource type="Texture2D" uid="uid://dlv573ri7oex" path="res://ui/dialogue/divider_line.png" id="5"]
+[ext_resource type="Texture2D" uid="uid://j43wedyf3dfu" path="res://ui/dialogue/panel_bg_opaque.png" id="4"]
 
 [sub_resource type="StyleBoxTexture" id="StyleBox_choice_focus"]
 texture = ExtResource("2")
