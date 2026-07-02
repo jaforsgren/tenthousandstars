@@ -1,69 +1,75 @@
 [gd_resource type="Theme" format=3 uid="uid://6r4gcsr0tf77"]
 
 [ext_resource type="StyleBox" uid="uid://4lpdkaxmvadr" path="res://white_style_box_flat.tres" id="1_dfk0a"]
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_btn_disabled"]
-content_margin_left = 8.0
-content_margin_top = 8.0
-content_margin_right = 8.0
-content_margin_bottom = 8.0
-bg_color = Color(0.68, 0.68, 0.68, 1)
-corner_radius_top_left = 4
-corner_radius_top_right = 4
-corner_radius_bottom_right = 4
-corner_radius_bottom_left = 4
-corner_detail = 4
-
-[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_focus"]
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_btn_hover"]
-content_margin_left = 8.0
-content_margin_top = 8.0
-content_margin_right = 8.0
-content_margin_bottom = 8.0
-bg_color = Color(0.95, 0.38, 0.18, 1)
-corner_radius_top_left = 4
-corner_radius_top_right = 4
-corner_radius_bottom_right = 4
-corner_radius_bottom_left = 4
-corner_detail = 4
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_btn_pressed"]
-content_margin_left = 8.0
-content_margin_top = 8.0
-content_margin_right = 8.0
-content_margin_bottom = 8.0
-bg_color = Color(0.7, 0.2, 0.06, 1)
-corner_radius_top_left = 4
-corner_radius_top_right = 4
-corner_radius_bottom_right = 4
-corner_radius_bottom_left = 4
-corner_detail = 4
+[ext_resource type="FontFile" uid="uid://c6wtytnqyvsf6" path="res://fonts/IBMPlexMono-Thin.ttf" id="font_thin"]
+[ext_resource type="FontFile" uid="uid://bbiiy76g3bcvu" path="res://fonts/IBMPlexMono-Light.ttf" id="font_light"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_btn_normal"]
 content_margin_left = 8.0
-content_margin_top = 8.0
+content_margin_top = 6.0
 content_margin_right = 8.0
-content_margin_bottom = 8.0
-bg_color = Color(0.9, 0.28, 0.1, 1)
-corner_radius_top_left = 4
-corner_radius_top_right = 4
-corner_radius_bottom_right = 4
-corner_radius_bottom_left = 4
-corner_detail = 4
+content_margin_bottom = 6.0
+bg_color = Color(0.08, 0.08, 0.08, 0.88)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.3, 0.3, 0.3, 0.7)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_btn_hover"]
+content_margin_left = 8.0
+content_margin_top = 6.0
+content_margin_right = 8.0
+content_margin_bottom = 6.0
+bg_color = Color(0.91, 0.55, 0.1, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.91, 0.55, 0.1, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_btn_pressed"]
+content_margin_left = 8.0
+content_margin_top = 6.0
+content_margin_right = 8.0
+content_margin_bottom = 6.0
+bg_color = Color(0.6, 0.3, 0.04, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.6, 0.3, 0.04, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_btn_disabled"]
+content_margin_left = 8.0
+content_margin_top = 6.0
+content_margin_right = 8.0
+content_margin_bottom = 6.0
+bg_color = Color(0.1, 0.1, 0.1, 0.5)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.2, 0.2, 0.2, 0.4)
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_focus"]
 
 [resource]
-Button/colors/font_color = Color(0, 0, 0, 1)
-Button/colors/font_disabled_color = Color(0, 0, 0, 0.4)
+default_font = ExtResource("font_thin")
+default_font_size = 12
+Button/colors/font_color = Color(0.88, 0.88, 0.88, 1)
+Button/colors/font_disabled_color = Color(0.4, 0.4, 0.4, 0.5)
 Button/colors/font_focus_color = Color(0, 0, 0, 1)
 Button/colors/font_hover_color = Color(0, 0, 0, 1)
 Button/colors/font_pressed_color = Color(0, 0, 0, 1)
+Button/fonts/font = ExtResource("font_light")
 Button/styles/disabled = SubResource("StyleBoxFlat_btn_disabled")
 Button/styles/focus = SubResource("StyleBoxEmpty_focus")
 Button/styles/hover = SubResource("StyleBoxFlat_btn_hover")
 Button/styles/hover_pressed = SubResource("StyleBoxFlat_btn_pressed")
 Button/styles/normal = SubResource("StyleBoxFlat_btn_normal")
 Button/styles/pressed = SubResource("StyleBoxFlat_btn_pressed")
-Label/colors/font_color = Color(0, 0, 0, 1)
+Label/colors/font_color = Color(0.82, 0.82, 0.82, 1)
+Label/fonts/font = ExtResource("font_thin")
 Panel/styles/panel = ExtResource("1_dfk0a")
 PanelContainer/styles/panel = ExtResource("1_dfk0a")

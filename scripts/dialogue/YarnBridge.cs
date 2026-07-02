@@ -47,11 +47,6 @@ public partial class YarnBridge : Node, DialoguePresenterBase
 		dialogueRunner!.AddCommandHandler("desc",
 			new Action<string>(descriptor => { _currentDescriptor = descriptor; }));
 
-		// <<wait 1.5>>  — pause dialogue for the given number of seconds
-		dialogueRunner!.AddCommandHandler("wait",
-			new Func<float, Task>(async seconds =>
-				await ToSignal(GetTree().CreateTimer(seconds, ignoreTimeScale: true), SceneTreeTimer.SignalName.Timeout)));
-
 		// <<skill "logic" 10>>
 		// Yarn passes numbers as floats; we accept float and cast to int.
 		dialogueRunner!.AddCommandHandler("skill",

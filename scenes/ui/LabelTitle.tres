@@ -1,5 +1,8 @@
 [gd_resource type="LabelSettings" format=3 uid="uid://d3o3fa7cpfaii"]
 
+[ext_resource type="FontFile" uid="uid://bbiiy76g3bcvu" path="res://fonts/IBMPlexMono-Light.ttf" id="1"]
+
 [resource]
+font = ExtResource("1")
 font_size = 13
-font_color = Color(0.9, 0.28, 0.1, 1)
+font_color = Color(0.9, 0.9, 0.9, 1)

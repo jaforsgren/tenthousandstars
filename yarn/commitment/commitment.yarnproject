@@ -1,11 +1,12 @@
 {
-  "projectFileVersion": 3,
-  "sourceFiles": [
-    "**/*.yarn"
-  ],
-  "excludeFiles": [],
-  "localisation": {},
-  "baseLanguage": "en",
-  "compilerOptions": {},
-  "definitionsFiles": []
+    "projectFileVersion": 3,
+    "sourceFiles": [
+        "**/*.yarn",
+        "../narrative/**/*.yarn"
+    ],
+    "excludeFiles": [],
+    "localisation": {},
+    "baseLanguage": "en",
+    "compilerOptions": {},
+    "definitionsFiles": []
 }
