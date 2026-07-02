@@ -13,11 +13,10 @@ namespace Tts.Dialogue;
 //
 // Scene layout expected (CommitmentDialoguePanel.tscn):
 //   CommitmentDialoguePanel (CanvasLayer — this script)
-//   ├── DialogueRoot (Control — DialogueController)
-//   │   └── YarnBridge
-//   ├── DialogueRunnerNode
-//   ├── InMemoryVariableStorage
-//   └── TextLineProvider
+//   └── DialogueContent (DialogueContent.tscn — DialogueController)
+//       ├── YarnBridge
+//       ├── DialogueRunnerNode
+//       └── InMemoryVariableStorage
 public partial class CommitmentDialogueController : CanvasLayer
 {
     private DialogueRunner _runner = null!;
@@ -28,10 +27,10 @@ public partial class CommitmentDialogueController : CanvasLayer
 
     public override void _Ready()
     {
-        _runner = GetNode<DialogueRunner>("DialogueRunnerNode");
-        _vars   = GetNode<InMemoryVariableStorage>("InMemoryVariableStorage");
+        _runner = GetNode<DialogueRunner>("DialogueContent/DialogueRunnerNode");
+        _vars   = GetNode<InMemoryVariableStorage>("DialogueContent/InMemoryVariableStorage");
 
-        var bridge = GetNode<YarnBridge>("DialogueRoot/YarnBridge");
+        var bridge = GetNode<YarnBridge>("DialogueContent/YarnBridge");
         bridge.dialogueRunner = _runner;
         _runner.dialoguePresenters.Add(bridge);
 

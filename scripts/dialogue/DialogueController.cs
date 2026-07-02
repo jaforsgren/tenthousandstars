@@ -10,7 +10,7 @@ namespace Tts.Dialogue;
 /// <summary>
 /// Root controller for the Disco-Elysium-style stacked dialogue UI.
 ///
-/// Layout contract (DialogueRoot.tscn):
+/// Layout contract (DialogueContent.tscn):
 ///   PinnedHeader  – fixed Control at the top; holds the current CharacterHeader
 ///   ScrollContainer / DialogStack – scrolling stack of dialogue entries
 ///
