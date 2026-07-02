@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using Godot;
 using Tts.Commitment;
@@ -15,6 +16,61 @@ public partial class Level
 	private void LaunchPlayerTransit(int fromIndex, int toIndex, float fleet)
 		=> LaunchTransit(fromIndex, toIndex, fleet, SystemOwner.Player, _ghostFleetOutline,
 			(toIdx, f) => ResolvePlayerTransitArrival(toIdx, f));
+
+	private void LaunchPlayerPathedTransit(List<int> path, float fleet)
+		=> LaunchTransit(path[0], path[1], fleet, SystemOwner.Player, _ghostFleetOutline,
+			(_, f) => OnPlayerPathedHop(path, 1, f));
+
+	private void OnPlayerPathedHop(List<int> path, int step, float fleet)
+	{
+		if (step == path.Count - 1)
+		{
+			ResolvePlayerTransitArrival(path[step], fleet);
+			return;
+		}
+		LaunchTransit(path[step], path[step + 1], fleet, SystemOwner.Player, _ghostFleetOutline,
+			(_, f) => OnPlayerPathedHop(path, step + 1, f));
+	}
+
+	private static readonly Color CapitolTransitColor = new(1f, 0.8f, 0.1f, 0.95f);
+	private const float CapitolShipFleet = 1f;
+
+	private void LaunchCapitolPathedTransit(List<int> path, IntentType intent)
+		=> LaunchTransit(path[0], path[1], CapitolShipFleet, SystemOwner.Player, CapitolTransitColor,
+			(_, f) => OnCapitolPathedHop(path, 1, intent, f));
+
+	private void OnCapitolPathedHop(List<int> path, int step, IntentType intent, float fleet)
+	{
+		if (step == path.Count - 1)
+		{
+			ResolveCapitolArrival(path[step], intent, fleet);
+			return;
+		}
+		LaunchTransit(path[step], path[step + 1], fleet, SystemOwner.Player, CapitolTransitColor,
+			(_, f) => OnCapitolPathedHop(path, step + 1, intent, f));
+	}
+
+	private void ResolveCapitolArrival(int toIndex, IntentType intent, float fleet)
+	{
+		var target = _systems[toIndex];
+		if (target.IsPlayerOwned)
+		{
+			target.AddCapitolShip();
+			CommitOwnSystem(toIndex, intent);
+		}
+		else
+		{
+			_commitmentController.StartCommitment(
+				toIndex,
+				SystemOwner.Player,
+				intent,
+				BuildFleetInfluences(fleet),
+				Time.GetTicksMsec() / 1000.0,
+				target.Ships);
+		}
+		UpdateFog();
+		_gameController.EvaluateEndState();
+	}
 
 	private void LaunchTransit(int fromIndex, int toIndex, float fleet, SystemOwner owner, Color dotColor, Action<int, float> onArrival)
 	{

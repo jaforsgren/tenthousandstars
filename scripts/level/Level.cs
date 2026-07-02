@@ -24,6 +24,7 @@ public partial class Level : Node2D
 	{
 		public bool IsActive;
 		public bool HasCandidate;
+		public bool IsCapitolShip;
 		public int FromIndex;
 		public int CandidateIndex;
 		public int FleetSlot;
@@ -63,6 +64,8 @@ public partial class Level : Node2D
 
 	private DragState _drag = DragState.None;
 	private Vector2 _pressWorldPos;
+
+	private static readonly Color CapitolGhostFill = new(1f, 0.8f, 0.1f, 0.9f);
 
 	private float _ghostFleetRadius;
 	private Color _ghostFleetFill;
@@ -111,6 +114,7 @@ public partial class Level : Node2D
 	private bool _endConditionReached;
 	private int _objectiveSystemIndex = -1;
 	private readonly HashSet<int> _encounterSystems = [];
+	private readonly List<RouteNode> _highlightedRoutes = [];
 
 	public override void _Ready()
 	{
@@ -137,7 +141,8 @@ public partial class Level : Node2D
 	public override void _Draw()
 	{
 		if (!_drag.IsActive) return;
-		DrawCircle(_drag.WorldPos, _ghostFleetRadius, _ghostFleetFill);
+		var fill = _drag.IsCapitolShip ? CapitolGhostFill : _ghostFleetFill;
+		DrawCircle(_drag.WorldPos, _ghostFleetRadius, fill);
 		DrawArc(_drag.WorldPos, _ghostFleetRadius, 0f, Mathf.Tau, 32, _ghostFleetOutline, _ghostFleetOutlineWidth);
 	}
 
@@ -534,6 +539,30 @@ public partial class Level : Node2D
 			colors[player.Owner] = Color.FromHsv(h, s, v, baseColor.A);
 		}
 		return colors;
+	}
+
+	private void SetPathHighlight(List<int>? path)
+	{
+		foreach (var r in _highlightedRoutes)
+			if (IsInstanceValid(r)) r.SetPathHighlight(false);
+		_highlightedRoutes.Clear();
+
+		if (path == null || path.Count < 2) return;
+		for (var i = 0; i < path.Count - 1; i++)
+		{
+			var route = FindRouteNode(path[i], path[i + 1]);
+			if (route == null) continue;
+			route.SetPathHighlight(true);
+			_highlightedRoutes.Add(route);
+		}
+	}
+
+	private RouteNode? FindRouteNode(int a, int b)
+	{
+		var (min, max) = a < b ? (a, b) : (b, a);
+		foreach (var (from, to, node) in _routeNodes)
+			if (from == min && to == max) return node;
+		return null;
 	}
 
 	private static Vector2 EdgeToward(Vector2 origin, Vector2 target, float radius)

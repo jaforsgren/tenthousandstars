@@ -4,9 +4,10 @@ namespace Tts.Fleet;
 
 public partial class FleetNode : Node2D
 {
-	private static readonly Color PlayerFill  = new(0.9f, 0.28f, 0.1f, 0.9f);
-	private static readonly Color NeutralFill = new(0.5f, 0.5f,  0.5f, 0.9f);
-	private static readonly Color AiFill      = new(0.5f, 0.5f,  0.5f, 0.9f);
+	private static readonly Color PlayerFill   = new(0.9f, 0.28f, 0.1f, 0.9f);
+	private static readonly Color NeutralFill  = new(0.5f, 0.5f,  0.5f, 0.9f);
+	private static readonly Color AiFill       = new(0.5f, 0.5f,  0.5f, 0.9f);
+	private static readonly Color CapitolFill  = new(1f,   0.8f,  0.1f, 0.95f);
 
 	private static readonly Color LineColor = new(1f, 1f, 1f, 0.35f);
 	private const float LineWidth    = 1.5f;
@@ -34,17 +35,26 @@ public partial class FleetNode : Node2D
 	}
 
 	public void InitializePlayer(float systemRadius, float gap)
-		=> Setup(systemRadius, gap, PlayerFill, null, null);
+		=> Setup(systemRadius, gap, below: true, PlayerFill, null, null);
 
 	public void InitializeNeutral(float systemRadius, float gap)
-		=> Setup(systemRadius, gap, NeutralFill, null, null);
+		=> Setup(systemRadius, gap, below: true, NeutralFill, null, null);
 
 	public void InitializeAi(float systemRadius, float gap, Color dispositionColor, string factionName)
-		=> Setup(systemRadius, gap, AiFill, factionName, dispositionColor);
+		=> Setup(systemRadius, gap, below: true, AiFill, factionName, dispositionColor);
 
-	private void Setup(float systemRadius, float gap, Color fill, string? factionName, Color? factionColor)
+	public void InitializeCapitol(float systemRadius, float gap)
 	{
-		Position = new Vector2(0f, systemRadius + gap + _height / 2f);
+		Setup(systemRadius, gap, below: false, CapitolFill, null, null);
+		_button.Text = "C";
+		Visible = true;
+	}
+
+	private void Setup(float systemRadius, float gap, bool below, Color fill, string? factionName, Color? factionColor)
+	{
+		var halfHeight = _height / 2f;
+		var offset = systemRadius + gap + halfHeight;
+		Position = new Vector2(0f, below ? offset : -offset);
 
 		var style = new StyleBoxFlat
 		{
@@ -60,9 +70,10 @@ public partial class FleetNode : Node2D
 		_button.AddThemeStyleboxOverride("pressed", style);
 		_button.AddThemeColorOverride("font_color", Colors.Black);
 
+		var lineDir = below ? -1f : 1f;
 		var line = new Line2D { DefaultColor = LineColor, Width = LineWidth };
-		line.AddPoint(new Vector2(0f, -_height / 2f));
-		line.AddPoint(new Vector2(0f, -(gap + _height / 2f)));
+		line.AddPoint(new Vector2(0f, lineDir * halfHeight));
+		line.AddPoint(new Vector2(0f, lineDir * (gap + halfHeight)));
 		AddChild(line);
 
 		_hasFaction = factionName != null;

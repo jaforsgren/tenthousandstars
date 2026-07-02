@@ -1,6 +1,9 @@
+using System.Collections.Generic;
 using Godot;
+using Tts.Commitment;
 using Tts.Types;
 using Tts.Ui;
+using Tts.Utils;
 
 namespace Tts.Level;
 
@@ -82,7 +85,10 @@ public partial class Level
 				_drag.IsActive = true;
 				_drag.FromIndex = _drag.CandidateIndex;
 				_drag.WorldPos = worldPos;
-				_systems[_drag.FromIndex].RefreshFleetVisuals();
+				if (_drag.IsCapitolShip)
+					_systems[_drag.FromIndex].SetCapitolShipVisible(false);
+				else
+					_systems[_drag.FromIndex].RefreshFleetVisuals();
 				_levelUi.SystemActionMenu.HideAll();
 				QueueRedraw();
 			}
@@ -91,22 +97,54 @@ public partial class Level
 		else if (_drag.IsActive)
 		{
 			_drag.WorldPos = GetGlobalMousePosition();
+			UpdateDragPath(_drag.WorldPos);
 			QueueRedraw();
 			GetViewport().SetInputAsHandled();
 		}
 	}
 
-	private void TryRegisterDragCandidate()
+	private void UpdateDragPath(Vector2 worldPos)
 	{
 		for (var i = 0; i < _systems.Count; i++)
 		{
-			if (!_systems[i].IsPlayerOwned || !_systems[i].HasFleet)
-				continue;
+			if (i == _drag.FromIndex) continue;
+			if (_systems[i].FogState == FogState.Hidden) continue;
+			if (!_systems[i].ContainsSystemAt(worldPos)) continue;
+
+			var path = GraphUtils.FindPath(
+				_drag.FromIndex, i, _adjacency,
+				idx => _systems[idx].IsPlayerOwned);
+			SetPathHighlight(path);
+			return;
+		}
+		SetPathHighlight(null);
+	}
+
+	private void TryRegisterDragCandidate()
+	{
+		// Capitol ships take priority over regular fleet
+		for (var i = 0; i < _systems.Count; i++)
+		{
+			if (!_systems[i].IsPlayerOwned || !_systems[i].HasCapitolShip) continue;
+			if (!_systems[i].ContainsCapitolShipAt(_pressWorldPos)) continue;
+
+			_drag.CandidateIndex = i;
+			_drag.FleetSlot = -1;
+			_drag.IsCapitolShip = true;
+			_drag.HasCandidate = true;
+			GetViewport().SetInputAsHandled();
+			return;
+		}
+
+		for (var i = 0; i < _systems.Count; i++)
+		{
+			if (!_systems[i].IsPlayerOwned || !_systems[i].HasFleet) continue;
 			var slot = _systems[i].GetFleetSlotAt(_pressWorldPos);
 			if (slot < 0) continue;
 
 			_drag.CandidateIndex = i;
 			_drag.FleetSlot = slot;
+			_drag.IsCapitolShip = false;
 			_drag.HasCandidate = true;
 			GetViewport().SetInputAsHandled();
 			return;
@@ -203,34 +241,70 @@ public partial class Level
 
 	private void EndFleetDrag()
 	{
+		SetPathHighlight(null);
 		var worldPos = GetGlobalMousePosition();
 		var resolved = false;
 
 		for (var i = 0; i < _systems.Count; i++)
 		{
-			if (i == _drag.FromIndex || !_systems[i].ContainsSystemAt(worldPos))
-				continue;
-			if (!AreConnected(_drag.FromIndex, i))
-				continue;
+			if (i == _drag.FromIndex) continue;
+			if (!_systems[i].ContainsSystemAt(worldPos)) continue;
+			if (_systems[i].FogState == FogState.Hidden) continue;
 
-			var fromIndex = _drag.FromIndex;
-			var toIndex = i;
-			var fleet = _systems[fromIndex].TakeFleet(_drag.FleetSlot);
+			var path = GraphUtils.FindPath(
+				_drag.FromIndex, i, _adjacency,
+				idx => _systems[idx].IsPlayerOwned);
+			if (path == null) break;
 
-			PostPlayerTransitBark(toIndex);
-			LaunchPlayerTransit(fromIndex, toIndex, fleet);
-
-			resolved = true;
+			if (_drag.IsCapitolShip)
+				resolved = TryLaunchCapitolShip(_drag.FromIndex, i, path);
+			else
+				resolved = TryLaunchPathedFleet(_drag.FromIndex, _drag.FleetSlot, path);
 			break;
 		}
 
 		if (!resolved)
-			_systems[_drag.FromIndex].RefreshFleetVisuals();
+		{
+			if (_drag.IsCapitolShip)
+				_systems[_drag.FromIndex].SetCapitolShipVisible(true);
+			else
+				_systems[_drag.FromIndex].RefreshFleetVisuals();
+		}
 
 		_drag = DragState.None;
 		QueueRedraw();
 
 		if (resolved)
 			UpdateFog();
+	}
+
+	private bool TryLaunchPathedFleet(int fromIndex, int fleetSlot, List<int> path)
+	{
+		var fleet = _systems[fromIndex].TakeFleet(fleetSlot);
+		PostPlayerTransitBark(path[^1]);
+		LaunchPlayerPathedTransit(path, fleet);
+		return true;
+	}
+
+	private bool TryLaunchCapitolShip(int fromIndex, int toIndex, List<int> path)
+	{
+		var target = _systems[toIndex];
+		(string Label, IntentType Intent)[] intents = target.IsPlayerOwned
+			? [("Fortify", IntentType.Fortify), ("Investigate", IntentType.Investigate), ("Exploit", IntentType.Exploit)]
+			: [("Attack", IntentType.Attack), ("Contest", IntentType.Contest)];
+
+		_systems[fromIndex].TakeCapitolShip();
+
+		_levelUi.SystemActionMenu.ShowIntentOnly(
+			target.GlobalPosition,
+			intents,
+			intent =>
+			{
+				LaunchCapitolPathedTransit(path, intent);
+				UpdateFog();
+			},
+			required: true);
+
+		return true;
 	}
 }

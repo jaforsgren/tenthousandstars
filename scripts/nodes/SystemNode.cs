@@ -31,6 +31,7 @@ public partial class SystemNode : FogAwareNode
 	private SystemCircleNode _systemCircle = null!;
 	private readonly List<PlanetNode> _planetNodes = [];
 	private SystemUpgrade _upgrade = SystemUpgrade.None;
+	private FleetNode? _capitolShipNode;
 	private float _forgeProductionBonus;
 	private float _fortifyDefenseBonusMultiplier;
 
@@ -67,6 +68,8 @@ public partial class SystemNode : FogAwareNode
 	private ProductionArcNode? _productionArc;
 	private float _lastShipsForArc;
 
+	public bool HasCapitolShip => _capitolShipNode != null;
+
 	public float ProductionRate => _cachedProductionRate;
 	public float DefenseBonusMultiplier => _upgrade == SystemUpgrade.Fortify ? _fortifyDefenseBonusMultiplier : 0f;
 	public SystemUpgrade Upgrade => _upgrade;
@@ -77,6 +80,30 @@ public partial class SystemNode : FogAwareNode
 	public bool IsAiOwned => _ownerPlayer.IsAi();
 
 	public bool ContainsFleetAt(Vector2 worldPos) => GetFleetSlotAt(worldPos) >= 0;
+
+	public bool ContainsCapitolShipAt(Vector2 worldPos)
+		=> _capitolShipNode != null && _capitolShipNode.ContainsPoint(worldPos);
+
+	public void AddCapitolShip()
+	{
+		if (_capitolShipNode != null) return;
+		var node = GD.Load<PackedScene>(FleetScenePath).Instantiate<FleetNode>();
+		AddChild(node);
+		node.InitializeCapitol(_systemRadius, _fleetCircleGap);
+		_capitolShipNode = node;
+	}
+
+	public void TakeCapitolShip()
+	{
+		_capitolShipNode?.QueueFree();
+		_capitolShipNode = null;
+	}
+
+	public void SetCapitolShipVisible(bool visible)
+	{
+		if (_capitolShipNode != null)
+			_capitolShipNode.Visible = visible;
+	}
 
 	public int GetFleetSlotAt(Vector2 worldPos)
 	{
@@ -155,7 +182,14 @@ public partial class SystemNode : FogAwareNode
 		_productionArc?.QueueFree();
 		_productionArc = null;
 		if (newOwner == SystemOwner.Player)
+		{
 			SpawnProductionArc(ships);
+			AddCapitolShip();
+		}
+		else
+		{
+			TakeCapitolShip();
+		}
 
 		QueueRedraw();
 	}
@@ -267,7 +301,10 @@ public partial class SystemNode : FogAwareNode
 		{
 			AddFleetSlot(initialShips);
 			if (owner == SystemOwner.Player)
+			{
 				SpawnProductionArc(initialShips);
+				AddCapitolShip();
+			}
 		}
 
 		if (_ownerPlayer.IsAi())

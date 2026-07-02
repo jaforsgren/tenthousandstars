@@ -1,7 +1,6 @@
 using System;
 using System.Linq;
 using Godot;
-using Tts.Commitment;
 using Tts.Config;
 using Tts.Types;
 using Tts.Ui;
@@ -24,7 +23,6 @@ public partial class Level
 				fa, fd, () => DoUpgrade(systemIndex, SystemUpgrade.Fortify),
 				ga, gd, () => DoUpgrade(systemIndex, SystemUpgrade.Forge),
 				splitDisabled, () => OnSplitButtonPressed(systemIndex, slot));
-			AppendOwnSystemIntentOptions(systemIndex);
 		}
 		else if (_systems[systemIndex].IsAiOwned)
 		{
@@ -52,7 +50,6 @@ public partial class Level
 				fa, fd, () => DoUpgrade(systemIndex, SystemUpgrade.Fortify),
 				ga, gd, () => DoUpgrade(systemIndex, SystemUpgrade.Forge),
 				splitDisabled, () => OnSplitButtonPressed(systemIndex, 0));
-			AppendOwnSystemIntentOptions(systemIndex);
 		}
 		else
 		{
@@ -66,18 +63,6 @@ public partial class Level
 			_systems[systemIndex].GlobalPosition,
 			() => ShowSystemInfo(systemIndex),
 			() => ShowAiSystemInfo(systemIndex));
-	}
-
-	private void AppendOwnSystemIntentOptions(int systemIndex)
-	{
-		if (!_systems[systemIndex].HasFleet) return;
-		_levelUi.SystemActionMenu.SetIntentOptions(
-			[
-				("Fortify",     IntentType.Fortify),
-				("Investigate", IntentType.Investigate),
-				("Exploit",     IntentType.Exploit)
-			],
-			intent => CommitOwnSystem(systemIndex, intent));
 	}
 
 	private void ComputeUpgradeStates(
