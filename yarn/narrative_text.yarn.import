@@ -1,0 +1,14 @@
+[remap]
+
+importer="yarnscript"
+type="Resource"
+uid="uid://n4rr4t1v3t3xt1"
+path="res://.godot/imported/narrative_text.yarn-n4rr4t1v3t3xt1.tres"
+
+[deps]
+
+source_file="res://yarn/narrative_text.yarn"
+dest_files=["res://.godot/imported/narrative_text.yarn-n4rr4t1v3t3xt1.tres"]
+
+[params]
+

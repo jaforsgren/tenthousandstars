@@ -1,0 +1,14 @@
+[remap]
+
+importer="yarnscript"
+type="Resource"
+uid="uid://gh0stfl33t0001"
+path="res://.godot/imported/the_ghost_fleet.yarn-gh0stfl33t0001.tres"
+
+[deps]
+
+source_file="res://yarn/scenarios/the_ghost_fleet.yarn"
+dest_files=["res://.godot/imported/the_ghost_fleet.yarn-gh0stfl33t0001.tres"]
+
+[params]
+

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Godot;
 using Tts.Config;
 using Tts.Utils;
@@ -12,13 +13,15 @@ public class NarrativeController
 {
     private readonly INarrativeService _service;
     private readonly INarrativeBarkSystem _barkSystem;
+    private readonly string[] _sectorNames;
     private readonly NarrativeTextConfig _textConfig;
     private readonly Random _rng;
 
-    private NarrativeController(INarrativeService service, INarrativeBarkSystem barkSystem, NarrativeTextConfig textConfig, Random rng)
+    private NarrativeController(INarrativeService service, INarrativeBarkSystem barkSystem, string[] sectorNames, NarrativeTextConfig textConfig, Random rng)
     {
         _service = service;
         _barkSystem = barkSystem;
+        _sectorNames = sectorNames;
         _textConfig = textConfig;
         _rng = rng;
     }
@@ -43,18 +46,71 @@ public class NarrativeController
         foreach (var file in chapterFiles)
             chapters.Add(ConfigLoader.Load<ChapterDefConfig>($"res://config/story/chapters/{file}.json"));
 
+        // Enrich chapters with bark pools from Yarn
+        var chapterBarkPools = YarnLinePool.Load("res://yarn/chapter_barks.yarn");
+        chapters = chapters.Select(c => c with
+        {
+            IntroBarks = YarnLinePool.GetPool(chapterBarkPools, $"{c.Id}_intro"),
+            OutroBarks = YarnLinePool.GetPool(chapterBarkPools, $"{c.Id}_outro")
+        }).ToList();
+
         var conditionSet = ConfigLoader.Load<NarrativeConditionSet>("res://config/story/conditions.json");
-        var briefingConfig = ConfigLoader.Load<BriefingConfig>("res://config/story/briefings.json");
-        var barkConfig = ConfigLoader.Load<BarkConfig>("res://config/barks.json");
+
+        // Enrich conditions with text from Yarn
+        var endStatePools = YarnLinePool.Load("res://yarn/end_states.yarn");
+        var enrichedConditions = conditionSet.Conditions.Select(c => c with
+        {
+            Description    = YarnLinePool.GetFirst(endStatePools, $"{c.Id}_brief")   ?? c.Description,
+            EndDescription = YarnLinePool.GetFirst(endStatePools, $"{c.Id}_end")     ?? c.EndDescription,
+            TimeoutMessage = YarnLinePool.GetFirst(endStatePools, $"{c.Id}_timeout") ?? c.TimeoutMessage
+        }).ToArray();
+
+        var briefingPools = YarnLinePool.Load("res://yarn/briefings.yarn");
+
+        // Narrative barks — pre-formatted as "[NPC]: Message"
+        var rawBarkPools = YarnLinePool.Load("res://yarn/barks.yarn");
+        var narrativeBarkPools = rawBarkPools.ToDictionary(
+            kv => kv.Key,
+            kv => kv.Value
+                .Where(l => !string.IsNullOrWhiteSpace(l))
+                .Select(l => {
+                    var sep = l.IndexOf(": ", StringComparison.Ordinal);
+                    return sep > 0 ? $"[{l[..sep]}]: {l[(sep + 2)..]}" : l;
+                })
+                .ToArray(),
+            StringComparer.Ordinal);
+
         var textConfig = ConfigLoader.Load<NarrativeTextConfig>("res://config/story/narrative.json");
+        var narrativeTextPools = YarnLinePool.Load("res://yarn/narrative_text.yarn");
+        var sectorNames = YarnLinePool.GetPool(narrativeTextPools, "sector_names");
+
         var aiNamingConfig = ConfigLoader.Load<AiNamingConfig>("res://config/ai_naming.json");
+
+        // Enrich scenarios with text from Yarn
         var scenarioConfig = ConfigLoader.Load<ScenarioConfig>("res://config/scenarios.json");
+        var scenarioPoolFiles = new[] { "the_relay_chain", "survivor_enclave", "the_ghost_fleet" };
+        var scenarioPools = new Dictionary<string, string[]>(StringComparer.Ordinal);
+        foreach (var file in scenarioPoolFiles)
+        {
+            var filePools = YarnLinePool.Load($"res://yarn/scenarios/{file}.yarn");
+            foreach (var kv in filePools) scenarioPools[kv.Key] = kv.Value;
+        }
+        var enrichedScenarios = scenarioConfig.Scenarios.Select(s => s with
+        {
+            Title     = YarnLinePool.GetFirst(scenarioPools, $"{s.Id}_title")      ?? s.Id,
+            IntroText = YarnLinePool.GetFirst(scenarioPools, $"{s.Id}_intro_text") ?? "",
+            Stages    = s.Stages.Select(stage => stage with
+            {
+                Text = YarnLinePool.GetText(scenarioPools, $"{s.Id}_{stage.DependsOn ?? "root"}")
+            }).ToArray()
+        }).ToArray();
+        var enrichedScenarioConfig = scenarioConfig with { Scenarios = enrichedScenarios };
 
-        var db = new NarrativeDatabase(archetypes, chapters, conditionSet.Conditions, briefingConfig, barkConfig, scenarioConfig);
+        var db = new NarrativeDatabase(archetypes, chapters, enrichedConditions, briefingPools, narrativeBarkPools, enrichedScenarioConfig);
         var service = new NarrativeService(db, new ChapterGenerator(), new MissionGenerator(db), new BriefingGenerator(db, rng), aiNamingConfig, rng);
-        var barkSystem = new NarrativeBarkSystem(db, rng);
+        var barkSystem = new NarrativeBarkSystem(narrativeBarkPools, rng);
 
-        return new NarrativeController(service, barkSystem, textConfig, rng);
+        return new NarrativeController(service, barkSystem, sectorNames, textConfig, rng);
     }
 
     public bool IsCampaignComplete => _service.IsCampaignComplete;
@@ -73,7 +129,7 @@ public class NarrativeController
     public MissionContext GetNextMission()
     {
         var ctx = _service.GetNextMission();
-        var sectorName = _textConfig.SectorNames[_rng.Next(_textConfig.SectorNames.Length)];
+        var sectorName = _sectorNames.Length > 0 ? _sectorNames[_rng.Next(_sectorNames.Length)] : "Unknown Sector";
         var year = _textConfig.BaseYear + ctx.State.MissionsCompleted;
         var date = _textConfig.DateFormat
             .Replace("{MissionIndex}", (ctx.State.MissionsCompleted + 1).ToString())
@@ -111,7 +167,7 @@ public class NarrativeController
     {
         var state = _service.CurrentState;
         var archetypeName = ArchetypeDisplayName(state.ArchetypeId);
-        var sectorName = _textConfig.SectorNames[_rng.Next(_textConfig.SectorNames.Length)];
+        var sectorName = _sectorNames.Length > 0 ? _sectorNames[_rng.Next(_sectorNames.Length)] : "Unknown Sector";
         var year = _textConfig.BaseYear + state.MissionsCompleted;
         var date = _textConfig.DateFormat
             .Replace("{MissionIndex}", state.MissionsCompleted.ToString())

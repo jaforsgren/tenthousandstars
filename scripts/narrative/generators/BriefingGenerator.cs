@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Tts.Narrative;
 
-public class BriefingGenerator : TagMatchingBase, IBriefingGenerator
+public class BriefingGenerator : IBriefingGenerator
 {
     private readonly NarrativeDatabase _db;
     private readonly Random _rng;
@@ -16,22 +16,20 @@ public class BriefingGenerator : TagMatchingBase, IBriefingGenerator
 
     public string GenerateBriefing(NarrativeConditionConfig condition, ChapterContext chapter, StoryState state, bool allRequired = true)
     {
-        var candidates = new List<BriefingTemplate>();
-        foreach (var template in _db.BriefingTemplates.Templates)
+        string[]? pool = null;
+
+        foreach (var tag in condition.Tags)
         {
-            var tagMatch = allRequired
-                ? HasAllTags(condition.Tags, template.Tags)
-                : HasAnyTag(condition.Tags, template.Tags);
-            if (!tagMatch) continue;
-            if (!StateConditionMatcher.Matches(template.When, state)) continue;
-            candidates.Add(template);
+            if (state.EnemyIsWinning && _db.BriefingPools.TryGetValue($"{tag}_enemy_winning", out var ep))
+                { pool = ep; break; }
+            if (state.PlayerStrongerThanEnemy && _db.BriefingPools.TryGetValue($"{tag}_player_stronger", out var pp))
+                { pool = pp; break; }
+            if (_db.BriefingPools.TryGetValue(tag, out var bp))
+                { pool = bp; break; }
         }
 
-        var text = candidates.Count > 0
-            ? candidates[_rng.Next(candidates.Count)].Template
-            : condition.Description;
-
-        return text
+        var template = pool?.Length > 0 ? pool[_rng.Next(pool.Length)] : condition.Description;
+        return template
             .Replace("{PlayerFaction}", state.Player.FactionName)
             .Replace("{EnemyFaction}", state.Enemy.FactionName);
     }

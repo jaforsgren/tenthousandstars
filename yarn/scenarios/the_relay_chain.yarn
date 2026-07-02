@@ -1,0 +1,68 @@
+// Scenario: The Relay Chain
+// Each node holds narrative text for one stage, keyed by the stage's DependsOn value.
+// "root" = initial stage (DependsOn: null)
+
+title: the_relay_chain_title
+---
+The Relay Chain
+===
+
+title: the_relay_chain_intro_text
+---
+Dormant comm arrays pulse with residual signal. Something — or someone — is still broadcasting from deep in this system.
+===
+
+title: the_relay_chain_root
+---
+The Relay Chain
+Your sensor operators flag the anomaly at 0300 watch: a coherent signal pattern, repeating on a pre-war frequency. Not random static. Not a ghost echo.
+The arrays are old — older than the last campaign. Buried in the rock of this system's primary moon. Whoever built them expected to be heard by someone who knew to listen.
+You have your signals officer pull the full spectral analysis. The pattern encodes coordinates. Not to any system on your charts. But the format is unmistakable: a rendezvous protocol. Someone planned to meet here.
+Your tactical officer advises caution. Activating the network will announce your position. Whoever left this signal may have also left watchers.
+Your signals officer disagrees. Dormant arrays like these are worth more than gold in this war. A functioning comm network could give you real-time intelligence on enemy movements across three sectors.
+The arrays are intact. The activation sequence is pre-loaded. One command is all it takes.
+The decision is yours.
+===
+
+title: the_relay_chain_relay_active
+---
+The Relay Chain
+The arrays come online one by one. Ancient hardware cycling through startup sequences designed decades before your commanders were born.
+For six minutes, nothing. Then the signal changes.
+Coordinates resolve. A system three jumps coreward. The message is brief, clinical: PACKAGE INTACT. AWAIT RECOVERY.
+Your signals officer runs identification checks. The authentication codes are from the old fleet — the Seventh Armada. Declared lost with all hands fourteen years ago.
+Something survived. Or someone left it to be found.
+The relay network is now live. Your signals officer reports that the network extends further than the original survey suggested — at least four more nodes, dormant, waiting for the carrier wave you just sent. She can try to trace where the signal originated from.
+===
+
+title: the_relay_chain_relay_traced
+---
+The Relay Chain
+The trace takes four hours. Your signals officer does not sleep.
+The signal originates from a deep-field research station — one that does not appear on any current chart. The station was decommissioned eight years ago, officially. The authentication codes say otherwise.
+There is a second message buried in the carrier wave. Encoded. It takes another two hours to break.
+When your signals officer hands you the transcript, she does not say anything. She just watches your face.
+The message reads: SEVENTH ARMADA COMMAND NODE INTACT. CORE DATA PRESERVED. DO NOT TRANSMIT LOCATION. COME IN PERSON.
+The coordinates are precise. The station is sixteen days out at current speed.
+Something is waiting for you.
+===
+
+title: the_relay_chain_relay_logged
+---
+The Relay Chain
+The coordinates are logged and flagged for fleet command. Your signals officer maps the active relay network and seals the access tunnels behind you.
+Fleet command acknowledges receipt. No further action logged.
+Three days later, long-range passive sensors pick up a faint acknowledgement ping from somewhere coreward — as if whatever is waiting at those coordinates received confirmation that someone finally heard the message.
+Your signals officer notes it in the log. Neither of you say anything else about it.
+===
+
+title: the_relay_chain_relay_destroyed
+---
+The Relay Chain
+The demolition teams finish in under an hour. Shaped charges in the access shafts. Clean detonations. The arrays collapse inward and go dark.
+Your tactical officer marks the system clear.
+Your signals officer submits a formal objection to the ship's log. She does not say anything else. She does not need to.
+Three days later, long-range sensors pick up a faint burst transmission on the same pre-war frequency — originating from a different source, further coreward. The signal repeats twice, then stops.
+Whoever was listening for the relay response has now stopped listening.
+You will not know what they had to say.
+===

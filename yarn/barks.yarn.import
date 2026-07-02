@@ -1,0 +1,14 @@
+[remap]
+
+importer="yarnscript"
+type="Resource"
+uid="uid://b4rksp00l00001"
+path="res://.godot/imported/barks.yarn-b4rksp00l00001.tres"
+
+[deps]
+
+source_file="res://yarn/barks.yarn"
+dest_files=["res://.godot/imported/barks.yarn-b4rksp00l00001.tres"]
+
+[params]
+

@@ -1,0 +1,14 @@
+[remap]
+
+importer="yarnscript"
+type="Resource"
+uid="uid://ch4pt3rb4rks001"
+path="res://.godot/imported/chapter_barks.yarn-ch4pt3rb4rks001.tres"
+
+[deps]
+
+source_file="res://yarn/chapter_barks.yarn"
+dest_files=["res://.godot/imported/chapter_barks.yarn-ch4pt3rb4rks001.tres"]
+
+[params]
+

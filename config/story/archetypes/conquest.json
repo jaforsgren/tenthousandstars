@@ -2,12 +2,5 @@
   "Id": "conquest",
   "Name": "Total Conquest",
   "ChapterSequence": ["assault", "assault", "conquest"],
-  "PlayerDisposition": "Aggressive",
-  "OpeningBarks": [
-    "We will crush them",
-    "Every system will fall. Every fleet will burn.",
-    "Let them burn",
-    "For glory and death!",
-    "They wont know what hit them"
-  ]
+  "PlayerDisposition": "Aggressive"
 }

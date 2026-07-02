@@ -1,0 +1,66 @@
+// Scenario: The Ghost Fleet
+
+title: the_ghost_fleet_title
+---
+The Ghost Fleet
+===
+
+title: the_ghost_fleet_intro_text
+---
+IFF transponders still cycling in the wreckage. These are your ships. Your people.
+===
+
+title: the_ghost_fleet_root
+---
+The Ghost Fleet
+The engagement was three months ago and the hulks are still here.
+Your comms officer patches in the IFF logs. Thirty-one ships. You recognise the designations. The Veylin. The Oras Deep. The Phalanx Run. You remember authorising their approach vectors. You remember the moment the tactical display went red.
+Three of them drifted into close orbit around the system's gas giant. Tidal forces have kept them relatively intact.
+Your salvage crews can reach them. The drives are probably salvageable. Some of the weapons packages too. Armour plating. Hull sections. The kind of materiel that takes three months and two procurement cycles to replace.
+But the crews are still aboard. What is left of them.
+Your senior NCO — a veteran named Calix — requests permission to speak.
+'They deserve retrieval, Commander. All of them. I know what the numbers say. I know what the schedule says. But if it were me out there — if it were any of us —' He stops. 'We pull them out. We do right by them. Whatever it costs.'
+Your logistics officer says nothing. But she pulls up the schedule anyway and starts looking for time that isn't there.
+===
+
+title: the_ghost_fleet_recovered
+---
+The Ghost Fleet
+The retrieval takes eleven hours.
+Calix personally leads the boarding teams. He does not ask for volunteers. He tells his people what needs doing and they do it. That is the kind of NCO he is.
+The recovered crews are given a proper accounting. Names logged. Records updated. Next of kin notified through the chain. It is not nothing.
+The hulks are stripped afterward. The Veylin's drives go into your reserve pool. The armour plating from the Phalanx Run will reinforce your perimeter stations. Nothing is wasted.
+Calix submits a short-form after-action report. In the remarks field, he writes: 'Crew recovered. Accounted for. No one left behind.'
+He pauses at your station before returning to his post.
+===
+
+title: the_ghost_fleet_countersigned
+---
+The Ghost Fleet
+You countersign the report. No additions. No annotations.
+Calix nods once and leaves.
+The after-action is filed with fleet records. Standard format. Thirty-one ships. Crew recovered. Materiel salvaged. Mission complete.
+It will sit in the archive with ten thousand others just like it. But it will be there. Accurate. Complete.
+Calix knows where to find it.
+===
+
+title: the_ghost_fleet_commended
+---
+The Ghost Fleet
+You add two lines to the report before countersigning. Senior NCO Calix — exceptional conduct during crew retrieval operation. Recommended for formal commendation.
+Calix reads it before you hand it back. He does not say anything for a long moment.
+'It wasn't just me,' he says finally.
+You tell him to put the full boarding team in the addendum.
+He does. All fourteen names. His is last.
+===
+
+title: the_ghost_fleet_salvaged
+---
+The Ghost Fleet
+The salvage teams go in first. They are efficient. They have to be.
+The drives come out of the Veylin in four hours. The weapons packages from the Oras Deep take six. The armour sections from the Phalanx Run are cut free and loaded by end of watch. Your logistics officer updates the materiel inventory. The numbers improve.
+The crew retrieval happens afterward, in the time that is left.
+Calix does his job. He does not say anything to you. He does not need to.
+The after-action report is filed correctly. Materiel recovered, listed first. Crew recovered, listed second. All numbers accurate.
+You sign it. You do not read it twice.
+===

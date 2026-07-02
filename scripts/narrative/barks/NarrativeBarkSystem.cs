@@ -3,32 +3,22 @@ using System.Collections.Generic;
 
 namespace Tts.Narrative;
 
-public class NarrativeBarkSystem : TagMatchingBase, INarrativeBarkSystem
+public class NarrativeBarkSystem : INarrativeBarkSystem
 {
-    private readonly NarrativeDatabase _db;
+    private readonly IReadOnlyDictionary<string, string[]> _pools;
     private readonly Random _rng;
 
-    public NarrativeBarkSystem(NarrativeDatabase db, Random rng)
+    public NarrativeBarkSystem(IReadOnlyDictionary<string, string[]> pools, Random rng)
     {
-        _db = db;
+        _pools = pools;
         _rng = rng;
     }
 
     public string? TryGetBark(BarkTrigger trigger, StoryState state)
     {
         var tag = TriggerToTag(trigger);
-        var candidates = new List<Bark>();
-
-        foreach (var bark in _db.Barks.Barks)
-        {
-            if (!HasTag(bark.Tags, tag)) continue;
-            if (!StateConditionMatcher.Matches(bark.When, state)) continue;
-            candidates.Add(bark);
-        }
-
-        if (candidates.Count == 0) return null;
-        var chosen = candidates[_rng.Next(candidates.Count)];
-        return $"[{chosen.Npc}]: {chosen.Message}";
+        if (!_pools.TryGetValue(tag, out var pool) || pool.Length == 0) return null;
+        return pool[_rng.Next(pool.Length)];
     }
 
     private static string TriggerToTag(BarkTrigger trigger) => trigger switch
@@ -40,6 +30,4 @@ public class NarrativeBarkSystem : TagMatchingBase, INarrativeBarkSystem
         BarkTrigger.PlayerLeading  => "player_leading",
         _ => trigger.ToString()
     };
-
-
 }

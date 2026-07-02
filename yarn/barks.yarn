@@ -1,0 +1,93 @@
+// Game event barks — one node per trigger tag, format "NPC: Message"
+
+title: player_move
+---
+Wing Commander: On route to system.
+Wing Commander: Fleet inbound, ETA nominal.
+Pilot: Holding formation. Moving out.
+Navigator: Course plotted. Advancing.
+Wing Commander: All ships, tighten up.
+===
+
+title: player_attack
+---
+Fleet Commander: Securing the system.
+Fleet Commander: All ships, engage on my mark.
+Tactical: Firing solutions locked in.
+Fleet Commander: Weapons free. Take them down.
+Tactical: Target acquired. Advancing.
+Fleet Commander: Capture that system.
+===
+
+title: player_under_attack
+---
+Wing Commander: Incoming! All hands to stations!
+Wing Commander: We are under attack, hold the line!
+Pilot: Hostile contacts detected!
+Wing Commander: Defense grid online. Brace for impact.
+Tactical: Enemy fleet approaching our position.
+===
+
+title: player_forge
+---
+Engineer: Forge systems online. Production up.
+Engineer: Retrofitting complete. Output increased.
+Engineer: Industrial capacity expanded.
+Logistics: Supply lines optimized. Fleet output up.
+Engineer: Manufacturing cores at full capacity.
+===
+
+title: player_fortify
+---
+Commander: Fortifications in place. Hold this system.
+Engineer: Defense grid active. They won't get through easy.
+Commander: Perimeter secured. Dig in.
+Tactical: Defensive emplacements online.
+Commander: This position is reinforced. Hold the line.
+===
+
+title: chapter_start
+---
+Commander: New orders received. Stand by.
+Tactical: Situation updated. Here is what we know.
+===
+
+title: mission_won
+---
+Commander: Sector secured. Move to the next objective.
+Wing Commander: Well fought. We press on.
+===
+
+title: mission_lost
+---
+Commander: We regroup. This is not over.
+Tactical: Fall back. Reassess. We try again.
+===
+
+title: enemy_winning
+---
+Commander: They are gaining ground. Hold the line.
+Wing Commander: We are taking heavy losses. We need to push back.
+===
+
+title: player_leading
+---
+Wing Commander: We have the advantage. Push it.
+Tactical: Enemy strength is declining. Maintain pressure.
+===
+
+title: route_combat_win
+---
+Wing Commander: Enemy fleet intercepted en route. They never reached the system.
+Tactical: Hostile transit destroyed. Our fleet continues on course.
+Fleet Commander: Mid-route engagement. We cut them off.
+Pilot: Got them in open space. Fleet pressing forward.
+===
+
+title: route_combat_lose
+---
+Wing Commander: Our transit group was intercepted. They're gone.
+Tactical: Fleet destroyed in transit. Enemy is still moving.
+Wing Commander: We lost them mid-route. They never made it.
+Pilot: Ambushed between systems. No survivors.
+===

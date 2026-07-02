@@ -2,11 +2,5 @@
   "Id": "falling_empire",
   "Name": "The Falling Empire",
   "ChapterSequence": ["retreat", "skirmish", "assault"],
-  "PlayerDisposition": "Cautious",
-  "OpeningBarks": [
-    "What do we have left to fight over...",
-    "Death over defeat!",
-    "For our glorious forefathers",
-    "We will rise again!"
-  ]
+  "PlayerDisposition": "Cautious"
 }

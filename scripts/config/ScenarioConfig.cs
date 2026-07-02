@@ -10,8 +10,8 @@ public record ScenarioDefinition(
     ScenarioCriteria Criteria);
 
 public record ScenarioStage(
-    string Text,
     ScenarioChoice[] Choices,
+    string Text = "",
     string? DependsOn = null);
 
 public record ScenarioChoice(

@@ -1,0 +1,14 @@
+[remap]
+
+importer="yarnscript"
+type="Resource"
+uid="uid://surv1v0r3ncl4v"
+path="res://.godot/imported/survivor_enclave.yarn-surv1v0r3ncl4v.tres"
+
+[deps]
+
+source_file="res://yarn/scenarios/survivor_enclave.yarn"
+dest_files=["res://.godot/imported/survivor_enclave.yarn-surv1v0r3ncl4v.tres"]
+
+[params]
+

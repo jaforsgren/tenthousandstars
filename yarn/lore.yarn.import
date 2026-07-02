@@ -1,0 +1,14 @@
+[remap]
+
+importer="yarnscript"
+type="Resource"
+uid="uid://l0r3p00ls00001"
+path="res://.godot/imported/lore.yarn-l0r3p00ls00001.tres"
+
+[deps]
+
+source_file="res://yarn/lore.yarn"
+dest_files=["res://.godot/imported/lore.yarn-l0r3p00ls00001.tres"]
+
+[params]
+

@@ -80,9 +80,9 @@ public partial class Level : Node2D
 	private bool _fogEnabled;
 	private float _fogClearSeconds;
 	private float _fadeOutSeconds;
-	private LoreConfig _loreConfig = null!;
+	private Dictionary<string, string[]> _lorePools = null!;
 	private IReadOnlyList<AiPlayerData> _aiPlayers = [];
-	private BarkConfig? _barkConfig;
+	private Dictionary<string, string[]> _barkPools = [];
 	private CameraController _camera = null!;
 	private AiController _aiController = null!;
 	private GameController _gameController = null!;
@@ -166,12 +166,12 @@ public partial class Level : Node2D
 		var aiNamingCfg = ConfigLoader.Load<AiNamingConfig>("res://config/ai_naming.json");
 		var sysCfg = ConfigLoader.Load<SystemConfig>("res://config/system.json");
 
-		_barkConfig = ConfigLoader.Load<BarkConfig>("res://config/barks.json");
+		_barkPools = LoadBarkPools("res://yarn/barks.yarn");
 		var data = LevelGenerator.Generate(_rng, genCfg, aiCfg, aiNamingCfg, sysCfg);
 		Build(data, sysCfg);
 		_aiPlayers = data.AiPlayers;
 
-		var endStateCfg = ConfigLoader.Load<EndStateConfig>("res://config/end_states.json");
+		var endStateCfg = LoadEndStateConfig();
 
 		if (GameSession.NarrativeController == null)
 		{
@@ -273,7 +273,7 @@ public partial class Level : Node2D
 
 	private void AssignLoreSeeds(LevelData data)
 	{
-		_loreConfig = ConfigLoader.Load<LoreConfig>("res://config/lore.json");
+		_lorePools = YarnLinePool.Load("res://yarn/lore.yarn");
 		var loreRng = new Random();
 
 		_systemLoreSeeds.Clear();
@@ -322,10 +322,50 @@ public partial class Level : Node2D
 	private static ScenarioDefinition[] LoadRandomModeScenarios()
 	{
 		var cfg = ConfigLoader.Load<ScenarioConfig>("res://config/scenarios.json");
-		return System.Array.FindAll(cfg.Scenarios, s => s.Criteria.MinMissionsPlayed == 0
+		var scenarioPools = LoadScenarioPools();
+		var enriched = cfg.Scenarios.Select(s => s with
+		{
+			Title     = YarnLinePool.GetFirst(scenarioPools, $"{s.Id}_title")      ?? s.Id,
+			IntroText = YarnLinePool.GetFirst(scenarioPools, $"{s.Id}_intro_text") ?? "",
+			Stages    = s.Stages.Select(stage => stage with
+			{
+				Text = YarnLinePool.GetText(scenarioPools, $"{s.Id}_{stage.DependsOn ?? "root"}")
+			}).ToArray()
+		});
+		return enriched.Where(s =>
+			s.Criteria.MinMissionsPlayed == 0
 			&& s.Criteria.MinMissionsWon == null
-			&& s.Criteria.MinMissionsLost == null);
+			&& s.Criteria.MinMissionsLost == null).ToArray();
 	}
+
+	private static Dictionary<string, string[]> LoadScenarioPools()
+	{
+		var scenarioPoolFiles = new[] { "the_relay_chain", "survivor_enclave", "the_ghost_fleet" };
+		var scenarioPools = new Dictionary<string, string[]>(StringComparer.Ordinal);
+		foreach (var file in scenarioPoolFiles)
+		{
+			var filePools = YarnLinePool.Load($"res://yarn/scenarios/{file}.yarn");
+			foreach (var kv in filePools) scenarioPools[kv.Key] = kv.Value;
+		}
+		return scenarioPools;
+	}
+
+	private static EndStateConfig LoadEndStateConfig()
+	{
+		var cfg = ConfigLoader.Load<EndStateConfig>("res://config/end_states.json");
+		var pools = YarnLinePool.Load("res://yarn/end_states.yarn");
+		var defeatDescriptions = YarnLinePool.GetPool(pools, "defeat_descriptions");
+		var enrichedConditions = cfg.Conditions.Select(c => c with
+		{
+			Description    = YarnLinePool.GetFirst(pools, $"{c.Id}_brief")   ?? c.Description,
+			EndDescription = YarnLinePool.GetFirst(pools, $"{c.Id}_end")     ?? c.EndDescription,
+			TimeoutMessage = YarnLinePool.GetFirst(pools, $"{c.Id}_timeout") ?? c.TimeoutMessage
+		}).ToArray();
+		return cfg with { DefeatDescriptions = defeatDescriptions, Conditions = enrichedConditions };
+	}
+
+	private static Dictionary<string, string[]> LoadBarkPools(string yarnPath)
+		=> YarnLinePool.Load(yarnPath);
 
 	private void UpdateFog()
 	{

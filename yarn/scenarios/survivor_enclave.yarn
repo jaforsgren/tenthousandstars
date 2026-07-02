@@ -1,0 +1,72 @@
+// Scenario: Survivor Enclave
+
+title: survivor_enclave_title
+---
+Survivor Enclave
+===
+
+title: survivor_enclave_intro_text
+---
+Long-range bio-sensors register human life signs clustered in the system's debris field. Civilians. Still alive.
+===
+
+title: survivor_enclave_root
+---
+Survivor Enclave
+They have been here a long time.
+The debris field is mostly slag from the engagement eighteen months ago — shattered hulls, dead drives, scrap that the salvagers passed over. But tucked into the wreckage is a converted ore processor, running on fumes and luck. Inside: 340 people.
+Your boarding officer's report is spare and honest. They are surviving, barely. Food synthesizers at 40% capacity. Water reclamation compromised. Medical supplies depleted three months ago. Two children born in the field. Four people died last week.
+They have a spokesperson — a former logistics coordinator named Dasha. She transmits on the frequency your boarding team gave her.
+'We heard your drives on approach. We thought you were scavengers coming to strip the hull. We almost vented the airlocks.'
+She pauses.
+'We stopped when we saw your markings. We have been waiting a long time for someone with your markings.'
+Extraction will cost you time. The ore processor cannot move under its own power. You will need to send transports. That means slowing your advance, splitting your logistics chain, exposing a convoy to interdiction.
+Leaving them means leaving them. The odds of another rescue passing through are close to zero.
+Dasha is waiting on the channel.
+===
+
+title: survivor_enclave_extracted
+---
+Survivor Enclave
+Dasha transmits one final message as your transports dock with the ore processor.
+'We kept records. Everything we saw during the engagement. Fleet movements. Targeting solutions. Salvage inventories. We kept records because someone had to.'
+She transfers 1.4 terabytes of data before your people are even aboard. Eighteen months of observation from the debris field. Traffic patterns. Enemy patrol routes. Logistical resupply chains.
+Your intelligence officer will spend a week going through it.
+The 340 are quartered in your rear depot system. They eat real food for the first time in months. Three of them, unprompted, request transfer to active duty.
+Dasha does not. She asks for access to a cartography terminal and continues working.
+You stop by her station the following morning. She has overlaid the engagement data onto your current campaign charts. She has circled three systems.
+'These are where the supply lines actually run,' she says. 'Not where your charts say they run. Where they actually run. I watched them for eighteen months.'
+You ask her how she wants to be credited in the intelligence report.
+===
+
+title: survivor_enclave_credited
+---
+Survivor Enclave
+Dasha's name appears in the header of Intelligence Bulletin 7-14. Source: Dasha Verak, civilian observer, formerly of the 3rd Logistics Wing.
+She reads it once and does not comment.
+Three weeks later, two other survivors from the debris field submit formal requests to be listed as named contributors to the bulletin series. They have been keeping their own records. Different data. Complementary.
+Your intelligence officer begins calling them the Debris Field Group. It is not an official designation.
+It sticks.
+===
+
+title: survivor_enclave_classified
+---
+Survivor Enclave
+The bulletin goes out with a standard source classification. Dasha does not ask about it.
+She is still at the cartography terminal when you pass her station a week later. The three circled systems have been updated. She has found a fourth.
+'I figured source classification meant you'd rather not explain where the data came from,' she says without looking up. 'That's fine. The data is still good.'
+You tell her she is right on both counts.
+She nods and keeps working.
+===
+
+title: survivor_enclave_abandoned
+---
+Survivor Enclave
+You close the channel.
+Dasha does not transmit again. There is a long silence on the frequency, and then nothing.
+Your tactical officer marks the debris field as non-strategic. Your fleet departs on schedule.
+The ore processor is still there when you check the long-range charts three weeks later. Same orbit. Same power signature. Running on fumes and luck.
+Your signals officer submits a flag to fleet command: civilian survivors at grid reference seven-niner. Possible extraction candidate. She does not mention that you were already there.
+Fleet command acknowledges receipt. No further action logged.
+You do not check the charts again.
+===

@@ -1,0 +1,91 @@
+// End state text pools — defeat messages and per-condition mission brief / victory / timeout text
+
+title: defeat_descriptions
+---
+Your last system has fallen. The stars no longer answer to you.
+The enemy consumed everything. Silence where your fleets once roared.
+Overrun. Your empire exists only in memory.
+The void swallowed you whole. Nothing remains but dust.
+Every system lost. Every fleet gone. The galaxy moves on without you.
+===
+
+// Condition: total_annihilation
+title: total_annihilation_brief
+---
+Eliminate all enemy fleets and capture every system.
+===
+
+title: total_annihilation_end
+---
+Total conquest. Every system bends to your will.
+===
+
+// Condition: fleet_elimination
+title: fleet_elimination_brief
+---
+Eliminate all enemy fleets.
+===
+
+title: fleet_elimination_end
+---
+The void is silent. No fleet dares challenge you.
+===
+
+// Condition: capture_target_system
+title: capture_target_system_brief
+---
+Capture the marked system deep in enemy territory.
+===
+
+title: capture_target_system_end
+---
+The distant system falls under your command.
+===
+
+// Condition: eliminate_faction
+title: eliminate_faction_brief
+---
+Eliminate the marked faction before time runs out.
+===
+
+title: eliminate_faction_end
+---
+The marked faction is destroyed. The stars are yours.
+===
+
+title: eliminate_faction_timeout
+---
+Enemy reinforcements arrived. The window has closed.
+===
+
+// Condition: defend_and_eliminate
+title: defend_and_eliminate_brief
+---
+Defend the marked system and eliminate all enemies.
+===
+
+title: defend_and_eliminate_end
+---
+All enemies destroyed. The marked system stands.
+===
+
+title: defend_and_eliminate_timeout
+---
+The enemy has entrenched. You failed to hold the line.
+===
+
+// Condition: rearguard_action
+title: rearguard_action_brief
+---
+Hold the marked system long enough for your forces to regroup.
+===
+
+title: rearguard_action_end
+---
+The line held. Your forces have regrouped.
+===
+
+title: rearguard_action_timeout
+---
+Your position was overrun. The retreat failed.
+===

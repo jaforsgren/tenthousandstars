@@ -1,0 +1,37 @@
+// Mission briefing templates — one node per chapter tag (+ conditional suffix)
+// Variables: {PlayerFaction}, {EnemyFaction}
+
+title: retreat
+---
+{EnemyFaction} is pressing hard. Hold your ground and buy time for the withdrawal.
+===
+
+title: retreat_enemy_winning
+---
+We are being overrun. {EnemyFaction} shows no sign of stopping. Hold — or everything is lost.
+===
+
+title: assault
+---
+{EnemyFaction} is overextended. Strike now — this is the moment.
+===
+
+title: assault_player_stronger
+---
+{EnemyFaction} cannot match our strength. Overwhelm them. Leave nothing standing.
+===
+
+title: conquest
+---
+{EnemyFaction} controls this sector. {PlayerFaction} will not tolerate it. Crush them.
+===
+
+title: skirmish
+---
+This sector is contested. {EnemyFaction} holds a presence here. Clear them out.
+===
+
+title: skirmish_enemy_winning
+---
+{EnemyFaction} is gaining ground across the sector. We need a win here — any win.
+===

@@ -4,6 +4,7 @@ using Godot;
 using Tts.Config;
 using Tts.Types;
 using Tts.Ui;
+using Tts.Utils;
 
 namespace Tts.Level;
 
@@ -90,10 +91,12 @@ public partial class Level
 
 	private void ShowFleetInfo(int systemIndex)
 	{
-		var pool = _systems[systemIndex].IsPlayerOwned ? _loreConfig.PlayerFleet : _loreConfig.NeutralFleet;
+		var prefix = _systems[systemIndex].IsPlayerOwned ? "player_fleet" : "neutral_fleet";
 		var seed = _fleetLoreSeeds[systemIndex];
-		var title = Pick(pool.Titles, seed);
-		var description = Pick(pool.Descriptions, seed);
+		var titles = YarnLinePool.GetPool(_lorePools, $"{prefix}_titles");
+		var descriptions = YarnLinePool.GetPool(_lorePools, $"{prefix}_descriptions");
+		var title = titles.Length > 0 ? Pick(titles, seed) : "Unknown Fleet";
+		var description = descriptions.Length > 0 ? Pick(descriptions, seed) : "";
 		_levelUi.AiSystemPanel.Hide();
 		_levelUi.SelectionPanel.ShowAt($"Fleet — {title}", description, GetViewport().GetVisibleRect().Size);
 	}
@@ -101,8 +104,10 @@ public partial class Level
 	private void ShowSystemInfo(int systemIndex)
 	{
 		var seed = _systemLoreSeeds[systemIndex];
-		var title = Pick(_loreConfig.System.Titles, seed);
-		var description = Pick(_loreConfig.System.Descriptions, seed);
+		var systemTitles = YarnLinePool.GetPool(_lorePools, "system_titles");
+		var systemDescriptions = YarnLinePool.GetPool(_lorePools, "system_descriptions");
+		var title = systemTitles.Length > 0 ? Pick(systemTitles, seed) : "Unknown System";
+		var description = systemDescriptions.Length > 0 ? Pick(systemDescriptions, seed) : "";
 		_levelUi.AiSystemPanel.Hide();
 
 		var scenario = _scenarioController.GetScenario(systemIndex);
@@ -143,13 +148,13 @@ public partial class Level
 			_systems[systemIndex].SpendShips(_levelCfg.UpgradeCost);
 		_systems[systemIndex].ApplyUpgrade(upgrade);
 
-		var pool = upgrade switch
+		var tag = upgrade switch
 		{
-			SystemUpgrade.Forge   => _barkConfig?.Get("player_forge"),
-			SystemUpgrade.Fortify => _barkConfig?.Get("player_fortify"),
+			SystemUpgrade.Forge   => "player_forge",
+			SystemUpgrade.Fortify => "player_fortify",
 			_ => null
 		};
-		PostBark(pool);
+		if (tag != null) PostBark(tag);
 
 		ComputeUpgradeStates(systemIndex, out var fa, out var fd, out var ga, out var gd);
 		_levelUi.SystemActionMenu.RefreshUpgradeButtons(

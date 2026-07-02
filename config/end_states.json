@@ -1,44 +1,12 @@
 {
   "MissionBriefSeconds": 10.0,
   "EndStateSeconds": 6.0,
-  "DefeatDescriptions": [
-	"Your last system has fallen. The stars no longer answer to you.",
-	"The enemy consumed everything. Silence where your fleets once roared.",
-	"Overrun. Your empire exists only in memory.",
-	"The void swallowed you whole. Nothing remains but dust.",
-    "Every system lost. Every fleet gone. The galaxy moves on without you."
-  ],
+  "DefeatDescriptions": [],
   "Conditions": [
-	{
-	  "EnemiesLeft": 0,
-	  "SystemsLeft": 0,
-	  "Description": "Eliminate all enemy fleets and capture every system.",
-	  "EndDescription": "Total conquest. Every system bends to your will."
-	},
-	{
-	  "EnemiesLeft": 0,
-	  "Description": "Eliminate all enemy fleets.",
-	  "EndDescription": "The void is silent. No fleet dares challenge you."
-	},
-	{
-	  "TargetSystemHops": 3,
-	  "Description": "Capture the marked system deep in enemy territory.",
-	  "EndDescription": "The distant system falls under your command."
-	},
-	{
-	  "EliminateTargetPlayer": true,
-	  "TimeoutSeconds": 300.0,
-	  "TimeoutMessage": "Enemy reinforcements arrived. The window has closed.",
-	  "Description": "Eliminate the marked faction before time runs out.",
-	  "EndDescription": "The marked faction is destroyed. The stars are yours."
-	},
-	{
-	  "DefendObjectiveSystem": true,
-	  "EnemiesLeft": 0,
-	  "TimeoutSeconds": 360.0,
-	  "TimeoutMessage": "The enemy has entrenched. You failed to hold the line.",
-	  "Description": "Defend the marked system and eliminate all enemies.",
-	  "EndDescription": "All enemies destroyed. The marked system stands."
-	}
+    { "Id": "total_annihilation",    "EnemiesLeft": 0, "SystemsLeft": 0 },
+    { "Id": "fleet_elimination",     "EnemiesLeft": 0 },
+    { "Id": "capture_target_system", "TargetSystemHops": 3 },
+    { "Id": "eliminate_faction",     "EliminateTargetPlayer": true,   "TimeoutSeconds": 300.0 },
+    { "Id": "defend_and_eliminate",  "DefendObjectiveSystem": true,   "EnemiesLeft": 0, "TimeoutSeconds": 360.0 }
   ]
 }

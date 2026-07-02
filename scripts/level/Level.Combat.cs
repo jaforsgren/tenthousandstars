@@ -161,7 +161,7 @@ public partial class Level
 			SpawnCombatEffect(systemIndex, attackerWon: false);
 		}
 
-		PostBark(_barkConfig?.Get("player_attack"));
+		PostBark("player_attack");
 		UpdateFog();
 		_gameController.EvaluateEndState();
 	}
@@ -201,7 +201,7 @@ public partial class Level
 		// Bark fires on arrival, not on resolution — commitment duration is invisible to the player
 		if (target.OwnerPlayer == SystemOwner.Player)
 		{
-			PostBark(_barkConfig?.Get("player_under_attack"));
+			PostBark("player_under_attack");
 			PostAiBark(aiPlayer);
 		}
 
@@ -259,7 +259,7 @@ public partial class Level
 		if (a.Owner == SystemOwner.Player || b.Owner == SystemOwner.Player)
 		{
 			var playerWon = winner.Owner == SystemOwner.Player;
-			PostBark(_barkConfig?.Get(playerWon ? "route_combat_win" : "route_combat_lose"));
+			PostBark(playerWon ? "route_combat_win" : "route_combat_lose");
 		}
 
 		if (survivingFleet > 0)
@@ -320,18 +320,20 @@ public partial class Level
 
 	private void PostPlayerTransitBark(int toIndex)
 	{
-		var pool = _systems[toIndex].OwnerPlayer == SystemOwner.Player
-			? _barkConfig?.Get("player_move")
-			: _barkConfig?.Get("player_attack");
-		PostBark(pool);
+		var tag = _systems[toIndex].OwnerPlayer == SystemOwner.Player ? "player_move" : "player_attack";
+		PostBark(tag);
 	}
 
-	private void PostBark(Bark[]? pool)
+	private void PostBark(string tag)
 	{
-		if (pool == null || pool.Length == 0 || _levelUi.ChatWindow == null)
+		if (_levelUi.ChatWindow == null || !_barkPools.TryGetValue(tag, out var pool) || pool.Length == 0)
 			return;
-		var bark = pool[_rng.Next(pool.Length)];
-		_levelUi.ChatWindow.PostMessage(bark.Npc, bark.Message);
+		var line = pool[_rng.Next(pool.Length)];
+		var sep = line.IndexOf(": ", StringComparison.Ordinal);
+		if (sep > 0)
+			_levelUi.ChatWindow.PostMessage(line[..sep], line[(sep + 2)..]);
+		else
+			_levelUi.ChatWindow.PostMessage("Commander", line);
 	}
 
 	private void PostAiBark(AiPlayerData aiPlayer)

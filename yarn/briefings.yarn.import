@@ -1,0 +1,14 @@
+[remap]
+
+importer="yarnscript"
+type="Resource"
+uid="uid://br13f1ngsp00l1"
+path="res://.godot/imported/briefings.yarn-br13f1ngsp00l1.tres"
+
+[deps]
+
+source_file="res://yarn/briefings.yarn"
+dest_files=["res://.godot/imported/briefings.yarn-br13f1ngsp00l1.tres"]
+
+[params]
+

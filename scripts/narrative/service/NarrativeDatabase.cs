@@ -9,23 +9,23 @@ public class NarrativeDatabase
 	public IReadOnlyList<ArchetypeConfig> Archetypes { get; }
 	public IReadOnlyList<ChapterDefConfig> Chapters { get; }
 	public IReadOnlyList<NarrativeConditionConfig> Conditions { get; }
-	public BriefingConfig BriefingTemplates { get; }
-	public BarkConfig Barks { get; }
+	public IReadOnlyDictionary<string, string[]> BriefingPools { get; }
+	public IReadOnlyDictionary<string, string[]> NarrativeBarkPools { get; }
 	public ScenarioConfig Scenarios { get; }
 
 	public NarrativeDatabase(
 		IReadOnlyList<ArchetypeConfig> archetypes,
 		IReadOnlyList<ChapterDefConfig> chapters,
 		IReadOnlyList<NarrativeConditionConfig> conditions,
-		BriefingConfig briefingTemplates,
-		BarkConfig barks,
+		IReadOnlyDictionary<string, string[]> briefingPools,
+		IReadOnlyDictionary<string, string[]> narrativeBarkPools,
 		ScenarioConfig scenarios)
 	{
 		Archetypes = archetypes;
 		Chapters = chapters;
 		Conditions = conditions;
-		BriefingTemplates = briefingTemplates;
-		Barks = barks;
+		BriefingPools = briefingPools;
+		NarrativeBarkPools = narrativeBarkPools;
 		Scenarios = scenarios;
 	}
 

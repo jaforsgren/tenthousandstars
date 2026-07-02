@@ -1,0 +1,14 @@
+[remap]
+
+importer="yarnscript"
+type="Resource"
+uid="uid://3ndst4t3sp00l1"
+path="res://.godot/imported/end_states.yarn-3ndst4t3sp00l1.tres"
+
+[deps]
+
+source_file="res://yarn/end_states.yarn"
+dest_files=["res://.godot/imported/end_states.yarn-3ndst4t3sp00l1.tres"]
+
+[params]
+

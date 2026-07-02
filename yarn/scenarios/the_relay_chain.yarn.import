@@ -1,0 +1,14 @@
+[remap]
+
+importer="yarnscript"
+type="Resource"
+uid="uid://r3l4ych41n0001"
+path="res://.godot/imported/the_relay_chain.yarn-r3l4ych41n0001.tres"
+
+[deps]
+
+source_file="res://yarn/scenarios/the_relay_chain.yarn"
+dest_files=["res://.godot/imported/the_relay_chain.yarn-r3l4ych41n0001.tres"]
+
+[params]
+

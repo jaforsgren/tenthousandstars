@@ -3,15 +3,6 @@
   "Title": "Strike Force",
   "MissionTags": ["assault"],
   "When": null,
-  "IntroBarks": [
-    "Press the attack. No hesitation.",
-    "Forward. All forces, advance!",
-    "We strike now while they are exposed."
-  ],
-  "OutroBarks": [
-    "The system is ours!",
-    "Another front secured!",
-    "Victory!",
-    "They could not stop us."
-  ]
+  "IntroBarks": [],
+  "OutroBarks": []
 }
