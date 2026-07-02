@@ -77,8 +77,14 @@ public partial class DialogueController : Node
 			_ = runner.StartDialogue(PreviewNode);
 		}
 
-		_bridge.Adapter.LineReady += OnLineReadyTrigger;
-		_bridge.Adapter.SkillCheckReady += OnSkillCheckReadyTrigger;
+		_bridge.Adapter.LineReady += line =>
+			OnLineReadyAsync(line).ContinueWith(t =>
+				GD.PushError($"[DialogueController] Line render error: {t.Exception}"),
+				TaskContinuationOptions.OnlyOnFaulted);
+		_bridge.Adapter.SkillCheckReady += result =>
+			OnSkillCheckReadyAsync(result).ContinueWith(t =>
+				GD.PushError($"[DialogueController] Skill check render error: {t.Exception}"),
+				TaskContinuationOptions.OnlyOnFaulted);
 		_bridge.Adapter.OptionsReady += OnOptionsReady;
 	}
 
@@ -92,15 +98,6 @@ public partial class DialogueController : Node
 	}
 
 	// ── Line rendering ───────────────────────────────────────────────────────
-
-	private void OnLineReadyTrigger(YarnLine line)
-	{
-		OnLineReadyAsync(line).ContinueWith(t =>
-		{
-			if (t.IsFaulted)
-				GD.PushError($"[DialogueController] Line render error: {t.Exception}");
-		}, TaskContinuationOptions.OnlyOnFaulted);
-	}
 
 	private async Task OnLineReadyAsync(YarnLine line)
 	{
@@ -205,15 +202,6 @@ public partial class DialogueController : Node
 	}
 
 	// ── Skill check rendering ────────────────────────────────────────────────
-
-	private void OnSkillCheckReadyTrigger(SkillCheckResult result)
-	{
-		OnSkillCheckReadyAsync(result).ContinueWith(t =>
-		{
-			if (t.IsFaulted)
-				GD.PushError($"[DialogueController] Skill check render error: {t.Exception}");
-		}, TaskContinuationOptions.OnlyOnFaulted);
-	}
 
 	private async Task OnSkillCheckReadyAsync(SkillCheckResult result)
 	{

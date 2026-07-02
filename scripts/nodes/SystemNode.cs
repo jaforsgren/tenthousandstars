@@ -131,10 +131,7 @@ public partial class SystemNode : FogAwareNode
 
 	private void RefreshProductionRate()
 	{
-		var planetSum = 0f;
-		for (var i = 0; i < _planets.Count; i++)
-			planetSum += _planets[i].ProductionRate;
-		_cachedProductionRate = (planetSum + _baseProduction)
+		_cachedProductionRate = (_planets.Sum(p => p.ProductionRate) + _baseProduction)
 			* (_upgrade == SystemUpgrade.Forge ? 1f + _forgeProductionBonus : 1f);
 	}
 

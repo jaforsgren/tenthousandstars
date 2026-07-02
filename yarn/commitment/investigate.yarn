@@ -64,7 +64,6 @@ Almost.
     Narrator:
     Looking for what they wanted you to miss.
 
-    <<jump investigate_done>>
 
 -> [File it and move on]
     Narrator:
@@ -72,8 +71,6 @@ Almost.
 
     Narrator:
     For now, the intelligence is enough.
-
-    <<jump investigate_done>>
 
 ===
 
@@ -117,12 +114,7 @@ You've accumulated quite a few of those.
 ---
 
 -> [Acknowledge]
-    <<jump investigate_done>>
 
-===
-
-title: investigate_done
----
 ===
 
 title: investigate_commit

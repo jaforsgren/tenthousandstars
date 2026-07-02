@@ -112,6 +112,6 @@ public partial class CommitmentDialogueController : CanvasLayer
         IntentType.Fortify     => "fortify_complete",
         IntentType.Investigate => controlGained ? "investigate_reveals"  : "investigate_quiet",
         IntentType.Exploit     => controlGained ? "exploit_extracted"    : "exploit_disrupted",
-        _                      => "attack_done"
+        _                      => "attack_won"
     };
 }

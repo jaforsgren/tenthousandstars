@@ -205,6 +205,16 @@ public partial class SystemActionMenu : Control
 		DrawLine(dir * systemEdgeLocal, slot.Position, _lineColor, _lineWidth);
 	}
 
+	private void HideAllNamedSlots()
+	{
+		_infoSlot.Visible         = false;
+		_opponentInfoSlot.Visible = false;
+		_rerouteSlot.Visible      = false;
+		_fortifySlot.Visible      = false;
+		_forgeSlot.Visible        = false;
+		_splitSlot.Visible        = false;
+	}
+
 	public void ShowForPlayer(
 		Vector2 worldPos,
 		Action onInfo,
@@ -214,9 +224,9 @@ public partial class SystemActionMenu : Control
 		bool splitDisabled, Action onSplit)
 	{
 		ClearIntentSlots();
+		HideAllNamedSlots();
 		_trackedWorldPos = worldPos;
 		_infoSlot.Configure(onInfo);
-		_opponentInfoSlot.Visible = false;
 		_rerouteSlot.Configure(hasReroute, onReroute);
 		_fortifySlot.Configure(fortifyActive, fortifyDisabled, onFortify);
 		_forgeSlot.Configure(forgeActive, forgeDisabled, onForge);
@@ -227,26 +237,19 @@ public partial class SystemActionMenu : Control
 	public void ShowForAiSystem(Vector2 worldPos, Action onSystemInfo, Action onFactionInfo)
 	{
 		ClearIntentSlots();
+		HideAllNamedSlots();
 		_trackedWorldPos = worldPos;
 		_infoSlot.Configure(onSystemInfo);
 		_opponentInfoSlot.Configure(onFactionInfo);
-		_rerouteSlot.Visible  = false;
-		_fortifySlot.Visible  = false;
-		_forgeSlot.Visible    = false;
-		_splitSlot.Visible    = false;
 		PlayShowAnimation();
 	}
 
 	public void ShowInfoOnly(Vector2 worldPos, Action onInfo)
 	{
 		ClearIntentSlots();
+		HideAllNamedSlots();
 		_trackedWorldPos = worldPos;
 		_infoSlot.Configure(onInfo);
-		_opponentInfoSlot.Visible = false;
-		_rerouteSlot.Visible      = false;
-		_fortifySlot.Visible      = false;
-		_forgeSlot.Visible        = false;
-		_splitSlot.Visible        = false;
 		PlayShowAnimation();
 	}
 
@@ -257,13 +260,8 @@ public partial class SystemActionMenu : Control
 		Action<IntentType> onPick,
 		bool required = false)
 	{
-		_trackedWorldPos          = worldPos;
-		_infoSlot.Visible         = false;
-		_opponentInfoSlot.Visible = false;
-		_rerouteSlot.Visible      = false;
-		_fortifySlot.Visible      = false;
-		_forgeSlot.Visible        = false;
-		_splitSlot.Visible        = false;
+		HideAllNamedSlots();
+		_trackedWorldPos = worldPos;
 		AddIntentSlots(options, onPick, required);
 		_isHiding = false;
 		_isActive = true;

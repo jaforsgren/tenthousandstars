@@ -13,8 +13,7 @@ namespace Tts.Dialogue;
 /// When done, call <see cref="NotifyCompleted"/> with the result dictionary.
 /// GameManager frees the scene automatically after that.
 ///
-/// Add as a sibling of YarnBridge inside DialogueRoot, or register as an autoload.
-/// Access via <see cref="Instance"/> after the node is ready.
+/// Registered as an autoload — access via <see cref="Instance"/> after the node is ready.
 /// </summary>
 public partial class GameManager : Node
 {

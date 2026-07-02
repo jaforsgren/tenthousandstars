@@ -73,7 +73,6 @@ You've taken enough systems to know that.
 ---
 
 -> [Acknowledge]
-    <<jump attack_done>>
 
 ===
 
@@ -147,12 +146,7 @@ But noted.
 ---
 
 -> [Acknowledge]
-    <<jump attack_done>>
 
-===
-
-title: attack_done
----
 ===
 
 title: attack_commit

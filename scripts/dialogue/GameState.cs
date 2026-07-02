@@ -8,9 +8,7 @@ namespace Tts.Dialogue;
 
 /// <summary>
 /// Central persistent state for skills, flags, and history.
-/// Add as a child of DialogueRoot or register as an autoload.
-///
-/// Access via <see cref="Instance"/> after the node is ready.
+/// Registered as an autoload — access via <see cref="Instance"/> after the node is ready.
 /// </summary>
 public partial class GameState : Node
 {

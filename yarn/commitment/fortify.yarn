@@ -65,12 +65,7 @@ Good.
 ---
 
 -> [Acknowledge]
-    <<jump fortify_done>>
 
-===
-
-title: fortify_done
----
 ===
 
 title: fortify_commit

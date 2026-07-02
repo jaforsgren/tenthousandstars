@@ -42,7 +42,6 @@ And the right kind of quiet.
 ---
 
 -> [Acknowledge]
-    <<jump contest_done>>
 
 ===
 
@@ -90,12 +89,7 @@ One you'd rather not answer right now.
 ---
 
 -> [Acknowledge]
-    <<jump contest_done>>
 
-===
-
-title: contest_done
----
 ===
 
 title: contest_commit
