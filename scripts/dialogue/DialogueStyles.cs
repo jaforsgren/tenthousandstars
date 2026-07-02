@@ -18,7 +18,4 @@ public static class DialogueStyles
 	// Skill-check result — applied at runtime based on success/failure
 	public static readonly Color SkillSuccess = new(0.3f, 1.0f, 0.3f, 1.0f);
 	public static readonly Color SkillFailure = new(1.0f, 0.3f, 0.3f, 1.0f);
-
-	// Separator lines (ColorRect.Color, not a theme property)
-	public static readonly Color Divider = new(0.25f, 0.25f, 0.25f, 0.6f);
 }

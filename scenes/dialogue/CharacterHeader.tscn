@@ -2,18 +2,38 @@
 
 [ext_resource type="Script" path="res://scripts/dialogue/CharacterHeader.cs" id="1"]
 [ext_resource type="Theme" path="res://themes/dialog_theme.tres" id="2"]
+[ext_resource type="Texture2D" uid="uid://dj10q8icqv0kt" path="res://ui/dialogue/portrait_frame.png" id="3"]
 
 [node name="CharacterHeader" type="HBoxContainer"]
 theme = ExtResource("2")
 theme_override_constants/separation = 12
 script = ExtResource("1")
 
-[node name="Portrait" type="TextureRect" parent="."]
+[node name="PortraitWrapper" type="Control" parent="."]
 custom_minimum_size = Vector2(140, 140)
 layout_mode = 2
 size_flags_vertical = 0
+
+[node name="Portrait" type="TextureRect" parent="PortraitWrapper"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 expand_mode = 4
 stretch_mode = 5
+
+[node name="PortraitFrame" type="TextureRect" parent="PortraitWrapper"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+texture = ExtResource("3")
+stretch_mode = 0
 
 [node name="Info" type="VBoxContainer" parent="."]
 layout_mode = 2

@@ -20,26 +20,27 @@ public partial class ChoiceEntry : VBoxContainer
 {
 	private Label _youLabel = null!;
 	private VBoxContainer _buttonsContainer = null!;
-	private ColorRect _divider = null!;
+	private TextureRect _divider = null!;
 
 	public override void _Ready()
 	{
 		_youLabel = GetNode<Label>("YouLabel");
 		_buttonsContainer = GetNode<VBoxContainer>("ButtonsContainer");
-		_divider = GetNode<ColorRect>("Divider");
+		_divider = GetNode<TextureRect>("Divider");
 
 		_youLabel.ThemeTypeVariation = "YouLabel";
-		_divider.Color = DialogueStyles.Divider;
+		_youLabel.Visible = false;
 	}
 
 	public void Setup(YarnOption[] options, Action<int> onSelected)
 	{
+		int index = 0;
 		foreach (YarnOption option in options)
 		{
 			var button = new Button();
-			button.Text = $"→ {option.Text}";
-			button.Alignment = HorizontalAlignment.Center;
-	
+			button.Text = $"{index + 1}.  {option.Text}";
+			button.Alignment = HorizontalAlignment.Left;
+
 			int capturedId = option.DialogueOptionID;
 			string capturedText = option.Text;
 			button.Pressed += () =>
@@ -49,6 +50,7 @@ public partial class ChoiceEntry : VBoxContainer
 			};
 
 			_buttonsContainer.AddChild(button);
+			index++;
 		}
 
 		if (_buttonsContainer.GetChildCount() > 0)
@@ -57,6 +59,8 @@ public partial class ChoiceEntry : VBoxContainer
 
 	private void CollapseToSelection(string selectedText)
 	{
+		_youLabel.Visible = true;
+
 		foreach (Node child in _buttonsContainer.GetChildren())
 			child.QueueFree();
 
@@ -64,7 +68,7 @@ public partial class ChoiceEntry : VBoxContainer
 		label.BbcodeEnabled = true;
 		label.FitContent = true;
 		label.ScrollActive = false;
-		label.Text = selectedText; // $"[color={DialogueStyles.PlayerAccentHex}][b]> {selectedText}[/b][/color]";
+		label.Text = $"[color=#777777]| {selectedText}[/color]";
 		_buttonsContainer.AddChild(label);
 	}
 }

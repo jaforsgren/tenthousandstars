@@ -10,7 +10,7 @@ namespace Tts.Dialogue;
 
 /// <summary>
 /// A single stacked dialogue entry. Speaker styling is applied via BBCode:
-///   "you"      → orange bold text with "> " prefix, small "You" label shown
+///   "you"      → muted "| text" with "YOU" label shown
 ///   "narration" / "" → muted italic text, no label
 ///   other (NPC) → plain text from markup parser
 ///
@@ -18,18 +18,17 @@ namespace Tts.Dialogue;
 ///   VBoxContainer (this node)
 ///     Label         "YouLabel"
 ///     RichTextLabel "DialogueText"
-///     ColorRect     "Divider"
+///     TextureRect   "Divider"
 /// </summary>
 public partial class DialogEntry : VBoxContainer
 {
 	private static readonly Color Transparent = new(1f, 1f, 1f, 0f);
 	private static readonly Color Opaque = new(1f, 1f, 1f, 1f);
 	private const float FadeInDuration = 0.25f;
-	private const string YouPrefix = "> ";
 
 	private Label _youLabel = null!;
 	private RichTextLabel _dialogueText = null!;
-	private ColorRect _divider = null!;
+	private TextureRect _divider = null!;
 
 	private CancellationTokenSource? _typewriterCts;
 
@@ -37,10 +36,9 @@ public partial class DialogEntry : VBoxContainer
 	{
 		_youLabel = GetNode<Label>("YouLabel");
 		_dialogueText = GetNode<RichTextLabel>("DialogueText");
-		_divider = GetNode<ColorRect>("Divider");
+		_divider = GetNode<TextureRect>("Divider");
 
 		_youLabel.ThemeTypeVariation = "YouLabel";
-		_divider.Color = DialogueStyles.Divider;
 	}
 
 	public async Task ShowAsync(YarnLine line)
@@ -74,11 +72,10 @@ public partial class DialogEntry : VBoxContainer
 		switch (line.Speaker.ToLowerInvariant())
 		{
 			case "you":
-				// TODO: fix with someting, _youLabel doesnt loook good. what is youprefix?
 				_youLabel.Visible = true;
-				_dialogueText.Text = $"[color={DialogueStyles.PlayerAccentHex}][b]{YouPrefix}{line.ParsedText.BBCodeText}[/b][/color]";
+				_dialogueText.Text = $"[color=#777777]| {line.ParsedText.BBCodeText}[/color]";
 				_divider.Visible = true;
-				return YouPrefix.Length;
+				return 2; // "| " prefix appears instantly
 
 			case "narration":
 			case "narrator":
@@ -91,8 +88,8 @@ public partial class DialogEntry : VBoxContainer
 
 			default:
 				_youLabel.Visible = false;
-				_dialogueText.Text = $"\"{line.ParsedText.BBCodeText}\"";
-				return 1; // opening " appears instantly
+				_dialogueText.Text = line.ParsedText.BBCodeText;
+				return 0;
 		}
 	}
 

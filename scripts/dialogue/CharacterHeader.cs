@@ -31,7 +31,7 @@ public partial class CharacterHeader : HBoxContainer
 
 	public override void _Ready()
 	{
-		_portrait = GetNode<TextureRect>("Portrait");
+		_portrait = GetNode<TextureRect>("PortraitWrapper/Portrait");
 		_speakerName = GetNode<Label>("Info/SpeakerName");
 		_descriptor = GetNode<Label>("Info/Descriptor");
 
