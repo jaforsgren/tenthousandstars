@@ -116,11 +116,11 @@ public partial class Level
 
 		if (_encounterSystems.Contains(toIndex))
 		{
-			var eventNode = _levelEventController.NextEventNode();
+			var eventNode = _encounterTracker.NextEventNode();
 			if (eventNode != null)
 			{
-				_levelEventController.MarkSeen(eventNode);
-				_commitmentDialogue.ShowEncounterEvent(eventNode,
+				_encounterTracker.MarkSeen(eventNode);
+				_narrativePanel.ShowEncounterEvent(eventNode,
 					() => ResolveDirectCombat(toIndex, fleet));
 			}
 			else
@@ -168,7 +168,7 @@ public partial class Level
 
 	internal void CommitOwnSystem(int systemIndex, IntentType intent)
 	{
-		_commitmentDialogue.ShowPreCommitment(intent, () =>
+		_narrativePanel.ShowPreCommitment(intent, () =>
 		{
 			_commitmentController.StartCommitment(
 				systemIndex,

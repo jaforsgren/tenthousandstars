@@ -6,7 +6,7 @@ using Tts.Nodes;
 
 namespace Tts.Narrative;
 
-public class ScenarioController
+public class ScenarioRegistry
 {
     private readonly Dictionary<int, ScenarioDefinition> _systemScenarios = new();
 

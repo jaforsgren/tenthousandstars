@@ -1,6 +1,6 @@
 namespace Tts.Events;
 
-public enum LevelScenarioType
+public enum EncounterType
 {
     BarbarianHorde,
     AiUprising,

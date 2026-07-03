@@ -99,12 +99,12 @@ public partial class Level : Node2D
 	private CountdownTimerNode _countdownTimer = null!;
 	private DebugOverlay? _debugOverlay;
 	private bool _debugRevealFog;
-	private ScenarioController _scenarioController = null!;
+	private ScenarioRegistry _scenarioRegistry = null!;
 	private CommitmentController _commitmentController = null!;
 	private CommitmentConfig _commitmentConfig = null!;
 	private NarrativePanel _narrativePanel = null!;
 	private PackedScene _narrativePanelScene = null!;
-	private LevelEventController _levelEventController = null!;
+	private EncounterTracker _encounterTracker = null!;
 	private EffectRegistry _effectRegistry = null!;
 	private EffectDisplayPanel _effectDisplayPanel = null!;
 	private readonly TransitSystem _transitSystem = new();
@@ -288,8 +288,8 @@ public partial class Level : Node2D
 	private void SpawnEventSystem()
 	{
 		_effectRegistry = new EffectRegistry();
-		var scenarioType = (LevelScenarioType)_rng.Next(4);
-		_levelEventController = new LevelEventController(scenarioType, _commitmentConfig.EncounterSystemChance, _rng);
+		var scenarioType = (EncounterType)_rng.Next(4);
+		_encounterTracker = new EncounterTracker(scenarioType, _commitmentConfig.EncounterSystemChance, _rng);
 
 		_effectDisplayPanel = new EffectDisplayPanel();
 		AddChild(_effectDisplayPanel);
@@ -312,10 +312,10 @@ public partial class Level : Node2D
 
 	private void AssignScenarios(ScenarioDefinition[] scenarios)
 	{
-		_scenarioController = new ScenarioController();
-		_scenarioController.AssignScenarios(_systems, scenarios, _rng);
+		_scenarioRegistry = new ScenarioRegistry();
+		_scenarioRegistry.AssignScenarios(_systems, scenarios, _rng);
 		for (var i = 0; i < _systems.Count; i++)
-			_systems[i].SetScenarioBadge(_scenarioController.HasScenario(i));
+			_systems[i].SetScenarioBadge(_scenarioRegistry.HasScenario(i));
 	}
 
 	private static ScenarioDefinition[] LoadRandomModeScenarios()

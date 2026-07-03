@@ -110,7 +110,7 @@ public partial class Level
 		var description = systemDescriptions.Length > 0 ? Pick(systemDescriptions, seed) : "";
 		_levelUi.AiSystemPanel.Hide();
 
-		var scenario = _scenarioController.GetScenario(systemIndex);
+		var scenario = _scenarioRegistry.GetScenario(systemIndex);
 		if (scenario != null)
 		{
 			_levelUi.SelectionPanel.ShowWithScenario(
@@ -137,7 +137,7 @@ public partial class Level
 
 	private void DismissScenario(int systemIndex)
 	{
-		_scenarioController.DismissScenario(systemIndex);
+		_scenarioRegistry.DismissScenario(systemIndex);
 		_systems[systemIndex].SetScenarioBadge(false);
 		_levelUi.SelectionPanel.Hide();
 	}

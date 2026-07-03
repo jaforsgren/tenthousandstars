@@ -7,12 +7,12 @@ using Godot;
 namespace Tts.Dialogue;
 
 /// <summary>
-/// Central persistent state for skills, flags, and history.
+/// Persistent skill values, flags, and history scoped to the dialogue system.
 /// Registered as an autoload — access via <see cref="Instance"/> after the node is ready.
 /// </summary>
-public partial class GameState : Node
+public partial class DialogueState : Node
 {
-	public static GameState? Instance { get; private set; }
+	public static DialogueState? Instance { get; private set; }
 
 	/// <summary>Player skill values keyed by lowercase name.</summary>
 	public Dictionary<string, int> Skills { get; } = new()
@@ -50,7 +50,7 @@ public partial class GameState : Node
 	{
 		string timestamped = $"[{DateTime.Now:HH:mm:ss}] {entry}";
 		History.Add(timestamped);
-		GD.Print($"[GameState] {timestamped}");
+		GD.Print($"[DialogueState] {timestamped}");
 	}
 
 	protected override void Dispose(bool disposing)

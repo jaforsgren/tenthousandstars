@@ -17,8 +17,8 @@ config/icon="res://icon.svg"
 
 [autoload]
 
-GameState="*res://scripts/dialogue/GameState.cs"
-GameManager="*res://scripts/dialogue/GameManager.cs"
+DialogueState="*res://scripts/dialogue/DialogueState.cs"
+YarnGameplayHost="*res://scripts/dialogue/YarnGameplayHost.cs"
 
 [display]
 

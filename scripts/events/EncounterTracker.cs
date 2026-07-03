@@ -3,24 +3,24 @@ using System.Collections.Generic;
 
 namespace Tts.Events;
 
-// Owns the scenario assigned to a level, the event pool for that scenario,
-// chain queuing, and the live encounter chance (modifiable by events).
-public sealed class LevelEventController
+// Tracks the encounter type assigned to a level run, manages the Yarn event pool,
+// chains queued events, and maintains the live encounter chance.
+public sealed class EncounterTracker
 {
-    public static LevelEventController? Instance { get; private set; }
+    public static EncounterTracker? Instance { get; private set; }
 
-    private readonly LevelScenarioType _scenario;
+    private readonly EncounterType _encounterType;
     private readonly Random _rng;
     private float _encounterChance;
     private readonly HashSet<string> _seenNodes = [];
     private string? _pendingChainNode;
 
-    public LevelScenarioType Scenario => _scenario;
+    public EncounterType EncounterType => _encounterType;
     public float EncounterChance => _encounterChance;
 
-    public LevelEventController(LevelScenarioType scenario, float baseEncounterChance, Random rng)
+    public EncounterTracker(EncounterType encounterType, float baseEncounterChance, Random rng)
     {
-        _scenario = scenario;
+        _encounterType = encounterType;
         _encounterChance = baseEncounterChance;
         _rng = rng;
         Instance = this;
@@ -50,19 +50,19 @@ public sealed class LevelEventController
 
     private string? SelectFromPool()
     {
-        var pool = EventPool(_scenario);
+        var pool = EventPool(_encounterType);
         var unseen = pool.FindAll(n => !_seenNodes.Contains(n));
         var candidates = unseen.Count > 0 ? unseen : pool;
         if (candidates.Count == 0) return null;
         return candidates[_rng.Next(candidates.Count)];
     }
 
-    private static List<string> EventPool(LevelScenarioType scenario) => scenario switch
+    private static List<string> EventPool(EncounterType type) => type switch
     {
-        LevelScenarioType.BarbarianHorde => ["barbarian_encounter", "barbarian_ritual", "barbarian_relic"],
-        LevelScenarioType.AiUprising    => ["ai_awakening",         "ai_negotiation",  "ai_sabotage"],
-        LevelScenarioType.Nemesis1      => ["nemesis1_contact",     "nemesis1_ambush", "nemesis1_messenger"],
-        LevelScenarioType.Nemesis2      => ["nemesis2_defense",     "nemesis2_sanctum","nemesis2_price"],
-        _                               => []
+        EncounterType.BarbarianHorde => ["barbarian_encounter", "barbarian_ritual", "barbarian_relic"],
+        EncounterType.AiUprising    => ["ai_awakening",         "ai_negotiation",  "ai_sabotage"],
+        EncounterType.Nemesis1      => ["nemesis1_contact",     "nemesis1_ambush", "nemesis1_messenger"],
+        EncounterType.Nemesis2      => ["nemesis2_defense",     "nemesis2_sanctum","nemesis2_price"],
+        _                           => []
     };
 }

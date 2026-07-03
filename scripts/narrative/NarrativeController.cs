@@ -88,6 +88,7 @@ public class NarrativeController
 
         // Enrich scenarios with text from Yarn
         var scenarioConfig = ConfigLoader.Load<ScenarioConfig>("res://config/scenarios.json");
+
         var scenarioPoolFiles = new[] { "the_relay_chain", "survivor_enclave", "the_ghost_fleet" };
         var scenarioPools = new Dictionary<string, string[]>(StringComparer.Ordinal);
         foreach (var file in scenarioPoolFiles)

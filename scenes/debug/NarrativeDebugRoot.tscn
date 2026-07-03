@@ -1,132 +1,161 @@
-[gd_scene format=3 uid="uid://narrativedbgroot"]
+[gd_scene format=3 uid="uid://c6m5af4e6wqy6"]
 
-[ext_resource type="Script" path="res://scripts/debug/NarrativeDebugRoot.cs" id="1_script"]
-[ext_resource type="Theme" path="res://scenes/ui/UiTheme.tres" id="2_theme"]
+[ext_resource type="Script" uid="uid://b3nxtleojia16" path="res://scripts/debug/NarrativeDebugRoot.cs" id="1_script"]
+[ext_resource type="Theme" uid="uid://6r4gcsr0tf77" path="res://scenes/ui/UiTheme.tres" id="2_theme"]
 
-[node name="NarrativeDebugRoot" type="Control" script=ExtResource("1_script")]
+[node name="NarrativeDebugRoot" type="Control" unique_id=1159250889]
+layout_mode = 3
+anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 theme = ExtResource("2_theme")
+script = ExtResource("1_script")
 
-[node name="PanelContainer" type="PanelContainer" parent="."]
+[node name="PanelContainer" type="PanelContainer" parent="." unique_id=1561352007]
+layout_mode = 0
 anchor_right = 1.0
 anchor_bottom = 1.0
 
-[node name="MarginContainer" type="MarginContainer" parent="PanelContainer"]
-anchor_right = 1.0
-anchor_bottom = 1.0
+[node name="MarginContainer" type="MarginContainer" parent="PanelContainer" unique_id=1867070026]
+layout_mode = 2
 theme_override_constants/margin_left = 24
-theme_override_constants/margin_right = 24
 theme_override_constants/margin_top = 20
+theme_override_constants/margin_right = 24
 theme_override_constants/margin_bottom = 20
 
-[node name="VBoxContainer" type="VBoxContainer" parent="PanelContainer/MarginContainer"]
-anchor_right = 1.0
-anchor_bottom = 1.0
+[node name="VBoxContainer" type="VBoxContainer" parent="PanelContainer/MarginContainer" unique_id=694145505]
+layout_mode = 2
 theme_override_constants/separation = 10
 
-[node name="Title" type="Label" parent="PanelContainer/MarginContainer/VBoxContainer"]
-text = "NARRATIVE DEBUG"
+[node name="Title" type="Label" parent="PanelContainer/MarginContainer/VBoxContainer" unique_id=313445709]
+layout_mode = 2
 theme_override_font_sizes/font_size = 16
+text = "NARRATIVE DEBUG"
 
-[node name="HSep1" type="HSeparator" parent="PanelContainer/MarginContainer/VBoxContainer"]
+[node name="HSep1" type="HSeparator" parent="PanelContainer/MarginContainer/VBoxContainer" unique_id=2097386327]
+layout_mode = 2
 
-[node name="NodeRow" type="HBoxContainer" parent="PanelContainer/MarginContainer/VBoxContainer"]
+[node name="NodeRow" type="HBoxContainer" parent="PanelContainer/MarginContainer/VBoxContainer" unique_id=2031169232]
+layout_mode = 2
 theme_override_constants/separation = 12
 
-[node name="NodeLabel" type="Label" parent="PanelContainer/MarginContainer/VBoxContainer/NodeRow"]
+[node name="NodeLabel" type="Label" parent="PanelContainer/MarginContainer/VBoxContainer/NodeRow" unique_id=2099918934]
 custom_minimum_size = Vector2(160, 0)
+layout_mode = 2
 text = "Yarn Node"
 vertical_alignment = 1
 
-[node name="NodeInput" type="LineEdit" parent="PanelContainer/MarginContainer/VBoxContainer/NodeRow"]
+[node name="NodeInput" type="LineEdit" parent="PanelContainer/MarginContainer/VBoxContainer/NodeRow" unique_id=1871332093]
 unique_name_in_owner = true
+layout_mode = 2
 size_flags_horizontal = 3
 placeholder_text = "e.g. conquest_begin"
 
-[node name="PlayerRow" type="HBoxContainer" parent="PanelContainer/MarginContainer/VBoxContainer"]
+[node name="PlayerRow" type="HBoxContainer" parent="PanelContainer/MarginContainer/VBoxContainer" unique_id=1837974536]
+layout_mode = 2
 theme_override_constants/separation = 12
 
-[node name="PlayerLabel" type="Label" parent="PanelContainer/MarginContainer/VBoxContainer/PlayerRow"]
+[node name="PlayerLabel" type="Label" parent="PanelContainer/MarginContainer/VBoxContainer/PlayerRow" unique_id=1909415233]
 custom_minimum_size = Vector2(160, 0)
+layout_mode = 2
 text = "$player_faction"
 vertical_alignment = 1
 
-[node name="PlayerFactionInput" type="LineEdit" parent="PanelContainer/MarginContainer/VBoxContainer/PlayerRow"]
+[node name="PlayerFactionInput" type="LineEdit" parent="PanelContainer/MarginContainer/VBoxContainer/PlayerRow" unique_id=1078134867]
 unique_name_in_owner = true
+layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="EnemyRow" type="HBoxContainer" parent="PanelContainer/MarginContainer/VBoxContainer"]
+[node name="EnemyRow" type="HBoxContainer" parent="PanelContainer/MarginContainer/VBoxContainer" unique_id=192781917]
+layout_mode = 2
 theme_override_constants/separation = 12
 
-[node name="EnemyLabel" type="Label" parent="PanelContainer/MarginContainer/VBoxContainer/EnemyRow"]
+[node name="EnemyLabel" type="Label" parent="PanelContainer/MarginContainer/VBoxContainer/EnemyRow" unique_id=1338937935]
 custom_minimum_size = Vector2(160, 0)
+layout_mode = 2
 text = "$enemy_faction"
 vertical_alignment = 1
 
-[node name="EnemyFactionInput" type="LineEdit" parent="PanelContainer/MarginContainer/VBoxContainer/EnemyRow"]
+[node name="EnemyFactionInput" type="LineEdit" parent="PanelContainer/MarginContainer/VBoxContainer/EnemyRow" unique_id=1215982176]
 unique_name_in_owner = true
+layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="SectorRow" type="HBoxContainer" parent="PanelContainer/MarginContainer/VBoxContainer"]
+[node name="SectorRow" type="HBoxContainer" parent="PanelContainer/MarginContainer/VBoxContainer" unique_id=681515147]
+layout_mode = 2
 theme_override_constants/separation = 12
 
-[node name="SectorLabel" type="Label" parent="PanelContainer/MarginContainer/VBoxContainer/SectorRow"]
+[node name="SectorLabel" type="Label" parent="PanelContainer/MarginContainer/VBoxContainer/SectorRow" unique_id=104186895]
 custom_minimum_size = Vector2(160, 0)
+layout_mode = 2
 text = "$sector_name"
 vertical_alignment = 1
 
-[node name="SectorNameInput" type="LineEdit" parent="PanelContainer/MarginContainer/VBoxContainer/SectorRow"]
+[node name="SectorNameInput" type="LineEdit" parent="PanelContainer/MarginContainer/VBoxContainer/SectorRow" unique_id=773057025]
 unique_name_in_owner = true
+layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="DateRow" type="HBoxContainer" parent="PanelContainer/MarginContainer/VBoxContainer"]
+[node name="DateRow" type="HBoxContainer" parent="PanelContainer/MarginContainer/VBoxContainer" unique_id=167607311]
+layout_mode = 2
 theme_override_constants/separation = 12
 
-[node name="DateLabel" type="Label" parent="PanelContainer/MarginContainer/VBoxContainer/DateRow"]
+[node name="DateLabel" type="Label" parent="PanelContainer/MarginContainer/VBoxContainer/DateRow" unique_id=625806657]
 custom_minimum_size = Vector2(160, 0)
+layout_mode = 2
 text = "$date"
 vertical_alignment = 1
 
-[node name="DateInput" type="LineEdit" parent="PanelContainer/MarginContainer/VBoxContainer/DateRow"]
+[node name="DateInput" type="LineEdit" parent="PanelContainer/MarginContainer/VBoxContainer/DateRow" unique_id=1519277704]
 unique_name_in_owner = true
+layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="ObjectiveRow" type="HBoxContainer" parent="PanelContainer/MarginContainer/VBoxContainer"]
+[node name="ObjectiveRow" type="HBoxContainer" parent="PanelContainer/MarginContainer/VBoxContainer" unique_id=1794347539]
+layout_mode = 2
 theme_override_constants/separation = 12
 
-[node name="ObjectiveLabel" type="Label" parent="PanelContainer/MarginContainer/VBoxContainer/ObjectiveRow"]
+[node name="ObjectiveLabel" type="Label" parent="PanelContainer/MarginContainer/VBoxContainer/ObjectiveRow" unique_id=852656052]
 custom_minimum_size = Vector2(160, 0)
+layout_mode = 2
 text = "$mission_objective"
 vertical_alignment = 1
 
-[node name="MissionObjectiveInput" type="LineEdit" parent="PanelContainer/MarginContainer/VBoxContainer/ObjectiveRow"]
+[node name="MissionObjectiveInput" type="LineEdit" parent="PanelContainer/MarginContainer/VBoxContainer/ObjectiveRow" unique_id=829812681]
 unique_name_in_owner = true
+layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="HSep2" type="HSeparator" parent="PanelContainer/MarginContainer/VBoxContainer"]
+[node name="HSep2" type="HSeparator" parent="PanelContainer/MarginContainer/VBoxContainer" unique_id=115762664]
+layout_mode = 2
 
-[node name="QuickLabel" type="Label" parent="PanelContainer/MarginContainer/VBoxContainer"]
+[node name="QuickLabel" type="Label" parent="PanelContainer/MarginContainer/VBoxContainer" unique_id=2146624860]
+layout_mode = 2
 text = "QUICK NODES"
 
-[node name="QuickNodeButtons" type="HFlowContainer" parent="PanelContainer/MarginContainer/VBoxContainer"]
+[node name="QuickNodeButtons" type="HFlowContainer" parent="PanelContainer/MarginContainer/VBoxContainer" unique_id=186291056]
 unique_name_in_owner = true
+layout_mode = 2
 theme_override_constants/h_separation = 6
 theme_override_constants/v_separation = 6
 
-[node name="HSep3" type="HSeparator" parent="PanelContainer/MarginContainer/VBoxContainer"]
+[node name="HSep3" type="HSeparator" parent="PanelContainer/MarginContainer/VBoxContainer" unique_id=1945182371]
+layout_mode = 2
 
-[node name="ActionRow" type="HBoxContainer" parent="PanelContainer/MarginContainer/VBoxContainer"]
+[node name="ActionRow" type="HBoxContainer" parent="PanelContainer/MarginContainer/VBoxContainer" unique_id=979439182]
+layout_mode = 2
 theme_override_constants/separation = 12
 
-[node name="PlayButton" type="Button" parent="PanelContainer/MarginContainer/VBoxContainer/ActionRow"]
+[node name="PlayButton" type="Button" parent="PanelContainer/MarginContainer/VBoxContainer/ActionRow" unique_id=197316894]
 unique_name_in_owner = true
+layout_mode = 2
 text = "PLAY"
 
-[node name="BackButton" type="Button" parent="PanelContainer/MarginContainer/VBoxContainer/ActionRow"]
+[node name="BackButton" type="Button" parent="PanelContainer/MarginContainer/VBoxContainer/ActionRow" unique_id=814703951]
 unique_name_in_owner = true
+layout_mode = 2
 text = "BACK"
 
-[node name="StatusLabel" type="Label" parent="PanelContainer/MarginContainer/VBoxContainer"]
+[node name="StatusLabel" type="Label" parent="PanelContainer/MarginContainer/VBoxContainer" unique_id=739697077]
 unique_name_in_owner = true
-text = ""
+layout_mode = 2

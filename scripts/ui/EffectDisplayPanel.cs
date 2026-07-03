@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using Godot;
-using Tts.Events;
+using Tts.Effects;
 
 namespace Tts.Ui;
 

@@ -11,13 +11,13 @@ namespace Tts.Dialogue;
 ///
 /// Scenes are loaded from <c>res://scenes/gameplay/{name}.tscn</c>.
 /// When done, call <see cref="NotifyCompleted"/> with the result dictionary.
-/// GameManager frees the scene automatically after that.
+/// YarnGameplayHost frees the scene automatically after that.
 ///
 /// Registered as an autoload — access via <see cref="Instance"/> after the node is ready.
 /// </summary>
-public partial class GameManager : Node
+public partial class YarnGameplayHost : Node
 {
-	public static GameManager? Instance { get; private set; }
+	public static YarnGameplayHost? Instance { get; private set; }
 
 	private const string GameplayBasePath = "res://scenes/gameplay/";
 
@@ -47,7 +47,7 @@ public partial class GameManager : Node
 
 		if (!ResourceLoader.Exists(path))
 		{
-			GD.PushError($"[GameManager] Gameplay scene not found: {path}");
+			GD.PushError($"[YarnGameplayHost] Gameplay scene not found: {path}");
 			return new Dictionary();
 		}
 

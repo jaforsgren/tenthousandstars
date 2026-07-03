@@ -1,4 +1,4 @@
-namespace Tts.Events;
+namespace Tts.Effects;
 
 public enum EffectKind { Buff, Debuff }
 

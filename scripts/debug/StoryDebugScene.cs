@@ -197,7 +197,7 @@ public partial class StoryDebugScene : Control
 
 	private void PreviewYarnNode(string nodeName, IReadOnlyDictionary<string, string> vars)
 	{
-		var panel = GD.Load<PackedScene>(DialoguePanelPath).Instantiate<NarrativePanel>();
+		var panel = GD.Load<PackedScene>(NarrativePanelPath).Instantiate<NarrativePanel>();
 		AddChild(panel);
 		panel.ShowNarrative(nodeName, vars, onComplete: panel.QueueFree);
 	}
@@ -205,7 +205,7 @@ public partial class StoryDebugScene : Control
 	private void PreviewOutro()
 	{
 		if (_outroNodeName == null || _outroVars == null) return;
-		var panel = GD.Load<PackedScene>(DialoguePanelPath).Instantiate<NarrativePanel>();
+		var panel = GD.Load<PackedScene>(NarrativePanelPath).Instantiate<NarrativePanel>();
 		AddChild(panel);
 		panel.ShowNarrative(_outroNodeName, _outroVars, onComplete: panel.QueueFree);
 	}

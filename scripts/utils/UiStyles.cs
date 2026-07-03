@@ -2,7 +2,7 @@ using Godot;
 
 namespace Tts.Utils;
 
-public static class UILayout
+public static class UiStyles
 {
 	public const float ButtonSize = 48f;
 

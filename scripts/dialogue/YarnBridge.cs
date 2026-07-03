@@ -9,6 +9,7 @@ using Godot;
 using Godot.Collections;
 using Yarn.Markup;
 using YarnSpinnerGodot;
+using Tts.Effects;
 using Tts.Events;
 
 namespace Tts.Dialogue;
@@ -66,18 +67,18 @@ public partial class YarnBridge : Node, DialoguePresenterBase
 
 		// <<chain_event "yarn_node">>
 		dialogueRunner!.AddCommandHandler("chain_event",
-			new Action<string>(node => LevelEventController.Instance?.QueueChain(node)));
+			new Action<string>(node => EncounterTracker.Instance?.QueueChain(node)));
 
 		// <<modify_encounter_chance 0.05>>
 		dialogueRunner!.AddCommandHandler("modify_encounter_chance",
-			new Action<float>(delta => LevelEventController.Instance?.ModifyEncounterChance(delta)));
+			new Action<float>(delta => EncounterTracker.Instance?.ModifyEncounterChance(delta)));
 	}
 
 	// ── Yarn Presenter ──────────────────────────────────────────────────────
 
 	public YarnTask OnDialogueStartedAsync()
 	{
-		SyncGameStateToYarn();
+		SyncDialogueStateToYarn();
 		return YarnTask.CompletedTask;
 	}
 
@@ -123,9 +124,9 @@ public partial class YarnBridge : Node, DialoguePresenterBase
 
 	private async Task HandleSkillCommand(string skillName, float difficulty)
 	{
-		if (GameState.Instance is not { } state)
+		if (DialogueState.Instance is not { } state)
 		{
-			GD.PushError("[YarnBridge] GameState.Instance is null during skill check.");
+			GD.PushError("[YarnBridge] DialogueState.Instance is null during skill check.");
 			return;
 		}
 
@@ -148,17 +149,17 @@ public partial class YarnBridge : Node, DialoguePresenterBase
 
 	private async Task HandleGameplayCommand(string sceneName)
 	{
-		if (GameManager.Instance is not { } manager)
+		if (YarnGameplayHost.Instance is not { } manager)
 		{
-			GD.PushError("[YarnBridge] GameManager.Instance is null during gameplay command.");
+			GD.PushError("[YarnBridge] YarnGameplayHost.Instance is null during gameplay command.");
 			return;
 		}
 
 		Dictionary result = await manager.RunGameplay(sceneName);
 
-		GameState.Instance?.AddHistory($"Gameplay [{sceneName}]: {result}");
+		DialogueState.Instance?.AddHistory($"Gameplay [{sceneName}]: {result}");
 
-		// Sync every result key into a Yarn variable ($key) and GameState flag
+		// Sync every result key into a Yarn variable ($key) and DialogueState flag
 		foreach (Variant key in result.Keys)
 		{
 			string varName = $"${key.AsString()}";
@@ -168,22 +169,22 @@ public partial class YarnBridge : Node, DialoguePresenterBase
 			{
 				case Variant.Type.Bool:
 					dialogueRunner!.VariableStorage.SetValue(varName, value.AsBool());
-					GameState.Instance?.SetFlag(key.AsString(), value);
+					DialogueState.Instance?.SetFlag(key.AsString(), value);
 					break;
 
 				case Variant.Type.Int:
 					dialogueRunner!.VariableStorage.SetValue(varName, (float)value.AsInt32());
-					GameState.Instance?.SetFlag(key.AsString(), value);
+					DialogueState.Instance?.SetFlag(key.AsString(), value);
 					break;
 
 				case Variant.Type.Float:
 					dialogueRunner!.VariableStorage.SetValue(varName, value.AsSingle());
-					GameState.Instance?.SetFlag(key.AsString(), value);
+					DialogueState.Instance?.SetFlag(key.AsString(), value);
 					break;
 
 				case Variant.Type.String:
 					dialogueRunner!.VariableStorage.SetValue(varName, value.AsString());
-					GameState.Instance?.SetFlag(key.AsString(), value);
+					DialogueState.Instance?.SetFlag(key.AsString(), value);
 					break;
 			}
 		}
@@ -191,9 +192,9 @@ public partial class YarnBridge : Node, DialoguePresenterBase
 
 	// ── Helpers ─────────────────────────────────────────────────────────────
 
-	private void SyncGameStateToYarn()
+	private void SyncDialogueStateToYarn()
 	{
-		if (GameState.Instance is not { } state || !IsInstanceValid(dialogueRunner))
+		if (DialogueState.Instance is not { } state || !IsInstanceValid(dialogueRunner))
 			return;
 
 		var storage = dialogueRunner!.VariableStorage;

@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace Tts.Events;
+namespace Tts.Effects;
 
 // Holds active buffs/debuffs for the current level.
 // Set as Instance when the level creates it; cleared on level teardown.

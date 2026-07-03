@@ -328,11 +328,11 @@ public partial class SystemActionMenu : Control
 			var btn  = new Button
 			{
 				Text              = label,
-				CustomMinimumSize = new Vector2(UILayout.ButtonSize, UILayout.ButtonSize),
-				Position          = new Vector2(-UILayout.ButtonSize / 2f, -UILayout.ButtonSize / 2f),
+				CustomMinimumSize = new Vector2(UiStyles.ButtonSize, UiStyles.ButtonSize),
+				Position          = new Vector2(-UiStyles.ButtonSize / 2f, -UiStyles.ButtonSize / 2f),
 				MouseFilter       = MouseFilterEnum.Stop
 			};
-			UILayout.ApplyGreyStyle(btn);
+			UiStyles.ApplyGreyStyle(btn);
 			var captured = intent;
 			btn.Pressed += () => { onPick(captured); HideAll(); };
 			slot.AddChild(btn);

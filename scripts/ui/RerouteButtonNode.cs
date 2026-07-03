@@ -13,7 +13,7 @@ public partial class RerouteButtonNode : Control
 	{
 		_button = GetNode<Button>("%RerouteButton");
 		_button.Pressed += () => _onPressed?.Invoke();
-		_button.Position = new Vector2(-UILayout.ButtonSize / 2f, -UILayout.ButtonSize / 2f);
+		_button.Position = new Vector2(-UiStyles.ButtonSize / 2f, -UiStyles.ButtonSize / 2f);
 		Visible = false;
 	}
 
