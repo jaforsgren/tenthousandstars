@@ -1,29 +1,30 @@
-[gd_scene format=3]
+[gd_scene format=3 uid="uid://bfjcr0ch74djg"]
 
-[ext_resource type="Script" path="res://scripts/dialogue/DialogueController.cs" id="1"]
-[ext_resource type="Shader" path="res://shaders/top_fade.gdshader" id="shader_topfade"]
-[ext_resource type="Shader" path="res://shaders/rough_border.gdshader" id="shader_rough"]
-[ext_resource type="Script" path="res://scripts/dialogue/YarnBridge.cs" id="2"]
-[ext_resource type="Script" path="res://addons/YarnSpinner-Godot/Runtime/DialogueRunner.cs" id="3"]
-[ext_resource type="Script" path="res://addons/YarnSpinner-Godot/Runtime/InMemoryVariableStorage.cs" id="4"]
-[ext_resource type="Script" path="res://addons/YarnSpinner-Godot/Runtime/LineProviders/TextLineProvider.cs" id="5"]
-[ext_resource type="Resource" path="res://yarn/tts.yarnproject" id="6"]
-[ext_resource type="Theme" path="res://themes/dialog_theme.tres" id="7"]
-[ext_resource type="PackedScene" path="res://scenes/dialogue/DialogEntry.tscn" id="8"]
+[ext_resource type="Script" uid="uid://drd7on1p3dg53" path="res://scripts/dialogue/DialogueController.cs" id="1"]
+[ext_resource type="Script" uid="uid://bcvyu73srelb0" path="res://scripts/dialogue/YarnBridge.cs" id="2"]
+[ext_resource type="Script" uid="uid://budnld4qd513n" path="res://addons/YarnSpinner-Godot/Runtime/DialogueRunner.cs" id="3"]
+[ext_resource type="Script" uid="uid://b1o5xpu22evvx" path="res://addons/YarnSpinner-Godot/Runtime/InMemoryVariableStorage.cs" id="4"]
+[ext_resource type="Script" uid="uid://c5gxawri864uf" path="res://addons/YarnSpinner-Godot/Runtime/LineProviders/TextLineProvider.cs" id="5"]
+[ext_resource type="Resource" uid="uid://d32trrbs3ai6k" path="res://yarn/tts.yarnproject" id="6"]
+[ext_resource type="Theme" uid="uid://cb4owkkkf73m1" path="res://themes/dialog_theme.tres" id="7"]
+[ext_resource type="PackedScene" uid="uid://ciprejnj85i32" path="res://scenes/dialogue/DialogEntry.tscn" id="8"]
 [ext_resource type="PackedScene" path="res://scenes/dialogue/SkillCheckEntry.tscn" id="9"]
 [ext_resource type="PackedScene" path="res://scenes/dialogue/CharacterHeader.tscn" id="12"]
 [ext_resource type="PackedScene" path="res://scenes/dialogue/ChoiceEntry.tscn" id="13"]
-[ext_resource type="Texture2D" uid="uid://dq5e5rpgg7q7" path="res://ui/dialogue/panel_bg.png" id="tex_panel_bg"]
+[ext_resource type="Shader" uid="uid://baamq1g35n0a3" path="res://shaders/rough_border.gdshader" id="shader_rough"]
+[ext_resource type="Shader" uid="uid://dft5gcd1n35ms" path="res://shaders/top_fade.gdshader" id="shader_topfade"]
 [ext_resource type="Texture2D" uid="uid://cxc767mweu6ul" path="res://ui/dialogue/grain_overlay.png" id="tex_grain"]
-
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_topfade"]
-shader = ExtResource("shader_topfade")
+[ext_resource type="Texture2D" uid="uid://dq5e5rpgg7q7" path="res://ui/dialogue/panel_bg.png" id="tex_panel_bg"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_rough"]
 shader = ExtResource("shader_rough")
 shader_parameter/roughness = 0.6
 
-[node name="DialogueContent" type="Control"]
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_topfade"]
+shader = ExtResource("shader_topfade")
+
+[node name="DialogueContent" type="Control" unique_id=504084668]
+layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -35,8 +36,8 @@ _skillCheckEntryScene = ExtResource("9")
 _characterHeaderScene = ExtResource("12")
 _choiceEntryScene = ExtResource("13")
 
-[node name="Background" type="ColorRect" parent="."]
-anchors_preset = 15
+[node name="Background" type="ColorRect" parent="." unique_id=887435366]
+layout_mode = 0
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
@@ -44,24 +45,24 @@ grow_vertical = 2
 mouse_filter = 2
 color = Color(0.04, 0.04, 0.04, 0.97)
 
-[node name="PanelBorder" type="NinePatchRect" parent="."]
-layout_mode = 3
+[node name="PanelBorder" type="NinePatchRect" parent="." unique_id=1988759897]
+material = SubResource("ShaderMaterial_rough")
+layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-mouse_filter = 2
+texture = ExtResource("tex_panel_bg")
 patch_margin_left = 20
 patch_margin_top = 20
 patch_margin_right = 20
 patch_margin_bottom = 20
-texture = ExtResource("tex_panel_bg")
-material = SubResource("ShaderMaterial_rough")
 
-[node name="PinnedHeader" type="Control" parent="."]
+[node name="PinnedHeader" type="Control" parent="." unique_id=674679890]
 clip_contents = true
-layout_mode = 3
+layout_mode = 1
+anchors_preset = 10
 anchor_right = 1.0
 offset_left = 16.0
 offset_top = 20.0
@@ -71,8 +72,8 @@ grow_horizontal = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
-[node name="ScrollContainer" type="ScrollContainer" parent="."]
-anchors_preset = 15
+[node name="ScrollContainer" type="ScrollContainer" parent="." unique_id=1798618816]
+layout_mode = 0
 anchor_right = 1.0
 anchor_bottom = 1.0
 offset_left = 16.0
@@ -83,16 +84,23 @@ grow_horizontal = 2
 grow_vertical = 2
 vertical_scroll_mode = 3
 
-[node name="DialogStack" type="VBoxContainer" parent="ScrollContainer"]
+[node name="MarginContainer" type="MarginContainer" parent="ScrollContainer" unique_id=182842638]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/margin_left = 24
+theme_override_constants/margin_right = 24
+
+[node name="DialogStack" type="VBoxContainer" parent="ScrollContainer/MarginContainer" unique_id=1863271952]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 4
 theme = ExtResource("7")
 theme_override_constants/separation = 32
 
-[node name="TopFade" type="ColorRect" parent="."]
+[node name="TopFade" type="ColorRect" parent="." unique_id=1195387597]
 material = SubResource("ShaderMaterial_topfade")
-layout_mode = 3
+layout_mode = 1
+anchors_preset = 10
 anchor_right = 1.0
 offset_left = 16.0
 offset_top = 187.0
@@ -102,8 +110,9 @@ grow_horizontal = 2
 mouse_filter = 2
 color = Color(0, 0, 0, 1)
 
-[node name="StatusBar" type="HBoxContainer" parent="."]
-layout_mode = 3
+[node name="StatusBar" type="HBoxContainer" parent="." unique_id=2062395444]
+layout_mode = 1
+anchors_preset = 12
 anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -114,36 +123,35 @@ offset_bottom = -12.0
 grow_horizontal = 2
 grow_vertical = 0
 
-[node name="StatusLeft" type="Label" parent="StatusBar"]
+[node name="StatusLeft" type="Label" parent="StatusBar" unique_id=520543575]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_type_variation = &"StatusText"
 text = "STATUS - STABLE"
 
-[node name="StatusRight" type="Label" parent="StatusBar"]
+[node name="StatusRight" type="Label" parent="StatusBar" unique_id=560611496]
 layout_mode = 2
 theme_type_variation = &"StatusText"
 text = "LINK - 5008  ■ ■ ■"
 
-[node name="GrainOverlay" type="TextureRect" parent="."]
-layout_mode = 3
+[node name="GrainOverlay" type="TextureRect" parent="." unique_id=1234226802]
+modulate = Color(1, 1, 1, 0.07)
+layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
-modulate = Color(1, 1, 1, 0.07)
 texture = ExtResource("tex_grain")
-stretch_mode = 0
 
-[node name="YarnBridge" type="Node" parent="." node_paths=PackedStringArray("dialogueRunner")]
+[node name="YarnBridge" type="Node" parent="." unique_id=2005573604 node_paths=PackedStringArray("dialogueRunner")]
 script = ExtResource("2")
 dialogueRunner = NodePath("../DialogueRunnerNode")
 
-[node name="DialogueRunnerNode" type="Control" parent="." node_paths=PackedStringArray("variableStorage", "lineProvider")]
+[node name="DialogueRunnerNode" type="Control" parent="." unique_id=1459551933 node_paths=PackedStringArray("variableStorage", "lineProvider")]
 visible = false
-layout_mode = 3
+layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -154,12 +162,10 @@ script = ExtResource("3")
 yarnProject = ExtResource("6")
 variableStorage = NodePath("../InMemoryVariableStorage")
 lineProvider = NodePath("../TextLineProvider")
-autoStart = false
-startNode = ""
 
-[node name="InMemoryVariableStorage" type="Node" parent="."]
+[node name="InMemoryVariableStorage" type="Node" parent="." unique_id=1287325010]
 script = ExtResource("4")
 
-[node name="TextLineProvider" type="Node" parent="."]
+[node name="TextLineProvider" type="Node" parent="." unique_id=1694328430]
 script = ExtResource("5")
 YarnProject = ExtResource("6")

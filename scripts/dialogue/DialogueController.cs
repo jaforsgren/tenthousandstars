@@ -60,7 +60,7 @@ public partial class DialogueController : Node
 
 	public override void _Ready()
 	{
-		_dialogStack = GetNode<VBoxContainer>("ScrollContainer/DialogStack");
+		_dialogStack = GetNode<VBoxContainer>("ScrollContainer/MarginContainer/DialogStack");
 		_scrollContainer = GetNode<ScrollContainer>("ScrollContainer");
 		_pinnedHeader = GetNode<Control>("PinnedHeader");
 		_bridge = GetNode<YarnBridge>("YarnBridge");

@@ -20,12 +20,12 @@ namespace Tts.Dialogue;
 /// </summary>
 public static class MarkupParser
 {
-	private const float NormalDelay = 0.04f;
+	private const float NormalDelay = 0.02f;
 	private const float SpaceDelay = 0.008f;
 	private const float CommaDelay = 0.10f;
 	private const float PunctuationDelay = 0.20f;
 	private const float SlowMultiplier = 2.5f;
-	private const float FastMultiplier = 0.25f;
+	private const float FastMultiplier = 0.1f;
 
 	public readonly record struct ParseResult(string BBCodeText, float[] CharDelays);
 
