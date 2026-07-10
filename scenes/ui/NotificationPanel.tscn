@@ -1,39 +1,101 @@
 [gd_scene format=3 uid="uid://bfc704rs71xe2"]
 
 [ext_resource type="Script" uid="uid://bfvdp74xmdry3" path="res://scripts/ui/NotificationPanel.cs" id="1_notp"]
-[ext_resource type="StyleBox" uid="uid://4lpdkaxmvadr" path="res://white_style_box_flat.tres" id="2_6q077"]
 [ext_resource type="Theme" uid="uid://6r4gcsr0tf77" path="res://scenes/ui/UiTheme.tres" id="2_theme"]
-[ext_resource type="LabelSettings" uid="uid://d3o3fa7cpfaii" path="res://scenes/ui/LabelTitle.tres" id="3_lbltitle"]
-[ext_resource type="LabelSettings" uid="uid://dkumsv7cpfaii" path="res://scenes/ui/LabelBody.tres" id="4_lblbody"]
+[ext_resource type="FontFile" uid="uid://bbiiy76g3bcvu" path="res://fonts/IBMPlexMono-Light.ttf" id="font_light"]
+[ext_resource type="FontFile" uid="uid://c6wtytnqyvsf6" path="res://fonts/IBMPlexMono-Thin.ttf" id="font_thin"]
+[ext_resource type="Shader" uid="uid://baamq1g35n0a3" path="res://shaders/rough_border.gdshader" id="shader_rough"]
+[ext_resource type="Texture2D" uid="uid://dlv573ri7oex" path="res://ui/dialogue/divider_line.png" id="tex_divider"]
+[ext_resource type="Texture2D" uid="uid://cxc767mweu6ul" path="res://ui/dialogue/grain_overlay.png" id="tex_grain"]
+[ext_resource type="Texture2D" uid="uid://dq5e5rpgg7q7" path="res://ui/dialogue/panel_bg.png" id="tex_panel_bg"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_panel"]
+content_margin_left = 0.0
+content_margin_top = 0.0
+content_margin_right = 0.0
+content_margin_bottom = 0.0
+bg_color = Color(0.04, 0.04, 0.04, 0.96)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_rough"]
+shader = ExtResource("shader_rough")
+shader_parameter/roughness = 0.35
+
+[sub_resource type="LabelSettings" id="LabelSettings_title"]
+line_spacing = 0.0
+font = ExtResource("font_light")
+font_size = 32
+font_color = Color(0.9, 0.9, 0.9, 1)
+
+[sub_resource type="LabelSettings" id="LabelSettings_body"]
+line_spacing = 0.0
+font = ExtResource("font_thin")
+font_size = 24
+font_color = Color(0.72, 0.72, 0.72, 1)
 
 [node name="NotificationPanel" type="PanelContainer" unique_id=1186808605]
 z_index = 99
 custom_minimum_size = Vector2(240, 0)
-offset_top = 194.0
-offset_right = 240.0
-offset_bottom = 294.0
 theme = ExtResource("2_theme")
-theme_override_styles/panel = ExtResource("2_6q077")
+theme_override_styles/panel = SubResource("StyleBoxFlat_panel")
 script = ExtResource("1_notp")
 PreviewInEditor = true
 
-[node name="Content" type="Control" parent="." unique_id=1186808606]
+[node name="PanelBorder" type="NinePatchRect" parent="." unique_id=990002001]
+material = SubResource("ShaderMaterial_rough")
 layout_mode = 2
+texture = ExtResource("tex_panel_bg")
+patch_margin_left = 14
+patch_margin_top = 14
+patch_margin_right = 14
+patch_margin_bottom = 14
 
-[node name="Title" type="Label" parent="Content" unique_id=1037142273]
+[node name="ContentPad" type="MarginContainer" parent="." unique_id=990002002]
+layout_mode = 2
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_top = 14
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_bottom = 14
+
+[node name="ContentLayout" type="VBoxContainer" parent="ContentPad" unique_id=990002003]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 8
+
+[node name="TitleRow" type="HBoxContainer" parent="ContentPad/ContentLayout" unique_id=990002004]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="AccentBar" type="ColorRect" parent="ContentPad/ContentLayout/TitleRow" unique_id=990002005]
+custom_minimum_size = Vector2(3, 0)
+layout_mode = 2
+size_flags_vertical = 3
+color = Color(0.91, 0.55, 0.1, 1)
+
+[node name="Title" type="Label" parent="ContentPad/ContentLayout/TitleRow" unique_id=1037142273]
 unique_name_in_owner = true
-layout_mode = 0
-offset_right = 220.0
-offset_bottom = 20.0
+layout_mode = 2
+size_flags_horizontal = 3
 text = "Mission Brief"
-label_settings = ExtResource("3_lbltitle")
+label_settings = SubResource("LabelSettings_title")
+uppercase = true
 
-[node name="Description" type="Label" parent="Content" unique_id=1037142274]
+[node name="Divider" type="TextureRect" parent="ContentPad/ContentLayout" unique_id=990002006]
+custom_minimum_size = Vector2(0, 2)
+layout_mode = 2
+size_flags_horizontal = 3
+mouse_filter = 2
+texture = ExtResource("tex_divider")
+
+[node name="Description" type="Label" parent="ContentPad/ContentLayout" unique_id=1037142274]
 unique_name_in_owner = true
-layout_mode = 0
-offset_top = 24.0
-offset_right = 220.0
-offset_bottom = 80.0
+layout_mode = 2
 text = "Eliminate all enemy factions before they consolidate the outer systems."
-label_settings = ExtResource("4_lblbody")
+label_settings = SubResource("LabelSettings_body")
 autowrap_mode = 3
+
+[node name="GrainOverlay" type="TextureRect" parent="." unique_id=990002007]
+visible = false
+modulate = Color(1, 1, 1, 0.07)
+layout_mode = 2
+mouse_filter = 2
+texture = ExtResource("tex_grain")

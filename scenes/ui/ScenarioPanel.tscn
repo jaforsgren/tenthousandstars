@@ -2,8 +2,35 @@
 
 [ext_resource type="Script" uid="uid://8jrsy4k1upkm" path="res://scripts/ui/ScenarioPanel.cs" id="1_scrp"]
 [ext_resource type="Theme" uid="uid://6r4gcsr0tf77" path="res://scenes/ui/UiTheme.tres" id="2_theme"]
-[ext_resource type="LabelSettings" uid="uid://d3o3fa7cpfaii" path="res://scenes/ui/LabelTitle.tres" id="3_lbltitle"]
-[ext_resource type="LabelSettings" uid="uid://dkumsv7cpfaii" path="res://scenes/ui/LabelBody.tres" id="4_lblbody"]
+[ext_resource type="Shader" uid="uid://baamq1g35n0a3" path="res://shaders/rough_border.gdshader" id="shader_rough"]
+[ext_resource type="Texture2D" uid="uid://dq5e5rpgg7q7" path="res://ui/dialogue/panel_bg.png" id="tex_panel_bg"]
+[ext_resource type="Texture2D" uid="uid://cxc767mweu6ul" path="res://ui/dialogue/grain_overlay.png" id="tex_grain"]
+[ext_resource type="Texture2D" uid="uid://dlv573ri7oex" path="res://ui/dialogue/divider_line.png" id="tex_divider"]
+[ext_resource type="FontFile" uid="uid://bbiiy76g3bcvu" path="res://fonts/IBMPlexMono-Light.ttf" id="font_light"]
+[ext_resource type="FontFile" uid="uid://c6wtytnqyvsf6" path="res://fonts/IBMPlexMono-Thin.ttf" id="font_thin"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_rough"]
+shader = ExtResource("shader_rough")
+shader_parameter/roughness = 0.45
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_panel"]
+content_margin_left = 0.0
+content_margin_top = 0.0
+content_margin_right = 0.0
+content_margin_bottom = 0.0
+bg_color = Color(0.04, 0.04, 0.04, 0.97)
+
+[sub_resource type="LabelSettings" id="LabelSettings_title"]
+font = ExtResource("font_light")
+font_size = 14
+font_color = Color(0.9, 0.9, 0.9, 1)
+line_spacing = 0.0
+
+[sub_resource type="LabelSettings" id="LabelSettings_body"]
+font = ExtResource("font_thin")
+font_size = 10
+font_color = Color(0.78, 0.78, 0.78, 1)
+line_spacing = 2.0
 
 [node name="ScenarioPanel" type="Control" unique_id=901000001]
 z_index = 99
@@ -17,14 +44,13 @@ theme = ExtResource("2_theme")
 script = ExtResource("1_scrp")
 
 [node name="Background" type="ColorRect" parent="." unique_id=901000002]
-visible = false
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-color = Color(0, 0, 0, 0.8)
+color = Color(0, 0, 0, 0.6)
 
 [node name="PanelBox" type="PanelContainer" parent="." unique_id=901000003]
 layout_mode = 0
@@ -32,36 +58,89 @@ offset_left = 20.0
 offset_top = 50.0
 offset_right = 460.0
 offset_bottom = 670.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_panel")
+
+[node name="PanelBorder" type="NinePatchRect" parent="PanelBox" unique_id=990004001]
+layout_mode = 2
+material = SubResource("ShaderMaterial_rough")
+mouse_filter = 2
+texture = ExtResource("tex_panel_bg")
+patch_margin_left = 18
+patch_margin_top = 18
+patch_margin_right = 18
+patch_margin_bottom = 18
 
 [node name="Layout" type="VBoxContainer" parent="PanelBox" unique_id=901000004]
 layout_mode = 2
+theme_override_constants/separation = 10
 
-[node name="Title" type="Label" parent="PanelBox/Layout" unique_id=901000005]
+[node name="TitlePad" type="MarginContainer" parent="PanelBox/Layout" unique_id=990004003]
+layout_mode = 2
+theme_override_constants/margin_left = 18
+theme_override_constants/margin_top = 18
+theme_override_constants/margin_right = 18
+theme_override_constants/margin_bottom = 0
+
+[node name="Title" type="Label" parent="PanelBox/Layout/TitlePad" unique_id=901000005]
 layout_mode = 2
 text = "Scenario Title"
-label_settings = ExtResource("3_lbltitle")
+label_settings = SubResource("LabelSettings_title")
+uppercase = true
 
-[node name="TitleSep" type="HSeparator" parent="PanelBox/Layout" unique_id=901000006]
+[node name="TitleSep" type="TextureRect" parent="PanelBox/Layout" unique_id=901000006]
+custom_minimum_size = Vector2(0, 2)
 layout_mode = 2
+size_flags_horizontal = 3
+mouse_filter = 2
+texture = ExtResource("tex_divider")
+stretch_mode = 0
 
 [node name="ScrollArea" type="ScrollContainer" parent="PanelBox/Layout" unique_id=901000007]
 custom_minimum_size = Vector2(0, 440)
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
+horizontal_scroll_mode = 3
 
-[node name="StageText" type="Label" parent="PanelBox/Layout/ScrollArea" unique_id=901000008]
+[node name="StageTextPad" type="MarginContainer" parent="PanelBox/Layout/ScrollArea" unique_id=990004004]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/margin_left = 18
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 18
+theme_override_constants/margin_bottom = 10
+
+[node name="StageText" type="Label" parent="PanelBox/Layout/ScrollArea/StageTextPad" unique_id=901000008]
 layout_mode = 2
 size_flags_horizontal = 3
 text = "Stage text goes here."
-label_settings = ExtResource("4_lblbody")
+label_settings = SubResource("LabelSettings_body")
 autowrap_mode = 3
 justification_flags = 171
 
-[node name="ChoiceSep" type="HSeparator" parent="PanelBox/Layout" unique_id=901000009]
+[node name="ChoiceSep" type="TextureRect" parent="PanelBox/Layout" unique_id=901000009]
+custom_minimum_size = Vector2(0, 2)
 layout_mode = 2
+size_flags_horizontal = 3
+mouse_filter = 2
+texture = ExtResource("tex_divider")
+stretch_mode = 0
 
-[node name="Choices" type="HBoxContainer" parent="PanelBox/Layout" unique_id=901000010]
+[node name="ChoicesPad" type="MarginContainer" parent="PanelBox/Layout" unique_id=990004005]
+layout_mode = 2
+theme_override_constants/margin_left = 18
+theme_override_constants/margin_top = 0
+theme_override_constants/margin_right = 18
+theme_override_constants/margin_bottom = 18
+
+[node name="Choices" type="HBoxContainer" parent="PanelBox/Layout/ChoicesPad" unique_id=901000010]
 layout_mode = 2
 size_flags_horizontal = 3
 alignment = 1
+
+[node name="GrainOverlay" type="TextureRect" parent="PanelBox" unique_id=990004002]
+layout_mode = 2
+modulate = Color(1, 1, 1, 0.07)
+mouse_filter = 2
+texture = ExtResource("tex_grain")
+stretch_mode = 0

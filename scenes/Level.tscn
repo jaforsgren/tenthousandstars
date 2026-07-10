@@ -102,6 +102,7 @@ script = ExtResource("1")
 PreviewSeed = 4
 
 [node name="CameraController" type="Camera2D" parent="." unique_id=400400400]
+position = Vector2(360, 644)
 script = ExtResource("script_camera")
 
 [node name="Background" type="CanvasLayer" parent="." unique_id=200200200]
@@ -157,6 +158,7 @@ grow_vertical = 2
 mouse_filter = 2
 
 [node name="GridOverlay" type="ColorRect" parent="PostProcess" unique_id=300300302]
+visible = false
 material = SubResource("ShaderMaterial_grid")
 anchors_preset = 15
 anchor_right = 1.0
@@ -191,10 +193,15 @@ grow_horizontal = 1
 
 [node name="CountdownTimerNode" parent="PersistentUI" unique_id=100100102 instance=ExtResource("7_timer")]
 unique_name_in_owner = true
-offset_left = -108.0
-offset_top = 10.0
-offset_right = -28.0
-offset_bottom = 46.0
+anchors_preset = -1
+anchor_left = 0.99000007
+anchor_top = 0.008
+anchor_right = 0.99000007
+anchor_bottom = 0.008
+offset_left = -175.80005
+offset_top = -0.24000072
+offset_right = -20.800049
+offset_bottom = 35.76
 
 [node name="LevelUi" type="Node" parent="." unique_id=500500500]
 unique_name_in_owner = true
@@ -216,39 +223,70 @@ color = Color(0, 0, 0, 1)
 
 [node name="PanelLayer" type="CanvasLayer" parent="LevelUi" unique_id=500500503]
 layer = 10
-
-[node name="SelectionPanel" parent="LevelUi/PanelLayer" unique_id=500500504 instance=ExtResource("ui_sel")]
-unique_name_in_owner = true
 visible = false
-offset_left = 270.0
-offset_top = 100.0
-offset_right = 470.0
-offset_bottom = 116.0
 
-[node name="AiSystemPanel" parent="LevelUi/PanelLayer" unique_id=500500505 instance=ExtResource("ui_ai")]
-unique_name_in_owner = true
-visible = false
-offset_left = 270.0
-offset_top = 100.0
-offset_right = 470.0
+[node name="PanelLayout" type="Control" parent="LevelUi/PanelLayer" unique_id=1419292228]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
 
-[node name="ChatWindowNode" parent="LevelUi/PanelLayer" unique_id=500500506 instance=ExtResource("ui_chat")]
+[node name="SelectionPanel" parent="LevelUi/PanelLayer/PanelLayout" unique_id=500500504 instance=ExtResource("ui_sel")]
 unique_name_in_owner = true
+layout_mode = 0
+anchor_right = 1.0
 offset_left = 8.0
-offset_top = 658.0
-offset_right = 472.0
-offset_bottom = 712.0
+offset_top = 77.0
+offset_right = -8.0
+offset_bottom = 210.0
+
+[node name="AiSystemPanel" parent="LevelUi/PanelLayer/PanelLayout" unique_id=500500505 instance=ExtResource("ui_ai")]
+unique_name_in_owner = true
+visible = false
+layout_mode = 0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 8.0
+offset_top = 10.0
+offset_right = -8.0
+offset_bottom = 227.0
+
+[node name="ChatWindowNode" parent="LevelUi/PanelLayer/PanelLayout" unique_id=500500506 instance=ExtResource("ui_chat")]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 8.0
+offset_top = -62.0
+offset_right = -8.0
 
 [node name="NotificationLayer" type="CanvasLayer" parent="LevelUi" unique_id=500500507]
 layer = 11
 
-[node name="NotificationPanel" parent="LevelUi/NotificationLayer" unique_id=500500508 instance=ExtResource("ui_notif")]
+[node name="NotifLayout" type="Control" parent="LevelUi/NotificationLayer" unique_id=2068455878]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="NotificationPanel" parent="LevelUi/NotificationLayer/NotifLayout" unique_id=500500508 instance=ExtResource("ui_notif")]
 unique_name_in_owner = true
 visible = false
-offset_left = 230.0
-offset_top = 100.0
-offset_right = 470.0
-offset_bottom = 386.0
+layout_mode = 0
+anchor_right = 1.0
+offset_left = 8.0
+offset_top = 79.0
+offset_right = -8.0
+offset_bottom = 292.0
 
 [node name="ActionMenuLayer" type="CanvasLayer" parent="LevelUi" unique_id=500500509]
 layer = 12
@@ -262,5 +300,17 @@ z_index = 50
 layer = 13
 visible = false
 
-[node name="ScenarioPanel" parent="LevelUi/ScenarioLayer" unique_id=500500512 instance=ExtResource("ui_scenario")]
+[node name="ScenarioLayout" type="Control" parent="LevelUi/ScenarioLayer" unique_id=158598759]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="ScenarioPanel" parent="LevelUi/ScenarioLayer/ScenarioLayout" unique_id=500500512 instance=ExtResource("ui_scenario")]
 unique_name_in_owner = true
+layout_mode = 1
+offset_left = 8.0
+offset_right = -8.0

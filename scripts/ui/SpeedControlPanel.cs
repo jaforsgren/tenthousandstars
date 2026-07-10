@@ -11,6 +11,12 @@ enum SpeedChange
 
 public partial class SpeedControlPanel : PanelContainer
 {
+	[Export]
+	public Texture2D PauseIcon { get; set; } = null!;
+
+	[Export]
+	public Texture2D PlayIcon { get; set; } = null!;
+
 	private Label _speedLabel = null!;
 	private Button _playPauseButton = null!;
 	private Button _halfSpeedButton = null!;
@@ -71,12 +77,12 @@ public partial class SpeedControlPanel : PanelContainer
 	{
 		if (GameSpeed.IsPlayerPaused)
 		{
-			_playPauseButton.Text = "▶";
+			_playPauseButton.Icon = PlayIcon;
 			_speedLabel.Text = "||";
 		}
 		else
 		{
-			_playPauseButton.Text = "||";
+			_playPauseButton.Icon = PauseIcon;
 			_speedLabel.Text = GameSpeed.Speed switch
 			{
 				0.5f => "½×",

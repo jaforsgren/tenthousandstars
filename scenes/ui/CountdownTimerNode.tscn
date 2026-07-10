@@ -11,20 +11,20 @@ layout_mode = 3
 anchors_preset = 1
 anchor_left = 1.0
 anchor_right = 1.0
-offset_left = -102.0
+offset_left = -187.0
 offset_top = 2.0
-offset_bottom = 38.0
+offset_bottom = 48.0
 grow_horizontal = 0
 script = ExtResource("1_script")
 
 [node name="HBoxContainer" type="HBoxContainer" parent="." unique_id=1533691360]
 layout_mode = 1
 anchors_preset = -1
-anchor_right = 1.0
+anchor_right = 1.0250001
 anchor_bottom = 0.5
-offset_left = 0.046001434
-offset_right = -4096.0
-offset_bottom = 4.0
+offset_left = -99.000015
+offset_right = -3.6750336
+offset_bottom = 22.0
 theme = SubResource("Theme_jxxf3")
 
 [node name="LabelTitle" type="Label" parent="HBoxContainer" unique_id=851314175]
@@ -38,6 +38,6 @@ horizontal_alignment = 2
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_colors/font_color = Color(0.91, 0.63, 0.13, 1)
-theme_override_font_sizes/font_size = 15
+theme_override_font_sizes/font_size = 32
 text = "02:30"
 horizontal_alignment = 2

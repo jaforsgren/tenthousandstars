@@ -17,9 +17,9 @@ public partial class ScenarioPanel : Control
 
 	public override void _Ready()
 	{
-		_titleLabel = GetNode<Label>("PanelBox/Layout/Title");
-		_stageText = GetNode<Label>("PanelBox/Layout/ScrollArea/StageText");
-		_choiceContainer = GetNode<HBoxContainer>("PanelBox/Layout/Choices");
+		_titleLabel = GetNode<Label>("PanelBox/Layout/TitlePad/Title");
+		_stageText = GetNode<Label>("PanelBox/Layout/ScrollArea/StageTextPad/StageText");
+		_choiceContainer = GetNode<HBoxContainer>("PanelBox/Layout/ChoicesPad/Choices");
 	}
 
 	public void Show(ScenarioDefinition scenario, Vector2 viewportSize, Action onClose)

@@ -39,14 +39,14 @@ public partial class SelectionPanel : PanelContainer
 	{
 		CustomMinimumSize = new Vector2(PanelWidth, 0f);
 
-		_scrollArea = GetNode<ScrollContainer>("ScrollArea");
-		_content = GetNode<VBoxContainer>("ScrollArea/Content");
+		_scrollArea = GetNode<ScrollContainer>("ContentPad/ContentLayout/ScrollArea");
+		_content = GetNode<VBoxContainer>("ContentPad/ContentLayout/ScrollArea/Content");
 		_titleLabel = GetNode<Label>("%Title");
 		_descriptionLabel = GetNode<Label>("%Description");
-		_scenarioSection = GetNode<VBoxContainer>("ScrollArea/Content/ScenarioSection");
-		_scenarioIntroLabel = GetNode<Label>("ScrollArea/Content/ScenarioSection/ScenarioIntro");
-		_enterButton = GetNode<Button>("ScrollArea/Content/ScenarioSection/EnterButton");
-		_ignoreButton = GetNode<Button>("ScrollArea/Content/ScenarioSection/IgnoreButton");
+		_scenarioSection = GetNode<VBoxContainer>("ContentPad/ContentLayout/ScrollArea/Content/ScenarioSection");
+		_scenarioIntroLabel = GetNode<Label>("ContentPad/ContentLayout/ScrollArea/Content/ScenarioSection/ScenarioIntro");
+		_enterButton = GetNode<Button>("ContentPad/ContentLayout/ScrollArea/Content/ScenarioSection/EnterButton");
+		_ignoreButton = GetNode<Button>("ContentPad/ContentLayout/ScrollArea/Content/ScenarioSection/IgnoreButton");
 
 		_enterButton.Pressed += () => _onEnterAction?.Invoke();
 		_ignoreButton.Pressed += () => _onIgnoreAction?.Invoke();

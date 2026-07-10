@@ -2,59 +2,125 @@
 
 [ext_resource type="Script" uid="uid://ulg8tdj54luv" path="res://scripts/ui/SelectionPanel.cs" id="1_selp"]
 [ext_resource type="Theme" uid="uid://6r4gcsr0tf77" path="res://scenes/ui/UiTheme.tres" id="2_theme"]
-[ext_resource type="LabelSettings" uid="uid://d3o3fa7cpfaii" path="res://scenes/ui/LabelTitle.tres" id="3_lbltitle"]
-[ext_resource type="LabelSettings" uid="uid://dkumsv7cpfaii" path="res://scenes/ui/LabelBody.tres" id="4_lblbody"]
+[ext_resource type="FontFile" uid="uid://bbiiy76g3bcvu" path="res://fonts/IBMPlexMono-Light.ttf" id="font_light"]
+[ext_resource type="FontFile" uid="uid://c6wtytnqyvsf6" path="res://fonts/IBMPlexMono-Thin.ttf" id="font_thin"]
+[ext_resource type="Shader" uid="uid://baamq1g35n0a3" path="res://shaders/rough_border.gdshader" id="shader_rough"]
+[ext_resource type="Texture2D" uid="uid://dlv573ri7oex" path="res://ui/dialogue/divider_line.png" id="tex_divider"]
+[ext_resource type="Texture2D" uid="uid://cxc767mweu6ul" path="res://ui/dialogue/grain_overlay.png" id="tex_grain"]
+[ext_resource type="Texture2D" uid="uid://dq5e5rpgg7q7" path="res://ui/dialogue/panel_bg.png" id="tex_panel_bg"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_panel"]
+content_margin_left = 0.0
+content_margin_top = 0.0
+content_margin_right = 0.0
+content_margin_bottom = 0.0
+bg_color = Color(0.04, 0.04, 0.04, 0.96)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_rough"]
+shader = ExtResource("shader_rough")
+shader_parameter/roughness = 0.35
+
+[sub_resource type="LabelSettings" id="LabelSettings_title"]
+line_spacing = 0.0
+font = ExtResource("font_light")
+font_size = 12
+font_color = Color(0.9, 0.9, 0.9, 1)
+
+[sub_resource type="LabelSettings" id="LabelSettings_body"]
+line_spacing = 0.0
+font = ExtResource("font_thin")
+font_size = 28
+font_color = Color(0.72, 0.72, 0.72, 1)
 
 [node name="SelectionPanel" type="PanelContainer" unique_id=532847577]
 z_index = 99
 z_as_relative = false
 custom_minimum_size = Vector2(200, 0)
 theme = ExtResource("2_theme")
+theme_override_styles/panel = SubResource("StyleBoxFlat_panel")
 script = ExtResource("1_selp")
 PreviewInEditor = true
 
-[node name="ScrollArea" type="ScrollContainer" parent="." unique_id=100000003]
+[node name="PanelBorder" type="NinePatchRect" parent="." unique_id=990001001]
+material = SubResource("ShaderMaterial_rough")
 layout_mode = 2
+texture = ExtResource("tex_panel_bg")
+patch_margin_left = 14
+patch_margin_top = 14
+patch_margin_right = 14
+patch_margin_bottom = 14
 
-[node name="Content" type="VBoxContainer" parent="ScrollArea" unique_id=532847578]
+[node name="ContentPad" type="MarginContainer" parent="." unique_id=990001002]
+layout_mode = 2
+theme_override_constants/margin_left = 14
+theme_override_constants/margin_top = 12
+theme_override_constants/margin_right = 14
+theme_override_constants/margin_bottom = 12
+
+[node name="ContentLayout" type="VBoxContainer" parent="ContentPad" unique_id=990001003]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/separation = 8
+
+[node name="Title" type="Label" parent="ContentPad/ContentLayout" unique_id=1298544557]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Test Prime"
+label_settings = SubResource("LabelSettings_title")
+uppercase = true
+
+[node name="Divider" type="TextureRect" parent="ContentPad/ContentLayout" unique_id=990001004]
+custom_minimum_size = Vector2(0, 2)
+layout_mode = 2
+size_flags_horizontal = 3
+mouse_filter = 2
+texture = ExtResource("tex_divider")
+
+[node name="ScrollArea" type="ScrollContainer" parent="ContentPad/ContentLayout" unique_id=100000003]
+layout_mode = 2
+size_flags_vertical = 3
+horizontal_scroll_mode = 3
+
+[node name="Content" type="VBoxContainer" parent="ContentPad/ContentLayout/ScrollArea" unique_id=532847578]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 4
+theme_override_constants/separation = 8
 
-[node name="Title" type="Label" parent="ScrollArea/Content" unique_id=1298544557]
+[node name="Description" type="Label" parent="ContentPad/ContentLayout/ScrollArea/Content" unique_id=1298544558]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 20)
-layout_mode = 2
-text = "Test Prime"
-label_settings = ExtResource("3_lbltitle")
-
-[node name="Description" type="Label" parent="ScrollArea/Content" unique_id=1298544558]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 20)
 layout_mode = 2
 text = "A contested frontier world. Rich in ore deposits but scarred by old campaigns."
-label_settings = ExtResource("4_lblbody")
+label_settings = SubResource("LabelSettings_body")
 autowrap_mode = 3
 
-[node name="ScenarioSection" type="VBoxContainer" parent="ScrollArea/Content" unique_id=1298544600]
+[node name="ScenarioSection" type="VBoxContainer" parent="ContentPad/ContentLayout/ScrollArea/Content" unique_id=1298544600]
 visible = false
 layout_mode = 2
+theme_override_constants/separation = 6
 
-[node name="ScenarioSep" type="HSeparator" parent="ScrollArea/Content/ScenarioSection" unique_id=1298544601]
+[node name="ScenarioSep" type="HSeparator" parent="ContentPad/ContentLayout/ScrollArea/Content/ScenarioSection" unique_id=1298544601]
 layout_mode = 2
 
-[node name="ScenarioIntro" type="Label" parent="ScrollArea/Content/ScenarioSection" unique_id=1298544602]
+[node name="ScenarioIntro" type="Label" parent="ContentPad/ContentLayout/ScrollArea/Content/ScenarioSection" unique_id=1298544602]
 layout_mode = 2
 text = "Scenario intro text."
-label_settings = ExtResource("4_lblbody")
+label_settings = SubResource("LabelSettings_body")
 autowrap_mode = 3
 
-[node name="EnterButton" type="Button" parent="ScrollArea/Content/ScenarioSection" unique_id=1298544603]
+[node name="EnterButton" type="Button" parent="ContentPad/ContentLayout/ScrollArea/Content/ScenarioSection" unique_id=1298544603]
 layout_mode = 2
 size_flags_horizontal = 3
-text = "Investigate"
+text = "INVESTIGATE"
 
-[node name="IgnoreButton" type="Button" parent="ScrollArea/Content/ScenarioSection" unique_id=1298544604]
+[node name="IgnoreButton" type="Button" parent="ContentPad/ContentLayout/ScrollArea/Content/ScenarioSection" unique_id=1298544604]
 layout_mode = 2
 size_flags_horizontal = 3
-text = "Ignore"
+text = "IGNORE"
+
+[node name="GrainOverlay" type="TextureRect" parent="." unique_id=990001005]
+modulate = Color(1, 1, 1, 0.07)
+layout_mode = 2
+mouse_filter = 2
+texture = ExtResource("tex_grain")

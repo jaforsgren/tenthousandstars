@@ -2,61 +2,116 @@
 
 [ext_resource type="Script" uid="uid://byocfpqa83mbg" path="res://scripts/ui/AiSystemPanel.cs" id="1_aisys"]
 [ext_resource type="Theme" uid="uid://6r4gcsr0tf77" path="res://scenes/ui/UiTheme.tres" id="2_theme"]
-[ext_resource type="LabelSettings" uid="uid://dkumsv7cpfaii" path="res://scenes/ui/LabelBody.tres" id="3_lblbody"]
+[ext_resource type="FontFile" uid="uid://bbiiy76g3bcvu" path="res://fonts/IBMPlexMono-Light.ttf" id="font_light"]
+[ext_resource type="FontFile" uid="uid://c6wtytnqyvsf6" path="res://fonts/IBMPlexMono-Thin.ttf" id="font_thin"]
+[ext_resource type="Shader" uid="uid://baamq1g35n0a3" path="res://shaders/rough_border.gdshader" id="shader_rough"]
+[ext_resource type="Texture2D" uid="uid://dlv573ri7oex" path="res://ui/dialogue/divider_line.png" id="tex_divider"]
+[ext_resource type="Texture2D" uid="uid://cxc767mweu6ul" path="res://ui/dialogue/grain_overlay.png" id="tex_grain"]
+[ext_resource type="Texture2D" uid="uid://dq5e5rpgg7q7" path="res://ui/dialogue/panel_bg.png" id="tex_panel_bg"]
 
-[sub_resource type="LabelSettings" id="LabelSettings_bdi1f"]
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_panel"]
+content_margin_left = 0.0
+content_margin_top = 0.0
+content_margin_right = 0.0
+content_margin_bottom = 0.0
+bg_color = Color(0.04, 0.04, 0.04, 0.96)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_rough"]
+shader = ExtResource("shader_rough")
+shader_parameter/roughness = 0.35
+
+[sub_resource type="LabelSettings" id="LabelSettings_name"]
 line_spacing = 0.0
-font_size = 12
+font = ExtResource("font_light")
+font_size = 38
+font_color = Color(0.9, 0.9, 0.9, 1)
+
+[sub_resource type="LabelSettings" id="LabelSettings_disposition"]
+line_spacing = 0.0
+font = ExtResource("font_thin")
+font_size = 32
+font_color = Color(0.72, 0.72, 0.72, 1)
+
+[sub_resource type="LabelSettings" id="LabelSettings_description"]
+line_spacing = 0.0
+font = ExtResource("font_thin")
+font_size = 24
+font_color = Color(0.66, 0.66, 0.66, 1)
+
+[sub_resource type="LabelSettings" id="LabelSettings_bark"]
+line_spacing = 0.0
+font = ExtResource("font_thin")
+font_size = 28
+font_color = Color(0.55, 0.55, 0.55, 1)
 
 [node name="AiSystemPanel" type="PanelContainer" unique_id=2037952806]
 z_index = 1
 custom_minimum_size = Vector2(200, 0)
-offset_right = 200.0
-offset_bottom = 116.0
 mouse_filter = 2
 theme = ExtResource("2_theme")
+theme_override_styles/panel = SubResource("StyleBoxFlat_panel")
 script = ExtResource("1_aisys")
 
-[node name="Content" type="Control" parent="." unique_id=2037952807]
+[node name="PanelBorder" type="NinePatchRect" parent="." unique_id=990003001]
+material = SubResource("ShaderMaterial_rough")
 layout_mode = 2
+texture = ExtResource("tex_panel_bg")
+patch_margin_left = 14
+patch_margin_top = 14
+patch_margin_right = 14
+patch_margin_bottom = 14
 
-[node name="Title" type="Label" parent="Content" unique_id=1071300876]
+[node name="ContentPad" type="MarginContainer" parent="." unique_id=990003002]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/margin_left = 14
+theme_override_constants/margin_top = 12
+theme_override_constants/margin_right = 14
+theme_override_constants/margin_bottom = 12
+
+[node name="ContentLayout" type="VBoxContainer" parent="ContentPad" unique_id=990003003]
+layout_mode = 2
+size_flags_horizontal = 3
+mouse_filter = 2
+theme_override_constants/separation = 6
+
+[node name="Title" type="Label" parent="ContentPad/ContentLayout" unique_id=1071300876]
 unique_name_in_owner = true
-layout_mode = 0
-offset_top = -8.0
-offset_right = 180.0
-offset_bottom = 15.0
-theme_override_font_sizes/font_size = 13
+layout_mode = 2
 text = "Title"
+label_settings = SubResource("LabelSettings_name")
+uppercase = true
 
-[node name="Title2" type="Label" parent="Content" unique_id=1589216896]
+[node name="Title2" type="Label" parent="ContentPad/ContentLayout" unique_id=1589216896]
 unique_name_in_owner = true
-layout_mode = 0
-offset_left = 2.0
-offset_top = 15.0
-offset_right = 182.0
-offset_bottom = 29.0
-theme_override_font_sizes/font_size = 8
+layout_mode = 2
 text = "Disposition : Name"
+label_settings = SubResource("LabelSettings_disposition")
+uppercase = true
 
-[node name="Decription" type="Label" parent="Content" unique_id=1563879449]
+[node name="Divider" type="TextureRect" parent="ContentPad/ContentLayout" unique_id=990003004]
+custom_minimum_size = Vector2(0, 2)
+layout_mode = 2
+size_flags_horizontal = 3
+mouse_filter = 2
+texture = ExtResource("tex_divider")
+
+[node name="Decription" type="Label" parent="ContentPad/ContentLayout" unique_id=1563879449]
 unique_name_in_owner = true
-layout_mode = 0
-offset_left = 3.0
-offset_top = 30.0
-offset_right = 183.0
-offset_bottom = 60.0
+layout_mode = 2
 text = "Description"
-label_settings = ExtResource("3_lblbody")
+label_settings = SubResource("LabelSettings_description")
 autowrap_mode = 3
 
-[node name="Bark" type="Label" parent="Content" unique_id=298624608]
+[node name="Bark" type="Label" parent="ContentPad/ContentLayout" unique_id=298624608]
 unique_name_in_owner = true
-layout_mode = 0
-offset_left = 1.0
-offset_top = 74.0
-offset_right = 181.0
-offset_bottom = 94.0
-theme_override_font_sizes/font_size = 10
+layout_mode = 2
 text = "\"Bark\""
-label_settings = SubResource("LabelSettings_bdi1f")
+label_settings = SubResource("LabelSettings_bark")
+autowrap_mode = 3
+
+[node name="GrainOverlay" type="TextureRect" parent="." unique_id=990003005]
+modulate = Color(1, 1, 1, 0.07)
+layout_mode = 2
+mouse_filter = 2
+texture = ExtResource("tex_grain")
