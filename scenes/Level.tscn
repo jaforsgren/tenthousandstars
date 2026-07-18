@@ -190,6 +190,7 @@ offset_top = 0.0
 offset_right = 134.0
 offset_bottom = 43.0
 grow_horizontal = 1
+SpeedIcons = []
 
 [node name="CountdownTimerNode" parent="PersistentUI" unique_id=100100102 instance=ExtResource("7_timer")]
 unique_name_in_owner = true
@@ -265,6 +266,8 @@ anchor_bottom = 1.0
 offset_left = 8.0
 offset_top = -62.0
 offset_right = -8.0
+grow_horizontal = 2
+grow_vertical = 0
 
 [node name="NotificationLayer" type="CanvasLayer" parent="LevelUi" unique_id=500500507]
 layer = 11

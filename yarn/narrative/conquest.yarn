@@ -13,13 +13,7 @@ Me: The {$sector_name} sector. My first command.
 
 Narrator: ( { $date } { $sector_name}. Outpost for {$enemy_faction }, the objective:  {$mission_objective} )
 
-Not a system. Bigger. Messier. A stretch of space stitched together by trade routes, old wars, and decisions no one remembers making.
-
-Narrator: Somewhere between the stars, in the empty space they thought didn't matter, something shifts.
-
-The first coordinated signal from {$enemy_faction} spreads across the sector. Calm. Measured.
-
-It carries the same message to every star: Stand firm.
+Conquer it!
 
 ===
 
@@ -33,53 +27,11 @@ Narrator: {$sector_name} is quieter now.
 Not silent. Just less alive than it was when you arrived.
 Narrator: Mid-campaign status: {$player_faction} has established forward dominance in multiple systems across {$sector_name}. Resistance from {$enemy_faction} persists, but coordination has degraded.
 
-They're still fighting, just not together.
-Narrator: The map is starting to make sense.
-
-Pockets of resistance. Isolated. Reactive. You can see where they'll try to hold, where they'll break, where they're already gone but haven't admitted it yet.
-
-You're closing around them.
-Narrator: Momentum is yours.
-
-Not absolute. Not guaranteed. But real.
-
-Every move they make now is a response. Every decision comes after yours. They've lost the initiative, and they know it.
-
-That knowledge does half the work for you.
-Narrator: They're getting desperate.
-
-You can hear it in their transmissions. Shorter. Sharper. Less certainty behind the words.
-
-Desperation makes them dangerous. Also predictable.
-Narrator: They're holding onto what's left.
-
-You don't spend time thinking about what that means for them.
-
-You can't. Not if you want to finish this.
 Narrator: {$mission_objective} advances.
-
-Not complete. Not yet. But inevitable.
-
-You're no longer testing the sector. You're reshaping it.
-Narrator: There's no hesitation left in you now.
-
-The first strike is always the hardest. After that, it becomes clearer. Simpler. Each system taken reinforces the next decision.
 
 You move because stopping would be the only real mistake.
 Narrator: Date: {$date}. Campaign midpoint logged. Strategic advantage held by {$player_faction}.
 
-Dry words. Accurate ones.
-Narrator: The sector feels different under you now.
-
-Not resisting in the same way. Not pushing back as hard.
-
-Like it's starting to accept the shape you're forcing onto it.
-
-The latest transmission from {$enemy_faction} is fragmented. Urgent. They're trying to hold what's left together.
-
-You almost respect that. Almost.
-
-You issue the next order. And the sector tightens around it.
 ===
 
 title: conquest_end
@@ -92,57 +44,10 @@ Narrator: {$sector_name} doesn't answer to anyone anymore.
 Not in the way it used to. Now it just settles.
 Narrator: Final campaign status: {$player_faction} has established sector-wide control over {$sector_name}. Organized resistance from {$enemy_faction} has ceased. Remaining opposition fragmented, uncoordinated, or evacuated.
 
-There is no front line anymore, only aftermath.
-Narrator: The map has stopped changing.
-
-That's the first thing you notice.
-
 Systems are marked, stabilized, integrated. Trade routes reappear. Fleet positions become administrative rather than tactical. What used to be movement is now placement.
 
-It looks like order even though it feels like exhaustion.
-Narrator: It worked. Not cleanly. Not cheaply. But completely enough to matter.
-
-Every competing calculation resolved in one direction. Every variable forced into alignment. What couldn't be controlled was removed from the equation.
-
-What remains is what you raised.
-Narrator: There is no last battle.
-
-Just a slow recognition that there won't be another.
-
-Signals taper off. Resistance stops sounding like resistance and starts sounding like absence of capacity. The sector stops bracing itself between reports.
-
-And starts breathing again. Carefully.
-Narrator: You receive surrender confirmations. Some formal. Some not. Some don't bother with words at all.
-
-You think about the people who will keep living here under a different flag. About how quickly they will adapt. About how quickly they will pretend it was always this way.
-
-But you don't dwell on it. You can't afford to.
 Narrator: {$mission_objective}: complete.
-
-It feels smaller than it should. Or maybe everything else got larger.
-
-Orders shift from conquest to consolidation. From movement to maintenance. The sector doesn't need to be taken anymore. It needs to be kept.
-Narrator: You are still issuing commands. That doesn't stop. It just changes shape.
-
-Now it's administration. Stability. Quiet enforcement of a reality that no longer has alternatives.
-
-You expected relief but what you get is continuity.
 Narrator: Date: {$date}. Campaign concluded. {$sector_name} recorded as secured territory under {$player_faction} control.
-Narrator: The sector feels different now that it's yours.
-
-Not safe. Not peaceful. Finished.
-
-Like something that stopped struggling and hasn't yet decided what comes after struggle.
-
-There are still scars across the systems. Empty stations. Bombed out cities. Places where something used to resist.
-
-They will remain for a long time.
-
-The last transmission from {$enemy_faction} is not a message. It is silence with structure.
-
-You look at the map of {$sector_name}. It belongs to you.
-
-And for the first time since this began— that doesn't feel like victory.
 ===
 
 title: outro_conquest_win
@@ -152,34 +57,13 @@ Narrator: {$player_faction} — Final War Directive
 Narrator: {$date}
 Narrator: {$sector_name} doesn't answer to anyone anymore.
 
-Not in the way it used to. Now it just settles.
 Narrator: Final campaign status: {$player_faction} has established sector-wide control over {$sector_name}. Organized resistance from {$enemy_faction} has ceased. Remaining opposition fragmented, uncoordinated, or evacuated.
-
-There is no front line anymore, only aftermath.
-Narrator: The map has stopped changing.
-
-Systems are marked, stabilized, integrated. Trade routes reappear. Fleet positions become administrative rather than tactical.
-
-It looks like order even though it feels like exhaustion.
-Narrator: It worked. Not cleanly. Not cheaply. But completely enough to matter.
-
-Every competing calculation resolved in one direction. Every variable forced into alignment. What couldn't be controlled was removed from the equation.
-
-What remains is what you raised.
-Narrator: You are still issuing commands. That doesn't stop. It just changes shape.
 
 Now it's administration. Stability. Quiet enforcement of a reality that no longer has alternatives.
 
 You expected relief but what you get is continuity.
 Narrator: The sector feels different now that it's yours.
 
-Not safe. Not peaceful. Finished.
-
-Like something that stopped struggling and hasn't yet decided what comes after struggle.
-
-The last transmission from {$enemy_faction} is not a message. It is silence with structure.
-
-You look at the map of {$sector_name}. It belongs to you.
 
 And for the first time since this began— that doesn't feel like victory.
 -> New Campaign
@@ -198,9 +82,9 @@ Narrator: Commander,
 {$player_faction} came to conquer. {$missions_won} of {$total_missions} engagements — it was not enough.
 Narrator: {$enemy_faction} denied us the sector. Their phalanxes held where ours broke. Their strategists outpaced our own. We must say it plainly: we were outmatched by kinsmen who learned the same lessons and applied them better.
 
-The civil war continues without us at its center. Another system-state will rise in our place, speak our language, invoke the same ancestors — and remember us as a cautionary verse in their victory songs.
+The civil war continues without us at its center. Another system-state will rise in our place, remember us as a cautionary verse in their victory songs.
 
-We regroup. The ambition remains. The reckoning, too.
+We regroup.
 -> New Campaign
     <<narrative_action "new_campaign">>
 -> Random Missions

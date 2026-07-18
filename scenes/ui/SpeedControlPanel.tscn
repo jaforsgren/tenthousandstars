@@ -2,10 +2,8 @@
 
 [ext_resource type="Script" uid="uid://j4op55in4ik4" path="res://scripts/ui/SpeedControlPanel.cs" id="1_script"]
 [ext_resource type="FontFile" uid="uid://c6wtytnqyvsf6" path="res://fonts/IBMPlexMono-Thin.ttf" id="font_thin"]
-[ext_resource type="Shader" uid="uid://baamq1g35n0a3" path="res://shaders/rough_border.gdshader" id="shader_rough"]
-[ext_resource type="Texture2D" uid="uid://dscm4p8etlojm" path="res://ui/dialogue/highlight_bar.png" id="tex_highlight"]
-[ext_resource type="Texture2D" uid="uid://dq5e5rpgg7q7" path="res://ui/dialogue/panel_bg.png" id="tex_panel_bg"]
-[ext_resource type="Texture2D" uid="uid://dslfiftq4p0lo" path="res://ui/dialogue/selector.png" id="tex_selector"]
+[ext_resource type="Shader" uid="uid://d0ytj1o7l8gp2" path="res://shaders/bw_alpha.gdshader" id="shader_bw"]
+[ext_resource type="Texture2D" uid="uid://nsyqor4po4vb" path="res://assets/images/icons/playspeed.png" id="tex_playspeed"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_panel"]
 content_margin_left = 0.0
@@ -15,22 +13,15 @@ content_margin_bottom = 0.0
 bg_color = Color(0.04, 0.04, 0.04, 0.96)
 
 [sub_resource type="AtlasTexture" id="Atlas_pause"]
-atlas = ExtResource("tex_selector")
-region = Rect2(5, 5, 55, 100)
+atlas = ExtResource("tex_playspeed")
+region = Rect2(460, 326.75, 184.5, 122)
 
 [sub_resource type="AtlasTexture" id="Atlas_play"]
-atlas = ExtResource("tex_selector")
-region = Rect2(285, 5, 75, 100)
+atlas = ExtResource("tex_playspeed")
+region = Rect2(219, 352, 219, 224)
 
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_rough"]
-shader = ExtResource("shader_rough")
-shader_parameter/roughness = 0.25
-
-[sub_resource type="LabelSettings" id="LabelSettings_speed"]
-line_spacing = 0.0
-font = ExtResource("font_thin")
-font_size = 32
-font_color = Color(0.75, 0.75, 0.75, 1)
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_bw"]
+shader = ExtResource("shader_bw")
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_btn_normal"]
 content_margin_left = 4.0
@@ -39,23 +30,23 @@ content_margin_right = 4.0
 content_margin_bottom = 2.0
 bg_color = Color(0.12, 0.12, 0.12, 0.6)
 
-[sub_resource type="StyleBoxTexture" id="StyleBox_btn_active"]
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_btn_pressed"]
 content_margin_left = 4.0
 content_margin_top = 2.0
 content_margin_right = 4.0
 content_margin_bottom = 2.0
-texture = ExtResource("tex_highlight")
-texture_margin_left = 8.0
-texture_margin_top = 8.0
-texture_margin_right = 8.0
-texture_margin_bottom = 8.0
+bg_color = Color(0.7, 0.4, 0.05, 0.9)
+corner_radius_top_left = 3
+corner_radius_top_right = 3
+corner_radius_bottom_right = 3
+corner_radius_bottom_left = 3
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_btn_hover"]
 content_margin_left = 4.0
 content_margin_top = 2.0
 content_margin_right = 4.0
 content_margin_bottom = 2.0
-bg_color = Color(0.25, 0.25, 0.25, 0.75)
+bg_color = Color(0.35, 0.35, 0.35, 0.8)
 corner_radius_top_left = 3
 corner_radius_top_right = 3
 corner_radius_bottom_right = 3
@@ -63,19 +54,19 @@ corner_radius_bottom_left = 3
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_focus"]
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_1kmsx"]
-atlas = ExtResource("tex_selector")
-region = Rect2(67.5, 0, 68, 101.25)
+[sub_resource type="AtlasTexture" id="Atlas_decrease"]
+atlas = ExtResource("tex_playspeed")
+region = Rect2(667.5, 329.25, 202, 109.5)
 
-[sub_resource type="ButtonGroup" id="ButtonGroup_speed"]
+[sub_resource type="AtlasTexture" id="Atlas_increase"]
+atlas = ExtResource("tex_playspeed")
+region = Rect2(1095, 319.642, 174.64404, 130)
 
-[sub_resource type="AtlasTexture" id="Atlas_slow"]
-atlas = ExtResource("tex_selector")
-region = Rect2(1, 3.75, 15, 91.5)
-
-[sub_resource type="AtlasTexture" id="Atlas_fast"]
-atlas = ExtResource("tex_selector")
-region = Rect2(150, 5, 125, 100)
+[sub_resource type="LabelSettings" id="LabelSettings_speed"]
+line_spacing = 0.0
+font = ExtResource("font_thin")
+font_size = 40
+font_color = Color(0.75, 0.75, 0.75, 1)
 
 [node name="SpeedControlPanel" type="PanelContainer" unique_id=2045214510]
 anchors_preset = 1
@@ -91,16 +82,6 @@ script = ExtResource("1_script")
 PauseIcon = SubResource("Atlas_pause")
 PlayIcon = SubResource("Atlas_play")
 
-[node name="PanelBorder" type="NinePatchRect" parent="." unique_id=990005001]
-visible = false
-material = SubResource("ShaderMaterial_rough")
-layout_mode = 2
-texture = ExtResource("tex_panel_bg")
-patch_margin_left = 10
-patch_margin_top = 10
-patch_margin_right = 10
-patch_margin_bottom = 10
-
 [node name="ContentPad" type="MarginContainer" parent="." unique_id=990005002]
 layout_mode = 2
 theme_override_constants/margin_left = 8
@@ -112,59 +93,50 @@ theme_override_constants/margin_bottom = 5
 layout_mode = 2
 theme_override_constants/separation = 4
 
+[node name="DecreaseButton" type="Button" parent="ContentPad/HBoxContainer" unique_id=1406040404]
+unique_name_in_owner = true
+material = SubResource("ShaderMaterial_bw")
+clip_contents = true
+custom_minimum_size = Vector2(60, 22)
+layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBoxFlat_btn_normal")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_btn_pressed")
+theme_override_styles/hover = SubResource("StyleBoxFlat_btn_hover")
+theme_override_styles/hover_pressed = SubResource("StyleBoxFlat_btn_pressed")
+theme_override_styles/focus = SubResource("StyleBoxEmpty_focus")
+icon = SubResource("Atlas_decrease")
+expand_icon = true
+
+[node name="PlayPauseButton" type="Button" parent="ContentPad/HBoxContainer" unique_id=1649076975]
+unique_name_in_owner = true
+material = SubResource("ShaderMaterial_bw")
+custom_minimum_size = Vector2(60, 22)
+layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBoxFlat_btn_normal")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_btn_pressed")
+theme_override_styles/hover = SubResource("StyleBoxFlat_btn_hover")
+theme_override_styles/hover_pressed = SubResource("StyleBoxFlat_btn_pressed")
+theme_override_styles/focus = SubResource("StyleBoxEmpty_focus")
+icon = SubResource("Atlas_pause")
+expand_icon = true
+
+[node name="IncreaseButton" type="Button" parent="ContentPad/HBoxContainer" unique_id=1371095737]
+unique_name_in_owner = true
+material = SubResource("ShaderMaterial_bw")
+custom_minimum_size = Vector2(60, 22)
+layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBoxFlat_btn_normal")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_btn_pressed")
+theme_override_styles/hover = SubResource("StyleBoxFlat_btn_hover")
+theme_override_styles/hover_pressed = SubResource("StyleBoxFlat_btn_pressed")
+theme_override_styles/focus = SubResource("StyleBoxEmpty_focus")
+icon = SubResource("Atlas_increase")
+expand_icon = true
+
 [node name="SpeedLabel" type="Label" parent="ContentPad/HBoxContainer" unique_id=2069310471]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(26, 0)
 layout_mode = 2
-theme_override_font_sizes/font_size = 32
 text = "1×"
 label_settings = SubResource("LabelSettings_speed")
 vertical_alignment = 1
-
-[node name="Divider" type="ColorRect" parent="ContentPad/HBoxContainer" unique_id=990005004]
-visible = false
-custom_minimum_size = Vector2(1, 0)
-layout_mode = 2
-size_flags_vertical = 3
-color = Color(0.3, 0.3, 0.3, 0.6)
-
-[node name="PlayPauseButton" type="Button" parent="ContentPad/HBoxContainer" unique_id=1649076975]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(28, 22)
-layout_mode = 2
-theme_override_colors/font_color = Color(1, 1, 1, 1)
-theme_override_styles/normal = SubResource("StyleBoxFlat_btn_normal")
-theme_override_styles/pressed = SubResource("StyleBox_btn_active")
-theme_override_styles/hover = SubResource("StyleBoxFlat_btn_hover")
-theme_override_styles/hover_pressed = SubResource("StyleBox_btn_active")
-theme_override_styles/focus = SubResource("StyleBoxEmpty_focus")
-icon = SubResource("AtlasTexture_1kmsx")
-expand_icon = true
-
-[node name="HalfSpeedButton" type="Button" parent="ContentPad/HBoxContainer" unique_id=1406040404]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(28, 22)
-layout_mode = 2
-theme_override_styles/normal = SubResource("StyleBoxFlat_btn_normal")
-theme_override_styles/pressed = SubResource("StyleBox_btn_active")
-theme_override_styles/hover = SubResource("StyleBoxFlat_btn_hover")
-theme_override_styles/hover_pressed = SubResource("StyleBox_btn_active")
-theme_override_styles/focus = SubResource("StyleBoxEmpty_focus")
-toggle_mode = true
-button_group = SubResource("ButtonGroup_speed")
-icon = SubResource("Atlas_slow")
-expand_icon = true
-
-[node name="FastSpeedButton" type="Button" parent="ContentPad/HBoxContainer" unique_id=1371095737]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(32, 22)
-layout_mode = 2
-theme_override_styles/normal = SubResource("StyleBoxFlat_btn_normal")
-theme_override_styles/pressed = SubResource("StyleBox_btn_active")
-theme_override_styles/hover = SubResource("StyleBoxFlat_btn_hover")
-theme_override_styles/hover_pressed = SubResource("StyleBox_btn_active")
-theme_override_styles/focus = SubResource("StyleBoxEmpty_focus")
-toggle_mode = true
-button_group = SubResource("ButtonGroup_speed")
-icon = SubResource("Atlas_fast")
-expand_icon = true
