@@ -1,6 +1,0 @@
-{
-  "Id": "rising_power",
-  "Name": "The Rising Power",
-  "ChapterSequence": ["skirmish", "assault", "conquest"],
-  "PlayerDisposition": "Strategic"
-}

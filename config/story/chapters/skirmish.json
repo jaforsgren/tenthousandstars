@@ -1,8 +1,0 @@
-{
-  "Id": "skirmish",
-  "Title": "Contested Space",
-  "MissionTags": ["skirmish"],
-  "When": null,
-  "IntroBarks": [],
-  "OutroBarks": []
-}

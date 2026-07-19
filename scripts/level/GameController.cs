@@ -21,7 +21,6 @@ internal sealed partial class GameController : Node
 	private EndCondition? _condition;
 	private EndStateConfig _endStateCfg = null!;
 	private string? _missionDescription;
-	private MissionContext? _missionContext;
 	private NarrativePanel _narrativePanel = null!;
 	private SystemOwner _targetPlayerOwner = SystemOwner.None;
 	private int _defendSystemIndex = -1;
@@ -37,7 +36,6 @@ internal sealed partial class GameController : Node
 	internal void Initialize(
 		EndCondition? condition,
 		EndStateConfig endStateCfg,
-		MissionContext? missionContext,
 		HashSet<(int, int)> routeSet,
 		IReadOnlyList<SystemNode> systems,
 		IReadOnlyList<AiPlayerData> aiPlayers,
@@ -50,7 +48,6 @@ internal sealed partial class GameController : Node
 	{
 		_condition = condition;
 		_endStateCfg = endStateCfg;
-		_missionContext = missionContext;
 		_systems = systems;
 		_aiPlayers = aiPlayers;
 		_rng = rng;
@@ -82,8 +79,9 @@ internal sealed partial class GameController : Node
 
 	internal void StartMission()
 	{
-		if (_missionContext?.InterludeNodeName != null)
-			ShowInterlude(_missionContext);
+		var campaign = GameSession.Campaign;
+		if (campaign != null && !campaign.IsCampaignComplete && !campaign.Current.IsTerminal)
+			_narrativePanel.ShowNarrative(campaign.Current.Title, campaign.BuildVars(), onComplete: ShowMissionBrief);
 		else
 			ShowMissionBrief();
 	}
@@ -129,20 +127,6 @@ internal sealed partial class GameController : Node
 		EmitSignal(SignalName.GameEnded);
 	}
 
-	private void ShowInterlude(MissionContext ctx)
-	{
-		var vars = new Dictionary<string, string>
-		{
-			["$player_faction"]    = ctx.State.Player.FactionName,
-			["$enemy_faction"]     = ctx.State.Enemy.FactionName,
-			["$sector_name"]       = ctx.SectorName,
-			["$mission_objective"] = ctx.Condition.Description,
-			["$chapter_title"]     = ctx.Chapter.ChapterTitle,
-			["$date"]              = ctx.InterludeDate,
-		};
-		_narrativePanel.ShowNarrative(ctx.InterludeNodeName!, vars, onComplete: ShowMissionBrief);
-	}
-
 	private void ShowMissionBrief()
 	{
 		GameSpeed.PushUiPause();
@@ -156,11 +140,7 @@ internal sealed partial class GameController : Node
 
 	private void ShowEndSequence(string title, string description, bool won)
 	{
-		GameSession.NarrativeController?.OnMissionComplete(
-			won,
-			_systems.Count(s => s.IsPlayerOwned),
-			_systems.Count(s => s.IsAiOwned),
-			_systems.Count(s => s.IsAiOwned && s.HasFleet));
+		GameSession.Campaign?.Advance(won);
 		_levelUi.FadeOverlay.MouseFilter = Control.MouseFilterEnum.Stop;
 		_camera.PanTo(ComputeMapCenter(), _endStateCfg.EndStateSeconds);
 		StartFadeOut(_fadeOutSeconds);
@@ -175,7 +155,8 @@ internal sealed partial class GameController : Node
 
 	private void OnEndSequenceDismissed()
 	{
-		if (GameSession.NarrativeController?.IsCampaignComplete == true)
+		var campaign = GameSession.Campaign;
+		if (campaign != null && !campaign.IsCampaignComplete && campaign.Current.IsTerminal)
 			ShowOutro();
 		else
 			GetTree().ReloadCurrentScene();
@@ -183,10 +164,8 @@ internal sealed partial class GameController : Node
 
 	private void ShowOutro()
 	{
-		var nc = GameSession.NarrativeController!;
-		var outroNode = nc.GetOutroNodeName();
-		var vars = nc.BuildOutroVars();
-		_narrativePanel.ShowNarrative(outroNode, vars, onComplete: OnOutroDialogueComplete);
+		var campaign = GameSession.Campaign!;
+		_narrativePanel.ShowNarrative(campaign.Current.Title, campaign.BuildVars(), onComplete: OnOutroDialogueComplete);
 	}
 
 	private void OnOutroDialogueComplete()
@@ -201,14 +180,14 @@ internal sealed partial class GameController : Node
 
 	private void OnNewCampaignPressed()
 	{
-		GameSession.NarrativeController = null;
+		GameSession.Campaign = null;
 		GameSession.GameModeOverride = GameMode.Story;
 		GetTree().ReloadCurrentScene();
 	}
 
 	private void OnRandomMissionsPressed()
 	{
-		GameSession.NarrativeController = null;
+		GameSession.Campaign = null;
 		GameSession.GameModeOverride = GameMode.Random;
 		GetTree().ReloadCurrentScene();
 	}

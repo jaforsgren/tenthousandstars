@@ -10,6 +10,7 @@ public static class GameSpeed
     private static int _uiPauseDepth;
 
     public static bool IsPlayerPaused => _playerPaused;
+    public static bool IsUiPaused => _uiPauseDepth > 0;
     public static float Speed => _speed;
 
     public static void SetSpeed(float speed)

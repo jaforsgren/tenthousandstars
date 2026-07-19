@@ -172,36 +172,24 @@ public partial class Level : Node2D
 
 		var endStateCfg = LoadEndStateConfig();
 
-		if (GameSession.NarrativeController == null)
+		if (GameSession.Campaign == null)
 		{
 			var gameMode = GameSession.GameModeOverride ?? ConfigLoader.Load<GameModeConfig>("res://config/game_mode.json").Mode;
 			if (gameMode == GameMode.Story)
-			{
-				var nc = NarrativeController.Create(_rng);
-				nc.StartCampaign();
-				GameSession.NarrativeController = nc;
-			}
+				GameSession.Campaign = CampaignController.Load(_rng);
 		}
+
+		var campaign = GameSession.Campaign;
+		if (campaign != null && _aiPlayers.Count > 0)
+			campaign.UpdateEnemyFaction(_aiPlayers[_rng.Next(_aiPlayers.Count)].FactionName);
 
 		EndCondition? activeCondition;
-		MissionContext? missionContext = null;
-		ScenarioDefinition[] pendingScenarios;
-
-		var narrative = GameSession.NarrativeController;
-		if (narrative != null && !narrative.IsCampaignComplete)
-		{
-			var primaryAi = _aiPlayers.Count > 0 ? _aiPlayers[_rng.Next(_aiPlayers.Count)] : null;
-			if (primaryAi != null)
-				narrative.UpdateEnemy(primaryAi);
-			missionContext = narrative.GetNextMission();
-			activeCondition = missionContext.Condition.ToEndCondition();
-			pendingScenarios = missionContext.Scenarios;
-		}
+		if (campaign != null && !campaign.IsCampaignComplete && !campaign.Current.IsTerminal)
+			activeCondition = campaign.Current.ToEndCondition();
 		else
-		{
 			activeCondition = endStateCfg.Conditions[_rng.Next(endStateCfg.Conditions.Length)];
-			pendingScenarios = LoadRandomModeScenarios();
-		}
+
+		var pendingScenarios = LoadRandomModeScenarios();
 
 		AssignLoreSeeds(data);
 		AssignScenarios(pendingScenarios);
@@ -218,7 +206,7 @@ public partial class Level : Node2D
 		AddChild(_gameController);
 		_gameController.GameEnded += () => _endConditionReached = true;
 		_gameController.Initialize(
-			activeCondition, endStateCfg, missionContext,
+			activeCondition, endStateCfg,
 			_routeSet, _systems, _aiPlayers, _rng, _levelUi, _camera, _countdownTimer, _fadeOutSeconds, _narrativePanel);
 
 		_objectiveSystemIndex = _gameController.ObjectiveSystemIndex;
@@ -289,7 +277,8 @@ public partial class Level : Node2D
 	{
 		_effectRegistry = new EffectRegistry();
 		var scenarioType = (EncounterType)_rng.Next(4);
-		_encounterTracker = new EncounterTracker(scenarioType, _commitmentConfig.EncounterSystemChance, _rng);
+		var encounterCfg = ConfigLoader.Load<EncounterConfig>("res://config/encounters.json");
+		_encounterTracker = new EncounterTracker(scenarioType, _commitmentConfig.EncounterSystemChance, encounterCfg.EventPools, _rng);
 
 		_effectDisplayPanel = new EffectDisplayPanel();
 		AddChild(_effectDisplayPanel);

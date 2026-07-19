@@ -1,0 +1,145 @@
+// Campaign: The Falling Empire
+// Variables injected before each node: $player_faction, $enemy_faction
+//
+// Header fields:
+//   level_seed: <int>   — fixed RNG seed (omit for random)
+//   enemies_left: <int> — win when enemy fleets ≤ this
+//   systems_left: <int> — win when enemy systems ≤ this
+//   target_system_hops: <int> — win by capturing system N hops away
+//   eliminate_target: true — win by eliminating a specific faction
+//   defend: true        — lose if your starting system falls
+//   timeout: <float>    — mission clock in seconds
+//   description: <text> — shown in mission brief popup
+//   win_text: <text>    — shown on victory end screen
+//   on_win: <node>      — next node on victory
+//   on_loss: <node>     — next node on defeat
+
+title: mission_retreat
+enemies_left: 0
+defend: true
+timeout: 300
+description: Hold the bridgehead. Destroy every invading fleet.
+win_text: The bridgehead remains within the domain of {$player_faction}.
+on_win: mission_assault
+on_loss: campaign_defeat
+------------------------
+
+Narrator: {$player_faction} — Bridgehead Record
+
+Nest-Administrator: Shoal-Coordinator.
+
+Shoal-Coordinator: Nest-Administrator.
+
+Nest-Administrator: {$enemy_faction} crossed the outer markers one cycle ago. Their lead shoals have entered the cluster.
+
+Shoal-Coordinator: Larger than expected?
+
+Nest-Administrator: Yes.
+
+The bridgehead is the youngest nesting system in this region.
+
+Its chambers are still growing.
+
+The Mother-Leader assigned this system to {$player_faction} during the last expansion.
+
+Nest-Administrator: The western chambers are unfinished.
+
+Shoal-Coordinator: Then they will remain unfinished.
+
+Nest-Administrator: The workers will complain.
+
+Shoal-Coordinator: Let them.
+
+The mother stars remain above the system.
+
+The defense shoals deploy.
+
+Destroy every invading fleet.
+
+===
+
+title: mission_assault
+target_system_hops: 3
+description: Capture the marked system before {$enemy_faction} can reinforce it.
+win_text: The marked system has entered the domain of {$player_faction}.
+on_win: campaign_victory
+on_loss: campaign_defeat
+------------------------
+
+Narrator: {$player_faction} — Advance Record
+
+Nest-Administrator: The bridgehead is stable.
+
+Shoal-Coordinator: Then we continue.
+
+Three crossings remain.
+
+{$enemy_faction} controls each of them.
+
+The archive predicts resistance along every route.
+
+Nest-Administrator: The archive is from the previous cycle.
+
+Shoal-Coordinator: Then we will improve it.
+
+Advance through the defending shoals.
+
+Establish a nesting hold before reinforcement arrives.
+
+===
+
+title: campaign_victory
+------------------------
+
+Narrator: {$player_faction} — Sector Record
+
+Nest-Administrator: The lattice has accepted the revision.
+
+Shoal-Coordinator: {$enemy_faction} no longer maintains organized shoals in this sector.
+
+The navigation lattice has expanded.
+
+New nesting systems have entered the domain of {$player_faction}.
+
+The Mother-Leader will receive the campaign record.
+
+The next generation will hatch with different boundaries.
+
+Orders will follow.
+
+-> New Campaign
+<<narrative_action "new_campaign">>
+-> Random Missions
+<<narrative_action "random_missions">>
+-> Quit
+<<narrative_action "quit">>
+
+===
+
+title: campaign_defeat
+------------------------
+
+Narrator: {$player_faction} — Final Record
+
+Nest-Administrator: The bridgehead is lost.
+
+Shoal-Coordinator: Confirmed.
+
+{$enemy_faction} now occupies this sector.
+
+The navigation lattice has been revised.
+
+The remaining shoals have altered their routes.
+
+The Mother-Leader receives the final report.
+
+Orders will continue elsewhere.
+
+-> New Campaign
+<<narrative_action "new_campaign">>
+-> Random Missions
+<<narrative_action "random_missions">>
+-> Quit
+<<narrative_action "quit">>
+
+===

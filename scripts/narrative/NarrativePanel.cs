@@ -4,6 +4,7 @@ using System.Globalization;
 using Godot;
 using YarnSpinnerGodot;
 using Tts.Commitment;
+using Tts.Dialogue;
 using Tts.Level;
 
 namespace Tts.Narrative;
@@ -21,6 +22,7 @@ public partial class NarrativePanel : CanvasLayer
 {
 	private DialogueRunner _runner = null!;
 	private InMemoryVariableStorage _vars = null!;
+	private DialogueController _dialogueController = null!;
 	private Action? _onDialogueComplete;
 
 	public string LastNarrativeAction { get; private set; } = "";
@@ -29,6 +31,7 @@ public partial class NarrativePanel : CanvasLayer
 	{
 		_runner = GetNode<DialogueRunner>("DialogueContent/DialogueRunnerNode");
 		_vars   = GetNode<InMemoryVariableStorage>("DialogueContent/InMemoryVariableStorage");
+		_dialogueController = GetNode<DialogueController>("DialogueContent");
 
 		var bridge = GetNode<YarnBridge>("DialogueContent/YarnBridge");
 		bridge.dialogueRunner = _runner;
@@ -47,7 +50,7 @@ public partial class NarrativePanel : CanvasLayer
 		_onDialogueComplete = onComplete;
 		GameSpeed.PushUiPause();
 		Show();
-		_ = _runner.StartDialogue(yarnNode);
+		RunDialogueSafe(yarnNode);
 	}
 
 	public void ShowNarrative(string yarnNode, IReadOnlyDictionary<string, string> vars, Action? onComplete = null)
@@ -75,7 +78,7 @@ public partial class NarrativePanel : CanvasLayer
 		_onDialogueComplete = onComplete;
 		GameSpeed.PushUiPause();
 		Show();
-		_ = _runner.StartDialogue(PreCommitYarnNode(intent));
+		RunDialogueSafe(PreCommitYarnNode(intent));
 	}
 
 	public void OnCommitmentResolved(int systemIndex, int ownerInt, int intentInt, bool controlGained, float remainingStrength)
@@ -90,11 +93,12 @@ public partial class NarrativePanel : CanvasLayer
 		_onDialogueComplete = null;
 		GameSpeed.PushUiPause();
 		Show();
-		_ = _runner.StartDialogue(ResolveYarnNode(intent, controlGained));
+		RunDialogueSafe(ResolveYarnNode(intent, controlGained));
 	}
 
 	private async void RunDialogueSafe(string yarnNode)
 	{
+		_dialogueController.Clear();
 		try
 		{
 			await _runner.StartDialogue(yarnNode);
@@ -102,6 +106,7 @@ public partial class NarrativePanel : CanvasLayer
 		catch (Exception ex)
 		{
 			GD.PushError($"[NarrativePanel] Dialogue error in '{yarnNode}': {ex.Message}");
+			OnDialogueComplete();
 		}
 	}
 

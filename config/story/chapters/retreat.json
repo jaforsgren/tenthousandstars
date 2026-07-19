@@ -1,8 +1,0 @@
-{
-  "Id": "retreat",
-  "Title": "Rearguard",
-  "MissionTags": ["retreat"],
-  "When": null,
-  "IntroBarks": [],
-  "OutroBarks": []
-}

@@ -1,6 +1,0 @@
-{
-  "Id": "conquest",
-  "Name": "Total Conquest",
-  "ChapterSequence": ["assault", "assault", "conquest"],
-  "PlayerDisposition": "Aggressive"
-}

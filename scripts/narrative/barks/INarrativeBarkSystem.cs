@@ -2,5 +2,5 @@ namespace Tts.Narrative;
 
 public interface INarrativeBarkSystem
 {
-    string? TryGetBark(BarkTrigger trigger, StoryState state);
+    string? TryGetBark(BarkTrigger trigger);
 }

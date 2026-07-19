@@ -1,6 +1,0 @@
-{
-  "Id": "falling_empire",
-  "Name": "The Falling Empire",
-  "ChapterSequence": ["retreat", "skirmish", "assault"],
-  "PlayerDisposition": "Cautious"
-}

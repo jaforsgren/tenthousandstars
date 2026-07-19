@@ -12,7 +12,8 @@ public partial class NotificationPanel : PanelContainer
 	private Label _titleLabel = null!;
 	private Label _descriptionLabel = null!;
 
-	private float _timeRemaining;
+	private ulong _startMs;
+	private float _durationSeconds;
 	private Action? _onDismiss;
 	private bool _active;
 	private bool _allowEarlyDismiss;
@@ -49,7 +50,8 @@ public partial class NotificationPanel : PanelContainer
 	{
 		_titleLabel.Text = title;
 		_descriptionLabel.Text = description;
-		_timeRemaining = displaySeconds;
+		_startMs = Time.GetTicksMsec();
+		_durationSeconds = displaySeconds;
 		_onDismiss = onDismiss;
 		_allowEarlyDismiss = allowEarlyDismiss;
 		_active = true;
@@ -64,8 +66,7 @@ public partial class NotificationPanel : PanelContainer
 		if (!_active)
 			return;
 
-		_timeRemaining -= (float)delta;
-		if (_timeRemaining <= 0f)
+		if ((Time.GetTicksMsec() - _startMs) / 1000f >= _durationSeconds)
 			Dismiss();
 	}
 

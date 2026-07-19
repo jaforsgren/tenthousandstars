@@ -1,8 +1,10 @@
 {
     "projectFileVersion": 3,
     "sourceFiles": [
+        "campaign.yarn",
         "commitment/**/*.yarn",
-        "narrative/**/*.yarn"
+        "narrative/**/*.yarn",
+        "scenarios/**/*.yarn"
     ],
     "excludeFiles": [],
     "localisation": {},

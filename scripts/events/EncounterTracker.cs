@@ -10,6 +10,7 @@ public sealed class EncounterTracker
     public static EncounterTracker? Instance { get; private set; }
 
     private readonly EncounterType _encounterType;
+    private readonly IReadOnlyDictionary<string, string[]> _eventPools;
     private readonly Random _rng;
     private float _encounterChance;
     private readonly HashSet<string> _seenNodes = [];
@@ -18,9 +19,10 @@ public sealed class EncounterTracker
     public EncounterType EncounterType => _encounterType;
     public float EncounterChance => _encounterChance;
 
-    public EncounterTracker(EncounterType encounterType, float baseEncounterChance, Random rng)
+    public EncounterTracker(EncounterType encounterType, float baseEncounterChance, IReadOnlyDictionary<string, string[]> eventPools, Random rng)
     {
         _encounterType = encounterType;
+        _eventPools = eventPools;
         _encounterChance = baseEncounterChance;
         _rng = rng;
         Instance = this;
@@ -50,19 +52,10 @@ public sealed class EncounterTracker
 
     private string? SelectFromPool()
     {
-        var pool = EventPool(_encounterType);
-        var unseen = pool.FindAll(n => !_seenNodes.Contains(n));
-        var candidates = unseen.Count > 0 ? unseen : pool;
-        if (candidates.Count == 0) return null;
-        return candidates[_rng.Next(candidates.Count)];
+        if (!_eventPools.TryGetValue(_encounterType.ToString(), out var pool) || pool.Length == 0)
+            return null;
+        var unseen = Array.FindAll(pool, n => !_seenNodes.Contains(n));
+        var candidates = unseen.Length > 0 ? unseen : pool;
+        return candidates[_rng.Next(candidates.Length)];
     }
-
-    private static List<string> EventPool(EncounterType type) => type switch
-    {
-        EncounterType.BarbarianHorde => ["barbarian_encounter", "barbarian_ritual", "barbarian_relic"],
-        EncounterType.AiUprising    => ["ai_awakening",         "ai_negotiation",  "ai_sabotage"],
-        EncounterType.Nemesis1      => ["nemesis1_contact",     "nemesis1_ambush", "nemesis1_messenger"],
-        EncounterType.Nemesis2      => ["nemesis2_defense",     "nemesis2_sanctum","nemesis2_price"],
-        _                           => []
-    };
 }

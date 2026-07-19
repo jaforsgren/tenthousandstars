@@ -14,7 +14,7 @@ public class NarrativeBarkSystem : INarrativeBarkSystem
         _rng = rng;
     }
 
-    public string? TryGetBark(BarkTrigger trigger, StoryState state)
+    public string? TryGetBark(BarkTrigger trigger)
     {
         var tag = TriggerToTag(trigger);
         if (!_pools.TryGetValue(tag, out var pool) || pool.Length == 0) return null;
@@ -28,6 +28,6 @@ public class NarrativeBarkSystem : INarrativeBarkSystem
         BarkTrigger.MissionLost    => "mission_lost",
         BarkTrigger.EnemyIsWinning => "enemy_winning",
         BarkTrigger.PlayerLeading  => "player_leading",
-        _ => trigger.ToString()
+        _                          => trigger.ToString()
     };
 }

@@ -11,7 +11,7 @@ public partial class Level
 {
 	public override void _UnhandledInput(InputEvent @event)
 	{
-		if (Engine.IsEditorHint() || _endConditionReached)
+		if (Engine.IsEditorHint() || _endConditionReached || GameSpeed.IsUiPaused)
 			return;
 
 		if (@event is InputEventKey { Pressed: true, Echo: false } key)

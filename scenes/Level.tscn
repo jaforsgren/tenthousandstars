@@ -224,7 +224,6 @@ color = Color(0, 0, 0, 1)
 
 [node name="PanelLayer" type="CanvasLayer" parent="LevelUi" unique_id=500500503]
 layer = 10
-visible = false
 
 [node name="PanelLayout" type="Control" parent="LevelUi/PanelLayer" unique_id=1419292228]
 layout_mode = 3

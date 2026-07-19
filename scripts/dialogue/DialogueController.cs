@@ -58,6 +58,22 @@ public partial class DialogueController : Node
 	private static readonly HashSet<string> PortraitlessSpeakers =
 		new(StringComparer.OrdinalIgnoreCase) { "you", "narration", "narrator", "" };
 
+	public void Clear()
+	{
+		_completedSections.Clear();
+		_currentSectionEntries.Clear();
+		_currentEntry = null;
+		_lastDialogEntry = null;
+		_activeHeader = null;
+		_lastSpeaker = "";
+		_lastLineSpeaker = "";
+		_lastNamedSpeaker = "";
+		foreach (Node child in _pinnedHeader.GetChildren())
+			child.QueueFree();
+		foreach (Node child in _dialogStack.GetChildren())
+			child.QueueFree();
+	}
+
 	public override void _Ready()
 	{
 		_dialogStack = GetNode<VBoxContainer>("ScrollContainer/MarginContainer/DialogStack");

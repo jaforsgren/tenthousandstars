@@ -1,0 +1,14 @@
+[remap]
+
+importer="yarnscript"
+type="Resource"
+uid="uid://d1facl5elja8v"
+path="res://.godot/imported/campaign.yarn-387702b865e48d25fb185f238fb2de45.tres"
+
+[deps]
+
+source_file="res://yarn/campaign.yarn"
+dest_files=["res://.godot/imported/campaign.yarn-387702b865e48d25fb185f238fb2de45.tres"]
+
+[params]
+

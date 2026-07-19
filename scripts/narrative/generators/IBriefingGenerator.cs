@@ -1,6 +1,0 @@
-namespace Tts.Narrative;
-
-public interface IBriefingGenerator
-{
-    string GenerateBriefing(NarrativeConditionConfig condition, ChapterContext chapter, StoryState state, bool allRequired = true);
-}

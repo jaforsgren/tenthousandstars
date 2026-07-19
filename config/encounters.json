@@ -1,0 +1,8 @@
+{
+  "EventPools": {
+    "BarbarianHorde": ["barbarian_encounter", "barbarian_ritual", "barbarian_relic"],
+    "AiUprising":    ["ai_awakening",         "ai_negotiation",  "ai_sabotage"],
+    "Nemesis1":      ["nemesis1_contact",      "nemesis1_ambush", "nemesis1_messenger"],
+    "Nemesis2":      ["nemesis2_defense",      "nemesis2_sanctum","nemesis2_price"]
+  }
+}
