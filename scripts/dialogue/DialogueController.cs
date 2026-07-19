@@ -85,7 +85,6 @@ public partial class DialogueController : Node
 
 	private readonly Queue<List<Node>> _completedSections = new();
 	private List<Node> _currentSectionEntries = new();
-	private Tween? _scrollTween;
 
 	private static readonly HashSet<string> PortraitlessSpeakers =
 		new(StringComparer.OrdinalIgnoreCase) { "you", "narration", "narrator", "" };
@@ -228,6 +227,7 @@ public partial class DialogueController : Node
 		_dialogStack.AddChild(entry);
 		_currentSectionEntries.Add(entry);
 		_currentEntry = entry;
+		CallDeferred(nameof(ScrollToBottom));
 
 		await entry.ShowAsync(line);
 
@@ -244,8 +244,8 @@ public partial class DialogueController : Node
 		if (LinePauseSeconds > 0f)
 			await ToSignal(GetTree().CreateTimer(LinePauseSeconds, ignoreTimeScale: true), SceneTreeTimer.SignalName.Timeout);
 
-		_bridge.Adapter.AcknowledgeLine();
 		CallDeferred(nameof(ScrollToBottom));
+		_bridge.Adapter.AcknowledgeLine();
 	}
 
 	// ── Skill check rendering ────────────────────────────────────────────────
@@ -373,20 +373,12 @@ public partial class DialogueController : Node
 
 	// ── Scroll / layout ──────────────────────────────────────────────────────
 
-	// Called via CallDeferred so layout has been flushed before we read MaxValue.
-	// Killing the previous tween prevents competing animations from popping.
-	private async void ScrollToBottom()
+	// Called via CallDeferred so Godot has flushed the layout pass before we
+	// update the scroll position. int.MaxValue is clamped by ScrollContainer
+	// to the actual content bottom — no need to read MaxValue from the scrollbar.
+	private void ScrollToBottom()
 	{
 		if (!IsInstanceValid(_scrollContainer)) return;
-
-		await ToSignal(GetTree(), SceneTree.SignalName.ProcessFrame);
-		if (!IsInstanceValid(_scrollContainer)) return;
-
-		_scrollTween?.Kill();
-		double target = _scrollContainer.GetVScrollBar().MaxValue;
-		_scrollTween = CreateTween();
-		_scrollTween.TweenProperty(_scrollContainer, "scroll_vertical", target, 10.4f)
-			.SetTrans(Tween.TransitionType.Sine)
-			.SetEase(Tween.EaseType.Out);
+		_scrollContainer.ScrollVertical = int.MaxValue;
 	}
 }

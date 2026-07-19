@@ -1,6 +1,9 @@
 // Campaign: The Falling Empire
 // Variables injected before each node: $player_faction, $enemy_faction
 //
+// IMPORTANT: Header separator must be exactly --- (three dashes). More or fewer dashes
+// silently break YarnSpinner compilation and no narrative will play.
+//
 // Header fields:
 //   level_seed: <int>   — fixed RNG seed (omit for random)
 //   enemies_left: <int> — win when enemy fleets ≤ this
@@ -22,39 +25,27 @@ description: Hold the bridgehead. Destroy every invading fleet.
 win_text: The bridgehead remains within the domain of {$player_faction}.
 on_win: mission_assault
 on_loss: campaign_defeat
-------------------------
+---
 
-Narrator: {$player_faction} — Bridgehead Record
+Narrator: {$player_faction} — Bridgehead Record.
 
-Nest-Administrator: Shoal-Coordinator.
+Nest-Administrator: Shoal-Coordinator. Your precence sings to me!
 
 Shoal-Coordinator: Nest-Administrator.
 
-Nest-Administrator: {$enemy_faction} crossed the outer markers one cycle ago. Their lead shoals have entered the cluster.
+Nest-Administrator: The blight of our guardens, {$enemy_faction}, crossed the outer markers one cycle ago. Their lead shoals have entered our domain.
 
-Shoal-Coordinator: Larger than expected?
+Shoal-Coordinator: With a larger contingency. 
 
 Nest-Administrator: Yes.
 
-The bridgehead is the youngest nesting system in this region.
+The bridgehead is the youngest nesting system in this region, with chambers still in development.
 
-Its chambers are still growing.
+{$player_faction} Mother-Leader assigned this system to us.
 
-The Mother-Leader assigned this system to {$player_faction} during the last expansion.
+Shoal-Coordinator: Then we defend it.
 
-Nest-Administrator: The western chambers are unfinished.
-
-Shoal-Coordinator: Then they will remain unfinished.
-
-Nest-Administrator: The workers will complain.
-
-Shoal-Coordinator: Let them.
-
-The mother stars remain above the system.
-
-The defense shoals deploy.
-
-Destroy every invading fleet.
+Nest-Administrator:  Yes. Destroy every invading fleet.
 
 ===
 
@@ -64,7 +55,7 @@ description: Capture the marked system before {$enemy_faction} can reinforce it.
 win_text: The marked system has entered the domain of {$player_faction}.
 on_win: campaign_victory
 on_loss: campaign_defeat
-------------------------
+---
 
 Narrator: {$player_faction} — Advance Record
 
@@ -72,15 +63,9 @@ Nest-Administrator: The bridgehead is stable.
 
 Shoal-Coordinator: Then we continue.
 
-Three crossings remain.
+Three crossings remain, {$enemy_faction} controls each of them.
 
-{$enemy_faction} controls each of them.
-
-The archive predicts resistance along every route.
-
-Nest-Administrator: The archive is from the previous cycle.
-
-Shoal-Coordinator: Then we will improve it.
+The archive predicts resistance.
 
 Advance through the defending shoals.
 
@@ -89,7 +74,7 @@ Establish a nesting hold before reinforcement arrives.
 ===
 
 title: campaign_victory
-------------------------
+---
 
 Narrator: {$player_faction} — Sector Record
 
@@ -117,7 +102,7 @@ Orders will follow.
 ===
 
 title: campaign_defeat
-------------------------
+---
 
 Narrator: {$player_faction} — Final Record
 
@@ -132,8 +117,6 @@ The navigation lattice has been revised.
 The remaining shoals have altered their routes.
 
 The Mother-Leader receives the final report.
-
-Orders will continue elsewhere.
 
 -> New Campaign
 <<narrative_action "new_campaign">>
