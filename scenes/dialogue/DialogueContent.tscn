@@ -9,7 +9,7 @@
 [ext_resource type="Theme" uid="uid://cb4owkkkf73m1" path="res://themes/dialog_theme.tres" id="7"]
 [ext_resource type="PackedScene" uid="uid://ciprejnj85i32" path="res://scenes/dialogue/DialogEntry.tscn" id="8"]
 [ext_resource type="PackedScene" path="res://scenes/dialogue/SkillCheckEntry.tscn" id="9"]
-[ext_resource type="PackedScene" path="res://scenes/dialogue/CharacterHeader.tscn" id="12"]
+[ext_resource type="PackedScene" uid="uid://cg37nyfajlhtg" path="res://scenes/dialogue/CharacterHeader.tscn" id="10"]
 [ext_resource type="PackedScene" path="res://scenes/dialogue/ChoiceEntry.tscn" id="13"]
 [ext_resource type="Shader" uid="uid://baamq1g35n0a3" path="res://shaders/rough_border.gdshader" id="shader_rough"]
 [ext_resource type="Shader" uid="uid://dft5gcd1n35ms" path="res://shaders/top_fade.gdshader" id="shader_topfade"]
@@ -33,8 +33,10 @@ grow_vertical = 2
 script = ExtResource("1")
 _dialogEntryScene = ExtResource("8")
 _skillCheckEntryScene = ExtResource("9")
-_characterHeaderScene = ExtResource("12")
 _choiceEntryScene = ExtResource("13")
+PreviewSpeaker = "Nest-Administrator"
+PreviewDescriptor = "test descriptor"
+PreviewLines = PackedStringArray("dsdss", "sss")
 
 [node name="Background" type="ColorRect" parent="." unique_id=887435366]
 layout_mode = 0
@@ -67,17 +69,27 @@ anchor_right = 1.0
 offset_left = 16.0
 offset_top = 20.0
 offset_right = -16.0
-offset_bottom = 180.0
+offset_bottom = 257.0
 grow_horizontal = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
+[node name="CharacterHeader" parent="PinnedHeader" unique_id=1670029231 instance=ExtResource("10")]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_bottom = -1.0
+grow_horizontal = 2
+grow_vertical = 2
+
 [node name="ScrollContainer" type="ScrollContainer" parent="." unique_id=1798618816]
-layout_mode = 0
+layout_mode = 1
+anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 offset_left = 16.0
-offset_top = 188.0
+offset_top = 251.0
 offset_right = -16.0
 offset_bottom = -46.0
 grow_horizontal = 2
@@ -98,6 +110,7 @@ theme = ExtResource("7")
 theme_override_constants/separation = 32
 
 [node name="TopFade" type="ColorRect" parent="." unique_id=1195387597]
+visible = false
 material = SubResource("ShaderMaterial_topfade")
 layout_mode = 1
 anchors_preset = 10

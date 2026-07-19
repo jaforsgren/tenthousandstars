@@ -11,31 +11,64 @@ namespace Tts.Dialogue;
 /// Root controller for the Disco-Elysium-style stacked dialogue UI.
 ///
 /// Layout contract (DialogueContent.tscn):
-///   PinnedHeader  – fixed Control at the top; holds the current CharacterHeader
+///   PinnedHeader/CharacterHeader – fixed node at the top; updated per NPC speaker
 ///   ScrollContainer / DialogStack – scrolling stack of dialogue entries
 ///
-/// The current NPC's CharacterHeader is pinned and never scrolls.
-/// Dialogue entries auto-scroll downward; old entries are pushed off the top
-/// through a gradient fade (TopFade shader node in the scene).
+/// The CharacterHeader never scrolls. Dialogue entries auto-scroll downward; old
+/// entries are pushed off the top through a gradient fade (TopFade shader node).
 ///
 /// "you" and "narration" speakers have no portrait and never show a header.
-/// NPC speaker changes replace the pinned header.
+/// NPC speaker changes update the pinned header in place with a fade.
 ///
 /// A "section" is a consecutive run of lines from the same speaker, plus any
 /// skill-check entries that appear inline during that run. Choice entries close
 /// the active section. Only MaxSections sections are kept; the oldest fades out
 /// when a new one begins.
+///
+/// Editor preview: set PreviewSpeaker / PreviewDescriptor / PreviewLines in the
+/// inspector to populate the UI without running the game. All preview content is
+/// cleared automatically when the game starts.
 /// </summary>
+[Tool]
 public partial class DialogueController : Node
 {
 	[Export] private PackedScene _dialogEntryScene = null!;
 	[Export] private PackedScene _skillCheckEntryScene = null!;
-	[Export] private PackedScene _characterHeaderScene = null!;
 	[Export] private PackedScene _choiceEntryScene = null!;
+
+	// ── Editor preview ───────────────────────────────────────────────────────
+
+	private string _previewSpeaker = "";
+	private string _previewDescriptor = "";
+	private string[] _previewLines = Array.Empty<string>();
+
+	[Export]
+	private string PreviewSpeaker
+	{
+		get => _previewSpeaker;
+		set { _previewSpeaker = value; if (Engine.IsEditorHint()) ApplyEditorPreview(); }
+	}
+
+	[Export]
+	private string PreviewDescriptor
+	{
+		get => _previewDescriptor;
+		set { _previewDescriptor = value; if (Engine.IsEditorHint()) ApplyEditorPreview(); }
+	}
+
+	[Export]
+	private string[] PreviewLines
+	{
+		get => _previewLines;
+		set { _previewLines = value; if (Engine.IsEditorHint()) ApplyEditorPreview(); }
+	}
+
+	// ── Runtime fields ───────────────────────────────────────────────────────
 
 	private VBoxContainer _dialogStack = null!;
 	private ScrollContainer _scrollContainer = null!;
 	private Control _pinnedHeader = null!;
+	private CharacterHeader _characterHeader = null!;
 	private YarnBridge _bridge = null!;
 
 	private const int MaxSections = 2;
@@ -46,7 +79,6 @@ public partial class DialogueController : Node
 
 	private DialogEntry? _currentEntry;
 	private DialogEntry? _lastDialogEntry;
-	private CharacterHeader? _activeHeader;
 	private string _lastSpeaker = "";
 	private string _lastLineSpeaker = "";
 	private string _lastNamedSpeaker = "";
@@ -58,31 +90,27 @@ public partial class DialogueController : Node
 	private static readonly HashSet<string> PortraitlessSpeakers =
 		new(StringComparer.OrdinalIgnoreCase) { "you", "narration", "narrator", "" };
 
-	public void Clear()
-	{
-		_completedSections.Clear();
-		_currentSectionEntries.Clear();
-		_currentEntry = null;
-		_lastDialogEntry = null;
-		_activeHeader = null;
-		_lastSpeaker = "";
-		_lastLineSpeaker = "";
-		_lastNamedSpeaker = "";
-		foreach (Node child in _pinnedHeader.GetChildren())
-			child.QueueFree();
-		foreach (Node child in _dialogStack.GetChildren())
-			child.QueueFree();
-	}
+	private const string PreviewMeta = "editor_preview";
+
+	// ── Lifecycle ────────────────────────────────────────────────────────────
 
 	public override void _Ready()
 	{
-		_dialogStack = GetNode<VBoxContainer>("ScrollContainer/MarginContainer/DialogStack");
+		_dialogStack     = GetNode<VBoxContainer>("ScrollContainer/MarginContainer/DialogStack");
 		_scrollContainer = GetNode<ScrollContainer>("ScrollContainer");
-		_pinnedHeader = GetNode<Control>("PinnedHeader");
+		_pinnedHeader    = GetNode<Control>("PinnedHeader");
+		_characterHeader = GetNode<CharacterHeader>("PinnedHeader/CharacterHeader");
+
+		if (Engine.IsEditorHint())
+		{
+			ApplyEditorPreview();
+			return;
+		}
+
 		_bridge = GetNode<YarnBridge>("YarnBridge");
 
-		foreach (Node child in _pinnedHeader.GetChildren())
-			child.QueueFree();
+		// Game start: clear any editor preview content and start clean.
+		_characterHeader.Reset();
 		foreach (Node child in _dialogStack.GetChildren())
 			child.QueueFree();
 
@@ -104,10 +132,57 @@ public partial class DialogueController : Node
 		_bridge.Adapter.OptionsReady += OnOptionsReady;
 	}
 
+	// ── Editor preview ───────────────────────────────────────────────────────
+
+	private void ApplyEditorPreview()
+	{
+		if (_characterHeader is null) return;
+
+		if (string.IsNullOrEmpty(_previewSpeaker))
+			_characterHeader.Reset();
+		else
+			_characterHeader.SetPreview(_previewSpeaker, _previewDescriptor);
+
+		if (_dialogStack is null) return;
+
+		foreach (Node child in _dialogStack.GetChildren())
+			if (child.HasMeta(PreviewMeta))
+				child.QueueFree();
+
+		foreach (string line in _previewLines)
+		{
+			if (string.IsNullOrWhiteSpace(line)) continue;
+			var label = new RichTextLabel();
+			label.BbcodeEnabled = true;
+			label.FitContent = true;
+			label.ScrollActive = false;
+			label.SizeFlagsHorizontal = Control.SizeFlags.Fill;
+			label.Text = line;
+			label.SetMeta(PreviewMeta, true);
+			_dialogStack.AddChild(label);
+		}
+	}
+
+	// ── Public API ───────────────────────────────────────────────────────────
+
+	public void Clear()
+	{
+		_completedSections.Clear();
+		_currentSectionEntries.Clear();
+		_currentEntry = null;
+		_lastDialogEntry = null;
+		_lastSpeaker = "";
+		_lastLineSpeaker = "";
+		_lastNamedSpeaker = "";
+		_characterHeader.Reset();
+		foreach (Node child in _dialogStack.GetChildren())
+			child.QueueFree();
+	}
+
 	public override void _Input(InputEvent @event)
 	{
-		if (!@event.IsActionPressed("ui_accept") || _currentEntry is null)
-			return;
+		if (Engine.IsEditorHint()) return;
+		if (!@event.IsActionPressed("ui_accept") || _currentEntry is null) return;
 
 		_currentEntry.SkipTypewriter();
 		GetViewport().SetInputAsHandled();
@@ -127,7 +202,7 @@ public partial class DialogueController : Node
 		bool isPortraitless = PortraitlessSpeakers.Contains(line.Speaker);
 
 		if (!isPortraitless && line.Speaker != _lastSpeaker)
-			await SwapCharacterHeaderAsync(line.Speaker, line.Descriptor);
+			await _characterHeader.ShowAsync(line.Speaker, line.Descriptor);
 
 		_lastSpeaker = isPortraitless ? "" : line.Speaker;
 
@@ -173,50 +248,6 @@ public partial class DialogueController : Node
 		CallDeferred(nameof(ScrollToBottom));
 	}
 
-	/// <summary>
-	/// Replaces the pinned CharacterHeader with a new one for the given speaker.
-	/// The header lives in PinnedHeader (outside the scroll stack) and never scrolls.
-	/// </summary>
-	private async Task SwapCharacterHeaderAsync(string speaker, string descriptor)
-	{
-		if (_characterHeaderScene == null)
-		{
-			GD.PushError("[DialogueController] _characterHeaderScene is not assigned.");
-			return;
-		}
-
-		
-		if (_activeHeader != null)
-		{
-			if (_activeHeader.GetSpeaker() == speaker)
-			{
-				_activeHeader.SetDescription(descriptor);
-				return;
-			}
-		}
-
-		// Fade out the outgoing header while the incoming one fades in (cross-fade).
-		CharacterHeader? outgoing = _activeHeader;
-		if (outgoing != null)
-		{
-			Tween fadeOut = CreateTween();
-			fadeOut.TweenProperty(outgoing, "modulate:a", 0f, 0.4f)
-				.SetTrans(Tween.TransitionType.Sine)
-				.SetEase(Tween.EaseType.Out);
-		}
-
-		CharacterHeader header = _characterHeaderScene.Instantiate<CharacterHeader>();
-		_pinnedHeader.AddChild(header);
-		header.SetAnchorsAndOffsetsPreset(Control.LayoutPreset.FullRect);
-		_activeHeader = header;
-
-		await header.ShowAsync(speaker, descriptor);
-
-		// Outgoing is fully transparent by now; remove it cleanly.
-		if (IsInstanceValid(outgoing))
-			outgoing.QueueFree();
-	}
-
 	// ── Skill check rendering ────────────────────────────────────────────────
 
 	private async Task OnSkillCheckReadyAsync(SkillCheckResult result)
@@ -248,7 +279,6 @@ public partial class DialogueController : Node
 			return;
 		}
 
-		// Close the active speaker section before the choice block.
 		FinalizeCurrentSection();
 
 		_lastSpeaker = "";
@@ -262,7 +292,6 @@ public partial class DialogueController : Node
 
 		entry.Setup(options, id =>
 		{
-			// Choice made: close the choice section so the next speaker opens fresh.
 			FinalizeCurrentSection();
 			_lastNamedSpeaker = "";
 			_bridge.Adapter.SelectOption(id);
@@ -285,8 +314,7 @@ public partial class DialogueController : Node
 
 	private void FinalizeCurrentSection()
 	{
-		if (_currentSectionEntries.Count == 0)
-			return;
+		if (_currentSectionEntries.Count == 0) return;
 
 		_completedSections.Enqueue(_currentSectionEntries);
 		_currentSectionEntries = new List<Node>();
@@ -308,8 +336,6 @@ public partial class DialogueController : Node
 
 	private void CollapseAndFreeSection(List<Node> entries)
 	{
-		// Measure the section's total height (including inter-node separation)
-		// while nodes are still in the tree but invisible.
 		int separation = _dialogStack.GetThemeConstant("separation");
 		float totalHeight = 0f;
 		int insertIndex = int.MaxValue;
@@ -333,8 +359,6 @@ public partial class DialogueController : Node
 
 		if (totalHeight <= 0f || insertIndex == int.MaxValue) return;
 
-		// A spacer holds the visual gap while the collapse animation runs.
-		// QueueFree is deferred, so the spacer is moved into place before nodes disappear.
 		var spacer = new Control();
 		spacer.CustomMinimumSize = new Vector2(0f, totalHeight);
 		_dialogStack.AddChild(spacer);
@@ -355,7 +379,6 @@ public partial class DialogueController : Node
 	{
 		if (!IsInstanceValid(_scrollContainer)) return;
 
-		// Wait one more frame so Godot finishes resizing the VBoxContainer.
 		await ToSignal(GetTree(), SceneTree.SignalName.ProcessFrame);
 		if (!IsInstanceValid(_scrollContainer)) return;
 

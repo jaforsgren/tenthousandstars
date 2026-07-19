@@ -28,7 +28,8 @@ public partial class DialogEntry : VBoxContainer
 
 	private Label _youLabel = null!;
 	private RichTextLabel _dialogueText = null!;
-	private TextureRect _divider = null!;
+	// private Line2D _divider = null!;
+	private TextureRect _divider = null!; 
 
 	private CancellationTokenSource? _typewriterCts;
 
@@ -36,8 +37,8 @@ public partial class DialogEntry : VBoxContainer
 	{
 		_youLabel = GetNode<Label>("YouLabel");
 		_dialogueText = GetNode<RichTextLabel>("DialogueText");
-		_divider = GetNode<TextureRect>("Divider");
-
+		// _divider = GetNode<Line2D>("Divider");
+		_divider = GetNode<TextureRect>("Divider2");
 		_youLabel.ThemeTypeVariation = "YouLabel";
 	}
 

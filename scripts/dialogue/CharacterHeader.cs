@@ -13,41 +13,61 @@ namespace Tts.Dialogue;
 ///
 /// Expected scene structure (CharacterHeader.tscn):
 ///   HBoxContainer (this node)
-///     TextureRect   "Portrait"
+///     Control       "PortraitWrapper"
+///       Portraits   "PortraitWrapper/Portraits"
+///       TextureRect "PortraitWrapper/PortraitFrame"
 ///     VBoxContainer "Info"
 ///       Label       "Info/SpeakerName"
 ///       Label       "Info/Descriptor"
 /// </summary>
+[Tool]
 public partial class CharacterHeader : HBoxContainer
 {
 	private static readonly Color Transparent = new(1f, 1f, 1f, 0f);
 	private static readonly Color Opaque = new(1f, 1f, 1f, 1f);
 	private const float FadeInDuration = 0.4f;
-	private const string PortraitBasePath = "res://portraits/";
 
-	private TextureRect _portrait = null!;
+	private Portraits _portraits = null!;
 	private Label _speakerName = null!;
 	private Label _descriptor = null!;
 
 	public override void _Ready()
 	{
-		_portrait = GetNode<TextureRect>("PortraitWrapper/Portrait");
+		_portraits = GetNode<Portraits>("PortraitWrapper/Portraits");
 		_speakerName = GetNode<Label>("Info/SpeakerName");
 		_descriptor = GetNode<Label>("Info/Descriptor");
 
 		_descriptor.ThemeTypeVariation = "Descriptor";
 	}
-	
-	
-	public String GetSpeaker()
-	{
-		return _speakerName.Text;
-	}
-	
+
+	public string GetSpeaker() => _speakerName.Text;
+
 	public void SetDescription(string descriptor)
 	{
 		_descriptor.Text = descriptor;
 		_descriptor.Visible = !string.IsNullOrWhiteSpace(descriptor);
+	}
+
+	// Synchronous, no animation — used by editor tool preview.
+	public void SetPreview(string speaker, string descriptor)
+	{
+		if (_speakerName is null) return;
+		_speakerName.Text = speaker;
+		_descriptor.Text = descriptor;
+		_descriptor.Visible = !string.IsNullOrWhiteSpace(descriptor);
+		_portraits.Visible = _portraits.ShowPortrait(speaker);
+		Modulate = Opaque;
+		Visible = true;
+	}
+
+	public void Reset()
+	{
+		_speakerName.Text = "";
+		_descriptor.Text = "";
+		_descriptor.Visible = false;
+		_portraits.HideAll();
+		Modulate = Opaque;
+		Visible = false;
 	}
 
 	public async Task ShowAsync(string speaker, string descriptor)
@@ -56,28 +76,14 @@ public partial class CharacterHeader : HBoxContainer
 		_descriptor.Visible = !string.IsNullOrWhiteSpace(descriptor);
 
 		if (_speakerName.Text == speaker)
-		{
 			return;
-		}
 
 		_speakerName.Text = speaker;
+		_portraits.Visible = _portraits.ShowPortrait(speaker);
 
-		LoadPortrait(speaker);
-
+		Visible = true;
 		Modulate = Transparent;
 		await FadeInAsync();
-	}
-
-	private void LoadPortrait(string speaker)
-	{
-		string path = $"{PortraitBasePath}{speaker.ToLowerInvariant()}.png";
-		if (!ResourceLoader.Exists(path))
-		{
-			_portrait.Visible = false;
-			return;
-		}
-		_portrait.Texture = ResourceLoader.Load<Texture2D>(path);
-		_portrait.Visible = true;
 	}
 
 	private async Task FadeInAsync()

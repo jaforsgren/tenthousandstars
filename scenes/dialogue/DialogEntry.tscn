@@ -25,9 +25,14 @@ text = "dsdsdsdsdsdsdss dsdsddssdsddssdsdsddsdssds dsdsdsdds dsdsdds"
 fit_content = true
 scroll_active = false
 
-[node name="Divider" type="TextureRect" parent="." unique_id=1642922839]
-custom_minimum_size = Vector2(0, 16)
+[node name="Divider2" type="TextureRect" parent="." unique_id=1642922839]
+custom_minimum_size = Vector2(0, 4)
 layout_mode = 2
 texture = ExtResource("3")
 expand_mode = 1
 flip_h = true
+
+[node name="Divider" type="Line2D" parent="." unique_id=56717210]
+visible = false
+points = PackedVector2Array(50, 130, 500, 130)
+width = 1.0
