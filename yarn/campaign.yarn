@@ -35,7 +35,7 @@ Nest-Administrator: Shoal-Coordinator. Your precence sings to me!
 
 Shoal-Coordinator: Nest-Administrator.
 
-Nest-Administrator: The blight of our guardens, {$enemy_faction}, crossed the outer markers one cycle ago. Their lead shoals have entered our domain.
+Nest-Administrator: THIS IS TUTORIL! The blight of our guardens, {$enemy_faction}, crossed the outer markers one cycle ago. Their lead shoals have entered our domain.
 
 Shoal-Coordinator: With a larger contingency. 
 

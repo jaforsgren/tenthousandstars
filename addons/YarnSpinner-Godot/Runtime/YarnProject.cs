@@ -40,313 +40,313 @@ namespace YarnSpinnerGodot;
 [GlobalClass]
 public partial class YarnProject : Resource
 {
-    /// <summary>
-    /// File extension of JSON yarn project files.
-    /// </summary>
-    public const string YARN_PROJECT_EXTENSION = ".yarnproject";
+	/// <summary>
+	/// File extension of JSON yarn project files.
+	/// </summary>
+	public const string YARN_PROJECT_EXTENSION = ".yarnproject";
 
-    /// <summary>
-    /// Indicates whether the last time this file was imported, the
-    /// file contained lines that did not have a line tag (and
-    /// therefore were assigned an automatically-generated, 'implicit'
-    /// string tag.) 
-    /// </summary>
-    [Export] public bool LastImportHadImplicitStringIDs;
+	/// <summary>
+	/// Indicates whether the last time this file was imported, the
+	/// file contained lines that did not have a line tag (and
+	/// therefore were assigned an automatically-generated, 'implicit'
+	/// string tag.) 
+	/// </summary>
+	[Export] public bool LastImportHadImplicitStringIDs;
 
-    /// <summary>
-    /// Indicates whether the last time this file was imported, the
-    /// file contained any string tags.
-    /// </summary>
-    [Export] public bool LastImportHadAnyStrings;
+	/// <summary>
+	/// Indicates whether the last time this file was imported, the
+	/// file contained any string tags.
+	/// </summary>
+	[Export] public bool LastImportHadAnyStrings;
 
-    /// <summary>
-    /// Indicates whether the last time this file was imported, the
-    /// file was able to be parsed without errors. 
-    /// </summary>
-    /// <remarks>
-    /// This value only represents whether syntactic errors exist or
-    /// not. Other errors may exist that prevent this script from being
-    /// compiled into a full program.
-    /// </remarks> 
-    [Export] public bool IsSuccessfullyParsed;
+	/// <summary>
+	/// Indicates whether the last time this file was imported, the
+	/// file was able to be parsed without errors. 
+	/// </summary>
+	/// <remarks>
+	/// This value only represents whether syntactic errors exist or
+	/// not. Other errors may exist that prevent this script from being
+	/// compiled into a full program.
+	/// </remarks> 
+	[Export] public bool IsSuccessfullyParsed;
 
-    /// <summary>
-    /// Path in the .godot folder used to store generated data
-    /// for this project
-    /// </summary>
-    [Export] public string ImportPath;
+	/// <summary>
+	/// Path in the .godot folder used to store generated data
+	/// for this project
+	/// </summary>
+	[Export] public string ImportPath;
 
-    public byte[] CompiledYarnProgram => Convert.FromBase64String(CompiledYarnProgramBase64);
+	public byte[] CompiledYarnProgram => Convert.FromBase64String(CompiledYarnProgramBase64);
 
-    [Export] public string CompiledYarnProgramBase64;
+	[Export] public string CompiledYarnProgramBase64;
 
-    [Export] public Localization baseLocalization;
+	[Export] public Localization baseLocalization;
 
-    /// <summary>
-    /// res:// path to the .yarnproject file
-    /// </summary>
-    [Export] public string JSONProjectPath;
+	/// <summary>
+	/// res:// path to the .yarnproject file
+	/// </summary>
+	[Export] public string JSONProjectPath;
 
-    /// <summary>
-    /// Whether to generate a C# file that contains properties for each variable.
-    /// </summary>
-    /// <seealso cref="variablesClassName"/>
-    /// <seealso cref="variablesClassNamespace"/>
-    /// <seealso cref="variablesClassParent"/>
-    [Export] public bool generateVariablesSourceFile;
+	/// <summary>
+	/// Whether to generate a C# file that contains properties for each variable.
+	/// </summary>
+	/// <seealso cref="variablesClassName"/>
+	/// <seealso cref="variablesClassNamespace"/>
+	/// <seealso cref="variablesClassParent"/>
+	[Export] public bool generateVariablesSourceFile;
 
-    /// <summary>
-    /// The name of the generated variables storage class.
-    /// </summary>
-    /// <seealso cref="generateVariablesSourceFile"/>
-    /// <seealso cref="variablesClassNamespace"/>
-    /// <seealso cref="variablesClassParent"/>
-    [Export] public string variablesClassName;
+	/// <summary>
+	/// The name of the generated variables storage class.
+	/// </summary>
+	/// <seealso cref="generateVariablesSourceFile"/>
+	/// <seealso cref="variablesClassNamespace"/>
+	/// <seealso cref="variablesClassParent"/>
+	[Export] public string variablesClassName;
 
-    /// <summary>
-    /// The namespace of the generated variables storage class.
-    /// </summary>
-    /// <seealso cref="generateVariablesSourceFile"/>
-    /// <seealso cref="variablesClassName"/>
-    /// <seealso cref="variablesClassParent"/>
-    [Export] public string variablesClassNamespace;
+	/// <summary>
+	/// The namespace of the generated variables storage class.
+	/// </summary>
+	/// <seealso cref="generateVariablesSourceFile"/>
+	/// <seealso cref="variablesClassName"/>
+	/// <seealso cref="variablesClassParent"/>
+	[Export] public string variablesClassNamespace;
 
-    /// <summary>
-    /// The parent class of the generated variables storage class.
-    /// </summary>
-    /// <seealso cref="generateVariablesSourceFile"/>
-    /// <seealso cref="variablesClassName"/>
-    /// <seealso cref="variablesClassNamespace"/>
-    [Export] public string variablesClassParent;
+	/// <summary>
+	/// The parent class of the generated variables storage class.
+	/// </summary>
+	/// <seealso cref="generateVariablesSourceFile"/>
+	/// <seealso cref="variablesClassName"/>
+	/// <seealso cref="variablesClassNamespace"/>
+	[Export] public string variablesClassParent;
 
 #if TOOLS
-    public string DefaultJSONProjectPath => new Regex(@"\.tres$").Replace(ResourcePath, ".yarnproject");
-    private Yarn.Compiler.Project _jsonProject;
+	public string DefaultJSONProjectPath => new Regex(@"\.tres$").Replace(ResourcePath, ".yarnproject");
+	private Yarn.Compiler.Project _jsonProject;
 
-    /// <summary>
-    /// Information available in the editor via the .yarnproject file,
-    /// parsed from JSON into a <see cref="Yarn.Compiler.Project"/>
-    /// </summary>
-    public Yarn.Compiler.Project JSONProject
-    {
-        get
-        {
-            if (_jsonProject == null)
-            {
-                if (string.IsNullOrEmpty(JSONProjectPath))
-                {
-                    JSONProjectPath = DefaultJSONProjectPath;
-                }
+	/// <summary>
+	/// Information available in the editor via the .yarnproject file,
+	/// parsed from JSON into a <see cref="Yarn.Compiler.Project"/>
+	/// </summary>
+	public Yarn.Compiler.Project JSONProject
+	{
+		get
+		{
+			if (_jsonProject == null)
+			{
+				if (string.IsNullOrEmpty(JSONProjectPath))
+				{
+					JSONProjectPath = DefaultJSONProjectPath;
+				}
 
-                if (!File.Exists(ProjectSettings.GlobalizePath(JSONProjectPath)))
-                {
-                    _jsonProject = new Yarn.Compiler.Project();
-                    SaveJSONProject();
-                }
-                else
-                {
-                    _jsonProject =
-                        Yarn.Compiler.Project.LoadFromFile(ProjectSettings.GlobalizePath(JSONProjectPath));
-                }
-            }
+				if (!File.Exists(ProjectSettings.GlobalizePath(JSONProjectPath)))
+				{
+					_jsonProject = new Yarn.Compiler.Project();
+					SaveJSONProject();
+				}
+				else
+				{
+					_jsonProject =
+						Yarn.Compiler.Project.LoadFromFile(ProjectSettings.GlobalizePath(JSONProjectPath));
+				}
+			}
 
-            return _jsonProject;
-        }
-        set => _jsonProject = value;
-    }
+			return _jsonProject;
+		}
+		set => _jsonProject = value;
+	}
 
-    public void SaveJSONProject()
-    {
-        _jsonProject.SaveToFile(ProjectSettings.GlobalizePath(JSONProjectPath));
-    }
+	public void SaveJSONProject()
+	{
+		_jsonProject.SaveToFile(ProjectSettings.GlobalizePath(JSONProjectPath));
+	}
 
-    /// <summary>
-    /// Base language that the .yarn scripts are written in.
-    /// Stored in the .yarnproject file
-    /// </summary>
-    public string defaultLanguage => JSONProject.BaseLanguage;
+	/// <summary>
+	/// Base language that the .yarn scripts are written in.
+	/// Stored in the .yarnproject file
+	/// </summary>
+	public string defaultLanguage => JSONProject.BaseLanguage;
 #endif
 
-    private LineMetadata _lineMetadata;
+	private LineMetadata _lineMetadata;
 
-    public LineMetadata LineMetadata
-    {
-        get
-        {
-            if (_lineMetadata != null)
-            {
-                return _lineMetadata;
-            }
+	public LineMetadata LineMetadata
+	{
+		get
+		{
+			if (_lineMetadata != null)
+			{
+				return _lineMetadata;
+			}
 
-            if (!string.IsNullOrEmpty(_lineMetadataJSON))
-            {
-                try
-                {
-                    _lineMetadata =
-                        JsonSerializer.Deserialize(_lineMetadataJSON, YarnJSONContext.Default.LineMetadata);
-                }
-                catch (Exception e)
-                {
-                    GD.PushError(
-                        $"Error parsing {nameof(LineMetadata)} from {ResourcePath}." +
-                        $" The JSON data may have been corrupted. Error: {e.Message}\n{e.StackTrace}");
-                }
-            }
-            else
-            {
-                LineMetadata = new LineMetadata();
-            }
+			if (!string.IsNullOrEmpty(_lineMetadataJSON))
+			{
+				try
+				{
+					_lineMetadata =
+						JsonSerializer.Deserialize(_lineMetadataJSON, YarnJSONContext.Default.LineMetadata);
+				}
+				catch (Exception e)
+				{
+					GD.PushError(
+						$"Error parsing {nameof(LineMetadata)} from {ResourcePath}." +
+						$" The JSON data may have been corrupted. Error: {e.Message}\n{e.StackTrace}");
+				}
+			}
+			else
+			{
+				LineMetadata = new LineMetadata();
+			}
 
-            return _lineMetadata;
-        }
-        set
-        {
-            _lineMetadata = value;
-            _lineMetadataJSON = JsonSerializer.Serialize(_lineMetadata, YarnJSONContext.Default.LineMetadata);
-        }
-    }
+			return _lineMetadata;
+		}
+		set
+		{
+			_lineMetadata = value;
+			_lineMetadataJSON = JsonSerializer.Serialize(_lineMetadata, YarnJSONContext.Default.LineMetadata);
+		}
+	}
 
-    [Export] private string _lineMetadataJSON;
+	[Export] private string _lineMetadataJSON;
 
-    private FunctionInfo[] _listOfFunctions;
+	private FunctionInfo[] _listOfFunctions;
 
-    public FunctionInfo[] ListOfFunctions
-    {
-        get
-        {
-            if (_listOfFunctions != null)
-            {
-                return _listOfFunctions;
-            }
+	public FunctionInfo[] ListOfFunctions
+	{
+		get
+		{
+			if (_listOfFunctions != null)
+			{
+				return _listOfFunctions;
+			}
 
-            if (!string.IsNullOrEmpty(_listOfFunctionsJSON))
-            {
-                try
-                {
-                    _listOfFunctions = JsonSerializer.Deserialize(_listOfFunctionsJSON,
-                        YarnJSONContext.Default.FunctionInfoArray);
-                }
-                catch (Exception e)
-                {
-                    GD.PushError(
-                        $"Error parsing {nameof(ListOfFunctions)} from {ResourcePath}. The JSON data may have been corrupted. Error: {e.Message}\n{e.StackTrace}");
-                }
-            }
-            else
-            {
-                ListOfFunctions = Array.Empty<FunctionInfo>();
-            }
+			if (!string.IsNullOrEmpty(_listOfFunctionsJSON))
+			{
+				try
+				{
+					_listOfFunctions = JsonSerializer.Deserialize(_listOfFunctionsJSON,
+						YarnJSONContext.Default.FunctionInfoArray);
+				}
+				catch (Exception e)
+				{
+					GD.PushError(
+						$"Error parsing {nameof(ListOfFunctions)} from {ResourcePath}. The JSON data may have been corrupted. Error: {e.Message}\n{e.StackTrace}");
+				}
+			}
+			else
+			{
+				ListOfFunctions = Array.Empty<FunctionInfo>();
+			}
 
-            return _listOfFunctions;
-        }
-        set
-        {
-            _listOfFunctions = value;
-            _listOfFunctionsJSON =
-                JsonSerializer.Serialize(_listOfFunctions, YarnJSONContext.Default.FunctionInfoArray);
-        }
-    }
+			return _listOfFunctions;
+		}
+		set
+		{
+			_listOfFunctions = value;
+			_listOfFunctionsJSON =
+				JsonSerializer.Serialize(_listOfFunctions, YarnJSONContext.Default.FunctionInfoArray);
+		}
+	}
 
-    [Export] private string _listOfFunctionsJSON;
+	[Export] private string _listOfFunctionsJSON;
 
-    private SerializedDeclaration[] _serializedDeclarations;
+	private SerializedDeclaration[] _serializedDeclarations;
 
-    public SerializedDeclaration[] SerializedDeclarations
-    {
-        get
-        {
-            if (_serializedDeclarations != null)
-            {
-                return _serializedDeclarations;
-            }
+	public SerializedDeclaration[] SerializedDeclarations
+	{
+		get
+		{
+			if (_serializedDeclarations != null)
+			{
+				return _serializedDeclarations;
+			}
 
-            if (!string.IsNullOrEmpty(_serializedDeclarationsJSON))
-            {
-                try
-                {
-                    _serializedDeclarations =
-                        JsonSerializer.Deserialize(_serializedDeclarationsJSON,
-                            YarnJSONContext.Default.SerializedDeclarationArray);
-                }
-                catch (Exception e)
-                {
-                    GD.PushError(
-                        $"Error parsing {nameof(SerializedDeclarations)} from {ResourcePath}. The JSON data may have been corrupted. Error: {e.Message}\n{e.StackTrace}");
-                }
-            }
-            else
-            {
-                SerializedDeclarations = Array.Empty<SerializedDeclaration>();
-            }
+			if (!string.IsNullOrEmpty(_serializedDeclarationsJSON))
+			{
+				try
+				{
+					_serializedDeclarations =
+						JsonSerializer.Deserialize(_serializedDeclarationsJSON,
+							YarnJSONContext.Default.SerializedDeclarationArray);
+				}
+				catch (Exception e)
+				{
+					GD.PushError(
+						$"Error parsing {nameof(SerializedDeclarations)} from {ResourcePath}. The JSON data may have been corrupted. Error: {e.Message}\n{e.StackTrace}");
+				}
+			}
+			else
+			{
+				SerializedDeclarations = Array.Empty<SerializedDeclaration>();
+			}
 
-            return _serializedDeclarations;
-        }
-        set
-        {
-            _serializedDeclarations = value;
-            _serializedDeclarationsJSON = JsonSerializer.Serialize(_serializedDeclarations,
-                YarnJSONContext.Default.SerializedDeclarationArray);
-        }
-    }
+			return _serializedDeclarations;
+		}
+		set
+		{
+			_serializedDeclarations = value;
+			_serializedDeclarationsJSON = JsonSerializer.Serialize(_serializedDeclarations,
+				YarnJSONContext.Default.SerializedDeclarationArray);
+		}
+	}
 
-    [Export] private string _serializedDeclarationsJSON;
+	[Export] private string _serializedDeclarationsJSON;
 
-    [Export] public YarnProjectError[] ProjectErrors = Array.Empty<YarnProjectError>();
+	[Export] public YarnProjectError[] ProjectErrors = Array.Empty<YarnProjectError>();
 
-    /// <summary>
-    /// The cached result of deserializing <see
-    /// cref="CompiledYarnProgram"/>.
-    /// </summary>
-    private Program cachedProgram;
+	/// <summary>
+	/// The cached result of deserializing <see
+	/// cref="CompiledYarnProgram"/>.
+	/// </summary>
+	private Program cachedProgram;
 
-    /// <summary>
-    /// Returns a list of all line and option IDs within the requested nodes
-    /// </summary>
-    /// <remarks>
-    /// This is intended to be used either to precache multiple nodes worth of lines or for debugging
-    /// </remarks>
-    /// <param name="nodes">the names of all nodes whos line IDs you covet</param>
-    /// <returns>The ids of all lines and options in the requested <paramref name="nodes"/> </returns>
-    public IEnumerable<string> GetLineIDsForNodes(IEnumerable<string> nodes)
-    {
-        var ids = new List<string>();
+	/// <summary>
+	/// Returns a list of all line and option IDs within the requested nodes
+	/// </summary>
+	/// <remarks>
+	/// This is intended to be used either to precache multiple nodes worth of lines or for debugging
+	/// </remarks>
+	/// <param name="nodes">the names of all nodes whos line IDs you covet</param>
+	/// <returns>The ids of all lines and options in the requested <paramref name="nodes"/> </returns>
+	public IEnumerable<string> GetLineIDsForNodes(IEnumerable<string> nodes)
+	{
+		var ids = new List<string>();
 
-        foreach (var node in nodes)
-        {
-            var lines = Program.LineIDsForNode(node);
-            if (lines != null)
-            {
-                ids.AddRange(lines);
-            }
-        }
+		foreach (var node in nodes)
+		{
+			var lines = Program.LineIDsForNode(node);
+			if (lines != null)
+			{
+				ids.AddRange(lines);
+			}
+		}
 
-        return ids;
-    }
+		return ids;
+	}
 
-    /// <summary>
-    /// Gets the Yarn Program stored in this project.
-    /// </summary>
-    [Obsolete("Use the Program property instead, which caches its return value.")]
-    public Program GetProgram()
-    {
-        return Program.Parser.ParseFrom(CompiledYarnProgram);
-    }
+	/// <summary>
+	/// Gets the Yarn Program stored in this project.
+	/// </summary>
+	[Obsolete("Use the Program property instead, which caches its return value.")]
+	public Program GetProgram()
+	{
+		return Program.Parser.ParseFrom(CompiledYarnProgram);
+	}
 
-    /// <summary>
-    /// Gets the Yarn Program stored in this project.
-    /// </summary>
-    /// <remarks>
-    /// The first time this is called, the program stored in <see
-    /// cref="CompiledYarnProgram"/> is deserialized and cached. Future
-    /// calls to this method will return the cached value.
-    /// </remarks>
-    public Program Program
-    {
-        get
-        {
-            cachedProgram ??= Program.Parser.ParseFrom(CompiledYarnProgram);
+	/// <summary>
+	/// Gets the Yarn Program stored in this project.
+	/// </summary>
+	/// <remarks>
+	/// The first time this is called, the program stored in <see
+	/// cref="CompiledYarnProgram"/> is deserialized and cached. Future
+	/// calls to this method will return the cached value.
+	/// </remarks>
+	public Program Program
+	{
+		get
+		{
+			cachedProgram ??= Program.Parser.ParseFrom(CompiledYarnProgram);
 
-            return cachedProgram;
-        }
-    }
+			return cachedProgram;
+		}
+	}
 }

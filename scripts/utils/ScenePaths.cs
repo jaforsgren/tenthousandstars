@@ -4,6 +4,7 @@ namespace Tts.Utils;
 public static class ScenePaths
 {
     public const string Level = "res://scenes/Level.tscn";
+    public const string MainMenu = "res://scenes/ui/MainMenu.tscn";
 
     public const string FleetNode = "res://scenes/fleet/FleetNode.tscn";
     public const string TransitFleetNode = "res://scenes/fleet/TransitFleetNode.tscn";

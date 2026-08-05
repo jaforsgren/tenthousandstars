@@ -1,0 +1,184 @@
+[gd_scene format=3 uid="uid://cftxclee643sf"]
+
+[ext_resource type="Script" uid="uid://dxnc4lj6o7ruv" path="res://scripts/ui/MainMenu.cs" id="1"]
+[ext_resource type="Script" uid="uid://hwqk86lqcdj4" path="res://scripts/ui/PortraitRingNode.cs" id="2"]
+[ext_resource type="PackedScene" uid="uid://cfc5bct4pehfe" path="res://scenes/dialogue/Portraits.tscn" id="3"]
+[ext_resource type="Theme" uid="uid://cb4owkkkf73m1" path="res://themes/dialog_theme.tres" id="4"]
+[ext_resource type="Script" uid="uid://dnn2emct8nxra" path="res://scripts/nodes/SpaceBackgroundNode.cs" id="5"]
+[ext_resource type="Shader" uid="uid://cv8wn7xycdhsw" path="res://shaders/space_background.gdshader" id="6"]
+[ext_resource type="Shader" uid="uid://8u1honyhwhvo" path="res://shaders/gradient_overlay.gdshader" id="7"]
+[ext_resource type="Shader" uid="uid://rjds60jhqikm" path="res://shaders/color_correction.gdshader" id="8"]
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_1"]
+seed = 1
+frequency = 0.0126
+fractal_lacunarity = 1.0
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_1"]
+width = 1024
+height = 1024
+generate_mipmaps = false
+noise = SubResource("FastNoiseLite_1")
+seamless = true
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_spacebg"]
+shader = ExtResource("6")
+shader_parameter/stars_on = true
+shader_parameter/stars_flicker = true
+shader_parameter/timeScaleFactor = 0.01
+shader_parameter/noise_texture = SubResource("NoiseTexture2D_1")
+shader_parameter/colour_muiltiplier = Color(1, 1, 1, 1)
+shader_parameter/colour_muiltiplier2 = Color(1, 1, 1, 1)
+shader_parameter/brightness = 1.774000084265
+shader_parameter/clouds_resolution = 4.614000219165
+shader_parameter/clouds_intesity = 0.0780000078961
+shader_parameter/waveyness = 7.0000003325
+shader_parameter/fragmentation = 5.0000002375
+shader_parameter/distortion = 1.0000000475
+shader_parameter/clouds_alpha = 0.55600001337046
+shader_parameter/movement = 0.7499999904540701
+shader_parameter/blur = 1.09200005187
+shader_parameter/blur2 = 0.0090000004275
+shader_parameter/bg_speed = 0.3
+shader_parameter/mid_speed = 1.0
+shader_parameter/fg_speed = 0.4
+shader_parameter/fromColor = Color(0.2, 0.2, 0.2, 1)
+shader_parameter/toColor = Color(0.12773606, 0.12773591, 0.12773594, 1)
+shader_parameter/colorChangeTimeScale = 0.050000002375
+shader_parameter/star_density = 0.94799997843814
+shader_parameter/star_size = 0.06800000253148
+shader_parameter/star_flicker_speed = 0.50000002049012
+shader_parameter/camera_position = Vector2(0, 0)
+shader_parameter/camera_zoom = 1.0
+shader_parameter/parallax_pan_factor = 0.050000002375
+shader_parameter/parallax_zoom_factor = 0.10000000475
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_gradient"]
+shader = ExtResource("7")
+shader_parameter/color_top = Color(0, 0, 0, 1)
+shader_parameter/color_bottom = Color(0.051266506, 0.055569064, 0.05700325, 1)
+shader_parameter/gradient_coverage = 0.7390000351025
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_cc"]
+shader = ExtResource("8")
+shader_parameter/brightness = 1.0000000475
+shader_parameter/contrast = 1.054000050065
+shader_parameter/saturation = 0.5350000254125
+shader_parameter/tint = Color(0.8428, 0.7056, 0.98, 0)
+shader_parameter/radial_inner = Color(1, 1, 1, 1)
+shader_parameter/radial_outer = Color(0, 0, 0, 1)
+shader_parameter/radial_strength = 1.0
+shader_parameter/vignette_strength = 1.0
+shader_parameter/vignette_softness = 0.39500001806398
+
+[node name="MainMenu" type="Control" unique_id=1236040494]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource("4")
+script = ExtResource("1")
+
+[node name="Background" type="CanvasLayer" parent="." unique_id=963404964]
+layer = -10
+
+[node name="SpaceBackground" type="ColorRect" parent="Background" unique_id=238655030]
+material = SubResource("ShaderMaterial_spacebg")
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("5")
+
+[node name="GradientOverlay" type="ColorRect" parent="Background" unique_id=1239445994]
+material = SubResource("ShaderMaterial_gradient")
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="ColorCorrection" type="ColorRect" parent="Background" unique_id=1803925634]
+material = SubResource("ShaderMaterial_cc")
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="PortraitRing" type="Control" parent="." unique_id=1723039041]
+unique_name_in_owner = true
+layout_mode = 1
+anchor_left = 0.5
+anchor_top = 0.3
+anchor_right = 0.5
+anchor_bottom = 0.3
+offset_left = -201.0
+offset_top = -204.0
+offset_right = 199.0
+offset_bottom = 196.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("2")
+RingColor = Color(0.85, 0.85, 0.85, 0.55)
+RingWidth = 0.629
+
+[node name="PortraitClip" type="Control" parent="PortraitRing" unique_id=1285872270]
+clip_contents = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 28.0
+offset_top = 28.0
+offset_right = -28.0
+offset_bottom = -28.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="Portraits" parent="PortraitRing/PortraitClip" unique_id=400822881 instance=ExtResource("3")]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 15
+anchor_bottom = 1.0
+offset_right = 0.0
+offset_bottom = 0.0
+
+[node name="ButtonMenu" type="VBoxContainer" parent="." unique_id=491014649]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.5
+anchor_top = 0.62
+anchor_right = 0.5
+anchor_bottom = 0.62
+offset_left = -160.0
+offset_right = 160.0
+grow_horizontal = 2
+theme_override_constants/separation = 32
+alignment = 1
+
+[node name="CampaignButton" type="Button" parent="ButtonMenu" unique_id=1849538619]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 4
+text = "CAMPAIGN"
+
+[node name="RandomMapButton" type="Button" parent="ButtonMenu" unique_id=1129332683]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 4
+text = "RANDOM MAP"
+
+[node name="ExitButton" type="Button" parent="ButtonMenu" unique_id=138278359]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 4
+text = "EXIT"
