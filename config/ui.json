@@ -7,5 +7,12 @@
 	"MinDisplayZoom": 1.0,
 	"LineColor": { "R": 1.0, "G": 1.0, "B": 1.0, "A": 0.3 },
 	"LineWidth": 1.5
+  },
+  "Dialogue": {
+	"HistoricAlpha": 0.35,
+	"HistoricFadeDuration": 3.3,
+	"ScrollDuration": 6.9,
+	"SectionFadeOutDuration": 2.0,
+	"SectionCollapseDuration": 1.5
   }
 }

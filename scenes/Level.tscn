@@ -49,7 +49,7 @@ shader_parameter/distortion = 1.0000000475
 shader_parameter/clouds_alpha = 0.55600001337046
 shader_parameter/movement = 0.7499999904540701
 shader_parameter/blur = 1.09200005187
-shader_parameter/blur2 = 0.00800000038
+shader_parameter/blur2 = 0.0090000004275
 shader_parameter/bg_speed = 0.3
 shader_parameter/mid_speed = 1.0
 shader_parameter/fg_speed = 0.4
@@ -68,7 +68,7 @@ shader_parameter/parallax_zoom_factor = 0.10000000475
 shader = ExtResource("shader_gradient")
 shader_parameter/color_top = Color(0, 0, 0, 1)
 shader_parameter/color_bottom = Color(0.051266506, 0.055569064, 0.05700325, 1)
-shader_parameter/gradient_coverage = 0.8
+shader_parameter/gradient_coverage = 0.7390000351025
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_remap"]
 shader = ExtResource("shader_remap")
@@ -79,14 +79,14 @@ shader_parameter/strength = 1.0
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_cc"]
 shader = ExtResource("shader_cc")
 shader_parameter/brightness = 1.0000000475
-shader_parameter/contrast = 1.0000000475
-shader_parameter/saturation = 1.0000000475
+shader_parameter/contrast = 1.054000050065
+shader_parameter/saturation = 0.230000010925
 shader_parameter/tint = Color(0.8428, 0.7056, 0.98, 0)
-shader_parameter/radial_inner = Color(0.9941245, 0, 0.20432511, 1)
-shader_parameter/radial_outer = Color(0.52, 0.52, 0.52, 0)
-shader_parameter/radial_strength = 0.2370000112575
+shader_parameter/radial_inner = Color(1, 1, 1, 1)
+shader_parameter/radial_outer = Color(0, 0, 0, 1)
+shader_parameter/radial_strength = 1.0
 shader_parameter/vignette_strength = 1.0
-shader_parameter/vignette_softness = 0.40000001830148
+shader_parameter/vignette_softness = 0.39500001806398
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_grid"]
 shader = ExtResource("shader_grid")
@@ -190,7 +190,6 @@ offset_top = 0.0
 offset_right = 134.0
 offset_bottom = 43.0
 grow_horizontal = 1
-SpeedIcons = []
 
 [node name="CountdownTimerNode" parent="PersistentUI" unique_id=100100102 instance=ExtResource("7_timer")]
 unique_name_in_owner = true

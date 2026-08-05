@@ -2,6 +2,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using Godot;
 
@@ -73,18 +74,32 @@ public partial class DialogueController : Node
 
 	private const int MaxSections = 2;
 	private const int MaxEntriesPerSection = 5;
+
+	// Animation timings come from config/ui.json (Dialogue section) so the
+	// dialogue feel can be tuned without a rebuild.
+	private float _historicAlpha;
+	private float _historicFadeDuration;
+	private float _scrollDuration;
+	private float _sectionFadeOutDuration;
+	private float _sectionCollapseDuration;
+
 	[Export] private float SpeakerDelaySeconds = 2.0f;
 	[Export] private float LinePauseSeconds = 1.0f;
 	[Export] private string PreviewNode = "";
 
+	private DialogueController() { }
 	private DialogEntry? _currentEntry;
 	private DialogEntry? _lastDialogEntry;
+	private Control? _focusEntry;
+	private float _scrollVelocity;
+	private const float _maxScrollRate = 2400f;
 	private string _lastSpeaker = "";
 	private string _lastLineSpeaker = "";
 	private string _lastNamedSpeaker = "";
 
 	private readonly Queue<List<Node>> _completedSections = new();
 	private List<Node> _currentSectionEntries = new();
+	private CancellationTokenSource? _scrollCts;
 
 	private static readonly HashSet<string> PortraitlessSpeakers =
 		new(StringComparer.OrdinalIgnoreCase) { "you", "narration", "narrator", "" };
@@ -108,6 +123,13 @@ public partial class DialogueController : Node
 		}
 
 		_bridge = GetNode<YarnBridge>("YarnBridge");
+
+		DialogueConfig dialogue = ConfigLoader.Load<UiConfig>("res://config/ui.json").Dialogue;
+		_historicAlpha = dialogue.HistoricAlpha;
+		_historicFadeDuration = dialogue.HistoricFadeDuration;
+		_scrollDuration = dialogue.ScrollDuration;
+		_sectionFadeOutDuration = dialogue.SectionFadeOutDuration;
+		_sectionCollapseDuration = dialogue.SectionCollapseDuration;
 
 		// Game start: clear any editor preview content and start clean.
 		_characterHeader.Reset();
@@ -170,6 +192,7 @@ public partial class DialogueController : Node
 		_completedSections.Clear();
 		_currentSectionEntries.Clear();
 		_currentEntry = null;
+		_focusEntry = null;
 		_lastDialogEntry = null;
 		_lastSpeaker = "";
 		_lastLineSpeaker = "";
@@ -228,7 +251,9 @@ public partial class DialogueController : Node
 		_dialogStack.AddChild(entry);
 		_currentSectionEntries.Add(entry);
 		_currentEntry = entry;
-		CallDeferred(nameof(ScrollToBottom));
+		_focusEntry = entry;
+		DimPreviousEntries(entry);
+		CallDeferred(nameof(ScrollToActive));
 
 		await entry.ShowAsync(line);
 
@@ -245,7 +270,7 @@ public partial class DialogueController : Node
 		if (LinePauseSeconds > 0f)
 			await ToSignal(GetTree().CreateTimer(LinePauseSeconds, ignoreTimeScale: true), SceneTreeTimer.SignalName.Timeout);
 
-		CallDeferred(nameof(ScrollToBottom));
+		CallDeferred(nameof(ScrollToActive));
 		_bridge.Adapter.AcknowledgeLine();
 	}
 
@@ -263,11 +288,13 @@ public partial class DialogueController : Node
 		SkillCheckEntry entry = _skillCheckEntryScene.Instantiate<SkillCheckEntry>();
 		_dialogStack.AddChild(entry);
 		_currentSectionEntries.Add(entry);
+		_focusEntry = entry;
+		DimPreviousEntries(entry);
 
 		await entry.ShowAsync(result);
 
 		_bridge.Adapter.AcknowledgeSkillCheck();
-		CallDeferred(nameof(ScrollToBottom));
+		CallDeferred(nameof(ScrollToActive));
 	}
 
 	// ── Choices ──────────────────────────────────────────────────────────────
@@ -290,16 +317,18 @@ public partial class DialogueController : Node
 		ChoiceEntry entry = _choiceEntryScene.Instantiate<ChoiceEntry>();
 		_dialogStack.AddChild(entry);
 		_currentSectionEntries.Add(entry);
+		_focusEntry = entry;
+		DimPreviousEntries(entry);
 
 		entry.Setup(options, id =>
 		{
 			FinalizeCurrentSection();
 			_lastNamedSpeaker = "";
 			_bridge.Adapter.SelectOption(id);
-			CallDeferred(nameof(ScrollToBottom));
+			CallDeferred(nameof(ScrollToActive));
 		});
 
-		CallDeferred(nameof(ScrollToBottom));
+		CallDeferred(nameof(ScrollToActive));
 	}
 
 	// ── Section management ───────────────────────────────────────────────────
@@ -324,18 +353,19 @@ public partial class DialogueController : Node
 			FadeOutSection(_completedSections.Dequeue());
 	}
 
-	private void FadeOutSection(List<Node> entries)
+	private async void FadeOutSection(List<Node> entries)
 	{
-		Tween fadeTween = CreateTween();
-		fadeTween.SetParallel(true);
+		var tasks = new List<Task>();
 		foreach (Node e in entries)
-			if (IsInstanceValid(e))
-				fadeTween.TweenProperty(e, "modulate:a", 0f, 2.0f);
+			if (IsInstanceValid(e) && e is CanvasItem canvas)
+				tasks.Add(FadeAlphaAsync(canvas, 0f, _sectionFadeOutDuration));
 
-		fadeTween.Finished += () => CollapseAndFreeSection(entries);
+		await Task.WhenAll(tasks);
+		if (IsInstanceValid(this))
+			CollapseAndFreeSection(entries);
 	}
 
-	private void CollapseAndFreeSection(List<Node> entries)
+	private async void CollapseAndFreeSection(List<Node> entries)
 	{
 		int separation = _dialogStack.GetThemeConstant("separation");
 		float totalHeight = 0f;
@@ -365,30 +395,136 @@ public partial class DialogueController : Node
 		_dialogStack.AddChild(spacer);
 		_dialogStack.MoveChild(spacer, insertIndex);
 
-		Tween collapseTween = CreateTween();
-		collapseTween.TweenProperty(spacer, "custom_minimum_size:y", 0f, 0.5f)
-			.SetTrans(Tween.TransitionType.Sine)
-			.SetEase(Tween.EaseType.Out);
-		collapseTween.Finished += () => { if (IsInstanceValid(spacer)) spacer.QueueFree(); };
+		float duration = _sectionCollapseDuration;
+		float startMs = Time.GetTicksMsec();
+		while (IsInstanceValid(spacer))
+		{
+			float elapsed = (Time.GetTicksMsec() - startMs) / 1000f;
+			if (elapsed >= duration) break;
+			float height = Mathf.Lerp(totalHeight, 0f, Mathf.Clamp(elapsed / duration, 0f, 1f));
+			spacer.CustomMinimumSize = new Vector2(0f, height);
+			await ToSignal(GetTree(), SceneTree.SignalName.ProcessFrame);
+		}
+		if (IsInstanceValid(spacer)) spacer.QueueFree();
 	}
 
 	// ── Scroll / layout ──────────────────────────────────────────────────────
 
+	// Fades a canvas item's alpha to a target over a duration. Runs as a frame
+	// loop driven by real ticks so it still animates while GameSpeed pauses the
+	// engine (Engine.TimeScale = 0), which home Tweens freeze on.
+	private async Task FadeAlphaAsync(CanvasItem target, float targetAlpha, float duration)
+	{
+		float startAlpha = target.Modulate.A;
+		if (Mathf.IsEqualApprox(startAlpha, targetAlpha)) return;
+
+		float startMs = Time.GetTicksMsec();
+		while (IsInstanceValid(target))
+		{
+			float elapsed = (Time.GetTicksMsec() - startMs) / 1000f;
+			if (elapsed >= duration) break;
+			Color c = target.Modulate;
+			target.Modulate = new Color(c.R, c.G, c.B, Mathf.Lerp(startAlpha, targetAlpha, Mathf.Clamp(elapsed / duration, 0f, 1f)));
+			await ToSignal(GetTree(), SceneTree.SignalName.ProcessFrame);
+		}
+
+		if (IsInstanceValid(target))
+		{
+			Color c = target.Modulate;
+			target.Modulate = new Color(c.R, c.G, c.B, targetAlpha);
+		}
+	}
+
+	// Dims every already-delivered entry in the stack (section headers, dialog,
+	// skill checks, choices) so the freshly added active row is the only fully
+	// focused text. Layout spacer Controls are opaque and therefore untouched.
+	private void DimPreviousEntries(Control active)
+	{
+		if (!IsInstanceValid(_dialogStack)) return;
+		foreach (Node child in _dialogStack.GetChildren())
+		{
+			if (child == active) continue;
+			if (child is not (DialogEntry or SkillCheckEntry or ChoiceEntry or Label)) continue;
+			_ = FadeAlphaAsync((CanvasItem)child, _historicAlpha, _historicFadeDuration);
+		}
+	}
+
 	// The stack resizes whenever an entry is appended or a collapsed section is
-	// removed. Pinning the scroll to the bottom at that exact moment guarantees
-	// the newest text never sits past the viewport, even when a manual scroll
-	// happened a frame before layout settled.
+	// removed. Re-centering on the focus at that exact moment guarantees the
+	// text being written stays at the vertical middle of the viewport instead of
+	// slipping past it, even when a manual scroll happened the frame before.
 	private void OnDialogStackResized()
 	{
-		CallDeferred(nameof(ScrollToBottom));
+		CallDeferred(nameof(ScrollToActive));
 	}
 
 	// Called via CallDeferred so Godot has flushed the layout pass before we
-	// update the scroll position. int.MaxValue is clamped by ScrollContainer
-	// to the actual content bottom — no need to read MaxValue from the scrollbar.
-	private void ScrollToBottom()
+	// update the scroll position. Scrolls so the active row sits near the
+	// vertical center of the viewport; ScrollContainer clamps the value to the
+	// content bounds, so short dialogues simply sit at the top.
+	private void ScrollToActive()
 	{
 		if (!IsInstanceValid(_scrollContainer)) return;
-		_scrollContainer.ScrollVertical = int.MaxValue;
+
+		_scrollCts?.Cancel();
+		_scrollCts?.Dispose();
+		_scrollCts = new CancellationTokenSource();
+		_ = AnimateScrollToActiveAsync(_scrollCts.Token);
+	}
+
+	// Scrolls toward the active row's center target with a critically damped
+	// spring. The target is recomputed every frame from the live layout
+	// (positions are only valid once Godot has sorted the stack, which lags the
+	// Resized event). Critically damped follow gives a continuous glide that
+	// decelerates fully without overshoot, and settles exactly on the target —
+	// no asymptotic crawl that snap-settles. The loop ends once both the scroll
+	// value and velocity are negligible near the target (or the target is the
+	// unclamped container bottom, which ScrollContainer pins down).
+	private async Task AnimateScrollToActiveAsync(CancellationToken token)
+	{
+		float omega = Mathf.Pi * 2f / _scrollDuration;
+		float lastMs = Time.GetTicksMsec();
+
+		while (IsInstanceValid(_scrollContainer) && !token.IsCancellationRequested)
+		{
+			float now = Time.GetTicksMsec();
+			float delta = Mathf.Max(0f, (now - lastMs) / 1000f);
+			lastMs = now;
+
+			int target = ComputeScrollTarget();
+			float position = _scrollContainer.ScrollVertical;
+
+			_scrollVelocity += (target - position) * omega * omega * delta;
+			_scrollVelocity -= 2f * omega * _scrollVelocity * delta;
+			position += _scrollVelocity * delta;
+
+			// A fresh spring must start from the row below hot launch, so cap the
+			// frame growth to avoid an overshooting first hop for long distances.
+			_scrollVelocity = Mathf.Clamp(_scrollVelocity, -_maxScrollRate, _maxScrollRate);
+
+			bool converged = Mathf.Abs(position - target) < 0.5f && Mathf.Abs(_scrollVelocity) < 0.5f;
+			_scrollContainer.ScrollVertical = Mathf.RoundToInt(converged ? target : position);
+
+			if (converged)
+			{
+				_scrollVelocity = 0f;
+				break;
+			}
+			await ToSignal(GetTree(), SceneTree.SignalName.ProcessFrame);
+		}
+	}
+
+	private int ComputeScrollTarget()
+	{
+		// No focus yet — glide to the bottom of the stack.
+		if (_focusEntry is null || !IsInstanceValid(_focusEntry))
+		{
+			ScrollBar bar = _scrollContainer.GetVScrollBar();
+			return Mathf.Max(0, Mathf.RoundToInt(bar?.MaxValue ?? 0f));
+		}
+
+		float viewportHeight = Mathf.Max(1f, _scrollContainer.Size.Y);
+		float centerOffset = _focusEntry.Position.Y + _focusEntry.Size.Y * 0.5f - viewportHeight * 0.5f;
+		return Mathf.Max(0, Mathf.RoundToInt(centerOffset));
 	}
 }
