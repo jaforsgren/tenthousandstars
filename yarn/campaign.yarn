@@ -95,12 +95,27 @@ The next generation will hatch with different boundaries.
 Orders will follow.
 
 -> New Campaign
-<<narrative_action "new_campaign">>
+    <<jump outro_new_campaign>>
 -> Skirmish Missions
-<<narrative_action "skirmish_missions">>
+    <<jump outro_skirmish_missions>>
 -> Quit
-<<narrative_action "quit">>
+    <<jump outro_quit>>
 
+===
+
+title: outro_new_campaign
+---
+<<narrative_action "new_campaign">>
+===
+
+title: outro_skirmish_missions
+---
+<<narrative_action "skirmish_missions">>
+===
+
+title: outro_quit
+---
+<<narrative_action "quit">>
 ===
 
 title: campaign_defeat
@@ -121,10 +136,10 @@ The remaining shoals have altered their routes.
 The Mother-Leader receives the final report.
 
 -> New Campaign
-<<narrative_action "new_campaign">>
+    <<jump outro_new_campaign>>
 -> Skirmish Missions
-<<narrative_action "skirmish_missions">>
+    <<jump outro_skirmish_missions>>
 -> Quit
-<<narrative_action "quit">>
+    <<jump outro_quit>>
 
 ===
