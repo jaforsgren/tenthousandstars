@@ -99,6 +99,7 @@ public partial class DialogueController : Node
 		_scrollContainer = GetNode<ScrollContainer>("ScrollContainer");
 		_pinnedHeader    = GetNode<Control>("PinnedHeader");
 		_characterHeader = GetNode<CharacterHeader>("PinnedHeader/CharacterHeader");
+		_dialogStack.Resized += OnDialogStackResized;
 
 		if (Engine.IsEditorHint())
 		{
@@ -372,6 +373,15 @@ public partial class DialogueController : Node
 	}
 
 	// ── Scroll / layout ──────────────────────────────────────────────────────
+
+	// The stack resizes whenever an entry is appended or a collapsed section is
+	// removed. Pinning the scroll to the bottom at that exact moment guarantees
+	// the newest text never sits past the viewport, even when a manual scroll
+	// happened a frame before layout settled.
+	private void OnDialogStackResized()
+	{
+		CallDeferred(nameof(ScrollToBottom));
+	}
 
 	// Called via CallDeferred so Godot has flushed the layout pass before we
 	// update the scroll position. int.MaxValue is clamped by ScrollContainer
