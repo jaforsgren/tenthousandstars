@@ -23,8 +23,8 @@
       "PartialControlThreshold": 0.1,
       "FleetDamageScale": 0.15,
       "SystemInstabilityScale": 0.2,
-      "DefenderFleetScale": 0.05,
-      "HostilityDefenseScale": 0.3
+      "DefenderFleetScale": 0.12,
+      "HostilityDefenseScale": 0.35
     },
     "Contest": {
       "ArrivalMultiplier": 0.8,

@@ -63,8 +63,7 @@ public partial class Level
 				SystemOwner.Player,
 				intent,
 				BuildFleetInfluences(fleet),
-				TimeUtils.NowSec(),
-				target.Ships);
+				TimeUtils.NowSec());
 		}
 		UpdateFog();
 		_gameController.EvaluateEndState();
@@ -191,8 +190,7 @@ public partial class Level
 			senderOwner,
 			intent,
 			BuildFleetInfluences(fleet),
-			TimeUtils.NowSec(),
-			target.Ships);
+			TimeUtils.NowSec());
 	}
 
 	private void CommitAiOwnSystem(int systemIndex, AiPlayerData player, IntentType intent)

@@ -43,7 +43,6 @@ public class CommitmentEngineTests
 			Owner = SystemOwner.Player,
 			Intent = intent,
 			Influences = new FleetInfluences(aggression, 5f, 5f, 5f),
-			DefenderFleetAtCommitment = 0f,
 			StartTime = 0f,
 		};
 
@@ -76,7 +75,7 @@ public class CommitmentEngineTests
 	public void Resolve_StrongAggressionYieldsFullControl()
 	{
 		var state = MakeState(IntentType.Attack, aggression: 10f);
-		var outcome = CommitmentEngine.Resolve(state, new SystemHiddenState(0f, 0f, 0f, 0f, 0f), MakeConfig(), new Random(1));
+		var outcome = CommitmentEngine.Resolve(state, new SystemHiddenState(0f, 0f, 0f, 0f, 0f), MakeConfig(), new Random(1), 0f);
 		Assert.Equal(ControlChange.Full, outcome.ControlChange);
 	}
 
@@ -84,8 +83,21 @@ public class CommitmentEngineTests
 	public void Resolve_WeakAggressionYieldsNoControl()
 	{
 		var state = MakeState(IntentType.Attack, aggression: 1f);
-		var outcome = CommitmentEngine.Resolve(state, new SystemHiddenState(0.9f, 0.9f, 0f, 0f, 0f), MakeConfig(), new Random(1));
+		var outcome = CommitmentEngine.Resolve(state, new SystemHiddenState(0.9f, 0.9f, 0f, 0f, 0f), MakeConfig(), new Random(1), 0f);
 		Assert.Equal(ControlChange.None, outcome.ControlChange);
+	}
+
+	[Fact]
+	public void Resolve_AttackConsidersCurrentDefenderFleet()
+	{
+		var state = MakeState(IntentType.Attack, aggression: 10f);
+		var hidden = new SystemHiddenState(0f, 0f, 0f, 0f, 0f);
+
+		var weakDefense = CommitmentEngine.Resolve(state, hidden, MakeConfig(), new Random(1), defenderFleet: 0f);
+		var strongDefense = CommitmentEngine.Resolve(state, hidden, MakeConfig(), new Random(1), defenderFleet: 80f);
+
+		Assert.Equal(ControlChange.Full, weakDefense.ControlChange);
+		Assert.Equal(ControlChange.None, strongDefense.ControlChange);
 	}
 
 	[Fact]

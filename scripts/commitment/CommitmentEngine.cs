@@ -32,7 +32,8 @@ public static class CommitmentEngine
         CommitmentState commitment,
         SystemHiddenState hiddenState,
         CommitmentConfig config,
-        Random rng)
+        Random rng,
+        float defenderFleet)
     {
         // Risk introduces variance — high risk = less predictable outcome
         var noise = (float)(rng.NextDouble() * commitment.RiskLevel * 0.4 - 0.2);
@@ -40,7 +41,7 @@ public static class CommitmentEngine
 
         return commitment.Intent switch
         {
-            IntentType.Attack      => ResolveAttack(commitment, hiddenState, intentCfg, noise),
+            IntentType.Attack      => ResolveAttack(commitment, hiddenState, intentCfg, noise, defenderFleet),
             IntentType.Contest     => ResolveContest(commitment, hiddenState, intentCfg, noise),
             IntentType.Fortify     => ResolveFortify(commitment, intentCfg),
             IntentType.Investigate => ResolveInvestigate(commitment, hiddenState, intentCfg, noise),
@@ -215,10 +216,11 @@ public static class CommitmentEngine
         CommitmentState c,
         SystemHiddenState hidden,
         IntentConfig cfg,
-        float noise)
+        float noise,
+        float defenderFleet)
     {
         var score = c.Influences.Aggression
-                    - (c.DefenderFleetAtCommitment * cfg.DefenderFleetScale + hidden.Hostility * cfg.HostilityDefenseScale)
+                    - (defenderFleet * cfg.DefenderFleetScale + hidden.Hostility * cfg.HostilityDefenseScale)
                     + noise;
 
         var control = score switch

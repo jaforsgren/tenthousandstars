@@ -10,7 +10,6 @@ public sealed class CommitmentState
     public SystemOwner Owner { get; init; }
     public IntentType Intent { get; init; }
     public FleetInfluences Influences { get; internal set; }
-    public float DefenderFleetAtCommitment { get; init; }
     public double StartTime { get; init; }
 
     public float InitialFleetStrength { get; internal set; }

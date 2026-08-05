@@ -56,8 +56,7 @@ public partial class CommitmentController : Node
         SystemOwner owner,
         IntentType intent,
         FleetInfluences influences,
-        double currentTime,
-        float defenderFleet = 0f)
+        double currentTime)
     {
         var existing = _active.Find(c =>
             c.SystemIndex == systemIndex &&
@@ -83,7 +82,6 @@ public partial class CommitmentController : Node
             Owner                     = owner,
             Intent                    = intent,
             Influences                = influences,
-            DefenderFleetAtCommitment = defenderFleet,
             InitialFleetStrength      = influences.Aggression / _config.FleetInfluencesPerShip.Aggression,
             StartTime                 = currentTime
         };
@@ -144,7 +142,8 @@ public partial class CommitmentController : Node
         {
             RemoveIndicator(commitment.Id);
             var hidden = _hiddenStates[commitment.SystemIndex];
-            var outcome = CommitmentEngine.Resolve(commitment, hidden, _config, _rng);
+            var defenderFleet = _systems[commitment.SystemIndex].Ships;
+            var outcome = CommitmentEngine.Resolve(commitment, hidden, _config, _rng, defenderFleet);
             ApplySystemChanges(commitment.SystemIndex, outcome.SystemChanges);
             var remaining = Math.Max(0f, commitment.InitialFleetStrength + outcome.FleetChanges.StrengthDelta);
             EmitSignal(SignalName.CommitmentResolved,
