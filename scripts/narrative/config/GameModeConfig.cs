@@ -1,5 +1,5 @@
 namespace Tts.Narrative;
 
-public enum GameMode { Random, Story }
+public enum GameMode { Skirmish, Story }
 
 public record GameModeConfig(GameMode Mode);

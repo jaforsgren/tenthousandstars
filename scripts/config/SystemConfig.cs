@@ -19,5 +19,6 @@ public record SystemConfig(
 	float FleetOutlineWidth,
 	ColorData NeutralFleetFill,
 	ColorData NeutralFleetOutline,
+	ColorData CapitolFill,
 	string[] SystemTexturePaths,
 	float[] SystemTextureScales);

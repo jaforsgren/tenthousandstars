@@ -25,6 +25,7 @@ public partial class SystemNode : FogAwareNode
 	private float _baseProduction;
 	private Color _playerSystemOutline;
 	private Color _neutralSystemOutline;
+	private Color _capitolFill;
 	private PlanetGradient[] _planetGradients = [];
 	private float _planetOrbitSpeed;
 
@@ -35,9 +36,9 @@ public partial class SystemNode : FogAwareNode
 	private float _forgeProductionBonus;
 	private float _fortifyDefenseBonusMultiplier;
 
-	private const string ScenarioBadgePath = "res://scenes/system/ScenarioBadgeNode.tscn";
-	private const string ProductionArcScenePath = "res://scenes/system/ProductionArcNode.tscn";
-	private const string FleetScenePath = "res://scenes/fleet/FleetNode.tscn";
+	private const string ScenarioBadgePath = ScenePaths.ScenarioBadgeNode;
+	private const string ProductionArcScenePath = ScenePaths.ProductionArcNode;
+	private const string FleetScenePath = ScenePaths.FleetNode;
 	private const float FleetNodeSpacing = 4f;
 
 	private static readonly Color ForgeBadgeColor   = new(1f,  0.55f, 0.1f, 0.95f);
@@ -55,13 +56,9 @@ public partial class SystemNode : FogAwareNode
 	private const float DefendRingWidth = 1.5f;
 	private const float AiOwnerRingGap = 2f;
 	private const float AiOwnerRingWidth = 1.5f;
-	private static readonly Color EncounterRingColor = new(1f, 0.65f, 0.1f, 0.85f);
-	private const float EncounterRingGap = 7f;
-	private const float EncounterRingWidth = 1.5f;
 
 	private bool _isObjective;
 	private bool _isDefend;
-	private bool _hasEncounterMark;
 	private SystemOwner _targetOwner = SystemOwner.None;
 	private float _cachedProductionRate;
 	private ScenarioBadgeNode? _scenarioBadge;
@@ -79,8 +76,6 @@ public partial class SystemNode : FogAwareNode
 	public bool IsPlayerOwned => _ownerPlayer == SystemOwner.Player;
 	public bool IsAiOwned => _ownerPlayer.IsAi();
 
-	public bool ContainsFleetAt(Vector2 worldPos) => GetFleetSlotAt(worldPos) >= 0;
-
 	public bool ContainsCapitolShipAt(Vector2 worldPos)
 		=> _capitolShipNode != null && _capitolShipNode.ContainsPoint(worldPos);
 
@@ -89,7 +84,7 @@ public partial class SystemNode : FogAwareNode
 		if (_capitolShipNode != null) return;
 		var node = GD.Load<PackedScene>(FleetScenePath).Instantiate<FleetNode>();
 		AddChild(node);
-		node.InitializeCapitol(_systemRadius, _fleetCircleGap);
+		node.InitializeCapitol(_systemRadius, _fleetCircleGap, _capitolFill);
 		_capitolShipNode = node;
 	}
 
@@ -221,12 +216,6 @@ public partial class SystemNode : FogAwareNode
 		QueueRedraw();
 	}
 
-	public void SetEncounterMark(bool has)
-	{
-		_hasEncounterMark = has;
-		QueueRedraw();
-	}
-
 	public void SetScenarioBadge(bool show)
 	{
 		if (show && _scenarioBadge == null)
@@ -249,9 +238,6 @@ public partial class SystemNode : FogAwareNode
 
 		if (_isDefend)
 			DrawArc(Vector2.Zero, _systemRadius + DefendRingGap, 0f, Mathf.Tau, 64, DefendRingColor, DefendRingWidth);
-
-		if (_hasEncounterMark)
-			DrawArc(Vector2.Zero, _systemRadius + EncounterRingGap, 0f, Mathf.Tau, 64, EncounterRingColor, EncounterRingWidth);
 
 		if (_targetOwner != SystemOwner.None && _ownerPlayer == _targetOwner)
 			DrawArc(Vector2.Zero, _systemRadius + TargetRingGap, 0f, Mathf.Tau, 64, TargetRingColor, TargetRingWidth);
@@ -320,6 +306,7 @@ public partial class SystemNode : FogAwareNode
 		_baseProduction = cfg.BaseProduction;
 		_playerSystemOutline = cfg.SystemOutline.ToColor();
 		_neutralSystemOutline = cfg.NeutralSystemOutline.ToColor();
+		_capitolFill = cfg.CapitolFill.ToColor();
 		_planetGradients = cfg.PlanetGradients;
 		_planetOrbitSpeed = cfg.PlanetOrbitSpeed;
 		var levelCfg = ConfigLoader.Load<LevelConfig>("res://config/level.json");

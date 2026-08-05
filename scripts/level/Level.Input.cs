@@ -41,7 +41,7 @@ public partial class Level
 				GetViewport().SetInputAsHandled();
 				break;
 			case Key.F4:
-				GetTree().ChangeSceneToFile("res://scenes/debug/StoryDebugScene.tscn");
+				GetTree().ChangeSceneToFile(ScenePaths.StoryDebugScene);
 				GetViewport().SetInputAsHandled();
 				break;
 			case Key.F5:
@@ -49,7 +49,7 @@ public partial class Level
 				GetViewport().SetInputAsHandled();
 				break;
 			case Key.F6:
-				GetTree().ChangeSceneToFile("res://scenes/debug/NarrativeDebugRoot.tscn");
+				GetTree().ChangeSceneToFile(ScenePaths.NarrativeDebugRoot);
 				GetViewport().SetInputAsHandled();
 				break;
 		}
@@ -190,7 +190,7 @@ public partial class Level
 
 	private void HandleSystemClick(int systemIndex)
 	{
-		var now = Time.GetTicksMsec() / 1000.0;
+		var now = TimeUtils.NowSec();
 		var isDoubleClick = _lastClickedSystemIndex == systemIndex
 			&& (now - _lastSystemClickTime) < DoubleClickThresholdSeconds;
 		_lastSystemClickTime = now;

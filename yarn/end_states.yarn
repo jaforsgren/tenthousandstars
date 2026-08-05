@@ -73,19 +73,3 @@ title: defend_and_eliminate_timeout
 ---
 The enemy has entrenched. You failed to hold the line.
 ===
-
-// Condition: rearguard_action
-title: rearguard_action_brief
----
-Hold the marked system long enough for your forces to regroup.
-===
-
-title: rearguard_action_end
----
-The line held. Your forces have regrouped.
-===
-
-title: rearguard_action_timeout
----
-Your position was overrun. The retreat failed.
-===

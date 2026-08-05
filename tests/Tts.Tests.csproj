@@ -23,6 +23,10 @@
   <ItemGroup>
     <!-- Narrative module — pure C#, no engine runtime dependency -->
     <Compile Include="../scripts/narrative/**/*.cs" />
+    <!-- NarrativePanel is a Godot CanvasLayer node (YarnSpinnerGodot) — not usable in tests -->
+    <Compile Remove="../scripts/narrative/NarrativePanel.cs" />
+    <!-- ScenarioRegistry depends on SystemNode (Godot Node2D) — not usable in tests -->
+    <Compile Remove="../scripts/narrative/service/ScenarioRegistry.cs" />
     <!-- EndCondition record referenced by NarrativeConditionConfig.ToEndCondition() -->
     <Compile Include="../scripts/config/EndStateConfig.cs" />
     <!-- AiNamingConfig used by NarrativeService; AiConfig for completeness -->
@@ -30,15 +34,41 @@
     <Compile Include="../scripts/config/ColorData.cs" />
     <!-- AiDisposition enum used by ArchetypeConfig and AiNaming -->
     <Compile Include="../scripts/ai/AiDisposition.cs" />
+    <!-- Pure AI combat viability prediction -->
+    <Compile Include="../scripts/ai/AiViability.cs" />
     <!-- Character base record shared by AiPlayerData and narrative factions -->
     <Compile Include="../scripts/ai/Character.cs" />
     <!-- Shared faction name generation used by NarrativeService -->
     <Compile Include="../scripts/ai/AiNaming.cs" />
+    <Compile Include="../scripts/ai/AiNaming.Godot.cs" />
     <!--
       ConfigLoader is included so the Tts namespace resolves fully.
       NarrativeController.Create() calls it, but tests bypass Create() via the
       private constructor, so ConfigLoader is never invoked during tests.
     -->
     <Compile Include="../scripts/utils/ConfigLoader.cs" />
+    <!-- Yarn parsing helpers used by CampaignController -->
+    <Compile Include="../scripts/utils/YarnLinePool.cs" />
+    <Compile Include="../scripts/utils/YarnHeaderParser.cs" />
+    <!-- Shared win-pattern campaign walk used by CLI + story debug -->
+    <Compile Include="../scripts/debug/CampaignSimulator.cs" />
+    <!-- Pure logic — no Godot runtime dependency -->
+    <Compile Include="../scripts/utils/GraphUtils.cs" />
+    <Compile Include="../scripts/utils/CombatResolver.cs" />
+    <!-- Level generator (Vector2/Mathf compile via GodotSharp; no engine runtime) -->
+    <Compile Include="../scripts/types/Planet.cs" />
+    <Compile Include="../scripts/config/SystemConfig.cs" />
+    <Compile Include="../scripts/config/PlanetGradient.cs" />
+    <Compile Include="../scripts/config/LevelGeneratorConfig.cs" />
+    <Compile Include="../scripts/level/LevelGenerator.cs" />
+    <!-- Effect system (pure records + registry) -->
+    <Compile Include="../scripts/effects/ActiveEffect.cs" />
+    <Compile Include="../scripts/effects/EffectRegistry.cs" />
+    <!-- Commitment module — pure engine/state; CommitmentController is a Godot Node, excluded -->
+    <Compile Include="../scripts/level/SystemOwner.cs" />
+    <Compile Include="../scripts/commitment/CommitmentTypes.cs" />
+    <Compile Include="../scripts/commitment/CommitmentState.cs" />
+    <Compile Include="../scripts/commitment/CommitmentEngine.cs" />
+    <Compile Include="../scripts/config/CommitmentConfig.cs" />
   </ItemGroup>
 </Project>

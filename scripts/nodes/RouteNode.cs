@@ -16,10 +16,11 @@ public partial class RouteNode : FogAwareNode
 	private bool _pathHighlighted;
 
 	// Positions are in Level (parent) local space; RouteNode sits at (0,0) so local == parent local.
-	public void Initialize(Vector2 from, Vector2 to)
+	public void Initialize(Vector2 from, Vector2 to, float routeWidth)
 	{
 		_from = from;
 		_to = to;
+		_routeWidth = routeWidth;
 	}
 
 	public void SetOwnerColor(Color? color)
@@ -33,11 +34,6 @@ public partial class RouteNode : FogAwareNode
 		if (_pathHighlighted == highlighted) return;
 		_pathHighlighted = highlighted;
 		QueueRedraw();
-	}
-
-	public override void _Ready()
-	{
-		_routeWidth = ConfigLoader.Load<UiConfig>("res://config/ui.json").RouteWidth;
 	}
 
 	public override void _Draw()

@@ -18,10 +18,7 @@ public partial class CommitmentController : Node
     [Signal]
     public delegate void CommitmentSignalChangedEventHandler(int systemIndex);
 
-    // Must match the multiplier used in Level.Combat.cs when building FleetInfluences
-    public const float InfluenceAggressionPerShip = 0.1f;
-
-    private const string IndicatorScenePath = "res://scenes/system/CommitmentIndicatorNode.tscn";
+    private const string IndicatorScenePath = ScenePaths.CommitmentIndicatorNode;
 
     private readonly List<CommitmentState> _active = [];
     private readonly List<CommitmentState> _pendingResolution = [];
@@ -66,7 +63,7 @@ public partial class CommitmentController : Node
             c.SystemIndex == systemIndex &&
             c.Owner == owner &&
             c.Intent == intent &&
-            !c.IsComplete && !c.IsInterrupted);
+            c.IsActive);
 
         if (existing != null)
         {
@@ -75,7 +72,7 @@ public partial class CommitmentController : Node
                 existing.Influences.Discipline + influences.Discipline,
                 existing.Influences.Curiosity  + influences.Curiosity,
                 existing.Influences.Stability  + influences.Stability);
-            existing.InitialFleetStrength += influences.Aggression / InfluenceAggressionPerShip;
+            existing.InitialFleetStrength += influences.Aggression / _config.FleetInfluencesPerShip.Aggression;
             EmitSignal(SignalName.CommitmentSignalChanged, systemIndex);
             return existing;
         }
@@ -87,7 +84,7 @@ public partial class CommitmentController : Node
             Intent                    = intent,
             Influences                = influences,
             DefenderFleetAtCommitment = defenderFleet,
-            InitialFleetStrength      = influences.Aggression / InfluenceAggressionPerShip,
+            InitialFleetStrength      = influences.Aggression / _config.FleetInfluencesPerShip.Aggression,
             StartTime                 = currentTime
         };
         _active.Add(commitment);
@@ -111,7 +108,7 @@ public partial class CommitmentController : Node
     {
         _cohabitantBuffer.Clear();
         foreach (var c in _active)
-            if (c.SystemIndex == systemIndex && !c.IsComplete && !c.IsInterrupted)
+            if (c.SystemIndex == systemIndex && c.IsActive)
                 _cohabitantBuffer.Add(c);
         return _cohabitantBuffer;
     }
@@ -129,7 +126,7 @@ public partial class CommitmentController : Node
     {
         foreach (var commitment in _active)
         {
-            if (commitment.IsComplete || commitment.IsInterrupted) continue;
+            if (!commitment.IsActive) continue;
 
             var hidden = _hiddenStates[commitment.SystemIndex];
             var cohabitants = GetActiveForSystem(commitment.SystemIndex);
@@ -160,7 +157,7 @@ public partial class CommitmentController : Node
         }
         _pendingResolution.Clear();
 
-        _active.RemoveAll(c => c.IsComplete || c.IsInterrupted);
+        _active.RemoveAll(c => !c.IsActive);
     }
 
     private void SpawnIndicator(CommitmentState commitment)
@@ -185,7 +182,7 @@ public partial class CommitmentController : Node
     {
         var count = 0;
         foreach (var c in _active)
-            if (c.SystemIndex == systemIndex && !c.IsComplete && !c.IsInterrupted)
+            if (c.SystemIndex == systemIndex && c.IsActive)
                 count++;
         return count;
     }

@@ -12,9 +12,17 @@ public sealed record CommitmentConfig
     public float InterruptPenaltyMultiplier { get; init; }
     public float AlterationRiskThreshold { get; init; }
     public float HiddenStateInitRange { get; init; }
-    public float EncounterSystemChance { get; init; }
+    public FleetInfluencesPerShip FleetInfluencesPerShip { get; init; } = new();
     public Dictionary<string, IntentConfig> Intents { get; init; } = new();
     public AiCommitmentConfig Ai { get; init; } = new();
+}
+
+public sealed record FleetInfluencesPerShip
+{
+    public float Aggression { get; init; }
+    public float Discipline { get; init; }
+    public float Curiosity { get; init; }
+    public float Stability { get; init; }
 }
 
 public sealed record IntentConfig
@@ -33,7 +41,6 @@ public sealed record IntentConfig
 
 public sealed record AiCommitmentConfig
 {
-    public float MinCommitIntervalSeconds { get; init; }
     public int MaxActiveCommitmentsPerPlayer { get; init; }
     public float InterruptRiskThreshold { get; init; }
     // Keys: disposition name → (intent name → weight 0–1)

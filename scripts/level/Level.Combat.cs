@@ -4,7 +4,6 @@ using System.Linq;
 using Godot;
 using Tts.Commitment;
 using Tts.Effects;
-using Tts.Events;
 using Tts.Fleet;
 using Tts.Ui;
 using Tts.Utils;
@@ -32,11 +31,10 @@ public partial class Level
 			(_, f) => OnPlayerPathedHop(path, step + 1, f));
 	}
 
-	private static readonly Color CapitolTransitColor = new(1f, 0.8f, 0.1f, 0.95f);
 	private const float CapitolShipFleet = 1f;
 
 	private void LaunchCapitolPathedTransit(List<int> path, IntentType intent)
-		=> LaunchTransit(path[0], path[1], CapitolShipFleet, SystemOwner.Player, CapitolTransitColor,
+		=> LaunchTransit(path[0], path[1], CapitolShipFleet, SystemOwner.Player, _capitolFill,
 			(_, f) => OnCapitolPathedHop(path, 1, intent, f));
 
 	private void OnCapitolPathedHop(List<int> path, int step, IntentType intent, float fleet)
@@ -46,7 +44,7 @@ public partial class Level
 			ResolveCapitolArrival(path[step], intent, fleet);
 			return;
 		}
-		LaunchTransit(path[step], path[step + 1], fleet, SystemOwner.Player, CapitolTransitColor,
+		LaunchTransit(path[step], path[step + 1], fleet, SystemOwner.Player, _capitolFill,
 			(_, f) => OnCapitolPathedHop(path, step + 1, intent, f));
 	}
 
@@ -65,7 +63,7 @@ public partial class Level
 				SystemOwner.Player,
 				intent,
 				BuildFleetInfluences(fleet),
-				Time.GetTicksMsec() / 1000.0,
+				TimeUtils.NowSec(),
 				target.Ships);
 		}
 		UpdateFog();
@@ -86,7 +84,7 @@ public partial class Level
 			ToIndex = toIndex,
 			Owner = owner,
 			Fleet = fleet,
-			LaunchTimeSec = Time.GetTicksMsec() / 1000.0,
+			LaunchTimeSec = TimeUtils.NowSec(),
 			TotalDurationSec = _transitDurationSeconds,
 			Node = transit,
 			ToWorldPos = toEdge
@@ -114,24 +112,7 @@ public partial class Level
 			return;
 		}
 
-		if (_encounterSystems.Contains(toIndex))
-		{
-			var eventNode = _encounterTracker.NextEventNode();
-			if (eventNode != null)
-			{
-				_encounterTracker.MarkSeen(eventNode);
-				_narrativePanel.ShowEncounterEvent(eventNode,
-					() => ResolveDirectCombat(toIndex, fleet));
-			}
-			else
-			{
-				ResolveDirectCombat(toIndex, fleet);
-			}
-		}
-		else
-		{
-			ResolveDirectCombat(toIndex, fleet);
-		}
+		ResolveDirectCombat(toIndex, fleet);
 
 		UpdateFog();
 	}
@@ -161,7 +142,7 @@ public partial class Level
 			SpawnCombatEffect(systemIndex, attackerWon: false);
 		}
 
-		PostBark("player_attack");
+		PostChat("player_attack");
 		UpdateFog();
 		_gameController.EvaluateEndState();
 	}
@@ -175,7 +156,7 @@ public partial class Level
 				SystemOwner.Player,
 				intent,
 				BuildFleetInfluences(_systems[systemIndex].Ships),
-				Time.GetTicksMsec() / 1000.0);
+				TimeUtils.NowSec());
 			UpdateFog();
 		});
 	}
@@ -201,7 +182,7 @@ public partial class Level
 		// Bark fires on arrival, not on resolution — commitment duration is invisible to the player
 		if (target.OwnerPlayer == SystemOwner.Player)
 		{
-			PostBark("player_under_attack");
+			PostChat("player_under_attack");
 			PostAiBark(aiPlayer);
 		}
 
@@ -210,7 +191,7 @@ public partial class Level
 			senderOwner,
 			intent,
 			BuildFleetInfluences(fleet),
-			Time.GetTicksMsec() / 1000.0,
+			TimeUtils.NowSec(),
 			target.Ships);
 	}
 
@@ -221,7 +202,7 @@ public partial class Level
 			player.Owner,
 			intent,
 			BuildFleetInfluences(_systems[systemIndex].Ships),
-			Time.GetTicksMsec() / 1000.0);
+			TimeUtils.NowSec());
 	}
 
 	private void RegisterTransit(ActiveTransit newTransit)
@@ -230,7 +211,7 @@ public partial class Level
 		if (opponent == null)
 			return;
 
-		var now = Time.GetTicksMsec() / 1000.0;
+		var now = TimeUtils.NowSec();
 		var remainA = (float)(opponent.TotalDurationSec - (now - opponent.LaunchTimeSec));
 		// Both fleets travel the same route at equal speed; meeting time = remainA * D_B / (D_A + D_B)
 		var meetingDelay = remainA * newTransit.TotalDurationSec / (opponent.TotalDurationSec + newTransit.TotalDurationSec);
@@ -259,12 +240,12 @@ public partial class Level
 		if (a.Owner == SystemOwner.Player || b.Owner == SystemOwner.Player)
 		{
 			var playerWon = winner.Owner == SystemOwner.Player;
-			PostBark(playerWon ? "route_combat_win" : "route_combat_lose");
+			PostChat(playerWon ? "route_combat_win" : "route_combat_lose");
 		}
 
 		if (survivingFleet > 0)
 		{
-			var now = Time.GetTicksMsec() / 1000.0;
+			var now = TimeUtils.NowSec();
 			var winnerRemaining = (float)(winner.TotalDurationSec - (now - winner.LaunchTimeSec));
 
 			if (winnerRemaining > 0)
@@ -311,36 +292,40 @@ public partial class Level
 	// All four values scale with ships so that fleet size affects every intent type.
 	// Ratios reflect what a transit fleet is likely good at: strong on aggression/discipline,
 	// weaker on curiosity/stability — those scale at lower rates but are not fixed.
-	// The Aggression multiplier must match CommitmentController.InfluenceAggressionPerShip.
-	private static FleetInfluences BuildFleetInfluences(float ships) => new(
-		Aggression: ships * CommitmentController.InfluenceAggressionPerShip,
-		Discipline: ships * 0.08f,
-		Curiosity:  ships * 0.05f,
-		Stability:  ships * 0.04f);
+	private FleetInfluences BuildFleetInfluences(float ships)
+	{
+		var perShip = _commitmentConfig.FleetInfluencesPerShip;
+		return new FleetInfluences(
+			Aggression: ships * perShip.Aggression,
+			Discipline: ships * perShip.Discipline,
+			Curiosity:  ships * perShip.Curiosity,
+			Stability:  ships * perShip.Stability);
+	}
 
 	private void PostPlayerTransitBark(int toIndex)
 	{
 		var tag = _systems[toIndex].OwnerPlayer == SystemOwner.Player ? "player_move" : "player_attack";
-		PostBark(tag);
-	}
-
-	private void PostBark(string tag)
-	{
-		if (_levelUi.ChatWindow == null || !_barkPools.TryGetValue(tag, out var pool) || pool.Length == 0)
-			return;
-		var line = pool[_rng.Next(pool.Length)];
-		var sep = line.IndexOf(": ", StringComparison.Ordinal);
-		if (sep > 0)
-			_levelUi.ChatWindow.PostMessage(line[..sep], line[(sep + 2)..]);
-		else
-			_levelUi.ChatWindow.PostMessage("Commander", line);
+		PostChat(tag);
 	}
 
 	private void PostAiBark(AiPlayerData aiPlayer)
 	{
 		if (_levelUi.ChatWindow == null || aiPlayer.Barks.Length == 0)
 			return;
-		var message = aiPlayer.Barks[_rng.Next(aiPlayer.Barks.Length)];
-		_levelUi.ChatWindow.PostMessage(aiPlayer.FactionName, message);
+		PostMessage(aiPlayer.FactionName, aiPlayer.Barks[_rng.Next(aiPlayer.Barks.Length)]);
+	}
+
+	private void PostChat(string poolKey)
+	{
+		if (_levelUi.ChatWindow == null || !_barkPools.TryGetValue(poolKey, out var pool) || pool.Length == 0)
+			return;
+		var line = pool[_rng.Next(pool.Length)];
+		var sep = line.IndexOf(": ", StringComparison.Ordinal);
+		PostMessage(sep > 0 ? line[..sep] : "Commander", sep > 0 ? line[(sep + 2)..] : line);
+	}
+
+	private void PostMessage(string speaker, string message)
+	{
+		_levelUi.ChatWindow?.PostMessage(speaker, message);
 	}
 }

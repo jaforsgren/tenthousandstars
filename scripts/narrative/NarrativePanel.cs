@@ -45,14 +45,6 @@ public partial class NarrativePanel : CanvasLayer
 		Hide();
 	}
 
-	public void ShowEncounterEvent(string yarnNode, Action onComplete)
-	{
-		_onDialogueComplete = onComplete;
-		GameSpeed.PushUiPause();
-		Show();
-		RunDialogueSafe(yarnNode);
-	}
-
 	public void ShowNarrative(string yarnNode, IReadOnlyDictionary<string, string> vars, Action? onComplete = null)
 	{
 		LastNarrativeAction = "";

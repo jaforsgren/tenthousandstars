@@ -17,7 +17,7 @@ public static class CommitmentEngine
         Random rng,
         float delta)
     {
-        if (commitment.IsComplete || commitment.IsInterrupted) return;
+        if (!commitment.IsActive) return;
 
         var intentCfg = config.Intents[commitment.Intent.ToString()];
         var hostileCount = CountHostileCohabitants(commitment, cohabitants);
@@ -87,7 +87,7 @@ public static class CommitmentEngine
 
         foreach (var c in commitments)
         {
-            if (c.IsComplete || c.IsInterrupted) continue;
+            if (!c.IsActive) continue;
             activeCount++;
             if (c.Intent == IntentType.Attack) hasAttack = true;
             if (c.Owner != lastOwner)
@@ -336,7 +336,7 @@ public static class CommitmentEngine
         foreach (var other in cohabitants)
         {
             if (other.Id == commitment.Id) continue;
-            if (other.IsComplete || other.IsInterrupted) continue;
+            if (!other.IsActive) continue;
             if (other.Owner != commitment.Owner) count++;
         }
         return count;
@@ -348,7 +348,7 @@ public static class CommitmentEngine
         if (commitment.Intent == IntentType.Fortify) return 0f;
         foreach (var other in cohabitants)
         {
-            if (other.IsComplete || other.IsInterrupted) continue;
+            if (!other.IsActive) continue;
             if (other.Intent == IntentType.Fortify && other.Owner != commitment.Owner)
                 return other.Influences.Stability;
         }

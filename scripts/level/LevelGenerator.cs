@@ -8,14 +8,6 @@ using Tts.Utils;
 
 namespace Tts.Level;
 
-public enum SystemOwner { None, Player, Ai1, Ai2, Ai3, Ai4 }
-
-public static class SystemOwnerExtensions
-{
-    public static bool IsAi(this SystemOwner owner) =>
-        owner is SystemOwner.Ai1 or SystemOwner.Ai2 or SystemOwner.Ai3 or SystemOwner.Ai4;
-}
-
 public record AiPlayerData(
     SystemOwner Owner,
     AiDisposition Disposition,
@@ -115,7 +107,7 @@ public static class LevelGenerator
 
     private static IReadOnlyList<Planet> GeneratePlanets(Random rng, LevelGeneratorConfig cfg, float planetProductionRate)
     {
-        var count = rng.Next(0, 6);
+        var count = rng.Next(cfg.MinPlanets, cfg.MaxPlanets);
         var planets = new List<Planet>(count);
         var angleStep = count > 0 ? Mathf.Tau / count : 0f;
 
@@ -154,7 +146,7 @@ public static class LevelGenerator
             }
 
             inTree.Add(bestTo);
-            routes.Add(NormalizedEdge(bestFrom, bestTo));
+            routes.Add(GraphUtils.NormalizedEdge(bestFrom, bestTo));
             connections[bestFrom]++;
             connections[bestTo]++;
         }
@@ -170,7 +162,7 @@ public static class LevelGenerator
             systems[a.Item1].Position.DistanceTo(systems[a.Item2].Position)
             .CompareTo(systems[b.Item1].Position.DistanceTo(systems[b.Item2].Position)));
 
-        var extraCount = rng.Next(1, Math.Min(5, extras.Count + 1));
+        var extraCount = rng.Next(1, Math.Min(cfg.MaxExtraRoutes, extras.Count + 1));
         for (var i = 0; i < extraCount && i < extras.Count; i++)
         {
             var (f, t) = extras[i];
@@ -182,6 +174,4 @@ public static class LevelGenerator
 
         return [.. routes];
     }
-
-    private static (int, int) NormalizedEdge(int a, int b) => a < b ? (a, b) : (b, a);
 }

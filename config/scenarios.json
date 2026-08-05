@@ -2,8 +2,6 @@
   "Scenarios": [
 	{
 	  "Id": "the_relay_chain",
-	  "Title": "",
-	  "IntroText": "",
 	  "Stages": [
 		{
 		  "DependsOn": null,
@@ -31,8 +29,6 @@
 	},
 	{
 	  "Id": "survivor_enclave",
-	  "Title": "",
-	  "IntroText": "",
 	  "Stages": [
 		{
 		  "DependsOn": null,
@@ -60,8 +56,6 @@
 	},
 	{
 	  "Id": "the_ghost_fleet",
-	  "Title": "",
-	  "IntroText": "",
 	  "Stages": [
 		{
 		  "DependsOn": null,

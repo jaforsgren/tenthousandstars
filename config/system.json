@@ -137,6 +137,12 @@
 		"B": 0.7,
 		"A": 1.0
 	},
+	"CapitolFill": {
+		"R": 1.0,
+		"G": 0.8,
+		"B": 0.1,
+		"A": 0.95
+	},
 	"SystemTexturePaths": [
 		"res://assets/images/systemsv2/system01.svg",
 		"res://assets/images/systemsv2/system02.svg",

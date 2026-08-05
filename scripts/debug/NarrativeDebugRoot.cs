@@ -20,16 +20,16 @@ public partial class NarrativeDebugRoot : Control
 	private Button _playButton = null!;
 	private Button _backButton = null!;
 
-	private const string NarrativePanelPath = "res://scenes/narrative/NarrativePanel.tscn";
+	private const string NarrativePanelPath = ScenePaths.NarrativePanel;
 
 	private static readonly string[] QuickNodes =
 	[
-		"conquest_begin", "conquest_mid", "conquest_end",
-		"outro_conquest_win", "outro_conquest_loss",
-		"falling_empire_begin", "falling_empire_mid", "falling_empire_end",
-		"outro_falling_empire_win", "outro_falling_empire_loss",
-		"rising_power_begin", "rising_power_mid", "rising_power_end",
-		"outro_rising_power_win", "outro_rising_power_loss",
+		"mission_retreat", "mission_assault", "campaign_victory", "campaign_defeat",
+		"attack_commit", "attack_won", "attack_repulsed",
+		"contest_commit", "contest_destabilized", "contest_failed",
+		"fortify_commit", "fortify_complete",
+		"investigate_commit", "investigate_reveals", "investigate_quiet",
+		"exploit_commit", "exploit_extracted", "exploit_disrupted",
 	];
 
 	public override void _Ready()
@@ -49,10 +49,10 @@ public partial class NarrativeDebugRoot : Control
 		_sectorNameInput.Text      = "The Veiled Span";
 		_dateInput.Text            = "Sequence 1-2847";
 		_missionObjectiveInput.Text = "Capture the marked system.";
-		_nodeInput.Text            = "conquest_begin";
+		_nodeInput.Text            = "mission_retreat";
 
 		_playButton.Pressed += OnPlayPressed;
-		_backButton.Pressed += () => GetTree().ChangeSceneToFile("res://scenes/Level.tscn");
+		_backButton.Pressed += () => GetTree().ChangeSceneToFile(ScenePaths.Level);
 
 		var quickButtons = GetNode<HFlowContainer>("%QuickNodeButtons");
 		foreach (var node in QuickNodes)

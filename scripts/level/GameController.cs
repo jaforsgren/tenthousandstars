@@ -172,9 +172,9 @@ internal sealed partial class GameController : Node
 	{
 		switch (_narrativePanel.LastNarrativeAction)
 		{
-			case "new_campaign":    OnNewCampaignPressed();    break;
-			case "random_missions": OnRandomMissionsPressed(); break;
-			default:                GetTree().Quit();          break;
+			case "new_campaign":      OnNewCampaignPressed();       break;
+			case "skirmish_missions": OnSkirmishMissionsPressed();  break;
+			default:                  GetTree().Quit();             break;
 		}
 	}
 
@@ -185,10 +185,10 @@ internal sealed partial class GameController : Node
 		GetTree().ReloadCurrentScene();
 	}
 
-	private void OnRandomMissionsPressed()
+	private void OnSkirmishMissionsPressed()
 	{
 		GameSession.Campaign = null;
-		GameSession.GameModeOverride = GameMode.Random;
+		GameSession.GameModeOverride = GameMode.Skirmish;
 		GetTree().ReloadCurrentScene();
 	}
 

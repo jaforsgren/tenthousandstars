@@ -25,4 +25,5 @@ public sealed class CommitmentState
 
     public bool IsComplete { get; internal set; }
     public bool IsInterrupted { get; internal set; }
+    public bool IsActive => !IsComplete && !IsInterrupted;
 }

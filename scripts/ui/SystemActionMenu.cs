@@ -223,34 +223,28 @@ public partial class SystemActionMenu : Control
 		bool forgeActive, bool forgeDisabled, Action onForge,
 		bool splitDisabled, Action onSplit)
 	{
-		ClearIntentSlots();
-		HideAllNamedSlots();
-		_trackedWorldPos = worldPos;
-		_infoSlot.Configure(onInfo);
-		_rerouteSlot.Configure(hasReroute, onReroute);
-		_fortifySlot.Configure(fortifyActive, fortifyDisabled, onFortify);
-		_forgeSlot.Configure(forgeActive, forgeDisabled, onForge);
-		_splitSlot.Configure(splitDisabled, onSplit);
-		PlayShowAnimation();
+		ShowMenu(worldPos, () =>
+		{
+			_infoSlot.Configure(onInfo);
+			_rerouteSlot.Configure(hasReroute, onReroute);
+			_fortifySlot.Configure(fortifyActive, fortifyDisabled, onFortify);
+			_forgeSlot.Configure(forgeActive, forgeDisabled, onForge);
+			_splitSlot.Configure(splitDisabled, onSplit);
+		});
 	}
 
 	public void ShowForAiSystem(Vector2 worldPos, Action onSystemInfo, Action onFactionInfo)
 	{
-		ClearIntentSlots();
-		HideAllNamedSlots();
-		_trackedWorldPos = worldPos;
-		_infoSlot.Configure(onSystemInfo);
-		_opponentInfoSlot.Configure(onFactionInfo);
-		PlayShowAnimation();
+		ShowMenu(worldPos, () =>
+		{
+			_infoSlot.Configure(onSystemInfo);
+			_opponentInfoSlot.Configure(onFactionInfo);
+		});
 	}
 
 	public void ShowInfoOnly(Vector2 worldPos, Action onInfo)
 	{
-		ClearIntentSlots();
-		HideAllNamedSlots();
-		_trackedWorldPos = worldPos;
-		_infoSlot.Configure(onInfo);
-		PlayShowAnimation();
+		ShowMenu(worldPos, () => _infoSlot.Configure(onInfo));
 	}
 
 	// Shows only intent options with no named action slots — used for arrival commit.
@@ -266,6 +260,15 @@ public partial class SystemActionMenu : Control
 		_isHiding = false;
 		_isActive = true;
 		Visible   = true;
+	}
+
+	private void ShowMenu(Vector2 worldPos, Action setup)
+	{
+		ClearIntentSlots();
+		HideAllNamedSlots();
+		_trackedWorldPos = worldPos;
+		setup();
+		PlayShowAnimation();
 	}
 
 	// Appends intent slots to a currently-shown menu (own system commit options).

@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Text;
 using Godot;
 using Tts.Narrative;
@@ -13,8 +12,6 @@ public partial class StoryDebugScene : Control
 	private Button _backButton = null!;
 	private RichTextLabel _outputText = null!;
 
-	private const string NarrativePanelPath = "res://scenes/narrative/NarrativePanel.tscn";
-
 	public override void _Ready()
 	{
 		_winPatternInput = GetNode<LineEdit>("%WinPatternInput");
@@ -23,7 +20,7 @@ public partial class StoryDebugScene : Control
 		_outputText      = GetNode<RichTextLabel>("%OutputText");
 
 		_generateButton.Pressed += OnGeneratePressed;
-		_backButton.Pressed += () => GetTree().ChangeSceneToFile("res://scenes/Level.tscn");
+		_backButton.Pressed += () => GetTree().ChangeSceneToFile(ScenePaths.Level);
 	}
 
 	private void OnGeneratePressed()
@@ -43,27 +40,18 @@ public partial class StoryDebugScene : Control
 		var rng = new Random();
 		var campaign = CampaignController.Load(rng);
 
+		var missions = CampaignSimulator.Run(campaign, rawPattern);
+
 		var sb = new StringBuilder();
 
 		AppendHeader(sb, "CAMPAIGN");
 		AppendField(sb, "Player", campaign.PlayerFaction);
 		sb.AppendLine();
 
-		var missionNodes = new List<CampaignNode>();
-		var visited = new System.Collections.Generic.HashSet<string>();
-		var node = campaign.Current;
-		while (node != null && !node.IsTerminal && visited.Add(node.Title))
+		for (var i = 0; i < missions.Count; i++)
 		{
-			missionNodes.Add(node);
-			node = node.OnWin != null ? GetNodeOrNull(campaign, node.OnWin) : null;
-		}
-
-		var wins = NarrativeCli.ParseWinPattern(rawPattern, missionNodes.Count);
-
-		for (var i = 0; i < missionNodes.Count; i++)
-		{
-			var m = missionNodes[i];
-			var won = wins[i];
+			var m = missions[i].Node;
+			var won = missions[i].Won;
 
 			sb.AppendLine($"[color=cyan][b]── Mission {i + 1}: {m.Title} ──[/b][/color]");
 			sb.AppendLine();
@@ -83,8 +71,6 @@ public partial class StoryDebugScene : Control
 			sb.AppendLine($"  {(won ? m.WinText : "Mission failed.")}");
 			AppendField(sb, "Next", won ? (m.OnWin ?? "(campaign ends)") : (m.OnLoss ?? "(campaign ends)"), indent: true);
 			sb.AppendLine();
-
-			campaign.Advance(won);
 		}
 
 		if (!campaign.IsCampaignComplete && campaign.Current.IsTerminal)
@@ -94,27 +80,6 @@ public partial class StoryDebugScene : Control
 		}
 
 		return sb.ToString();
-	}
-
-	private static CampaignNode? GetNodeOrNull(CampaignController campaign, string title)
-	{
-		try
-		{
-			var rng = new Random();
-			var tmp = CampaignController.Load(rng);
-			// Advance to the target node by name
-			while (tmp.Current.Title != title && !tmp.Current.IsTerminal)
-				tmp.Advance(won: true);
-			return tmp.Current.Title == title ? tmp.Current : null;
-		}
-		catch { return null; }
-	}
-
-	private void PreviewYarnNode(string nodeName, IReadOnlyDictionary<string, string> vars)
-	{
-		var panel = GD.Load<PackedScene>(NarrativePanelPath).Instantiate<NarrativePanel>();
-		AddChild(panel);
-		panel.ShowNarrative(nodeName, vars, onComplete: panel.QueueFree);
 	}
 
 	private static void AppendHeader(StringBuilder sb, string text)

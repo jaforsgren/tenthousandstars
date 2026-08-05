@@ -31,24 +31,14 @@ public sealed class EffectRegistry
         Changed?.Invoke();
     }
 
-    public float TotalAttackerStrengthBonus()
-    {
-        var total = 0f;
-        foreach (var e in _active) total += e.Payload.AttackerStrengthBonus;
-        return total;
-    }
+    public float TotalAttackerStrengthBonus() => Sum(e => e.Payload.AttackerStrengthBonus);
 
-    public float TotalDefenderBonusDelta()
-    {
-        var total = 0f;
-        foreach (var e in _active) total += e.Payload.DefenderBonusDelta;
-        return total;
-    }
+    public float TotalDefenderBonusDelta() => Sum(e => e.Payload.DefenderBonusDelta);
 
-    public float TotalEncounterChanceDelta()
+    private float Sum(Func<ActiveEffect, float> selector)
     {
         var total = 0f;
-        foreach (var e in _active) total += e.Payload.EncounterChanceDelta;
+        foreach (var e in _active) total += selector(e);
         return total;
     }
 
@@ -70,20 +60,6 @@ public sealed class EffectRegistry
                 "Crew unsettled by visions from beyond. Attack strength −3.",
                 EffectKind.Debuff,
                 new EffectPayload(AttackerStrengthBonus: -3f)),
-
-            ["horde_tribute"] = new(
-                "horde_tribute",
-                "Horde Tribute",
-                "Tribute paid. Barbarian activity temporarily suppressed. Encounter chance −5%.",
-                EffectKind.Buff,
-                new EffectPayload(EncounterChanceDelta: -0.05f)),
-
-            ["horde_aggression"] = new(
-                "horde_aggression",
-                "Horde Aggression",
-                "Horde roused to fury. Encounter activity surges. Encounter chance +10%.",
-                EffectKind.Debuff,
-                new EffectPayload(EncounterChanceDelta: 0.10f)),
 
             ["relic_empowerment"] = new(
                 "relic_empowerment",
@@ -126,13 +102,6 @@ public sealed class EffectRegistry
                 "Command codes flagged by nemesis countermeasures. Defender bonus −0.2.",
                 EffectKind.Debuff,
                 new EffectPayload(DefenderBonusDelta: -0.2f)),
-
-            ["inner_sanctum_key"] = new(
-                "inner_sanctum_key",
-                "Inner Sanctum Access",
-                "Authentication codes for the nemesis home systems. Encounter chance −8%.",
-                EffectKind.Buff,
-                new EffectPayload(EncounterChanceDelta: -0.08f)),
 
             ["blood_price"] = new(
                 "blood_price",

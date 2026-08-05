@@ -1,26 +1,16 @@
-using Godot;
 using System;
-using Tts.Utils;
+using Godot;
 
 namespace Tts.Ui;
 
-public partial class SplitButtonNode : Control
+public partial class SplitButtonNode : ActionButtonNodeBase
 {
-	private Button _button = null!;
-	private Action? _onPressed;
-
-	public override void _Ready()
-	{
-		_button = GetNode<Button>("%SplitButton");
-		_button.Pressed += () => _onPressed?.Invoke();
-		_button.Position = new Vector2(-UiStyles.ButtonSize / 2f, -UiStyles.ButtonSize / 2f);
-		Visible = false;
-	}
+	protected override NodePath ButtonNodePath => "%SplitButton";
+	protected override bool UseGreyStyle => false;
 
 	public void Configure(bool disabled, Action? onPressed)
 	{
-		_onPressed = onPressed;
+		Show(onPressed);
 		_button.Disabled = disabled;
-		Visible = true;
 	}
 }

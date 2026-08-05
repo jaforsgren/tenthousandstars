@@ -1,7 +1,6 @@
 {
   "MissionBriefSeconds": 10.0,
   "EndStateSeconds": 6.0,
-  "DefeatDescriptions": [],
   "Conditions": [
     { "Id": "total_annihilation",    "EnemiesLeft": 0, "SystemsLeft": 0 },
     { "Id": "fleet_elimination",     "EnemiesLeft": 0 },

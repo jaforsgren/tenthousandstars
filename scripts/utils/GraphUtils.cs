@@ -73,4 +73,7 @@ public static class GraphUtils
 
 		return distances;
 	}
+
+	// Normalises an undirected edge to (min, max) index order so lookups are order-independent.
+	public static (int, int) NormalizedEdge(int a, int b) => a < b ? (a, b) : (b, a);
 }

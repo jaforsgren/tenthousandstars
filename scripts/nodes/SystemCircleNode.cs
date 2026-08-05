@@ -15,7 +15,7 @@ public partial class SystemCircleNode : Node2D
 	private CollisionShape2D _clickShape = null!;
 
 	private const int    ArcSegments    = 64;
-	private const string VisualScenePath = "res://scenes/system/SystemCircleNode.tscn";
+	private const string VisualScenePath = ScenePaths.SystemCircleNode;
 
 	public override void _Ready()
 	{

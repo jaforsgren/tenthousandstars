@@ -6,8 +6,7 @@ public enum EffectKind { Buff, Debuff }
 // All deltas are additive; multipliers are multiplicative with each other.
 public sealed record EffectPayload(
     float AttackerStrengthBonus = 0f,
-    float DefenderBonusDelta = 0f,
-    float EncounterChanceDelta = 0f);
+    float DefenderBonusDelta = 0f);
 
 public sealed record ActiveEffect(
     string Id,

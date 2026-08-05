@@ -80,9 +80,8 @@ public partial class AiController : Node
 	{
 		foreach (var c in _commitmentController.GetAllActive())
 		{
-			if (c.IsComplete || c.IsInterrupted || !c.Owner.IsAi()) continue;
-			var visible = _commitmentController.GetVisibleState(c.SystemIndex);
-			if (AiCommitmentEvaluator.ShouldInterrupt(c, visible, _commitmentConfig))
+			if (!c.IsActive || !c.Owner.IsAi()) continue;
+			var visible = _commitmentController.GetVisibleState(c.SystemIndex);			if (AiCommitmentEvaluator.ShouldInterrupt(c, visible, _commitmentConfig))
 				_commitmentController.InterruptCommitment(c.Id);
 		}
 	}
@@ -111,42 +110,29 @@ public partial class AiController : Node
 
 	// Attacks first; reinforces only when no attack is available.
 	private bool TryAggressiveAction(AiPlayerData player, IntentType transitIntent)
-	{
-		var targets = PickTransitTargets(transitIntent);
-		if (targets.Count > 0)
-			return ExecuteTransit(targets[_rng.Next(targets.Count)], player, transitIntent);
+		=> TryTransitAction(player, transitIntent, reinforceFirst: false);
 
-		if (_reinforceOptionsBuffer.Count > 0
-			&& _rng.NextDouble() < _config.DispositionReinforceChance[player.Disposition.ToString()])
-			return ExecuteReinforce(_reinforceOptionsBuffer[_rng.Next(_reinforceOptionsBuffer.Count)]);
-
-		return false;
-	}
-
-	// Reinforces with high probability before committing to a transit action.
+	// Reinforces before committing to a transit action.
 	private bool TryStrategicAction(AiPlayerData player, IntentType transitIntent)
-	{
-		if (_reinforceOptionsBuffer.Count > 0
-			&& _rng.NextDouble() < _config.DispositionReinforceChance[player.Disposition.ToString()])
-			return ExecuteReinforce(_reinforceOptionsBuffer[_rng.Next(_reinforceOptionsBuffer.Count)]);
+		=> TryTransitAction(player, transitIntent, reinforceFirst: true);
 
-		var targets = PickTransitTargets(transitIntent);
-		if (targets.Count > 0)
-			return ExecuteTransit(targets[_rng.Next(targets.Count)], player, transitIntent);
-
-		return false;
-	}
-
-	// Reinforces before attacking cautiously.
 	private bool TryCautiousAction(AiPlayerData player, IntentType transitIntent)
+		=> TryTransitAction(player, transitIntent, reinforceFirst: true);
+
+	private bool TryTransitAction(AiPlayerData player, IntentType transitIntent, bool reinforceFirst)
 	{
-		if (_reinforceOptionsBuffer.Count > 0
-			&& _rng.NextDouble() < _config.DispositionReinforceChance[player.Disposition.ToString()])
+		var reinforce = _reinforceOptionsBuffer.Count > 0
+			&& _rng.NextDouble() < _config.DispositionReinforceChance[player.Disposition.ToString()];
+
+		if (reinforce && reinforceFirst)
 			return ExecuteReinforce(_reinforceOptionsBuffer[_rng.Next(_reinforceOptionsBuffer.Count)]);
 
 		var targets = PickTransitTargets(transitIntent);
 		if (targets.Count > 0)
 			return ExecuteTransit(targets[_rng.Next(targets.Count)], player, transitIntent);
+
+		if (reinforce)
+			return ExecuteReinforce(_reinforceOptionsBuffer[_rng.Next(_reinforceOptionsBuffer.Count)]);
 
 		return false;
 	}
@@ -177,22 +163,16 @@ public partial class AiController : Node
 	}
 
 	private void BuildViableAttacks(AiPlayerData player, List<(int From, int To)> buffer)
-	{
-		buffer.Clear();
-		for (var i = 0; i < _systems.Count; i++)
-		{
-			if (_systems[i].OwnerPlayer != player.Owner || !_systems[i].HasFleet) continue;
-			foreach (var neighbor in GetAdjacentSystemIndices(i))
-			{
-				if (_systems[neighbor].OwnerPlayer == player.Owner) continue;
-				if (IsViableAttack(i, neighbor, player.Disposition))
-					buffer.Add((i, neighbor));
-			}
-		}
-	}
+		=> BuildViableMoves(player, buffer, (from, neighbor) => IsViableAttack(from, neighbor, player.Disposition));
 
 	// Contest has a lower bar than Attack — any adjacent enemy system is valid.
 	private void BuildViableContests(AiPlayerData player, List<(int From, int To)> buffer)
+		=> BuildViableMoves(player, buffer, (_, _) => true);
+
+	private void BuildViableMoves(
+		AiPlayerData player,
+		List<(int From, int To)> buffer,
+		Func<int, int, bool> isViable)
 	{
 		buffer.Clear();
 		for (var i = 0; i < _systems.Count; i++)
@@ -201,7 +181,8 @@ public partial class AiController : Node
 			foreach (var neighbor in GetAdjacentSystemIndices(i))
 			{
 				if (_systems[neighbor].OwnerPlayer == player.Owner) continue;
-				buffer.Add((i, neighbor));
+				if (isViable(i, neighbor))
+					buffer.Add((i, neighbor));
 			}
 		}
 	}
@@ -256,16 +237,14 @@ public partial class AiController : Node
 	}
 
 	private bool IsViableAttack(int fromIndex, int toIndex, AiDisposition disposition)
-	{
-		var result = CombatResolver.Resolve(_systems[fromIndex].Ships, _systems[toIndex].Ships, _defenderBonus);
-		return disposition switch
-		{
-			AiDisposition.Aggressive => result.AttackerWins,
-			AiDisposition.Strategic  => result.AttackerWins && result.AttackerRemainder >= _config.StrategicMinSpareShips,
-			AiDisposition.Cautious   => result.AttackerWins && (float)_rng.NextDouble() < _config.CautiousAttackChance,
-			_ => false
-		};
-	}
+		=> AiViability.IsViableAttack(
+			_systems[fromIndex].Ships,
+			_systems[toIndex].Ships,
+			_defenderBonus,
+			disposition,
+			_config.StrategicMinSpareShips,
+			_config.CautiousAttackChance,
+			_rng);
 
 	// Weighted pick between Attack and Contest based on disposition weights.
 	// Falls back to Attack if weights are missing or zero.

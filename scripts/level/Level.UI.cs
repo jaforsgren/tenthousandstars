@@ -14,16 +14,8 @@ public partial class Level
 	{
 		if (_systems[systemIndex].IsPlayerOwned)
 		{
-			ComputeUpgradeStates(systemIndex, out var fa, out var fd, out var ga, out var gd);
 			var slot = _selectedFleetSlot;
-			var splitDisabled = _systems[systemIndex].GetFleetShips(slot) < 2f;
-			_levelUi.SystemActionMenu.ShowForPlayer(
-				_systems[systemIndex].GlobalPosition,
-				() => ShowFleetInfo(systemIndex),
-				_rerouteTargets.ContainsKey(systemIndex), () => OnRerouteButtonPressed(systemIndex),
-				fa, fd, () => DoUpgrade(systemIndex, SystemUpgrade.Fortify),
-				ga, gd, () => DoUpgrade(systemIndex, SystemUpgrade.Forge),
-				splitDisabled, () => OnSplitButtonPressed(systemIndex, slot));
+			ShowPlayerMenu(systemIndex, slot, () => ShowFleetInfo(systemIndex));
 		}
 		else if (_systems[systemIndex].IsAiOwned)
 		{
@@ -42,20 +34,25 @@ public partial class Level
 	{
 		if (_systems[systemIndex].IsPlayerOwned)
 		{
-			ComputeUpgradeStates(systemIndex, out var fa, out var fd, out var ga, out var gd);
-			var splitDisabled = !_systems[systemIndex].HasFleet || _systems[systemIndex].GetFleetShips(0) < 2f;
-			_levelUi.SystemActionMenu.ShowForPlayer(
-				_systems[systemIndex].GlobalPosition,
-				() => ShowSystemInfo(systemIndex),
-				_rerouteTargets.ContainsKey(systemIndex), () => OnRerouteButtonPressed(systemIndex),
-				fa, fd, () => DoUpgrade(systemIndex, SystemUpgrade.Fortify),
-				ga, gd, () => DoUpgrade(systemIndex, SystemUpgrade.Forge),
-				splitDisabled, () => OnSplitButtonPressed(systemIndex, 0));
+			ShowPlayerMenu(systemIndex, 0, () => ShowSystemInfo(systemIndex));
 		}
 		else
 		{
 			_levelUi.SystemActionMenu.ShowInfoOnly(_systems[systemIndex].GlobalPosition, () => ShowSystemInfo(systemIndex));
 		}
+	}
+
+	private void ShowPlayerMenu(int systemIndex, int fleetSlot, Action onInfo)
+	{
+		ComputeUpgradeStates(systemIndex, out var fa, out var fd, out var ga, out var gd);
+		var splitDisabled = !_systems[systemIndex].HasFleet || _systems[systemIndex].GetFleetShips(fleetSlot) < 2f;
+		_levelUi.SystemActionMenu.ShowForPlayer(
+			_systems[systemIndex].GlobalPosition,
+			onInfo,
+			_rerouteTargets.ContainsKey(systemIndex), () => OnRerouteButtonPressed(systemIndex),
+			fa, fd, () => DoUpgrade(systemIndex, SystemUpgrade.Fortify),
+			ga, gd, () => DoUpgrade(systemIndex, SystemUpgrade.Forge),
+			splitDisabled, () => OnSplitButtonPressed(systemIndex, fleetSlot));
 	}
 
 	private void SelectAiSystem(int systemIndex)
@@ -92,22 +89,14 @@ public partial class Level
 	private void ShowFleetInfo(int systemIndex)
 	{
 		var prefix = _systems[systemIndex].IsPlayerOwned ? "player_fleet" : "neutral_fleet";
-		var seed = _fleetLoreSeeds[systemIndex];
-		var titles = YarnLinePool.GetPool(_lorePools, $"{prefix}_titles");
-		var descriptions = YarnLinePool.GetPool(_lorePools, $"{prefix}_descriptions");
-		var title = titles.Length > 0 ? Pick(titles, seed) : "Unknown Fleet";
-		var description = descriptions.Length > 0 ? Pick(descriptions, seed) : "";
+		var (title, description) = PickLore($"{prefix}_titles", $"{prefix}_descriptions", _fleetLoreSeeds[systemIndex], "Unknown Fleet");
 		_levelUi.AiSystemPanel.Hide();
 		_levelUi.SelectionPanel.ShowAt($"Fleet — {title}", description, GetViewport().GetVisibleRect().Size);
 	}
 
 	private void ShowSystemInfo(int systemIndex)
 	{
-		var seed = _systemLoreSeeds[systemIndex];
-		var systemTitles = YarnLinePool.GetPool(_lorePools, "system_titles");
-		var systemDescriptions = YarnLinePool.GetPool(_lorePools, "system_descriptions");
-		var title = systemTitles.Length > 0 ? Pick(systemTitles, seed) : "Unknown System";
-		var description = systemDescriptions.Length > 0 ? Pick(systemDescriptions, seed) : "";
+		var (title, description) = PickLore("system_titles", "system_descriptions", _systemLoreSeeds[systemIndex], "Unknown System");
 		_levelUi.AiSystemPanel.Hide();
 
 		var scenario = _scenarioRegistry.GetScenario(systemIndex);
@@ -123,6 +112,15 @@ public partial class Level
 		{
 			_levelUi.SelectionPanel.ShowAt(title, description, GetViewport().GetVisibleRect().Size);
 		}
+	}
+
+	private (string Title, string Description) PickLore(string titlePoolKey, string descriptionPoolKey, int seed, string fallbackTitle)
+	{
+		var titles = YarnLinePool.GetPool(_lorePools, titlePoolKey);
+		var descriptions = YarnLinePool.GetPool(_lorePools, descriptionPoolKey);
+		var title = titles.Length > 0 ? Pick(titles, seed) : fallbackTitle;
+		var description = descriptions.Length > 0 ? Pick(descriptions, seed) : "";
+		return (title, description);
 	}
 
 	private void OpenScenario(int systemIndex, ScenarioDefinition scenario)
@@ -154,7 +152,7 @@ public partial class Level
 			SystemUpgrade.Fortify => "player_fortify",
 			_ => null
 		};
-		if (tag != null) PostBark(tag);
+		if (tag != null) PostChat(tag);
 
 		ComputeUpgradeStates(systemIndex, out var fa, out var fd, out var ga, out var gd);
 		_levelUi.SystemActionMenu.RefreshUpgradeButtons(

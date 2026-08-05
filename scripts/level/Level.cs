@@ -7,7 +7,6 @@ using Tts.Commitment;
 using Tts.Config;
 using Tts.Debug;
 using Tts.Effects;
-using Tts.Events;
 using Tts.Fleet;
 using Tts.Narrative;
 using Tts.Nodes;
@@ -64,11 +63,10 @@ public partial class Level : Node2D
 	private DragState _drag = DragState.None;
 	private Vector2 _pressWorldPos;
 
-	private static readonly Color CapitolGhostFill = new(1f, 0.8f, 0.1f, 0.9f);
-
 	private float _ghostFleetRadius;
 	private Color _ghostFleetFill;
 	private Color _ghostFleetOutline;
+	private Color _capitolFill;
 	private float _ghostFleetOutlineWidth;
 	private float _defenderBonus;
 	private float _systemRadius;
@@ -89,6 +87,7 @@ public partial class Level : Node2D
 	private double _lastSystemClickTime = double.MinValue;
 	private int _lastClickedSystemIndex = -1;
 	private LevelConfig _levelCfg = null!;
+	private UiConfig _uiCfg = null!;
 	private readonly Dictionary<int, int> _rerouteTargets = [];
 	private readonly Dictionary<int, RerouteArrowNode> _rerouteArrows = [];
 	private bool _isPickingRerouteTarget;
@@ -104,7 +103,6 @@ public partial class Level : Node2D
 	private CommitmentConfig _commitmentConfig = null!;
 	private NarrativePanel _narrativePanel = null!;
 	private PackedScene _narrativePanelScene = null!;
-	private EncounterTracker _encounterTracker = null!;
 	private EffectRegistry _effectRegistry = null!;
 	private EffectDisplayPanel _effectDisplayPanel = null!;
 	private readonly TransitSystem _transitSystem = new();
@@ -112,7 +110,6 @@ public partial class Level : Node2D
 	private FogSystem? _fogSystem;
 	private bool _endConditionReached;
 	private int _objectiveSystemIndex = -1;
-	private readonly HashSet<int> _encounterSystems = [];
 	private readonly List<RouteNode> _highlightedRoutes = [];
 
 	public override void _Ready()
@@ -140,7 +137,7 @@ public partial class Level : Node2D
 	public override void _Draw()
 	{
 		if (!_drag.IsActive) return;
-		var fill = _drag.IsCapitolShip ? CapitolGhostFill : _ghostFleetFill;
+		var fill = _drag.IsCapitolShip ? _capitolFill.WithAlpha(0.9f) : _ghostFleetFill;
 		DrawCircle(_drag.WorldPos, _ghostFleetRadius, fill);
 		DrawArc(_drag.WorldPos, _ghostFleetRadius, 0f, Mathf.Tau, 32, _ghostFleetOutline, _ghostFleetOutlineWidth);
 	}
@@ -149,25 +146,20 @@ public partial class Level : Node2D
 	{
 		ClearForPreview();
 		var levelCfg = ConfigLoader.Load<LevelConfig>("res://config/level.json");
-		var genCfg = ConfigLoader.Load<LevelGeneratorConfig>("res://config/level_generator.json");
-		var aiCfg = ConfigLoader.Load<AiConfig>("res://config/ai.json");
-		var aiNamingCfg = ConfigLoader.Load<AiNamingConfig>("res://config/ai_naming.json");
-		var sysCfg = ConfigLoader.Load<SystemConfig>("res://config/system.json");
+		var cfg = GeneratorConfigLoader.Load();
 		var seed = PreviewSeed != UnsetSeed ? PreviewSeed : levelCfg.DefaultPreviewSeed;
-		Build(LevelGenerator.Generate(new Random(seed), genCfg, aiCfg, aiNamingCfg, sysCfg), sysCfg);
+		Build(LevelGenerator.Generate(new Random(seed), cfg.Generator, cfg.Ai, cfg.AiNaming, cfg.System), cfg.Ai, cfg.System, levelCfg);
 	}
 
 	private void GenerateRuntime()
 	{
 		GameSpeed.Reset();
-		var genCfg = ConfigLoader.Load<LevelGeneratorConfig>("res://config/level_generator.json");
-		var aiCfg = ConfigLoader.Load<AiConfig>("res://config/ai.json");
-		var aiNamingCfg = ConfigLoader.Load<AiNamingConfig>("res://config/ai_naming.json");
-		var sysCfg = ConfigLoader.Load<SystemConfig>("res://config/system.json");
+		var cfg = GeneratorConfigLoader.Load();
 
 		_barkPools = LoadBarkPools("res://yarn/barks.yarn");
-		var data = LevelGenerator.Generate(_rng, genCfg, aiCfg, aiNamingCfg, sysCfg);
-		Build(data, sysCfg);
+		var levelCfg = ConfigLoader.Load<LevelConfig>("res://config/level.json");
+		var data = LevelGenerator.Generate(_rng, cfg.Generator, cfg.Ai, cfg.AiNaming, cfg.System);
+		Build(data, cfg.Ai, cfg.System, levelCfg);
 		_aiPlayers = data.AiPlayers;
 
 		var endStateCfg = LoadEndStateConfig();
@@ -189,18 +181,16 @@ public partial class Level : Node2D
 		else
 			activeCondition = endStateCfg.Conditions[_rng.Next(endStateCfg.Conditions.Length)];
 
-		var pendingScenarios = LoadRandomModeScenarios();
+		var pendingScenarios = LoadSkirmishScenarios();
 
 		AssignLoreSeeds(data);
 		AssignScenarios(pendingScenarios);
 		SpawnCommitmentController();
-		SpawnEventSystem();
-		AssignEncounters();
-		SpawnAiController(data, aiCfg);
+		SpawnEffectSystem();
+		SpawnAiController(data, cfg.Ai);
 
 		_levelUi = GetNode<LevelUi>("%LevelUi");
-		var uiCfg = ConfigLoader.Load<UiConfig>("res://config/ui.json");
-		_levelUi.Initialize(_camera, _systemRadius, uiCfg.ActionMenu);
+		_levelUi.Initialize(_camera, _systemRadius, _uiCfg.ActionMenu);
 
 		_gameController = new GameController();
 		AddChild(_gameController);
@@ -230,29 +220,30 @@ public partial class Level : Node2D
 		DebugOverlay.Log($"Fog reveal: {(_debugRevealFog ? "ON" : "OFF")}");
 	}
 
-	private void Build(LevelData data, SystemConfig sysCfg)
+	private void Build(LevelData data, AiConfig aiCfg, SystemConfig sysCfg, LevelConfig levelCfg)
 	{
-		var aiCfg = ConfigLoader.Load<AiConfig>("res://config/ai.json");
 		_ghostFleetRadius = sysCfg.LabelHeight / 2f;
 		_ghostFleetFill = sysCfg.FleetFill.ToColor();
 		_ghostFleetOutline = sysCfg.FleetOutline.ToColor();
+		_capitolFill = sysCfg.CapitolFill.ToColor();
 		_ghostFleetOutlineWidth = sysCfg.FleetOutlineWidth;
 		_systemRadius = sysCfg.SystemRadius;
-		_levelCfg = ConfigLoader.Load<LevelConfig>("res://config/level.json");
+		_levelCfg = levelCfg;
 		_defenderBonus = _levelCfg.DefenderBonus;
 		_fogEnabled = _levelCfg.FogEnabled;
 		_fogClearSeconds = _levelCfg.FogClearSeconds;
 		_fadeOutSeconds = _levelCfg.FadeOutSeconds;
 		_transitDurationSeconds = _levelCfg.TransitDurationSeconds;
-		_transitFleetScene = GD.Load<PackedScene>("res://scenes/fleet/TransitFleetNode.tscn");
-		_combatEffectScene = GD.Load<PackedScene>("res://scenes/effects/CombatEffectNode.tscn");
-		_rerouteArrowScene = GD.Load<PackedScene>("res://scenes/system/RerouteArrowNode.tscn");
+		_transitFleetScene = GD.Load<PackedScene>(ScenePaths.TransitFleetNode);
+		_combatEffectScene = GD.Load<PackedScene>(ScenePaths.CombatEffectNode);
+		_rerouteArrowScene = GD.Load<PackedScene>(ScenePaths.RerouteArrowNode);
 		_routeSet = new HashSet<(int, int)>(data.Routes);
 		_adjacency = GraphUtils.BuildAdjacency(data.Systems.Count, _routeSet);
 
 		var camCfg = ConfigLoader.Load<CameraConfig>("res://config/camera.json");
+		_uiCfg = ConfigLoader.Load<UiConfig>("res://config/ui.json");
 
-		SpawnRoutes(data);
+		SpawnRoutes(data, _uiCfg.RouteWidth);
 		SpawnSystems(data, aiCfg, sysCfg);
 		SpawnCamera(data, camCfg);
 		_fogSystem = new FogSystem(_systems, _routeNodes, _adjacency, _aiColors, _fogEnabled, _fogClearSeconds);
@@ -273,30 +264,13 @@ public partial class Level : Node2D
 		}
 	}
 
-	private void SpawnEventSystem()
+	private void SpawnEffectSystem()
 	{
 		_effectRegistry = new EffectRegistry();
-		var scenarioType = (EncounterType)_rng.Next(4);
-		var encounterCfg = ConfigLoader.Load<EncounterConfig>("res://config/encounters.json");
-		_encounterTracker = new EncounterTracker(scenarioType, _commitmentConfig.EncounterSystemChance, encounterCfg.EventPools, _rng);
 
 		_effectDisplayPanel = new EffectDisplayPanel();
 		AddChild(_effectDisplayPanel);
 		_effectRegistry.Changed += () => _effectDisplayPanel.Refresh(_effectRegistry.Effects);
-	}
-
-	private void AssignEncounters()
-	{
-		_encounterSystems.Clear();
-		for (var i = 0; i < _systems.Count; i++)
-		{
-			if (_systems[i].IsPlayerOwned) continue;
-			if (_rng.NextDouble() < _commitmentConfig.EncounterSystemChance)
-			{
-				_encounterSystems.Add(i);
-				_systems[i].SetEncounterMark(true);
-			}
-		}
 	}
 
 	private void AssignScenarios(ScenarioDefinition[] scenarios)
@@ -307,7 +281,7 @@ public partial class Level : Node2D
 			_systems[i].SetScenarioBadge(_scenarioRegistry.HasScenario(i));
 	}
 
-	private static ScenarioDefinition[] LoadRandomModeScenarios()
+	private static ScenarioDefinition[] LoadSkirmishScenarios()
 	{
 		var cfg = ConfigLoader.Load<ScenarioConfig>("res://config/scenarios.json");
 		var scenarioPools = LoadScenarioPools();
@@ -365,7 +339,7 @@ public partial class Level : Node2D
 		}
 		var committed = new HashSet<int>();
 		foreach (var c in _commitmentController.GetAllActive())
-			if (c.Owner == SystemOwner.Player && !c.IsComplete && !c.IsInterrupted)
+			if (c.Owner == SystemOwner.Player && c.IsActive)
 				committed.Add(c.SystemIndex);
 		_fogSystem.Update(_objectiveSystemIndex, committed);
 	}
@@ -383,7 +357,7 @@ public partial class Level : Node2D
 			_rng.Next());
 		_commitmentController.CommitmentResolved += OnCommitmentResolved;
 
-		_narrativePanelScene = GD.Load<PackedScene>("res://scenes/narrative/NarrativePanel.tscn");
+		_narrativePanelScene = GD.Load<PackedScene>(ScenePaths.NarrativePanel);
 		_narrativePanel = _narrativePanelScene.Instantiate<NarrativePanel>();
 		AddChild(_narrativePanel);
 		_commitmentController.CommitmentResolved += _narrativePanel.OnCommitmentResolved;
@@ -456,7 +430,7 @@ public partial class Level : Node2D
 		_fogSystem = null;
 	}
 
-	private void SpawnRoutes(LevelData data)
+	private void SpawnRoutes(LevelData data, float routeWidth)
 	{
 		foreach (var (from, to) in data.Routes)
 		{
@@ -466,7 +440,8 @@ public partial class Level : Node2D
 			AddChild(route);
 			route.Initialize(
 				EdgeToward(fromPos, toPos, _systemRadius),
-				EdgeToward(toPos, fromPos, _systemRadius));
+				EdgeToward(toPos, fromPos, _systemRadius),
+				routeWidth);
 			_routeNodes.Add((from, to, route));
 		}
 	}
@@ -551,7 +526,7 @@ public partial class Level : Node2D
 
 	private bool AreConnected(int a, int b)
 	{
-		var edge = a < b ? (a, b) : (b, a);
+		var edge = GraphUtils.NormalizedEdge(a, b);
 		return _routeSet.Contains(edge);
 	}
 
@@ -587,7 +562,7 @@ public partial class Level : Node2D
 
 	private RouteNode? FindRouteNode(int a, int b)
 	{
-		var (min, max) = a < b ? (a, b) : (b, a);
+		var (min, max) = GraphUtils.NormalizedEdge(a, b);
 		foreach (var (from, to, node) in _routeNodes)
 			if (from == min && to == max) return node;
 		return null;

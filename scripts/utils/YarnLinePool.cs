@@ -11,21 +11,19 @@ namespace Tts.Utils;
 // Blank lines are preserved in the returned arrays; callers decide whether to skip them.
 public static class YarnLinePool
 {
-    public static Dictionary<string, string[]> Load(string resPath)
+    // Reads a res:// text file via Godot when running inside the engine, else from disk.
+    public static string ReadResourceText(string resPath)
     {
-        string text;
         if (Type.GetType("Godot.Engine, GodotSharp") != null)
-        {
-            text = Godot.FileAccess.GetFileAsString(resPath);
-        }
-        else
-        {
-            var root = Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, "../../../../.."));
-            var fsPath = Path.Combine(root, resPath.Replace("res://", ""));
-            text = File.ReadAllText(fsPath);
-        }
-        return Parse(text);
+            return Godot.FileAccess.GetFileAsString(resPath);
+
+        var root = Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, "../../../../.."));
+        var fsPath = Path.Combine(root, resPath.Replace("res://", ""));
+        return File.ReadAllText(fsPath);
     }
+
+    public static Dictionary<string, string[]> Load(string resPath)
+        => Parse(ReadResourceText(resPath));
 
     public static Dictionary<string, string[]> Parse(string text)
     {

@@ -94,8 +94,8 @@ Orders will follow.
 
 -> New Campaign
 <<narrative_action "new_campaign">>
--> Random Missions
-<<narrative_action "random_missions">>
+-> Skirmish Missions
+<<narrative_action "skirmish_missions">>
 -> Quit
 <<narrative_action "quit">>
 
@@ -120,8 +120,8 @@ The Mother-Leader receives the final report.
 
 -> New Campaign
 <<narrative_action "new_campaign">>
--> Random Missions
-<<narrative_action "random_missions">>
+-> Skirmish Missions
+<<narrative_action "skirmish_missions">>
 -> Quit
 <<narrative_action "quit">>
 

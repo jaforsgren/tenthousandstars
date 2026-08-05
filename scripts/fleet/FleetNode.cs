@@ -7,7 +7,6 @@ public partial class FleetNode : Node2D
 	private static readonly Color PlayerFill   = new(0.9f, 0.28f, 0.1f, 0.9f);
 	private static readonly Color NeutralFill  = new(0.5f, 0.5f,  0.5f, 0.9f);
 	private static readonly Color AiFill       = new(0.5f, 0.5f,  0.5f, 0.9f);
-	private static readonly Color CapitolFill  = new(1f,   0.8f,  0.1f, 0.95f);
 
 	private static readonly Color LineColor = new(1f, 1f, 1f, 0.35f);
 	private const float LineWidth    = 1.5f;
@@ -43,9 +42,9 @@ public partial class FleetNode : Node2D
 	public void InitializeAi(float systemRadius, float gap, Color dispositionColor, string factionName)
 		=> Setup(systemRadius, gap, below: true, AiFill, factionName, dispositionColor);
 
-	public void InitializeCapitol(float systemRadius, float gap)
+	public void InitializeCapitol(float systemRadius, float gap, Color capitolFill)
 	{
-		Setup(systemRadius, gap, below: false, CapitolFill, null, null);
+		Setup(systemRadius, gap, below: false, capitolFill, null, null);
 		_button.Text = "C";
 		Visible = true;
 	}

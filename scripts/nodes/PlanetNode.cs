@@ -12,7 +12,7 @@ public partial class PlanetNode : Node2D
 	private ColorRect _visualRect = null!;
 
 	private const float MinTapRadius = 10f;
-	private const string VisualScenePath = "res://scenes/system/PlanetNode.tscn";
+	private const string VisualScenePath = ScenePaths.PlanetNode;
 
 	public override void _Ready()
 	{

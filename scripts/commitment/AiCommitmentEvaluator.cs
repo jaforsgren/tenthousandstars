@@ -146,7 +146,7 @@ public static class AiCommitmentEvaluator
     {
         var count = 0;
         foreach (var c in commitments)
-            if (c.Owner == owner && !c.IsComplete && !c.IsInterrupted) count++;
+            if (c.Owner == owner && c.IsActive) count++;
         return count;
     }
 }

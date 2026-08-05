@@ -1,28 +1,16 @@
-using Godot;
 using System;
-using Tts.Utils;
+using Godot;
 
 namespace Tts.Ui;
 
-public partial class UpgradeButtonNode : Control
+public partial class UpgradeButtonNode : ActionButtonNodeBase
 {
-	private Button _button = null!;
-	private Action? _onPressed;
-
-	public override void _Ready()
-	{
-		_button = GetNode<Button>("%UpgradeButton");
-		_button.Pressed += () => _onPressed?.Invoke();
-		_button.Position = new Vector2(-UiStyles.ButtonSize / 2f, -UiStyles.ButtonSize / 2f);
-		UiStyles.ApplyGreyStyle(_button);
-		Visible = false;
-	}
+	protected override NodePath ButtonNodePath => "%UpgradeButton";
 
 	public void Configure(bool isActive, bool disabled, Action? onPressed)
 	{
-		_onPressed = onPressed;
+		Show(onPressed);
 		_button.ButtonPressed = isActive;
 		_button.Disabled = disabled;
-		Visible = true;
 	}
 }

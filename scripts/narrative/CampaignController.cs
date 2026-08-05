@@ -36,7 +36,7 @@ public class CampaignController
 
     public static CampaignController Load(Random rng)
     {
-        var yarnText = FileAccess.GetFileAsString("res://yarn/campaign.yarn");
+        var yarnText = YarnLinePool.ReadResourceText("res://yarn/campaign.yarn");
         var headers = YarnHeaderParser.Parse(yarnText);
 
         var nodes = new Dictionary<string, CampaignNode>(StringComparer.Ordinal);
