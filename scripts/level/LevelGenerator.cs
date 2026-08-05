@@ -15,7 +15,7 @@ public record AiPlayerData(
     string FactionName,
     string Description,
     string[] Barks) : Character(Disposition, Title, FactionName, Description, Barks);
-public record SystemData(Vector2 Position, IReadOnlyList<Planet> Planets, SystemOwner Owner = SystemOwner.None, float InitialFleet = 0f);
+public record SystemData(Vector2 Position, IReadOnlyList<Planet> Planets, SystemOwner Owner = SystemOwner.None, float InitialFleet = 0f, string? Name = null, string? Description = null);
 public record LevelData(IReadOnlyList<SystemData> Systems, IReadOnlyList<(int From, int To)> Routes, IReadOnlyList<AiPlayerData> AiPlayers);
 
 public static class LevelGenerator

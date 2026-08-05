@@ -98,7 +98,7 @@ public partial class Level
 
 	private void ShowSystemInfo(int systemIndex)
 	{
-		var (title, description) = PickLore("system_titles", "system_descriptions", _systemLoreSeeds[systemIndex], "Unknown System");
+		var (title, description) = PickSystemLore(systemIndex);
 		_levelUi.HideContextMenus();
 		_levelUi.AiSystemPanel.Hide();
 
@@ -115,6 +115,13 @@ public partial class Level
 		{
 			_levelUi.SelectionPanel.ShowAt(title, description, GetViewport().GetVisibleRect().Size);
 		}
+	}
+
+	private (string Title, string Description) PickSystemLore(int systemIndex)
+	{
+		if (systemIndex < _systemData.Count && _systemData[systemIndex] is { Name: not null } authored)
+			return (authored.Name, authored.Description ?? "");
+		return PickLore("system_titles", "system_descriptions", _systemLoreSeeds[systemIndex], "Unknown System");
 	}
 
 	private (string Title, string Description) PickLore(string titlePoolKey, string descriptionPoolKey, int seed, string fallbackTitle)

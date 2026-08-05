@@ -12,12 +12,14 @@
 //   eliminate_target: true — win by eliminating a specific faction
 //   defend: true        — lose if your starting system falls
 //   timeout: <float>    — mission clock in seconds
+//   map: <name>         — load res://config/maps/<name>.json instead of random gen
 //   description: <text> — shown in mission brief popup
 //   win_text: <text>    — shown on victory end screen
 //   on_win: <node>      — next node on victory
 //   on_loss: <node>     — next node on defeat
 
 title: mission_retreat
+map: tutorial
 enemies_left: 0
 defend: true
 timeout: 300

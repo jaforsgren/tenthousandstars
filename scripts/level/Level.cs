@@ -79,6 +79,7 @@ public partial class Level : Node2D
 	private float _fadeOutSeconds;
 	private Dictionary<string, string[]> _lorePools = null!;
 	private IReadOnlyList<AiPlayerData> _aiPlayers = [];
+	private IReadOnlyList<SystemData> _systemData = [];
 	private Dictionary<string, string[]> _barkPools = [];
 	private CameraController _camera = null!;
 	private AiController _aiController = null!;
@@ -158,20 +159,14 @@ public partial class Level : Node2D
 
 		_barkPools = LoadBarkPools("res://yarn/barks.yarn");
 		var levelCfg = ConfigLoader.Load<LevelConfig>("res://config/level.json");
-		var data = LevelGenerator.Generate(_rng, cfg.Generator, cfg.Ai, cfg.AiNaming, cfg.System);
-		Build(data, cfg.Ai, cfg.System, levelCfg);
-		_aiPlayers = data.AiPlayers;
-
 		var endStateCfg = LoadEndStateConfig();
 
-		if (GameSession.Campaign == null)
-		{
-			var gameMode = GameSession.GameModeOverride ?? ConfigLoader.Load<GameModeConfig>("res://config/game_mode.json").Mode;
-			if (gameMode == GameMode.Story)
-				GameSession.Campaign = CampaignController.Load(_rng);
-		}
+		var campaign = ResolveCampaign();
+		var data = BuildLevelData(campaign, cfg);
+		Build(data, cfg.Ai, cfg.System, levelCfg);
+		_aiPlayers = data.AiPlayers;
+		_systemData = data.Systems;
 
-		var campaign = GameSession.Campaign;
 		if (campaign != null && _aiPlayers.Count > 0)
 			campaign.UpdateEnemyFaction(_aiPlayers[_rng.Next(_aiPlayers.Count)].FactionName);
 
@@ -204,6 +199,37 @@ public partial class Level : Node2D
 
 		SpawnDebugOverlay();
 		_gameController.StartMission();
+	}
+
+	private CampaignController? ResolveCampaign()
+	{
+		if (GameSession.Campaign != null)
+			return GameSession.Campaign;
+
+		var gameMode = GameSession.GameModeOverride ?? ConfigLoader.Load<GameModeConfig>("res://config/game_mode.json").Mode;
+		if (gameMode == GameMode.Story)
+			GameSession.Campaign = CampaignController.Load(_rng);
+
+		return GameSession.Campaign;
+	}
+
+	private LevelData BuildLevelData(CampaignController? campaign, GeneratorConfigs cfg)
+	{
+		var isMission = campaign != null && !campaign.IsCampaignComplete && !campaign.Current.IsTerminal;
+		var mapName = isMission ? campaign!.Current.Map : null;
+
+		var generationRng = isMission && campaign!.Current.LevelSeed.HasValue
+			? new Random(campaign.Current.LevelSeed.Value)
+			: _rng;
+
+		if (mapName != null)
+		{
+			var mapPath = $"res://config/maps/{mapName}.json";
+			if (ConfigLoader.Exists(mapPath))
+				return MapBuilder.Build(ConfigLoader.Load<MapDefinition>(mapPath), generationRng, cfg.AiNaming);
+		}
+
+		return LevelGenerator.Generate(generationRng, cfg.Generator, cfg.Ai, cfg.AiNaming, cfg.System);
 	}
 
 	private void SpawnDebugOverlay()

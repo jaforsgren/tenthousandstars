@@ -18,7 +18,8 @@ public record CampaignNode(
     string Description,
     string WinText,
     string? OnWin,
-    string? OnLoss)
+    string? OnLoss,
+    string? Map)
 {
     public bool IsTerminal => OnWin == null && OnLoss == null;
 
@@ -44,7 +45,8 @@ public record CampaignNode(
         Description:           Str(h, "description") ?? "",
         WinText:               Str(h, "win_text") ?? "",
         OnWin:                 Str(h, "on_win"),
-        OnLoss:                Str(h, "on_loss"));
+        OnLoss:                Str(h, "on_loss"),
+        Map:                   Str(h, "map"));
 
     private static int? Int(IReadOnlyDictionary<string, string> h, string key)
         => h.TryGetValue(key, out var v) && int.TryParse(v, out var n) ? n : null;

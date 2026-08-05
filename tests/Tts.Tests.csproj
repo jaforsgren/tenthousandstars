@@ -61,6 +61,8 @@
     <Compile Include="../scripts/config/PlanetGradient.cs" />
     <Compile Include="../scripts/config/LevelGeneratorConfig.cs" />
     <Compile Include="../scripts/level/LevelGenerator.cs" />
+    <Compile Include="../scripts/config/MapDefinition.cs" />
+    <Compile Include="../scripts/level/MapBuilder.cs" />
     <!-- Effect system (pure records + registry) -->
     <Compile Include="../scripts/effects/ActiveEffect.cs" />
     <Compile Include="../scripts/effects/EffectRegistry.cs" />

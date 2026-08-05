@@ -1,0 +1,39 @@
+{
+	"Systems": [
+		{
+			"Position": { "X": 600, "Y": 1500 },
+			"Owner": "Player",
+			"InitialFleet": 5,
+			"Name": "Vrehl",
+			"Description": "The bridgehead world. Your shoals muster here."
+		},
+		{
+			"Position": { "X": 420, "Y": 1050 },
+			"Owner": "Ai1",
+			"InitialFleet": 3,
+			"Disposition": "Cautious",
+			"Name": "Hrafnsport",
+			"Description": "A contested station city. The enemy hold it lightly."
+		},
+		{
+			"Position": { "X": 780, "Y": 1050 },
+			"Owner": "None",
+			"InitialFleet": 2,
+			"Name": "Ashfall",
+			"Description": "A world picked clean. It bars the way ahead."
+		},
+		{
+			"Position": { "X": 600, "Y": 650 },
+			"Owner": "None",
+			"InitialFleet": 0,
+			"Name": "Rimespur",
+			"Description": "The far watch. Nothing bars the crossing beyond it."
+		}
+	],
+	"Routes": [
+		{ "From": 0, "To": 1 },
+		{ "From": 0, "To": 2 },
+		{ "From": 1, "To": 3 },
+		{ "From": 2, "To": 3 }
+	]
+}

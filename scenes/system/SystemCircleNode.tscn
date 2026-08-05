@@ -49,7 +49,7 @@ shader = ExtResource("shader_variant")
 shader_parameter/noise_texture = SubResource("NoiseTexture2D_variant")
 shader_parameter/noise_scale = 1.00000004424012
 shader_parameter/threshold = 0.4890000232275
-shader_parameter/edge_softness = 0.0010000000475
+shader_parameter/edge_softness = 0.1190000056525
 shader_parameter/noise_strength = 0.582000027645
 shader_parameter/time_scale = 0.0
 
