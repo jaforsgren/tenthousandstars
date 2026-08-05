@@ -82,6 +82,7 @@ public partial class Level
 		var aiPlayer = _aiPlayers.FirstOrDefault(p => p.Owner == owner);
 		if (aiPlayer == null) return;
 		_aiColors.TryGetValue(owner, out var color);
+		_levelUi.HideContextMenus();
 		_levelUi.SelectionPanel.Hide();
 		_levelUi.AiSystemPanel.ShowFor(aiPlayer, color, _systemLoreSeeds[systemIndex], GetViewport().GetVisibleRect().Size);
 	}
@@ -90,6 +91,7 @@ public partial class Level
 	{
 		var prefix = _systems[systemIndex].IsPlayerOwned ? "player_fleet" : "neutral_fleet";
 		var (title, description) = PickLore($"{prefix}_titles", $"{prefix}_descriptions", _fleetLoreSeeds[systemIndex], "Unknown Fleet");
+		_levelUi.HideContextMenus();
 		_levelUi.AiSystemPanel.Hide();
 		_levelUi.SelectionPanel.ShowAt($"Fleet — {title}", description, GetViewport().GetVisibleRect().Size);
 	}
@@ -97,6 +99,7 @@ public partial class Level
 	private void ShowSystemInfo(int systemIndex)
 	{
 		var (title, description) = PickLore("system_titles", "system_descriptions", _systemLoreSeeds[systemIndex], "Unknown System");
+		_levelUi.HideContextMenus();
 		_levelUi.AiSystemPanel.Hide();
 
 		var scenario = _scenarioRegistry.GetScenario(systemIndex);
