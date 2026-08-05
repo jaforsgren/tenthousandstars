@@ -21,14 +21,14 @@
     </g>
   </defs>
 
-  <circle cx="0" cy="0" r="60" fill="none" stroke="white" stroke-width="0.5"/>
-  <circle cx="0" cy="0" r="48" fill="none" stroke="white" stroke-width="0.3"/>
-  <circle cx="0" cy="0" r="36" fill="none" stroke="white" stroke-width="0.3"/>
+  <circle cx="0" cy="0" r="60" fill="none" stroke="white" stroke-width="0.25"/>
+  <circle cx="0" cy="0" r="48" fill="none" stroke="white" stroke-width="0.15"/>
+  <circle cx="0" cy="0" r="36" fill="none" stroke="white" stroke-width="0.15"/>
 
-  <line x1="0" y1="-60" x2="0" y2="-54" stroke="white" stroke-width="0.2"/>
-  <line x1="0" y1="60" x2="0" y2="54" stroke="white" stroke-width="0.2"/>
-  <line x1="-60" y1="0" x2="-54" y2="0" stroke="white" stroke-width="0.2"/>
-  <line x1="60" y1="0" x2="54" y2="0" stroke="white" stroke-width="0.2"/>
+  <line x1="0" y1="-60" x2="0" y2="-54" stroke="white" stroke-width="0.1"/>
+  <line x1="0" y1="60" x2="0" y2="54" stroke="white" stroke-width="0.1"/>
+  <line x1="-60" y1="0" x2="-54" y2="0" stroke="white" stroke-width="0.1"/>
+  <line x1="60" y1="0" x2="54" y2="0" stroke="white" stroke-width="0.1"/>
 
   <use href="#orbit16"/>
 

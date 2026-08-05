@@ -25,10 +25,10 @@
   <circle cx="0" cy="0" r="48" fill="none" stroke="white" stroke-width="0.3"/>
   <circle cx="0" cy="0" r="36" fill="none" stroke="white" stroke-width="0.3"/>
 
-  <line x1="0" y1="-60" x2="0" y2="-22" stroke="white" stroke-width="0.3"/>
-  <line x1="0" y1="60" x2="0" y2="22" stroke="white" stroke-width="0.3"/>
-  <line x1="-60" y1="0" x2="-22" y2="0" stroke="white" stroke-width="0.3"/>
-  <line x1="60" y1="0" x2="22" y2="0" stroke="white" stroke-width="0.3"/>
+  <line x1="0" y1="-60" x2="0" y2="-22" stroke="white" stroke-width="0.15"/>
+  <line x1="0" y1="60" x2="0" y2="22" stroke="white" stroke-width="0.15"/>
+  <line x1="-60" y1="0" x2="-22" y2="0" stroke="white" stroke-width="0.15"/>
+  <line x1="60" y1="0" x2="22" y2="0" stroke="white" stroke-width="0.15"/>
 
   <use href="#orbit16"/>
 
