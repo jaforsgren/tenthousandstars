@@ -1,6 +1,6 @@
 [gd_resource type="Theme" format=3 uid="uid://6r4gcsr0tf77"]
 
-[ext_resource type="StyleBox" uid="uid://4lpdkaxmvadr" path="res://white_style_box_flat.tres" id="1_dfk0a"]
+[ext_resource type="StyleBox" uid="uid://4lpdkaxmvadr" path="res://themes/white_style_box_flat.tres" id="1_dfk0a"]
 [ext_resource type="FontFile" uid="uid://bbiiy76g3bcvu" path="res://fonts/IBMPlexMono-Light.ttf" id="font_light"]
 [ext_resource type="FontFile" uid="uid://c6wtytnqyvsf6" path="res://fonts/IBMPlexMono-Thin.ttf" id="font_thin"]
 
