@@ -1,12 +1,16 @@
 [gd_scene format=3 uid="uid://cfc5bct4pehfe"]
 
 [ext_resource type="Script" uid="uid://cbqkkuj1m2iuk" path="res://scripts/dialogue/Portraits.cs" id="1"]
-[ext_resource type="Texture2D" uid="uid://0o0h8kg00jf" path="res://assets/images/portraits/02.png" id="2"]
-[ext_resource type="Texture2D" uid="uid://cpga1nvedvcph" path="res://assets/images/portraits/03.png" id="3"]
-[ext_resource type="Texture2D" uid="uid://becc3x73qafbr" path="res://assets/images/portraits/04.png" id="4"]
-[ext_resource type="Texture2D" uid="uid://nw0dytrx6cdn" path="res://assets/images/portraits/05.png" id="5"]
-[ext_resource type="Texture2D" uid="uid://cwoof1kklf3ee" path="res://assets/images/portraits/Nest-Administrator.png" id="6"]
-[ext_resource type="Texture2D" uid="uid://dbhta7nlfpebc" path="res://assets/images/portraits/Shoal-Coordinator.png" id="7"]
+[ext_resource type="Texture2D" uid="uid://gawhxa5u2upx" path="res://assets/images/portraits/portrait_bg.png" id="2"]
+[ext_resource type="Texture2D" uid="uid://b6m44yqcitq2h" path="res://assets/images/portraits/alien02.png" id="3"]
+[ext_resource type="Texture2D" uid="uid://cddrpd4m4foiq" path="res://assets/images/portraits/alien03.png" id="4"]
+[ext_resource type="Texture2D" uid="uid://dk4istlo3vpf4" path="res://assets/images/portraits/alien04.png" id="5"]
+[ext_resource type="Texture2D" uid="uid://7akulxdyhp44" path="res://assets/images/portraits/alien05.png" id="6"]
+[ext_resource type="Texture2D" uid="uid://78fon0pek4jt" path="res://assets/images/portraits/alien06.png" id="7"]
+[ext_resource type="Texture2D" uid="uid://cqrwxdmtmivvk" path="res://assets/images/portraits/alien07.png" id="8"]
+[ext_resource type="Texture2D" uid="uid://btxj7d80wgg52" path="res://assets/images/portraits/alien08.png" id="9"]
+[ext_resource type="Texture2D" uid="uid://dgh10rid0b11v" path="res://assets/images/portraits/alien09.png" id="10"]
+[ext_resource type="Texture2D" uid="uid://cwoof1kklf3ee" path="res://assets/images/portraits/Nest-Administrator.png" id="11"]
 
 [node name="Portraits" type="Control" unique_id=1067704070]
 layout_mode = 3
@@ -18,8 +22,7 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1")
 
-[node name="02" type="TextureRect" parent="." unique_id=1899860706]
-visible = false
+[node name="portrait_bg" type="TextureRect" parent="." unique_id=1899860706]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -34,7 +37,7 @@ texture = ExtResource("2")
 expand_mode = 4
 stretch_mode = 5
 
-[node name="03" type="TextureRect" parent="." unique_id=369503441]
+[node name="Commander" type="TextureRect" parent="." unique_id=369503441]
 visible = false
 layout_mode = 1
 anchors_preset = 15
@@ -49,7 +52,7 @@ texture = ExtResource("3")
 expand_mode = 4
 stretch_mode = 5
 
-[node name="04" type="TextureRect" parent="." unique_id=1218916350]
+[node name="Shoal-Coordinator" type="TextureRect" parent="." unique_id=1218916350]
 visible = false
 layout_mode = 1
 anchors_preset = 15
@@ -64,7 +67,7 @@ texture = ExtResource("4")
 expand_mode = 4
 stretch_mode = 5
 
-[node name="05" type="TextureRect" parent="." unique_id=1584454692]
+[node name="Fleet Commander" type="TextureRect" parent="." unique_id=1584454692]
 visible = false
 layout_mode = 1
 anchors_preset = 15
@@ -79,7 +82,7 @@ texture = ExtResource("5")
 expand_mode = 4
 stretch_mode = 5
 
-[node name="Nest-Administrator" type="TextureRect" parent="." unique_id=2042376144]
+[node name="Logistics" type="TextureRect" parent="." unique_id=2042376144]
 visible = false
 layout_mode = 1
 anchors_preset = 15
@@ -95,8 +98,7 @@ texture = ExtResource("6")
 expand_mode = 4
 stretch_mode = 5
 
-[node name="Shoal-Coordinator" type="TextureRect" parent="." unique_id=1026896154]
-visible = false
+[node name="Nest-Administrator" type="TextureRect" parent="." unique_id=1026896154]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -108,5 +110,69 @@ offset_bottom = 14.0
 grow_horizontal = 2
 grow_vertical = 2
 texture = ExtResource("7")
+expand_mode = 4
+stretch_mode = 5
+
+[node name="Pilot" type="TextureRect" parent="." unique_id=1542017496]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 3.0
+offset_top = -2.0
+offset_right = -1.0
+offset_bottom = -8.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("8")
+expand_mode = 4
+stretch_mode = 5
+
+[node name="Tactical" type="TextureRect" parent="." unique_id=1690328074]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 1.0
+offset_top = 5.0
+offset_right = 4.0
+offset_bottom = 9.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("9")
+expand_mode = 4
+stretch_mode = 5
+
+[node name="Wing Commander" type="TextureRect" parent="." unique_id=1793079971]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -3.0
+offset_top = 2.0
+offset_right = 7.0
+offset_bottom = -2.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("10")
+expand_mode = 4
+stretch_mode = 5
+
+[node name="Nest-Administrator2" type="TextureRect" parent="." unique_id=2034287562]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -2.0
+offset_top = -1.0
+offset_right = 6.0
+offset_bottom = -7.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("11")
 expand_mode = 4
 stretch_mode = 5

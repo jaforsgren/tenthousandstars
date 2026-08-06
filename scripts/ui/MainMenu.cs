@@ -1,4 +1,3 @@
-using System.Linq;
 using Godot;
 using Tts.Dialogue;
 using Tts.Utils;
@@ -26,14 +25,7 @@ public partial class MainMenu : Control
 		ShowRandomPortrait();
 	}
 
-	private void ShowRandomPortrait()
-	{
-		var faces = _portraits.GetChildren().OfType<TextureRect>().ToArray();
-		if (faces.Length == 0) return;
-
-		_portraits.HideAll();
-		faces[new System.Random().Next(faces.Length)].Visible = true;
-	}
+	private void ShowRandomPortrait() => _portraits.ShowRandomPortrait();
 
 	private void OnCampaignPressed()
 	{
