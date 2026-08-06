@@ -30,12 +30,14 @@ public partial class CharacterHeader : HBoxContainer
 	private Portraits _portraits = null!;
 	private Label _speakerName = null!;
 	private Label _descriptor = null!;
+	private VBoxContainer _info = null!;
 
 	public override void _Ready()
 	{
 		_portraits = GetNode<Portraits>("PortraitWrapper/Portraits");
 		_speakerName = GetNode<Label>("Info/SpeakerName");
 		_descriptor = GetNode<Label>("Info/Descriptor");
+		_info = GetNode<VBoxContainer>("Info");
 
 		_descriptor.ThemeTypeVariation = "Descriptor";
 	}
@@ -79,10 +81,11 @@ public partial class CharacterHeader : HBoxContainer
 			return;
 
 		_speakerName.Text = speaker;
-		_portraits.Visible = _portraits.ShowPortrait(speaker);
+		_portraits.Visible = true;
+		await _portraits.ShowPortraitAsync(speaker, FadeInDuration);
 
 		Visible = true;
-		Modulate = Transparent;
+		_info.Modulate = Transparent;
 		await FadeInAsync();
 	}
 
@@ -93,10 +96,10 @@ public partial class CharacterHeader : HBoxContainer
 		{
 			float elapsed = (Time.GetTicksMsec() - startMs) / 1000f;
 			if (elapsed >= FadeInDuration) break;
-			Modulate = new Color(1f, 1f, 1f, Mathf.Clamp(elapsed / FadeInDuration, 0f, 1f));
+			_info.Modulate = new Color(1f, 1f, 1f, Mathf.Clamp(elapsed / FadeInDuration, 0f, 1f));
 			await YarnTask.NextFrame();
 		}
 		if (IsInstanceValid(this))
-			Modulate = Opaque;
+			_info.Modulate = Opaque;
 	}
 }
