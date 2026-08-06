@@ -112,6 +112,8 @@ public partial class Level : Node2D
 	private bool _endConditionReached;
 	private int _objectiveSystemIndex = -1;
 	private readonly List<RouteNode> _highlightedRoutes = [];
+	private MapEvent[] _mapEvents = [];
+	private MapEventController _mapEventController = null!;
 
 	public override void _Ready()
 	{
@@ -181,6 +183,7 @@ public partial class Level : Node2D
 		AssignLoreSeeds(data);
 		AssignScenarios(pendingScenarios);
 		SpawnCommitmentController();
+		SpawnMapEvents(campaign);
 		SpawnEffectSystem();
 		SpawnAiController(data, cfg.Ai);
 
@@ -226,9 +229,14 @@ public partial class Level : Node2D
 		{
 			var mapPath = $"res://config/maps/{mapName}.json";
 			if (ConfigLoader.Exists(mapPath))
-				return MapBuilder.Build(ConfigLoader.Load<MapDefinition>(mapPath), generationRng, cfg.AiNaming);
+			{
+				var map = ConfigLoader.Load<MapDefinition>(mapPath);
+				_mapEvents = map.Events ?? [];
+				return MapBuilder.Build(map, generationRng, cfg.AiNaming);
+			}
 		}
 
+		_mapEvents = [];
 		return LevelGenerator.Generate(generationRng, cfg.Generator, cfg.Ai, cfg.AiNaming, cfg.System);
 	}
 
@@ -389,6 +397,17 @@ public partial class Level : Node2D
 		_commitmentController.CommitmentResolved += _narrativePanel.OnCommitmentResolved;
 	}
 
+	private void SpawnMapEvents(CampaignController? campaign)
+	{
+		_mapEventController = new MapEventController();
+		AddChild(_mapEventController);
+		_mapEventController.Initialize(
+			_mapEvents,
+			_narrativePanel,
+			campaign?.BuildVars() ?? new Dictionary<string, string>());
+		_mapEventController.NotifyMissionStart();
+	}
+
 	private void OnCommitmentResolved(int systemIndex, int ownerInt, int intentInt, bool controlGained, float remainingStrength)
 	{
 		var owner = (SystemOwner)ownerInt;
@@ -399,6 +418,7 @@ public partial class Level : Node2D
 			if (owner == SystemOwner.Player)
 			{
 				target.Capture(remainingStrength, SystemOwner.Player);
+				_mapEventController?.NotifyPlayerConquer();
 				SpawnCombatEffect(systemIndex, attackerWon: true);
 				if (_camera.IsFollowing)
 					_camera.FollowSystem(target.GlobalPosition);

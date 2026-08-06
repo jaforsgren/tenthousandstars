@@ -35,5 +35,19 @@
 		{ "From": 0, "To": 2 },
 		{ "From": 1, "To": 3 },
 		{ "From": 2, "To": 3 }
+	],
+	"Events": [
+		{
+			"Trigger": "MissionStart",
+			"DelaySeconds": 10,
+			"MaxFires": 1,
+			"YarnNode": "tutorial_mechanics_tip"
+		},
+		{
+			"Trigger": "ConquerDelayed",
+			"DelaySeconds": 10,
+			"MaxFires": 1,
+			"YarnNode": "tutorial_first_conquest_tip"
+		}
 	]
 }

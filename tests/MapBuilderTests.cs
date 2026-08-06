@@ -41,6 +41,11 @@ public class MapBuilderTests
             new MapRoute(0, 1),
             new MapRoute(0, 2),
             new MapRoute(1, 2)
+        ],
+        Events:
+        [
+            new MapEvent(MapEventTrigger.MissionStart, "intro_tip", DelaySeconds: 10, MaxFires: 1),
+            new MapEvent(MapEventTrigger.Conquer, "conquer_log")
         ]);
 
     [Fact]
@@ -135,5 +140,35 @@ public class MapBuilderTests
         var routes = data.Routes.Select(r => ((int, int))(r.From, r.To)).ToList();
         var hops = GraphUtils.BfsHopDistances(0, data.Systems.Count, routes);
         Assert.All(hops, d => Assert.True(d >= 0));
+    }
+
+    [Fact]
+    public void TutorialMap_LoadsEventsFromDisk()
+    {
+        var definition = ConfigLoader.Load<MapDefinition>("res://config/maps/tutorial.json");
+
+        var events = definition.Events ?? [];
+        Assert.Equal(2, events.Length);
+
+        var missionStart = events[0];
+        Assert.Equal(MapEventTrigger.MissionStart, missionStart.Trigger);
+        Assert.Equal("tutorial_mechanics_tip", missionStart.YarnNode);
+        Assert.Equal(10f, missionStart.DelaySeconds);
+        Assert.Equal(1, missionStart.MaxFires);
+
+        var firstConquest = events[1];
+        Assert.Equal(MapEventTrigger.ConquerDelayed, firstConquest.Trigger);
+        Assert.Equal("tutorial_first_conquest_tip", firstConquest.YarnNode);
+        Assert.Equal(10f, firstConquest.DelaySeconds);
+        Assert.Equal(1, firstConquest.MaxFires);
+    }
+
+    [Fact]
+    public void MapEvents_DefaultsToUnlimitedFiresAndNoDelay()
+    {
+        var evt = new MapEvent(MapEventTrigger.Attack, "attack_log");
+
+        Assert.Equal(0f, evt.DelaySeconds);
+        Assert.Equal(int.MaxValue, evt.MaxFires);
     }
 }

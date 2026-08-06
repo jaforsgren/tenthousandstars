@@ -1,0 +1,43 @@
+// Tutorial primer: map events attach Yarn nodes to authored maps. This node is
+// referenced by config/maps/tutorial.json and runs ~10 seconds after the mission
+// begins to walk the player through production and attacking.
+
+title: tutorial_mechanics_tip
+---
+Narrator: Lattice Record — Shoal Primer.
+
+Nest-Administrator: Listen, Shoal-Coordinator. This will not take long.
+
+Nest-Administrator: Every system you hold hatches ships on its own.
+
+Leave it to its work and the shoal grows. Production asks nothing of you but patience.
+
+Shoal-Coordinator: And when I must strike?
+
+Nest-Administrator: Select one of our systems, then push its fleet across a route toward a foreign system.
+
+Nest-Administrator: When your shoal arrives it engages. Win the exchange and the world changes hands.
+
+Shoal-Coordinator: The numbers on the field decide the rest.
+
+Nest-Administrator: Yes. Accrue, dispatch, hold. Everything else is ornament.
+
+-> [Acknowledge]
+===
+
+title: tutorial_first_conquest_tip
+---
+Narrator: Lattice Record — First Conquest.
+
+Nest-Administrator: A world has entered our domain. Well charted work, Shoal-Coordinator.
+
+Shoal-Coordinator: The crossing broke before the second volley.
+
+Nest-Administrator: Do not sleep on the marker. Consolidate — redirect every held force here, then press the advance.
+
+Shoal-Coordinator: We are to take the rest of the stars.
+
+Nest-Administrator: Every world left to the enemy hatches one more shoal against us. Take them all.
+
+-> [Understood]
+===

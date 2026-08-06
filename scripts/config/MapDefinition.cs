@@ -9,7 +9,28 @@ namespace Tts.Config;
 // generation and produce a LevelData directly via LevelGenerator/LMapBuilder.
 public sealed record MapDefinition(
     MapSystem[] Systems,
-    MapRoute[] Routes);
+    MapRoute[] Routes,
+    MapEvent[]? Events = null);
+
+// When a map event fires the Yarn node is run as an in-game dialogue by the
+// MapEventController. MaxFires limits how many times the event may trigger
+// across a mission (default: unlimited).
+public sealed record MapEvent(
+    MapEventTrigger Trigger,
+    string YarnNode,
+    float DelaySeconds = 0f,
+    int MaxFires = int.MaxValue);
+
+// AttackDelayed/ConquerDelayed fire DelaySeconds after the corresponding
+// player action; MissionStart fires DelaySeconds after the mission begins.
+public enum MapEventTrigger
+{
+    MissionStart,
+    Attack,
+    Conquer,
+    AttackDelayed,
+    ConquerDelayed
+}
 
 public sealed record MapPoint(float X, float Y);
 

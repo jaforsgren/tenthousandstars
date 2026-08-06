@@ -58,6 +58,7 @@ public partial class Level
 		}
 		else
 		{
+			_mapEventController?.NotifyPlayerAttack();
 			_commitmentController.StartCommitment(
 				toIndex,
 				SystemOwner.Player,
@@ -111,6 +112,7 @@ public partial class Level
 			return;
 		}
 
+		_mapEventController?.NotifyPlayerAttack();
 		ResolveDirectCombat(toIndex, fleet);
 
 		UpdateFog();
@@ -130,6 +132,7 @@ public partial class Level
 			var remainder = Math.Max(0f, result.AttackerRemainder);
 			var aiPlayer = _aiPlayers.FirstOrDefault(p => p.Owner == target.OwnerPlayer);
 			target.Capture(remainder, SystemOwner.Player);
+			_mapEventController?.NotifyPlayerConquer();
 			SpawnCombatEffect(systemIndex, attackerWon: true);
 			if (_camera.IsFollowing)
 				_camera.FollowSystem(target.GlobalPosition);

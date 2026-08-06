@@ -1,0 +1,14 @@
+[remap]
+
+importer="yarnscript"
+type="Resource"
+uid="uid://d1vlw28nx0imr"
+path="res://.godot/imported/tutorial_events.yarn-190338c49f3703e7a6e8d22d956bd043.tres"
+
+[deps]
+
+source_file="res://yarn/narrative/tutorial_events.yarn"
+dest_files=["res://.godot/imported/tutorial_events.yarn-190338c49f3703e7a6e8d22d956bd043.tres"]
+
+[params]
+
